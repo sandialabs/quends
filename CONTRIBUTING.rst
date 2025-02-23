@@ -51,7 +51,7 @@ To set up `quends` for local development:
 
 4. When you're done making changes run all the checks and docs builder with one command::
 
-    tox
+    pytest
 
 5. Commit your changes and push your branch to GitHub::
 
@@ -68,18 +68,7 @@ If you need some code review or feedback while you're developing the code just m
 
 For merging, you should:
 
-1. Include passing tests (run ``tox``).
+1. Include passing tests (run ``pytest``).
 2. Update documentation when there's new API, functionality etc.
 3. Add a note to ``changelog.rst`` about the changes.
 4. Add yourself to ``authors.rst``.
-
-Tips
-----
-
-To run a subset of tests::
-
-    tox -e envname -- pytest -k test_myfeature
-
-To run all the test environments in *parallel*::
-
-    tox -p auto

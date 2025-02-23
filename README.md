@@ -113,13 +113,13 @@ quends/
 2. **Install the package and dependencies**:
     You can install the package along with its dependencies using pip:
     ```bash
-    pip install quends
+    pip install .
     ```
 
 3. **Verify the installation**:
     To ensure that the installation was successful, you can run a simple test:
-    ```python
-    import quends
+    ```bash
+    python -c "import quends"
     ```
 
 
