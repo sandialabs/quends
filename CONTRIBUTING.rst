@@ -24,7 +24,7 @@ articles, and such.
 Feature requests and feedback
 =============================
 
-The best way to send feedback is to file an issue at https://github.com/adcalpa/quends/issues.
+The best way to send feedback is to file an issue at https://github.com/sandialabs/quends/issues.
 
 If you are proposing a feature:
 
