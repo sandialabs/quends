@@ -15,7 +15,6 @@ This project focuses on uncertainty quantification in plasma turbulent simulatio
 - [Module Descriptions](#module-descriptions)
 - [Examples](#examples)
 - [Summary](#summary)
-- [Authors] (#authors)
 - [Contributing](#contributing)
 - [License](#license)
 
