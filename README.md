@@ -1,14 +1,12 @@
-# Sandia National Labs
-# Quanitfication of Uncertainty in ENsembles of Data Streams (QUENDS)
+# Quantification of Uncertainty in ENsembles of Data Streams (QUENDS)
 
-#### Bert Debusschere, Evans Etrue Howard, Abeyah Calpatura, Pieterjan Magda M Robbe
+#### Bert Debusschere, Evans Etrue Howard, Abeyah Calpatura, Pieterjan Robbe
 
 ## Overview
 This project focuses on uncertainty quantification in plasma turbulent simulations. It includes modules for loading and processing NetCDF and CSV datasets, estimating steady states, computing effective sample sizes, and running uncertainty quantification analyses. The project is structured into multiple Python scripts, each handling different aspects of the analysis. The following Python scripts are included:
 
 ## Table of Contents
 
-## Table of Contents
 - [Project Structure](#project-structure)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -186,7 +184,7 @@ The `postprocessing/` directory contains modules responsible for exporting and v
     - `ensemble_steady_state_plot()`: Plot steady state detection for each ensemble member using a user-supplied steady state start.
     - `ensemble_trace_plot()`: Plot ensemble time series data, with traces from each ensemble member plotted on the same axes.
 
-#### `preprocessing/`
+### `preprocessing/`
 This module provides functions for loading and preprocessing data from various sources. It includes methods for reading data from CSV, JSON, NetCDF, and other formats.
 
 **Key Functions:**
