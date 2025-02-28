@@ -127,13 +127,13 @@ quends/
 ## Usage
 
 Examples are shown in the `examples/notebooks` directories.
-    - `cgyro`: Contains all CGYRO data
-    - `gx`: Contains all gx data
-    - `gx/ensemble`: Contains all ensemble data
-    - `DataStream_Guide-CGRYO.ipynb`: DataStream guide for CGYRO data
-    - `DataStream_Guide-GX.ipynb`: DataStream guide for GX data
-    - `DataStream_Guide-Ensemble.ipynb`: DataStream guide for Ensembles
-    - `DataStream_Guide.ipynb`: DataStream guide
+- `cgyro`: Contains all CGYRO data
+- `gx`: Contains all gx data
+- `gx/ensemble`: Contains all ensemble data
+- `DataStream_Guide-CGRYO.ipynb`: DataStream guide for CGYRO data
+- `DataStream_Guide-GX.ipynb`: DataStream guide for GX data
+- `DataStream_Guide-Ensemble.ipynb`: DataStream guide for Ensembles
+- `DataStream_Guide.ipynb`: DataStream guide
 
 
 ### Module Descriptions
