@@ -99,6 +99,7 @@ class DataStream:
         else:
             raise ValueError("Invalid method. Choose 'std', 'threshold', or 'rolling_variance'.")
 
+        # print(steady_state_start_time)
         if steady_state_start_time is not None:
             trimmed_df = self.df.loc[self.df['time'] >= steady_state_start_time, ['time', column_name]].reset_index(drop=True)
             return DataStream(trimmed_df)

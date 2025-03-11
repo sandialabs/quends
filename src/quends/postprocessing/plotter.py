@@ -7,7 +7,7 @@ from quends.base.data_stream import DataStream  # Adjust the import if necessary
 from scipy.optimize import curve_fit
 from statsmodels.tsa.stattools import acf
 from scipy.stats import norm
-
+from quends.base.ensemble import Ensemble
 
 class Plotter:
     """
@@ -49,6 +49,8 @@ class Plotter:
         """
         if isinstance(data, DataStream):
             return {"DataStream": data.df}
+        elif isinstance(data, Ensemble):
+            return {f"DataStream {k}": data.data_streams[k].df for k in range(len(data))}
         elif isinstance(data, dict):
             return data
         else:
@@ -128,7 +130,109 @@ class Plotter:
             plt.show()
             plt.close()
 
+        return axes
+    
+    def trace_plot_with_mean(self, data, variables_to_plot=None, save=False):
+        """
+        Plot individual (trace) time series data from a DataStream or a dictionary of DataFrames.
+        The resulting plots are displayed and optionally saved if 'save' is True.
+
+        Args:
+            data (DataStream or dict): A DataStream instance or dictionary of DataFrames.
+            variables_to_plot (list, optional): List of variables to plot. If None,
+                all columns (except 'time') from the first DataFrame are used.
+            save (bool, optional): If True, save the generated plots to the output directory.
+                                   Defaults to False.
+        """
+        data_frames = self._prepare_data_frames(data)
+
+        # If no variables provided, infer from the first DataFrame (excluding 'time')
+        if variables_to_plot is None:
+            first_df = next(iter(data_frames.values()))
+            variables_to_plot = [col for col in first_df.columns if col != "time"]
+        else:
+            variables_to_plot = [var for var in variables_to_plot if var != "time"]
+
+        # Create a trace plot for each dataset in the dictionary
+        for dataset_name, df in data_frames.items():
+            time_series = df["time"]
+            num_traces = len(variables_to_plot)
+            num_cols = min(5, num_traces)
+            num_rows = (num_traces + num_cols - 1) // num_cols  # Ceiling division
+            fig_size = self._calc_fig_size(num_cols, num_rows)
+            fig, axes = plt.subplots(num_rows, num_cols, figsize=fig_size)
+            #fig_width = num_cols * 4
+            #fig_height = num_rows * 4
+
+            #fig, axes = plt.subplots(num_rows, num_cols, figsize=(fig_width, fig_height))
+            # Ensure axes is always a flat list
+            if num_traces == 1:
+                axes = [axes]
+            else:
+                axes = axes.flatten()
+
+            for j, column in enumerate(variables_to_plot):
+                ds = DataStream(df)
+                tds = ds.trim(column)
+                m = tds.mean()[column]["mean"]
+                l, u = tds.confidence_interval()[column]["confidence interval"]
+                axes[j].plot(time_series, df[column], label=column)
+                axes[j].plot(tds.df["time"], m * np.ones(len(tds.df["time"])), color="r", label="mean")
+                axes[j].fill_between(tds.df["time"], l, u, color="r", alpha=0.2, label="mean uncertainty")
+                axes[j].set_xlabel("Time")
+                axes[j].set_title(column)
+                axes[j].legend(fontsize='small')
+                axes[j].grid(True)
+
+            # Remove any unused subplots
+            for k in range(j + 1, len(axes)):
+                fig.delaxes(axes[k])
+
+            plt.suptitle(f"Time Series Plots for {self.format_dataset_name(dataset_name)}", fontsize=16)
+            plt.tight_layout(rect=[0, 0, 1, 0.95])
+            if save:
+                save_path = os.path.join(self.output_dir, f"time_series_{self.format_dataset_name(dataset_name)}.png")
+                plt.savefig(save_path)
+            plt.show()
+            plt.close()
+        
+
     def ensemble_trace_plot(self, data, variables_to_plot=None, save=False):
+        """
+        Plot ensemble time series data, with traces from each ensemble member plotted on the same axes.
+        The resulting plots are displayed and optionally saved if 'save' is True.
+
+        Args:
+            data (DataStream or dict): A DataStream instance or dictionary of DataFrames representing ensemble members.
+            variables_to_plot (list, optional): List of variables to plot. If None,
+                all columns (except 'time') from the first DataFrame are used.
+            save (bool, optional): If True, save the generated plots to the output directory.
+                                   Defaults to False.
+        """
+        data_frames = self._prepare_data_frames(data)
+
+        # If no variables provided, infer from the first DataFrame (excluding 'time')
+        if variables_to_plot is None:
+            first_df = next(iter(data_frames.values()))
+            variables_to_plot = [col for col in first_df.columns if col != "time"]
+        else:
+            variables_to_plot = [var for var in variables_to_plot if var != "time"]
+
+        for var in variables_to_plot:
+            plt.figure(figsize=(8, 6))
+            for dataset_name, df in data_frames.items():
+                plt.plot(df["time"], df[var], label=dataset_name)
+            plt.xlabel("Time")
+            plt.title(f"Ensemble Time Series for {var}")
+            plt.legend()
+            plt.tight_layout()
+            if save:
+                save_path = os.path.join(self.output_dir, f"ensemble_time_series_{var}.png")
+                plt.savefig(save_path)
+            plt.show()
+            plt.close()
+
+    def ensemble_trace_plot_with_mean(self, data, variables_to_plot=None, save=False):
         """
         Plot ensemble time series data, with traces from each ensemble member plotted on the same axes.
         The resulting plots are displayed and optionally saved if 'save' is True.
