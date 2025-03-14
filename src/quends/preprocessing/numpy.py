@@ -1,6 +1,10 @@
 import numpy as np
 import pandas as pd
-from ..base.data_stream import DataStream  # Adjust import based on your module structure
+
+from ..base.data_stream import (
+    DataStream,  # Adjust import based on your module structure
+)
+
 
 def from_numpy(np_array, variables=None):
     """
@@ -17,7 +21,7 @@ def from_numpy(np_array, variables=None):
     """
     if not isinstance(np_array, np.ndarray):
         raise ValueError("Input must be a NumPy array.")
-    
+
     # For 1D arrays, create a single-column DataFrame.
     if np_array.ndim == 1:
         df = pd.DataFrame(np_array, columns=["data"])
@@ -26,12 +30,14 @@ def from_numpy(np_array, variables=None):
         # If user provided column names, verify the length matches the array's number of columns.
         if variables is not None:
             if len(variables) != df.shape[1]:
-                raise ValueError("Length of variables does not match number of columns in the array.")
+                raise ValueError(
+                    "Length of variables does not match number of columns in the array."
+                )
             df.columns = variables
         else:
             # Otherwise, assign default names.
             df.columns = [f"col_{i}" for i in range(df.shape[1])]
     else:
         raise ValueError("Only 1D or 2D NumPy arrays are supported.")
-    
+
     return DataStream(df)
