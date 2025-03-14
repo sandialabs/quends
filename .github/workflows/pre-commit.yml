@@ -1,0 +1,18 @@
+name: Pre-Commit Hook
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0  # version
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+  - repo: https://github.com/psf/black
+    rev: 23.1.0  # version
+    hooks:
+      - id: black
+        language_version: python3
+  - repo: https://github.com/charliermarsh/ruff
+    rev: v0.0.1  # version
+    hooks:
+      - id: ruff
