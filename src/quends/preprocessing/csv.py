@@ -1,7 +1,12 @@
 import os
+
 import pandas as pd
+
 # from base.data_stream import DataStream
-from ..base.data_stream import DataStream  # Adjust the import based on the module structure
+from ..base.data_stream import (
+    DataStream,  # Adjust the import based on the module structure
+)
+
 
 # Import from a csv file
 def from_csv(file, variables=None):
@@ -27,7 +32,7 @@ def from_csv(file, variables=None):
     else:
         # Optionally, filter out any variable names not in Dataframe
         variables = [var for var in variables if var in df.columns]
-    
+
     df = df[variables]
 
     # Return DataStream initialized with the DataFrame

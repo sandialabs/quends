@@ -2,8 +2,8 @@ import os
 import sys
 
 # Add the src directory to the Python path
-sys.path.insert(0, os.path.abspath('../src'))  # Adjust this path if necessary
-sys.path.insert(0, os.path.abspath('../src/quends'))
+sys.path.insert(0, os.path.abspath("../src"))  # Adjust this path if necessary
+sys.path.insert(0, os.path.abspath("../src/quends"))
 
 print("Python path:", sys.path)  # This will help you verify the path
 

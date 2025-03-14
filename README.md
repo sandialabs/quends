@@ -11,6 +11,7 @@ This project focuses on uncertainty quantification in plasma turbulent simulatio
 - [Project Structure](#project-structure)
 - [Installation](#installation)
 - [Usage](#usage)
+- [For Developers](#for-developers)
 - [Module Descriptions](#module-descriptions)
 - [Examples](#examples)
 - [Summary](#summary)
@@ -134,6 +135,50 @@ Examples are shown in the `examples/notebooks` directories.
 - `DataStream_Guide-GX.ipynb`: DataStream guide for GX data
 - `DataStream_Guide-Ensemble.ipynb`: DataStream guide for Ensembles
 - `DataStream_Guide.ipynb`: DataStream guide
+
+## For Developers
+
+1. **Clone the repository**:
+    - Using SSH:
+    ```bash
+    git clone git@github.com:sandialabs/quends.git
+    cd quends
+    ```
+    - Using HTTPS:
+    ```bash
+    git clone https://github.com/sandialabs/quends.git
+    cd quends
+    ```
+
+2. **Install the package and dependencies**:
+    You can install the package along with its dependencies using pip:
+    ```bash
+    pip install -e .\[dev\]
+    ```
+
+3. **Install pre-commit hooks**
+    To ensure code quality and consistency, install:
+    ```bash
+    pre-commit install
+    ```
+
+4. **Run Ruff**:
+    For linting and fixing issues:
+    ```bash
+    ruff check --fix
+    ```
+
+5. **Run Black**:
+    To format your code with Black:
+    ```bash
+    black .
+    ```
+
+6. **Run isort**:
+    To format your code with Black:
+    ```bash
+    isort .
+    ```
 
 
 ### Module Descriptions

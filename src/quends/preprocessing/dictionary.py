@@ -1,5 +1,9 @@
 import pandas as pd
-from ..base.data_stream import DataStream  # Adjust import based on your module structure
+
+from ..base.data_stream import (
+    DataStream,  # Adjust import based on your module structure
+)
+
 
 def from_dict(data_dict, variables=None):
     """
@@ -15,14 +19,14 @@ def from_dict(data_dict, variables=None):
     """
     if not isinstance(data_dict, dict):
         raise ValueError("Input must be a dictionary.")
-    
+
     df = pd.DataFrame(data_dict)
-    
+
     # If variables is not provided, use all columns.
     if variables is None:
         variables = df.columns.tolist()
-    
+
     # Filter the DataFrame to include only the specified columns.
     df = df[variables]
-    
+
     return DataStream(df)

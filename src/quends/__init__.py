@@ -18,14 +18,14 @@ from .preprocessing.numpy import from_numpy
 
 # Optionally, you can define the __all__ variable to specify what is exported when using 'from quends import *'
 __all__ = [
-    'DataStream',
-    'Ensemble',
-    'Exporter',
-    'Plotter',
-    'from_csv',
-    'from_dict',
-    'from_gx',
-    'from_json',
-    'from_netcdf',
-    'from_numpy'
+    "DataStream",
+    "Ensemble",
+    "Exporter",
+    "Plotter",
+    "from_csv",
+    "from_dict",
+    "from_gx",
+    "from_json",
+    "from_netcdf",
+    "from_numpy",
 ]
