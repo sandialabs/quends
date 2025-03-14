@@ -168,17 +168,18 @@ Examples are shown in the `examples/notebooks` directories.
     ruff check --fix
     ```
 
-5. **Run Black**:
+5. **Run isort**:
+    To format your code with Black:
+    ```bash
+    isort .
+    ```
+
+6. **Run Black**:
     To format your code with Black:
     ```bash
     black .
     ```
 
-6. **Run isort**:
-    To format your code with Black:
-    ```bash
-    isort .
-    ```
 
 
 ### Module Descriptions
