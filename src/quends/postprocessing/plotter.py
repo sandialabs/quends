@@ -232,8 +232,7 @@ class Plotter:
             data (DataStream or dict): A DataStream instance or dictionary of DataFrames representing ensemble members.
             variables_to_plot (list, optional): List of variables to plot. If None,
                 all columns (except 'time') from the first DataFrame are used.
-            save (bool, optional): If True, save the generated plots to the output directory.
-                                   Defaults to False.
+            save (bool, optional): If True, save the generated plots to the output directory. Defaults to False.
         """
         data_frames = self._prepare_data_frames(data)
 
@@ -438,10 +437,12 @@ class Plotter:
         Plot steady state detection for each variable in the data using a user-supplied steady state start.
         The user can provide a single float (applied to all variables) or a dictionary mapping variable names to floats.
         For each variable, if a steady state start is provided, the plot displays:
+
             - The full signal.
             - A vertical dashed red line at the given steady state start.
             - A horizontal green line for the mean (after steady state).
             - Shaded regions for ±1, ±2, and ±3 standard deviations (after steady state).
+
         If no steady state start is provided for a variable, only the raw signal is plotted and a message is printed.
 
         Args:
@@ -669,9 +670,11 @@ class Plotter:
         For each ensemble member in the Ensemble object, for each variable (if multiple are provided,
         all are overlaid on the same subplot), the method uses DataStream.trim() to estimate the steady
         state start time. If detected, it plots the original signal with:
+
           - A vertical dashed red line at the estimated steady state start.
           - A horizontal green line at the overall mean (computed from the data after steady state).
           - Shaded regions for ±1, ±2, and ±3 standard deviations.
+
         If no steady state is detected, it plots the raw signal and prints a message.
 
         The plots are arranged in a grid with one subplot per ensemble member.
@@ -686,6 +689,9 @@ class Plotter:
             threshold (float, optional): Threshold if needed by the method.
             robust (bool): If True, use robust statistics (median/MAD) in the 'std' method.
             save (bool): If True, save the resulting figure to disk.
+
+        Returns:
+            None
         """
         # Determine grid dimensions based on number of ensemble members.
         n_members = len(ensemble_obj.data_streams)
@@ -787,9 +793,11 @@ class Plotter:
 
         For each ensemble member in the Ensemble object, the function plots the signal for the specified
         variables (or all non-'time' variables if not provided) and draws:
+
           - A vertical dashed red line at the user-supplied steady state start.
           - A horizontal green line representing the mean of the data after the steady state.
           - Shaded regions for ±1, ±2, and ±3 standard deviations (computed after the steady state).
+
         If no steady state start is provided for a variable, the raw signal is plotted and a message is printed.
 
         The plots are arranged in a grid.

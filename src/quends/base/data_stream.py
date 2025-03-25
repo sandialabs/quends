@@ -599,7 +599,7 @@ class DataStream:
                 - 'current_sem': current SEM (at n_current),
                 - 'target_sem': target SEM,
                 - 'n_target': estimated total samples required,
-                 - 'additional_samples': additional samples needed (n_target - n_current).
+                - 'additional_samples': additional samples needed (n_target - n_current).
         """
         # Get cumulative statistics computed on the processed data (using your cumulative_statistics method)
         stats = self.cumulative_statistics(
@@ -668,19 +668,24 @@ class DataStream:
 
     def effective_sample_size_below(self, column_names=None, alpha=0.05):
         """
+        .. |ACF| replace:: Autocorrelation Function
+
         Compute the effective sample size (ESS) for each specified column using a weighted
         autocorrelation approach where "significant" lags are defined as all lags up to (but not including)
         the first lag at which the absolute ACF drops below the 95% confidence interval.
 
         The steps are:
+
         1. Determine the number of observations, n.
         2. Compute the autocorrelation function (ACF) for nlags = int(n/3).
-        3. Calculate the two-tailed critical value: z_critical = norm.ppf(1 - alpha/2),
-            and then the confidence interval: conf_interval = z_critical / sqrt(n).
+        3. Calculate the two-tailed critical value:
+            z_critical = norm.ppf(1 - alpha/2),
+            and then the confidence interval:
+            conf_interval = z_critical / sqrt(n).
         4. Find the first lag (excluding lag 0) where |ACF| < conf_interval.
         5. Sum the absolute ACF values for all lags before that drop.
         6. Compute ESS using:
-                ESS = n / (1 + 2 * sum(|ACF| at lags before drop))
+            ESS = n / (1 + 2 * sum(|ACF| at lags before drop))
 
         Args:
             column_names (str or list, optional): Column(s) for which to compute ESS.

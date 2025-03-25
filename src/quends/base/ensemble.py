@@ -277,16 +277,20 @@ class Ensemble:
         Compute the mean uncertainty for the ensemble.
 
         Technique 0: Returns individual member uncertainties.
+
         Technique 1: Aggregates raw data and computes uncertainty on the concatenated Series.
+
         Technique 2: Computes a weighted aggregation using:
             - For each member, the weight is the number of processed data points.
             - The ensemble uncertainty is computed as:
-                SEM = sqrt(Σ nᵢ (uᵢ² + (μᵢ - μ_w)²) / Σ nᵢ) / sqrt(Σ nᵢ)
+              SEM = sqrt(Σ nᵢ (uᵢ² + (μᵢ - μ_w)²) / Σ nᵢ) / sqrt(Σ nᵢ)
               and the weighted average uncertainty is also returned.
 
         Returns:
-            dict: {"Individual Members": ..., "Member Ensemble": {col: {"mean_uncertainty": SEM,
-                                                                           "mean_uncertainty_average": weighted_avg}}}
+            dict: A dictionary containing:
+                - "Individual Members": Individual member uncertainties.
+                - "Member Ensemble": A dictionary with column names as keys and their uncertainties as values, structured as:
+                {col: {"mean_uncertainty": SEM, "mean_uncertainty_average": weighted_avg}}
         """
         if technique == 0:
             return {
@@ -429,11 +433,16 @@ class Ensemble:
         Compute confidence intervals for the ensemble.
 
         Technique 0: Returns individual members' CIs.
+
         Technique 1: Aggregates raw data then computes CI.
+
         Technique 2: Computes weighted ensemble mean and uncertainty and then derives CI as:
                    CI = (weighted_mean - 1.96*weighted_uncertainty, weighted_mean + 1.96*weighted_uncertainty)
+
         Returns:
-            dict: {"Individual Members": ..., "Member Ensemble": ...}
+            dict: A dictionary containing:
+            - "Individual Members": Confidence intervals for individual members.
+            - "Member Ensemble": Confidence interval for the ensemble.
         """
         if technique == 0:
             results = {}
