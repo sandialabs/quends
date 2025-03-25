@@ -42,9 +42,6 @@ extlinks = {
 }
 
 html_theme = "sphinx_book_theme"
-html_theme_options = {
-    "githuburl": "https://sandialabs.github.io/quends/",
-}
 
 html_use_smartypants = True
 html_last_updated_fmt = "%b %d, %Y"
