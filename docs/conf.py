@@ -43,7 +43,7 @@ extlinks = {
 
 html_theme = "sphinx_book_theme"
 html_theme_options = {
-    "githuburl": "https://github.com/sandialabs/quends/",
+    "githuburl": "https://sandialabs.github.io/quends/",
 }
 
 html_use_smartypants = True
