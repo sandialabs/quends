@@ -282,15 +282,14 @@ class Ensemble:
 
         Technique 2: Computes a weighted aggregation using:
             - For each member, the weight is the number of processed data points.
-            - The ensemble uncertainty is computed as:
-              SEM = sqrt(Σ nᵢ (uᵢ² + (μᵢ - μ_w)²) / Σ nᵢ) / sqrt(Σ nᵢ)
-              and the weighted average uncertainty is also returned.
+            - The ensemble uncertainty is computed as: SEM = sqrt(Σ nᵢ (uᵢ² + (μᵢ - μ_w)²) / Σ nᵢ) / sqrt(Σ nᵢ).
+            - The weighted average uncertainty is also returned.
 
         Returns:
             dict: A dictionary containing:
                 - "Individual Members": Individual member uncertainties.
                 - "Member Ensemble": A dictionary with column names as keys and their uncertainties as values, structured as:
-                {col: {"mean_uncertainty": SEM, "mean_uncertainty_average": weighted_avg}}
+                                    {col: {"mean_uncertainty": SEM, "mean_uncertainty_average": weighted_avg}}.
         """
         if technique == 0:
             return {
