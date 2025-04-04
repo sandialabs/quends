@@ -35,18 +35,42 @@ Overview
 
 Quantification of Uncertainties in ENsembles of Data Streams
 
-* Free software: MIT license
+* Free software: BSD 3-Clause License
 
 Installation
 ============
 
-::
+To install the package, you can choose one of the following methods:
 
-    pip install quends
+1. **Clone the repository**:
 
-You can also install the in-development version with::
+   Using SSH:
+   .. code-block:: shell
 
-    pip install https://github.com/sandialabs/quends/archive/main.zip
+       git clone git@github.com:sandialabs/quends.git
+       cd quends
+
+   Using HTTPS:
+   .. code-block:: shell
+
+       git clone https://github.com/sandialabs/quends.git
+       cd quends
+
+2. **Install the package and its dependencies**:
+
+   Once you have cloned the repository, you can install the package using pip:
+
+   .. code-block:: shell
+
+       pip install .
+
+3. **Verify the installation**:
+
+   To ensure that the installation was successful, you can run a simple test:
+
+   .. code-block:: shell
+
+       python -c "import quends"
 
 
 Documentation
