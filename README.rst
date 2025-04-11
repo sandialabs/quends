@@ -45,13 +45,11 @@ To install the package, you can choose one of the following methods:
 1. **Clone the repository**:
 
    Using SSH:
-   .. code-block:: shell
 
        git clone git@github.com:sandialabs/quends.git
        cd quends
 
    Using HTTPS:
-   .. code-block:: shell
 
        git clone https://github.com/sandialabs/quends.git
        cd quends
@@ -60,15 +58,11 @@ To install the package, you can choose one of the following methods:
 
    Once you have cloned the repository, you can install the package using pip:
 
-   .. code-block:: shell
-
        pip install .
 
 3. **Verify the installation**:
 
    To ensure that the installation was successful, you can run a simple test:
-
-   .. code-block:: shell
 
        python -c "import quends"
 
