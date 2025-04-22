@@ -3,8 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Trigger on pushes to the main branch
-  workflow_dispatch:  # Allow manual triggering
+      - main  # Change this to your main branch if different
 
 permissions:
   contents: write  # Grant write access to repository contents
@@ -41,17 +40,10 @@ jobs:
           mkdir -p docs/_build/html/coverage  # Create a directory for coverage reports
           cp -r htmlcov/* docs/_build/html/coverage/  # Copy coverage report to the new directory
 
-      - name: Deploy Sphinx documentation to GitHub Pages
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/_build/html  # Publish Sphinx documentation
           publish_branch: gh-pages  # Specify the branch to publish to
-
-      - name: Deploy coverage report to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/_build/html/coverage  # Publish coverage report
-          publish_branch: gh-pages  # Specify the branch to publish to
-          force_orphan: true  # Optional: Create an orphan branch
+          force_orphan: true
