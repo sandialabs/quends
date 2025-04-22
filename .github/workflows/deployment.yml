@@ -1,0 +1,54 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Change this to your main branch if different
+
+permissions:
+  contents: write  # Grant write access to repository contents
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'  # Specify your Python version
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .[dev]  # Install your development dependencies
+
+      - name: Build Sphinx documentation
+        run: |
+          sphinx-build -b html docs docs/_build/html  # Adjust paths as necessary
+
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=quends --cov-report=html  # Run tests and generate coverage report
+
+      - name: Prepare coverage report for deployment
+        run: |
+          mkdir -p docs/_build/html/coverage  # Create a directory for coverage reports
+          cp -r htmlcov/* docs/_build/html/coverage/  # Copy coverage report to the new directory
+
+      - name: Deploy Sphinx documentation to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/_build/html  # Publish Sphinx documentation
+          publish_branch: gh-pages  # Specify the branch to publish to
+
+      - name: Deploy coverage report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/_build/html/coverage  # Publish coverage report
+          publish_branch: gh-pages  # Specify the branch to publish to
