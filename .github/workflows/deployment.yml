@@ -53,3 +53,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/_build/html/coverage  # Publish coverage report
           publish_branch: gh-pages  # Specify the branch to publish to
+          force_orphan: true  # Optional: Create an orphan branch for coverage
