@@ -48,5 +48,3 @@ jobs:
           publish_dir: docs/_build/html  # Publish Sphinx documentation and coverage report
           publish_branch: gh-pages  # Specify the branch to publish to
           force_orphan: true  # Optional: Create an orphan branch
-
-          force-orphan: True
