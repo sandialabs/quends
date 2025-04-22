@@ -24,7 +24,7 @@ dev = [
     "pytest>=7.0",
     "pytest-cov",
     "pre-commit>=2.17.0",
-    "black>=25.1.0",
+    "black>=24.4.2",
     "ruff>=0.11.0",
     "isort>=5.12.0"
 ]
