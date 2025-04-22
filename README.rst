@@ -97,3 +97,8 @@ Note, to combine the coverage data from all the tox environments run:
       - ::
 
             PYTEST_ADDOPTS=--cov-append tox
+
+Coverage
+==========
+
+You can view the coverage report [here](coverage/).
