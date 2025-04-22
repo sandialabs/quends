@@ -3,7 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Change this to your main branch if different
+      - main  # Trigger on pushes to the main branch
+  workflow_dispatch:  # Allow manual triggering
 
 permissions:
   contents: write  # Grant write access to repository contents
@@ -24,14 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-<<<<<<< HEAD
-<<<<<<< HEAD
           pip install sphinx sphinx_rtd_theme myst_parser sphinx-book-theme
-=======
->>>>>>> 3b5867b (update deployment)
-=======
-          pip install sphinx sphinx_rtd_theme myst_parser sphinx-book-theme
->>>>>>> b7fabfa (update deployment)
           pip install .[dev]  # Install your development dependencies
 
       - name: Build Sphinx documentation
@@ -53,4 +47,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/_build/html  # Publish Sphinx documentation and coverage report
           publish_branch: gh-pages  # Specify the branch to publish to
-          force_orphan: true  # Optional: Create an orphan branch
+          force_orphan: true  # Optional: Create an orphan branch for coverage
