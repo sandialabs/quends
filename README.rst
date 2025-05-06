@@ -101,4 +101,4 @@ Note, to combine the coverage data from all the tox environments run:
 Coverage
 ==========
 
-You can view the coverage report [here](coverage/).
+You can view the coverage report `here <https://sandialabs.github.io/quends/coverage/index.html>`_.
