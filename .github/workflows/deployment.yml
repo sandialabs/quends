@@ -33,12 +33,18 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pytest --cov=quends --cov-report=html  # Run tests and generate coverage report
+          coverage run --source=mypkg -m pytest tests/  # Run tests and generate coverage report
+          coverage html  # Generate HTML coverage report
 
       - name: Prepare coverage report for deployment
         run: |
           mkdir -p docs/_build/html/coverage  # Create a directory for coverage reports
           cp -r htmlcov/* docs/_build/html/coverage/  # Copy coverage report to the new directory
+
+      - name: Upload coverage to Coveralls
+        run: coveralls
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
