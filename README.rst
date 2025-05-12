@@ -21,8 +21,7 @@ Overview
     :alt: GitHub Actions Build Status
     :target: https://github.com/sandialabs/quends/actions
 
-.. |coveralls| image:: https://coveralls.io/repos/github/sandialabs/quends/badge.svg?branch=main
-    :alt: Coverage Status
+.. |coveralls| .. image:: https://coveralls.io/repos/github/sandialabs/quends/badge.svg?branch=main
     :target: https://coveralls.io/github/sandialabs/quends?branch=main
 
 .. |commits-since| image:: https://img.shields.io/github/commits-since/sandialabs/quends/v0.0.0.svg
