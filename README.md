@@ -2,6 +2,7 @@
 
 #### Evans Etrue Howard, Abeyah Calpatura, Pieterjan Robbe, Bert Debusschere
 
+[![Coverage Status](https://coveralls.io/repos/github/sandialabs/quends/badge.svg?branch=main)](https://coveralls.io/github/sandialabs/quends?branch=main)
 
 ## Overview
 This project focuses on uncertainty quantification in plasma turbulent simulations. It includes modules for loading and processing NetCDF and CSV datasets, estimating steady states, computing effective sample sizes, and running uncertainty quantification analyses. The project is structured into multiple Python scripts, each handling different aspects of the analysis. The following Python scripts are included:
