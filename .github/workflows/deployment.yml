@@ -26,6 +26,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install sphinx sphinx_rtd_theme myst_parser sphinx-book-theme
           pip install .[dev]  # Install your development dependencies
+          pip install coveralls
 
       - name: Build Sphinx documentation
         run: |
