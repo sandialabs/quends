@@ -885,3 +885,102 @@ class Plotter:
             print(f"Figure saved to {save_path}")
         plt.show()
         plt.close(fig)
+
+
+    def plot_ensemble(self,
+                      ensemble_obj,
+                      variables_to_plot=None,
+                      show_plots=False,
+                      save=False):
+        """
+        Plot each ensemble member together with the ensemble average,
+        arranged in 2 columns and as many rows as needed.
+        Legend is centered below the grid, with just enough room reserved.
+        """
+        # 1) collect each member’s DataFrame
+        member_dfs = {
+            f"Member {i}": ds.df
+            for i, ds in enumerate(ensemble_obj.data_streams)
+        }
+
+        # 2) compute the ensemble average DataStream and add it
+        avg_stream = ensemble_obj.compute_average_ensemble()
+        member_dfs["Ensemble Average"] = avg_stream.df
+
+        # 3) pick variables
+        all_cols = avg_stream.df.columns.tolist()
+        vars_to_plot = (
+            [c for c in all_cols if c != "time"]
+            if variables_to_plot is None
+            else [c for c in variables_to_plot if c != "time"]
+        )
+        if not vars_to_plot:
+            raise ValueError("No variables to plot.")
+        n_vars = len(vars_to_plot)
+
+        # 4) determine 2-column grid
+        ncols = 2
+        nrows = math.ceil(n_vars / ncols)
+
+        # 5) create figure
+        fig, axes = plt.subplots(
+            nrows, ncols,
+            figsize=(7 * ncols, 7 * nrows),
+            squeeze=False
+        )
+        axes = axes.flatten()
+
+        # 6) plot each variable
+        for idx, var in enumerate(vars_to_plot):
+            ax = axes[idx]
+            for name, df in member_dfs.items():
+                if name == "Ensemble Average":
+                    ax.plot(df["time"], df[var],
+                            label=name,
+                            color="black",
+                            linewidth=2.5,
+                            zorder=5)
+                else:
+                    ax.plot(df["time"], df[var],
+                            label=name,
+                            alpha=0.3,
+                            linewidth=1.0)
+            ax.set_title(var, fontsize=14)
+            ax.set_xlabel("Time", fontsize=12)
+            ax.set_ylabel(var, fontsize=12)
+            ax.grid(True)
+
+        # 7) remove any unused subplots
+        for j in range(n_vars, len(axes)):
+            fig.delaxes(axes[j])
+
+        # 8) build a single legend below the panels
+        handles, labels = axes[0].get_legend_handles_labels()
+        legend_ncol = min(len(labels), 4)
+        legend_nrow = math.ceil(len(labels) / legend_ncol)
+        # y-offset = 5% per legend row
+        legend_y = -0.05 * legend_nrow
+        fig.legend(
+            handles, labels,
+            loc="lower center",
+            bbox_to_anchor=(0.5, legend_y),
+            ncol=legend_ncol,
+            fontsize="small",
+            frameon=False
+        )
+
+        # 9) tighten layout, reserving bottom space = 5%*rows + 2%
+        bottom_margin = 0.005 * 1 + 0.002
+        plt.tight_layout(rect=[0, bottom_margin, 1, 1])
+
+        # 10) save/show
+        if save:
+            outpath = os.path.join(
+                self.output_dir,
+                "ensemble_members_and_average.png"
+            )
+            fig.savefig(outpath, dpi=150)
+        if show_plots:
+            plt.show()
+        else:
+            plt.close(fig)
