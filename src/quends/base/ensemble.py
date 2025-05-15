@@ -772,3 +772,64 @@ class Ensemble:
                 "Individual Members": member_stats,
                 "Member Ensemble": ensemble_stats,
             }
+
+    def resample_to_short_intervals(self,
+                                    short_df: pd.DataFrame,
+                                    long_df: pd.DataFrame):
+        short_times = short_df['time'].values
+        long_times  = long_df['time'].values
+        indices     = np.searchsorted(long_times, short_times)
+
+        out = pd.DataFrame({'time': short_times.copy()})
+        for col in long_df.columns:
+            if col == 'time':
+                continue
+            vals  = long_df[col].values
+            means = []
+            for start, end in zip(indices[:-1], indices[1:]):
+                seg = vals[start:end]
+                means.append(np.nanmean(seg) if seg.size else np.nan)
+            tail = vals[indices[-1]:]
+            means.append(np.nanmean(tail) if tail.size else np.nan)
+            out[col] = means
+        return out
+
+    def compute_average_ensemble(
+        self,
+        members: List[DataStream] = None
+    ):
+        """
+        Align each member’s DataFrame to the shortest time grid
+        and compute the pointwise ensemble mean.
+        """
+        # use passed-in list or the one stored on self
+        data_streams = members if members is not None else self.data_streams
+
+        # build a dict of raw DataFrames
+        data_frames: Dict[str, pd.DataFrame] = {
+            f"Member {i}": ds.df
+            for i, ds in enumerate(data_streams)
+        }
+
+        if not data_frames:
+            raise ValueError("No data streams provided for ensemble averaging.")
+
+        # 1. pick the shortest time grid
+        shortest_df = min(data_frames.values(), key=lambda df: len(df))
+
+        # 2. resample each member onto that grid
+        resampled = {
+            name: self.resample_to_short_intervals(shortest_df, df)
+            for name, df in data_frames.items()
+        }
+
+        # 3. compute the ensemble-average DataFrame
+        ensemble_avg = shortest_df[['time']].copy().reset_index(drop=True)
+        for col in shortest_df.columns:
+            if col == 'time':
+                continue
+            arrays = [df[col].to_numpy() for df in resampled.values()]
+            ensemble_avg[col] = np.mean(arrays, axis=0)
+
+        # wrap and return as a DataStream so we can perform other UQ analysis on it
+        return DataStream(ensemble_avg)
