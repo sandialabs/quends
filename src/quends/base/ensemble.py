@@ -932,5 +932,137 @@ class Ensemble:
         }
         return {"results": stats, "metadata": metadata}
 
+<<<<<<< HEAD
 
 # End of class
+=======
+            cols = (
+                [column_name]
+                if isinstance(column_name, str)
+                else self.common_variables() if column_name is None else column_name
+            )
+            # For each column, aggregate the statistics using weighted formulas.
+            ensemble_stats = {}
+            for col in cols:
+                means = []
+                uncs = []
+                lowers = []
+                uppers = []
+                weights = []
+                for i in range(len(self.data_streams)):
+                    key = f"Member {i}"
+                    if key in member_stats and col in member_stats[key]:
+                        m_i = member_stats[key][col]["mean"]
+                        u_i = member_stats[key][col]["mean_uncertainty"]
+                        # Weight based on processed data length.
+                        col_data = (
+                            self.data_streams[i].df[col].dropna()
+                            if col in self.data_streams[i].df.columns
+                            else pd.Series()
+                        )
+                        w_i = 0
+                        if not col_data.empty:
+                            est_win = self.data_streams[i]._estimate_window(
+                                col, col_data, window_size
+                            )
+                            processed = self.data_streams[i]._process_column(
+                                col_data, est_win, method
+                            )
+                            w_i = len(processed)
+                        if w_i > 0:
+                            means.append(m_i)
+                            uncs.append(u_i)
+                            weights.append(w_i)
+                            lowers.append(
+                                member_stats[key][col]["confidence_interval"][0]
+                            )
+                            uppers.append(
+                                member_stats[key][col]["confidence_interval"][1]
+                            )
+                if means and np.sum(weights) > 0:
+                    weights = np.array(weights)
+                    means = np.array(means)
+                    uncs = np.array(uncs)
+                    weighted_mean = np.sum(weights * means) / np.sum(weights)
+                    # Weighted variance: sum_i[w_i * (u_i^2 + (m_i - weighted_mean)^2)] / sum_i[w_i]
+                    weighted_var = np.sum(
+                        weights * (uncs**2 + (means - weighted_mean) ** 2)
+                    ) / np.sum(weights)
+                    ensemble_unc = np.sqrt(weighted_var) / np.sqrt(np.sum(weights))
+                    ensemble_stats[col] = {
+                        "mean": weighted_mean,
+                        "mean_uncertainty": ensemble_unc,
+                        "mean_uncertainty_average": np.sum(weights * uncs)
+                        / np.sum(weights),
+                        "confidence_interval": (np.mean(lowers), np.mean(uppers)),
+                        "pm_std": (
+                            weighted_mean - ensemble_unc,
+                            weighted_mean + ensemble_unc,
+                        ),
+                    }
+            return {
+                "Individual Members": member_stats,
+                "Member Ensemble": ensemble_stats,
+            }
+
+    def resample_to_short_intervals(self,
+                                    short_df: pd.DataFrame,
+                                    long_df: pd.DataFrame):
+        short_times = short_df['time'].values
+        long_times  = long_df['time'].values
+        indices     = np.searchsorted(long_times, short_times)
+
+        out = pd.DataFrame({'time': short_times.copy()})
+        for col in long_df.columns:
+            if col == 'time':
+                continue
+            vals  = long_df[col].values
+            means = []
+            for start, end in zip(indices[:-1], indices[1:]):
+                seg = vals[start:end]
+                means.append(np.nanmean(seg) if seg.size else np.nan)
+            tail = vals[indices[-1]:]
+            means.append(np.nanmean(tail) if tail.size else np.nan)
+            out[col] = means
+        return out
+
+    def compute_average_ensemble(
+        self,
+        members: List[DataStream] = None
+    ):
+        """
+        Align each member’s DataFrame to the shortest time grid
+        and compute the pointwise ensemble mean.
+        """
+        # use passed-in list or the one stored on self
+        data_streams = members if members is not None else self.data_streams
+
+        # build a dict of raw DataFrames
+        data_frames: Dict[str, pd.DataFrame] = {
+            f"Member {i}": ds.df
+            for i, ds in enumerate(data_streams)
+        }
+
+        if not data_frames:
+            raise ValueError("No data streams provided for ensemble averaging.")
+
+        # 1. pick the shortest time grid
+        shortest_df = min(data_frames.values(), key=lambda df: len(df))
+
+        # 2. resample each member onto that grid
+        resampled = {
+            name: self.resample_to_short_intervals(shortest_df, df)
+            for name, df in data_frames.items()
+        }
+
+        # 3. compute the ensemble-average DataFrame
+        ensemble_avg = shortest_df[['time']].copy().reset_index(drop=True)
+        for col in shortest_df.columns:
+            if col == 'time':
+                continue
+            arrays = [df[col].to_numpy() for df in resampled.values()]
+            ensemble_avg[col] = np.mean(arrays, axis=0)
+
+        # wrap and return as a DataStream so we can perform other UQ analysis on it
+        return DataStream(ensemble_avg)
+>>>>>>> 4e28c83 (Update ensemble.py)
