@@ -5,7 +5,7 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   readme
+   README
    installation
    usage
    documentation/index
