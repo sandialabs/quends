@@ -46,7 +46,7 @@ jobs:
           else
             echo "htmlcov directory does not exist. Skipping coverage report copy."
           fi
-
+          
       - name: Upload coverage to Coveralls
         run: coveralls
         env:
