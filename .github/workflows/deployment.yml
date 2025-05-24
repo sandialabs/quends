@@ -34,11 +34,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-<<<<<<< HEAD
           coverage run --source=quends -m pytest tests/  # Run tests and generate coverage report
-=======
-          coverage run -source=quends -m pytest tests/  # Run tests and generate coverage report
->>>>>>> 75548bd (update deployment)
           coverage html  # Generate HTML coverage report
 
       - name: Prepare coverage report for deployment
