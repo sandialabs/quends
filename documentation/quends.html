@@ -1,0 +1,1665 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>quends &#8212; QUENDS 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'documentation/quends';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing" href="../contributing.html" />
+    <link rel="prev" title="Documentation" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="May 24, 2025"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">QUENDS 0.1.0 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">quends</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/documentation/quends.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>quends</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream"><code class="docutils literal notranslate"><span class="pre">DataStream</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.__init__"><code class="docutils literal notranslate"><span class="pre">DataStream.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.__len__"><code class="docutils literal notranslate"><span class="pre">DataStream.__len__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.additional_data"><code class="docutils literal notranslate"><span class="pre">DataStream.additional_data()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.compute_statistics"><code class="docutils literal notranslate"><span class="pre">DataStream.compute_statistics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.confidence_interval"><code class="docutils literal notranslate"><span class="pre">DataStream.confidence_interval()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.cumulative_statistics"><code class="docutils literal notranslate"><span class="pre">DataStream.cumulative_statistics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.effective_sample_size"><code class="docutils literal notranslate"><span class="pre">DataStream.effective_sample_size()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.effective_sample_size_below"><code class="docutils literal notranslate"><span class="pre">DataStream.effective_sample_size_below()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.find_steady_state_rolling_variance"><code class="docutils literal notranslate"><span class="pre">DataStream.find_steady_state_rolling_variance()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.find_steady_state_std"><code class="docutils literal notranslate"><span class="pre">DataStream.find_steady_state_std()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.find_steady_state_threshold"><code class="docutils literal notranslate"><span class="pre">DataStream.find_steady_state_threshold()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.head"><code class="docutils literal notranslate"><span class="pre">DataStream.head()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.is_stationary"><code class="docutils literal notranslate"><span class="pre">DataStream.is_stationary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.mean"><code class="docutils literal notranslate"><span class="pre">DataStream.mean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.mean_uncertainty"><code class="docutils literal notranslate"><span class="pre">DataStream.mean_uncertainty()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.normalize_data"><code class="docutils literal notranslate"><span class="pre">DataStream.normalize_data()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.optimal_window_size"><code class="docutils literal notranslate"><span class="pre">DataStream.optimal_window_size()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.trim"><code class="docutils literal notranslate"><span class="pre">DataStream.trim()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.variables"><code class="docutils literal notranslate"><span class="pre">DataStream.variables()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble"><code class="docutils literal notranslate"><span class="pre">Ensemble</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.__init__"><code class="docutils literal notranslate"><span class="pre">Ensemble.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.__len__"><code class="docutils literal notranslate"><span class="pre">Ensemble.__len__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.common_variables"><code class="docutils literal notranslate"><span class="pre">Ensemble.common_variables()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.compute_statistics"><code class="docutils literal notranslate"><span class="pre">Ensemble.compute_statistics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.confidence_interval"><code class="docutils literal notranslate"><span class="pre">Ensemble.confidence_interval()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.effective_sample_size"><code class="docutils literal notranslate"><span class="pre">Ensemble.effective_sample_size()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.get_member"><code class="docutils literal notranslate"><span class="pre">Ensemble.get_member()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.head"><code class="docutils literal notranslate"><span class="pre">Ensemble.head()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.is_stationary"><code class="docutils literal notranslate"><span class="pre">Ensemble.is_stationary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.mean"><code class="docutils literal notranslate"><span class="pre">Ensemble.mean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.mean_uncertainty"><code class="docutils literal notranslate"><span class="pre">Ensemble.mean_uncertainty()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.members"><code class="docutils literal notranslate"><span class="pre">Ensemble.members()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.summary"><code class="docutils literal notranslate"><span class="pre">Ensemble.summary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.trim"><code class="docutils literal notranslate"><span class="pre">Ensemble.trim()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter"><code class="docutils literal notranslate"><span class="pre">Exporter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.__init__"><code class="docutils literal notranslate"><span class="pre">Exporter.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.display_dataframe"><code class="docutils literal notranslate"><span class="pre">Exporter.display_dataframe()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.display_dictionary"><code class="docutils literal notranslate"><span class="pre">Exporter.display_dictionary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.display_json"><code class="docutils literal notranslate"><span class="pre">Exporter.display_json()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.display_numpy"><code class="docutils literal notranslate"><span class="pre">Exporter.display_numpy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.save_dataframe"><code class="docutils literal notranslate"><span class="pre">Exporter.save_dataframe()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.save_dictionary"><code class="docutils literal notranslate"><span class="pre">Exporter.save_dictionary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.save_json"><code class="docutils literal notranslate"><span class="pre">Exporter.save_json()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.save_numpy"><code class="docutils literal notranslate"><span class="pre">Exporter.save_numpy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.to_dataframe"><code class="docutils literal notranslate"><span class="pre">Exporter.to_dataframe()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.to_dictionary"><code class="docutils literal notranslate"><span class="pre">Exporter.to_dictionary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.to_json"><code class="docutils literal notranslate"><span class="pre">Exporter.to_json()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.to_numpy"><code class="docutils literal notranslate"><span class="pre">Exporter.to_numpy()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter"><code class="docutils literal notranslate"><span class="pre">Plotter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.__init__"><code class="docutils literal notranslate"><span class="pre">Plotter.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.ensemble_steady_state_automatic_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_steady_state_automatic_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.ensemble_steady_state_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_steady_state_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.ensemble_trace_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_trace_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.ensemble_trace_plot_with_mean"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_trace_plot_with_mean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.format_dataset_name"><code class="docutils literal notranslate"><span class="pre">Plotter.format_dataset_name()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.plot_acf"><code class="docutils literal notranslate"><span class="pre">Plotter.plot_acf()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.plot_acf_ensemble"><code class="docutils literal notranslate"><span class="pre">Plotter.plot_acf_ensemble()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.steady_state_automatic_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.steady_state_automatic_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.steady_state_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.steady_state_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.trace_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.trace_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.trace_plot_with_mean"><code class="docutils literal notranslate"><span class="pre">Plotter.trace_plot_with_mean()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.from_csv"><code class="docutils literal notranslate"><span class="pre">from_csv()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.from_gx"><code class="docutils literal notranslate"><span class="pre">from_gx()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.from_json"><code class="docutils literal notranslate"><span class="pre">from_json()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.from_netcdf"><code class="docutils literal notranslate"><span class="pre">from_netcdf()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.from_numpy"><code class="docutils literal notranslate"><span class="pre">from_numpy()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="quends">
+<h1>quends<a class="headerlink" href="#quends" title="Permalink to this heading">#</a></h1>
+<span class="target" id="module-quends"></span><dl class="py class">
+<dt class="sig sig-object py" id="quends.DataStream">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quends.</span></span><span class="sig-name descname"><span class="pre">DataStream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream" title="Permalink to this definition">#</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.__init__" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.__len__">
+<span class="sig-name descname"><span class="pre">__len__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.__len__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.__len__" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the length of this data stream.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.additional_data">
+<span class="sig-name descname"><span class="pre">additional_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sliding'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.additional_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.additional_data" title="Permalink to this definition">#</a></dt>
+<dd><p>For each specified column, compute cumulative statistics on the processed data, fit a power‐law
+SEM model of the form:</p>
+<blockquote>
+<div><p>SEM(n) = A / (n^p)</p>
+</div></blockquote>
+<p>to the observed cumulative standard error (SEM) values, and then estimate how many additional
+samples are required to reduce the current SEM by the given reduction factor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_name</strong> (<em>str or list, optional</em>) – Column(s) to compute additional samples for.
+If None, use all columns except ‘time’.</p></li>
+<li><p><strong>ddof</strong> (<em>int</em>) – Degrees of freedom for standard deviation.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Processing method (“sliding” or “non-overlapping”).</p></li>
+<li><p><strong>window_size</strong> (<em>int, optional</em>) – Window size for processing data.</p></li>
+<li><p><strong>reduction_factor</strong> (<em>float</em>) – Fraction by which to reduce the current SEM
+(e.g. 0.1 for a 10% reduction; target SEM = (1 - reduction_factor) * current SEM).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>dict</em> –</p>
+<dl class="simple">
+<dt>For each column, a dictionary containing:</dt><dd><ul class="simple">
+<li><p>’A_est’: estimated A parameter,</p></li>
+<li><p>’p_est’: estimated exponent p,</p></li>
+<li><p>’n_current’: current number of samples (from cumulative statistics),</p></li>
+<li><p>’current_sem’: current SEM (at n_current),</p></li>
+<li><p>’target_sem’: target SEM,</p></li>
+<li><p>’n_target’: estimated total samples required,</p></li>
+<li><p>’additional_samples’: additional samples needed (n_target - n_current).</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.compute_statistics">
+<span class="sig-name descname"><span class="pre">compute_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.compute_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.compute_statistics" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate mean, standard deviation, confidence interval, and plus-minus one standard deviation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_name</strong> (<em>str or list, optional</em>) – Column(s) to compute statistics for. If None, infer columns.</p></li>
+<li><p><strong>ddof</strong> (<em>int</em>) – Delta degrees of freedom for standard deviation.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Method to calculate statistics (“sliding” or “non-overlapping”).</p></li>
+<li><p><strong>window_size</strong> (<em>int, optional</em>) – Window size for the selected method. If None, estimated from ESS.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – Statistics for each column.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.confidence_interval">
+<span class="sig-name descname"><span class="pre">confidence_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.confidence_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.confidence_interval" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the confidence interval for the mean of the short-term averages using
+the mean and the uncertainty (standard error) computed from the short-term averages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_name</strong> (<em>str or list, optional</em>) – Column(s) to compute confidence intervals for.
+If None, infer columns.</p></li>
+<li><p><strong>ddof</strong> (<em>int</em>) – Delta degrees of freedom for standard deviation.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Method to calculate confidence intervals (“sliding” or “non-overlapping”).</p></li>
+<li><p><strong>window_size</strong> (<em>int, optional</em>) – Window size for the selected method. If None, estimated from ESS.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>dict</em> –</p>
+<dl class="simple">
+<dt>Confidence interval for each column computed as:</dt><dd><p>(mean - 1.96 * mean_uncertainty, mean + 1.96 * mean_uncertainty)</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.cumulative_statistics">
+<span class="sig-name descname"><span class="pre">cumulative_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.cumulative_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.cumulative_statistics" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute cumulative statistics (cumulative mean, std, and standard error) for the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_name</strong> (<em>str or list, optional</em>) – Column(s) to compute cumulative statistics for. If None, infer columns.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Method to calculate statistics (“sliding” or “non-overlapping”).</p></li>
+<li><p><strong>window_size</strong> (<em>int, optional</em>) – Window size for the selected method. If None, estimated from ESS.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – Cumulative statistics for each column.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.effective_sample_size">
+<span class="sig-name descname"><span class="pre">effective_sample_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.effective_sample_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.effective_sample_size" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the effective sample size (ESS) for the data using the following steps:</p>
+<ol class="arabic simple">
+<li><p>Determine the number of observations, n.</p></li>
+<li><p>Compute the autocorrelation function (ACF) for nlags = n/3.</p></li>
+<li><p>Calculate the two-tailed critical value and derive the confidence interval: CI = z_critical / sqrt(n).</p></li>
+<li><p>Identify significant lags (excluding lag 0) where the absolute ACF exceeds the CI.</p></li>
+<li><p>Sum the absolute ACF values at the significant lags.</p></li>
+<li><p>Compute ESS using: ESS = n / (1 + 2 * sum(Autocorrelation Function at significant lags)).</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_names</strong> (<em>str or list, optional</em>) – Column(s) to compute ESS for.
+If None, all columns except ‘time’ are used.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – Significance level for the confidence interval (default 0.05).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – A dictionary where keys are column names and values are the estimated ESS.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.effective_sample_size_below">
+<span class="sig-name descname"><span class="pre">effective_sample_size_below</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.effective_sample_size_below"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.effective_sample_size_below" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the effective sample size (ESS) for each specified column using a weighted
+autocorrelation approach where “significant” lags are defined as all lags up to (but not including)
+the first lag at which the absolute ACF drops below the 95% confidence interval.</p>
+<p>The steps are:</p>
+<ol class="arabic simple">
+<li><p>Determine the number of observations, n.</p></li>
+<li><p>Compute the autocorrelation function (ACF) for nlags = int(n/3).</p></li>
+<li><dl class="simple">
+<dt>Calculate the two-tailed critical value:</dt><dd><p>z_critical = norm.ppf(1 - alpha/2),
+and then the confidence interval:
+conf_interval = z_critical / sqrt(n).</p>
+</dd>
+</dl>
+</li>
+<li><p>Find the first lag (excluding lag 0) where Autocorrelation Function &lt; conf_interval.</p></li>
+<li><p>Sum the absolute ACF values for all lags before that drop.</p></li>
+<li><dl class="simple">
+<dt>Compute ESS using:</dt><dd><p>ESS = n / (1 + 2 * sum(Autocorrelation Function at lags before drop))</p>
+</dd>
+</dl>
+</li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_names</strong> (<em>str or list, optional</em>) – Column(s) for which to compute ESS.
+If None, all columns except ‘time’ are used.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – Significance level for the confidence interval (default 0.05).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – A dictionary with keys as column names and values as the estimated ESS.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.find_steady_state_rolling_variance">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_steady_state_rolling_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.find_steady_state_rolling_variance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.find_steady_state_rolling_variance" title="Permalink to this definition">#</a></dt>
+<dd><p>Find the steady-state start time based on rolling variance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – DataFrame containing the time series data.</p></li>
+<li><p><strong>column_name</strong> (<em>str</em>) – Name of the column to analyze.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em>) – Window size for computing rolling variance.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – Multiplier for variance threshold determination.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – Steady state start time.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.find_steady_state_std">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_steady_state_std</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.find_steady_state_std"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.find_steady_state_std" title="Permalink to this definition">#</a></dt>
+<dd><p>Find the steady-state start time based on standard deviation or robust median/MAD method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – DataFrame containing the time series data.</p></li>
+<li><p><strong>column_name</strong> (<em>str</em>) – Name of the column to analyze.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em>) – Window size for analysis.</p></li>
+<li><p><strong>start_time</strong> (<em>float</em>) – Start time for the analysis.</p></li>
+<li><p><strong>robust</strong> (<em>bool</em>) – Use median and MAD for non-normal data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – Steady state start time.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.find_steady_state_threshold">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_steady_state_threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.find_steady_state_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.find_steady_state_threshold" title="Permalink to this definition">#</a></dt>
+<dd><p>Find the steady-state start time based on a threshold method using a sliding window approach.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – DataFrame containing the time series data.</p></li>
+<li><p><strong>column_name</strong> (<em>str</em>) – Name of the column to analyze.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em>) – Window size for rolling averages.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – Threshold value for steady state detection.</p></li>
+<li><p><strong>start_time</strong> (<em>float</em>) – Start time for the analysis.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – Steady state start time.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.head">
+<span class="sig-name descname"><span class="pre">head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.head" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the first n rows of the DataFrame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.is_stationary">
+<span class="sig-name descname"><span class="pre">is_stationary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.is_stationary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.is_stationary" title="Permalink to this definition">#</a></dt>
+<dd><p>Check if the specified columns in the DataStream are stationary using the ADF test.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>columns</strong> (<em>str or list</em>) – Column name(s) to check for stationarity.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>dict</em> –</p>
+<dl class="simple">
+<dt>A dictionary with column names as keys and True/False as values.</dt><dd><p>True if stationary, False otherwise.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.mean">
+<span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.mean" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the mean of the short-term averages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_name</strong> (<em>str or list, optional</em>) – Column(s) to compute mean for. If None, infer columns.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Method to calculate mean (“sliding” or “non-overlapping”).</p></li>
+<li><p><strong>window_size</strong> (<em>int, optional</em>) – Window size for the selected method. If None, estimated from ESS.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – Mean of the data for each column.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.mean_uncertainty">
+<span class="sig-name descname"><span class="pre">mean_uncertainty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.mean_uncertainty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.mean_uncertainty" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the uncertainty (standard error) of the mean of the short-term averages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_name</strong> (<em>str or list, optional</em>) – Column(s) to compute standard deviation for. If None, infer columns.</p></li>
+<li><p><strong>ddof</strong> (<em>int</em>) – Delta degrees of freedom for standard deviation.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Method to calculate uncertainty (“sliding” or “non-overlapping”).</p></li>
+<li><p><strong>window_size</strong> (<em>int, optional</em>) – Window size for the selected method. If None, estimated from ESS.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – Uncertainty of the mean for each column.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.normalize_data">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalize_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.normalize_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.normalize_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Normalize data excluding the ‘time’ column without modifying the original data stream.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.optimal_window_size">
+<span class="sig-name descname"><span class="pre">optimal_window_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.optimal_window_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.optimal_window_size" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the optimal window size that results in the lowest uncertainty (minimum std) in the mean prediction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_name</strong> (<em>str, optional</em>) – Column name to analyze. If None, infer the column.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Method to calculate statistics (“sliding” or “non-overlapping”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – Optimal window size, corresponding minimum std, mean, and confidence interval for each column.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.trim">
+<span class="sig-name descname"><span class="pre">trim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'std'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.trim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.trim" title="Permalink to this definition">#</a></dt>
+<dd><p>Trims the data to start from the steady state and retains only the specified column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_name</strong> (<em>str</em>) – Name of the column to analyze.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em>) – Window size for analysis.</p></li>
+<li><p><strong>start_time</strong> (<em>float</em>) – Start time for the analysis.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Method to use for steady state detection
+(“std”, “threshold”, “rolling_variance”).</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – Threshold value for steady state detection (used with “threshold” and “rolling_variance” methods).</p></li>
+<li><p><strong>robust</strong> (<em>bool</em>) – Use median and MAD for non-normal data (used with “std” method).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>DataStream</em> – A new DataStream instance containing the trimmed data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.DataStream.variables">
+<span class="sig-name descname"><span class="pre">variables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/data_stream.html#DataStream.variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.DataStream.variables" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the variables in this data stream.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="quends.Ensemble">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quends.</span></span><span class="sig-name descname"><span class="pre">Ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_streams</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble" title="Permalink to this definition">#</a></dt>
+<dd><p>Represents an ensemble of DataStream objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_streams</strong> (<em>list</em>) – List of DataStream instances.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_streams</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.__init__" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.__len__">
+<span class="sig-name descname"><span class="pre">__len__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.__len__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.__len__" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the number of ensemble members.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.common_variables">
+<span class="sig-name descname"><span class="pre">common_variables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.common_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.common_variables" title="Permalink to this definition">#</a></dt>
+<dd><p>Return a sorted list of variable names common to all members (excluding ‘time’).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.compute_statistics">
+<span class="sig-name descname"><span class="pre">compute_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">technique</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.compute_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.compute_statistics" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute statistics (mean, mean uncertainty, confidence interval, and ±1 std) for each member,
+then aggregate them for the ensemble.</p>
+<p>Technique 0: Process each member individually.
+Technique 1: Aggregate raw data then compute statistics.
+Technique 2: Compute individual member statistics and aggregate using weighted formulas.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em> – {“Individual Members”: {…}, “Member Ensemble”: {…}}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.confidence_interval">
+<span class="sig-name descname"><span class="pre">confidence_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">technique</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.confidence_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.confidence_interval" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute confidence intervals for the ensemble.</p>
+<p>Technique 0: Returns individual members’ CIs.</p>
+<p>Technique 1: Aggregates raw data then computes CI.</p>
+<dl class="simple">
+<dt>Technique 2: Computes weighted ensemble mean and uncertainty and then derives CI as:</dt><dd><p>CI = (weighted_mean - 1.96*weighted_uncertainty, weighted_mean + 1.96*weighted_uncertainty)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em> – A dictionary containing:
+- “Individual Members”: Confidence intervals for individual members.
+- “Member Ensemble”: Confidence interval for the ensemble.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.effective_sample_size">
+<span class="sig-name descname"><span class="pre">effective_sample_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.effective_sample_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.effective_sample_size" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the effective sample size (ESS) for specified columns in each member.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_names</strong> (<em>str or list</em>) – Columns to analyze. Defaults to all except ‘time’.</p></li>
+<li><p><strong>max_plot_lags</strong> (<em>int</em>) – Maximum lags for ACF.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – Significance level.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – ESS results per member.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.get_member">
+<span class="sig-name descname"><span class="pre">get_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.get_member"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.get_member" title="Permalink to this definition">#</a></dt>
+<dd><p>Return a specific ensemble member by index.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.head">
+<span class="sig-name descname"><span class="pre">head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.head" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the first n rows of each ensemble member.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em> – Keys are member indices; values are DataFrame heads.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.is_stationary">
+<span class="sig-name descname"><span class="pre">is_stationary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.is_stationary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.is_stationary" title="Permalink to this definition">#</a></dt>
+<dd><p>Check stationarity of the specified columns in each ensemble member.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>columns</strong> (<em>str or list</em>) – Column(s) to test.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – Keys are member indices, values are test results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.mean">
+<span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">technique</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.mean" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the mean for the ensemble.</p>
+<p>Technique 0: Returns individual member means.
+Technique 1: Aggregates raw data from members, then computes mean.
+Technique 2: Computes a weighted mean using each member’s processed data length as weight.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em> – Dictionary with “Individual Members” and “Member Ensemble” keys.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.mean_uncertainty">
+<span class="sig-name descname"><span class="pre">mean_uncertainty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">technique</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.mean_uncertainty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.mean_uncertainty" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the mean uncertainty for the ensemble.</p>
+<p>Technique 0: Returns individual member uncertainties.</p>
+<p>Technique 1: Aggregates raw data and computes uncertainty on the concatenated Series.</p>
+<dl class="simple">
+<dt>Technique 2: Computes a weighted aggregation using:</dt><dd><ul class="simple">
+<li><p>For each member, the weight is the number of processed data points.</p></li>
+<li><p>The ensemble uncertainty is computed as: SEM = sqrt(Σ nᵢ (uᵢ² + (μᵢ - μ_w)²) / Σ nᵢ) / sqrt(Σ nᵢ).</p></li>
+<li><p>The weighted average uncertainty is also returned.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p><em>dict</em> –</p>
+<dl class="simple">
+<dt>A dictionary containing:</dt><dd><ul class="simple">
+<li><p>”Individual Members”: Individual member uncertainties.</p></li>
+<li><dl class="simple">
+<dt>”Member Ensemble”: A dictionary with column names as keys and their uncertainties as values, structured as:</dt><dd><p>{col: {“mean_uncertainty”: SEM, “mean_uncertainty_average”: weighted_avg}}.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.members">
+<span class="sig-name descname"><span class="pre">members</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.members"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.members" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the list of all ensemble members.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.summary" title="Permalink to this definition">#</a></dt>
+<dd><p>Print and return a summary of the ensemble: number of members, common variables,
+and a brief summary (number of samples, columns, head) for each member.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em> – Overall summary dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Ensemble.trim">
+<span class="sig-name descname"><span class="pre">trim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'std'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/base/ensemble.html#Ensemble.trim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Ensemble.trim" title="Permalink to this definition">#</a></dt>
+<dd><p>Trim each ensemble member by calling its trim() method.
+Only members that return a non-None trimmed DataStream are kept.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column_name</strong> (<em>str or list</em>) – Column(s) to trim.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em>) – Window size for analysis.</p></li>
+<li><p><strong>start_time</strong> (<em>float</em>) – Start time threshold.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Method to detect steady state (“std”, “threshold”, or “rolling_variance”).</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – Threshold for detection (if required).</p></li>
+<li><p><strong>robust</strong> (<em>bool</em>) – Use robust statistics if True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Ensemble</em> – A new Ensemble with trimmed members (or None if none succeed).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="quends.Exporter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quends.</span></span><span class="sig-name descname"><span class="pre">Exporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exported_results'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter" title="Permalink to this definition">#</a></dt>
+<dd><p>A class for exporting data/results in various formats: DataFrame, JSON, dictionary, and NumPy array.
+Provides both display (print to console) and save (to file) functions.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Exporter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exported_results'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter.__init__" title="Permalink to this definition">#</a></dt>
+<dd><p>Initialize the Exporter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_dir</strong> (<em>str</em>) – Directory to save the exported files.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Exporter.display_dataframe">
+<span class="sig-name descname"><span class="pre">display_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter.display_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter.display_dataframe" title="Permalink to this definition">#</a></dt>
+<dd><p>Display data as a DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Data convertible to DataFrame.</p></li>
+<li><p><strong>head</strong> (<em>int, optional</em>) – If provided, only display the first ‘head’ rows.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Exporter.display_dictionary">
+<span class="sig-name descname"><span class="pre">display_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter.display_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter.display_dictionary" title="Permalink to this definition">#</a></dt>
+<dd><p>Display data as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – Data convertible to dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Exporter.display_json">
+<span class="sig-name descname"><span class="pre">display_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter.display_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter.display_json" title="Permalink to this definition">#</a></dt>
+<dd><p>Display data as a JSON string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – Data convertible to JSON.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Exporter.display_numpy">
+<span class="sig-name descname"><span class="pre">display_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter.display_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter.display_numpy" title="Permalink to this definition">#</a></dt>
+<dd><p>Display data as a NumPy array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – Data convertible to a NumPy array.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Exporter.save_dataframe">
+<span class="sig-name descname"><span class="pre">save_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dataframe.csv'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter.save_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter.save_dataframe" title="Permalink to this definition">#</a></dt>
+<dd><p>Save data as a CSV file (DataFrame format).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Data convertible to DataFrame.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the file (default: ‘dataframe.csv’).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Exporter.save_dictionary">
+<span class="sig-name descname"><span class="pre">save_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data_dictionary.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter.save_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter.save_dictionary" title="Permalink to this definition">#</a></dt>
+<dd><p>Save data as a JSON file representing a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Data convertible to a dictionary.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the file (default: ‘data_dictionary.json’).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Exporter.save_json">
+<span class="sig-name descname"><span class="pre">save_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter.save_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter.save_json" title="Permalink to this definition">#</a></dt>
+<dd><p>Save data as a JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Data convertible to JSON.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the file (default: ‘data.json’).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Exporter.save_numpy">
+<span class="sig-name descname"><span class="pre">save_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data.npy'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter.save_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter.save_numpy" title="Permalink to this definition">#</a></dt>
+<dd><p>Save data as a NumPy array file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Data convertible to a NumPy array.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of the file (default: ‘data.npy’).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Exporter.to_dataframe">
+<span class="sig-name descname"><span class="pre">to_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter.to_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter.to_dataframe" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert input data to a pandas DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – DataFrame, dict, NumPy array, or any structure convertible to DataFrame.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>pd.DataFrame</em> – The converted DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Exporter.to_dictionary">
+<span class="sig-name descname"><span class="pre">to_dictionary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter.to_dictionary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter.to_dictionary" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert input data to a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – dict, DataFrame, or NumPy array.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – The converted dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Exporter.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter.to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter.to_json" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert input data to a JSON string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – DataFrame, dict, or NumPy array.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str</em> – The JSON string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Exporter.to_numpy">
+<span class="sig-name descname"><span class="pre">to_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/exporter.html#Exporter.to_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Exporter.to_numpy" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert input data to a NumPy array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – np.ndarray, DataFrame, or dict.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>np.ndarray</em> – The converted NumPy array.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="quends.Plotter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quends.</span></span><span class="sig-name descname"><span class="pre">Plotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'results_figures'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/plotter.html#Plotter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Plotter" title="Permalink to this definition">#</a></dt>
+<dd><p>A class that encapsulates plotting functionality for time series data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Plotter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'results_figures'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/plotter.html#Plotter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Plotter.__init__" title="Permalink to this definition">#</a></dt>
+<dd><p>Initialize the Plotter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_dir</strong> (<em>str</em>) – Directory to save the generated plots.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Plotter.ensemble_steady_state_automatic_plot">
+<span class="sig-name descname"><span class="pre">ensemble_steady_state_automatic_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'std'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/plotter.html#Plotter.ensemble_steady_state_automatic_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Plotter.ensemble_steady_state_automatic_plot" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot steady state detection automatically for each ensemble member on a grid.</p>
+<p>For each ensemble member in the Ensemble object, for each variable (if multiple are provided,
+all are overlaid on the same subplot), the method uses DataStream.trim() to estimate the steady
+state start time. If detected, it plots the original signal with:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A vertical dashed red line at the estimated steady state start.</p></li>
+<li><p>A horizontal green line at the overall mean (computed from the data after steady state).</p></li>
+<li><p>Shaded regions for ±1, ±2, and ±3 standard deviations.</p></li>
+</ul>
+</div></blockquote>
+<p>If no steady state is detected, it plots the raw signal and prints a message.</p>
+<p>The plots are arranged in a grid with one subplot per ensemble member.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ensemble_obj</strong> (<em>Ensemble</em>) – An Ensemble instance.</p></li>
+<li><p><strong>variables_to_plot</strong> (<em>list, optional</em>) – List of variable names to plot. If None, all columns (except ‘time’)
+from the first member are used.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em>) – Window size for the trim() function.</p></li>
+<li><p><strong>start_time</strong> (<em>float</em>) – Start time for steady state detection.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Steady state detection method (‘std’, ‘threshold’, or ‘rolling_variance’).</p></li>
+<li><p><strong>threshold</strong> (<em>float, optional</em>) – Threshold if needed by the method.</p></li>
+<li><p><strong>robust</strong> (<em>bool</em>) – If True, use robust statistics (median/MAD) in the ‘std’ method.</p></li>
+<li><p><strong>save</strong> (<em>bool</em>) – If True, save the resulting figure to disk.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Plotter.ensemble_steady_state_plot">
+<span class="sig-name descname"><span class="pre">ensemble_steady_state_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/plotter.html#Plotter.ensemble_steady_state_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Plotter.ensemble_steady_state_plot" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot steady state detection for each ensemble member using a user-supplied steady state start.</p>
+<p>For each ensemble member in the Ensemble object, the function plots the signal for the specified
+variables (or all non-‘time’ variables if not provided) and draws:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A vertical dashed red line at the user-supplied steady state start.</p></li>
+<li><p>A horizontal green line representing the mean of the data after the steady state.</p></li>
+<li><p>Shaded regions for ±1, ±2, and ±3 standard deviations (computed after the steady state).</p></li>
+</ul>
+</div></blockquote>
+<p>If no steady state start is provided for a variable, the raw signal is plotted and a message is printed.</p>
+<p>The plots are arranged in a grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ensemble_obj</strong> (<em>Ensemble</em>) – An Ensemble instance.</p></li>
+<li><p><strong>variables_to_plot</strong> (<em>list, optional</em>) – List of variables to plot. If None, all non-‘time’ columns are used.</p></li>
+<li><p><strong>steady_state_start</strong> (<em>float or dict, optional</em>) – A single float or a dict mapping variable names to steady state start values.</p></li>
+<li><p><strong>save</strong> (<em>bool</em>) – If True, save the resulting figure.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Plotter.ensemble_trace_plot">
+<span class="sig-name descname"><span class="pre">ensemble_trace_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/plotter.html#Plotter.ensemble_trace_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Plotter.ensemble_trace_plot" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot ensemble time series data, with traces from each ensemble member plotted on the same axes.
+The resulting plots are displayed and optionally saved if ‘save’ is True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>DataStream or dict</em>) – A DataStream instance or dictionary of DataFrames representing ensemble members.</p></li>
+<li><p><strong>variables_to_plot</strong> (<em>list, optional</em>) – List of variables to plot. If None,
+all columns (except ‘time’) from the first DataFrame are used.</p></li>
+<li><p><strong>save</strong> (<em>bool, optional</em>) – If True, save the generated plots to the output directory. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Plotter.ensemble_trace_plot_with_mean">
+<span class="sig-name descname"><span class="pre">ensemble_trace_plot_with_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/plotter.html#Plotter.ensemble_trace_plot_with_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Plotter.ensemble_trace_plot_with_mean" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot ensemble time series data, with traces from each ensemble member plotted on the same axes.
+The resulting plots are displayed and optionally saved if ‘save’ is True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>DataStream or dict</em>) – A DataStream instance or dictionary of DataFrames representing ensemble members.</p></li>
+<li><p><strong>variables_to_plot</strong> (<em>list, optional</em>) – List of variables to plot. If None,
+all columns (except ‘time’) from the first DataFrame are used.</p></li>
+<li><p><strong>save</strong> (<em>bool, optional</em>) – If True, save the generated plots to the output directory.
+Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Plotter.format_dataset_name">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">format_dataset_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/plotter.html#Plotter.format_dataset_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Plotter.format_dataset_name" title="Permalink to this definition">#</a></dt>
+<dd><p>Format the dataset name for display and file naming.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset_name</strong> (<em>str</em>) – The original dataset name.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str</em> – A formatted dataset name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Plotter.plot_acf">
+<span class="sig-name descname"><span class="pre">plot_acf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/plotter.html#Plotter.plot_acf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Plotter.plot_acf" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot the Autocorrelation Function (ACF) for a given data stream or array-like object.</p>
+<p>If ‘data’ is a DataStream, the function extracts the specified column (or the first column
+that is not “time” if not specified). Otherwise, data is assumed to be 1D array-like.</p>
+<dl class="simple">
+<dt>The function computes:</dt><dd><ul class="simple">
+<li><p>nlags = int(n / 3), where n is the number of observations.</p></li>
+<li><p>ACF values using statsmodels.tsa.stattools.acf.</p></li>
+<li><p>A 95% confidence interval as: conf_interval = z_critical / sqrt(n),
+where z_critical is computed from the two-tailed test.</p></li>
+</ul>
+</dd>
+</dl>
+<p>If an axis (ax) is provided, the plot is drawn on that axis; otherwise, a new figure is created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>DataStream or array-like</em>) – The data to plot.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – Significance level for the confidence interval (default: 0.05).</p></li>
+<li><p><strong>column</strong> (<em>str, optional</em>) – Column name to use if data is a DataStream. Defaults to the first non-‘time’ column.</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axis on which to plot. If None, a new figure is created.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Plotter.plot_acf_ensemble">
+<span class="sig-name descname"><span class="pre">plot_acf_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/plotter.html#Plotter.plot_acf_ensemble"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Plotter.plot_acf_ensemble" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot the ACF for each ensemble member individually on a grid of subplots.</p>
+<p>The number of rows and columns in the grid is determined based on the number of ensemble members.
+This function loops through each ensemble member (DataStream) in the Ensemble object and calls
+the plot_acf function to generate the individual ACF plots on separate subplots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ensemble_obj</strong> (<em>Ensemble</em>) – An Ensemble instance containing DataStream members.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – Significance level for the confidence interval (default: 0.05).</p></li>
+<li><p><strong>column</strong> (<em>str, optional</em>) – Column name to use for ACF computation. If None, the first non-‘time’ column is used.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Plotter.steady_state_automatic_plot">
+<span class="sig-name descname"><span class="pre">steady_state_automatic_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'std'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/plotter.html#Plotter.steady_state_automatic_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Plotter.steady_state_automatic_plot" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot steady state detection for each variable in the data. For each variable, the method uses the
+DataStream.trim() function to estimate the steady state start time. If a steady state is detected,
+the function plots the original time series along with:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A vertical dashed red line indicating the steady state start time.</p></li>
+<li><p>A horizontal green line at the overall mean (computed from data after the steady state start).</p></li>
+<li><p>Shaded regions representing ±1, ±2, and ±3 standard deviations.</p></li>
+</ul>
+</div></blockquote>
+<p>If no steady state is detected for a variable, the full signal is plotted and a message is printed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>DataStream or dict</em>) – A DataStream instance or a dictionary of DataFrames.</p></li>
+<li><p><strong>variables_to_plot</strong> (<em>list, optional</em>) – List of variables to plot. If None,
+all columns (except ‘time’) from the first DataFrame are used.</p></li>
+<li><p><strong>window_size</strong> (<em>int, optional</em>) – Window size to use in the trim() function.</p></li>
+<li><p><strong>start_time</strong> (<em>float, optional</em>) – Start time for steady state detection.</p></li>
+<li><p><strong>method</strong> (<em>str, optional</em>) – Method to use for steady state detection (‘std’, ‘threshold’, or ‘rolling_variance’).</p></li>
+<li><p><strong>threshold</strong> (<em>float, optional</em>) – Threshold value required for ‘threshold’ or ‘rolling_variance’ methods.</p></li>
+<li><p><strong>robust</strong> (<em>bool, optional</em>) – Whether to use robust statistics (median/MAD) in the ‘std’ method.</p></li>
+<li><p><strong>save</strong> (<em>bool, optional</em>) – If True, save the plot to disk. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Plotter.steady_state_plot">
+<span class="sig-name descname"><span class="pre">steady_state_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/plotter.html#Plotter.steady_state_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Plotter.steady_state_plot" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot steady state detection for each variable in the data using a user-supplied steady state start.
+The user can provide a single float (applied to all variables) or a dictionary mapping variable names to floats.
+For each variable, if a steady state start is provided, the plot displays:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The full signal.</p></li>
+<li><p>A vertical dashed red line at the given steady state start.</p></li>
+<li><p>A horizontal green line for the mean (after steady state).</p></li>
+<li><p>Shaded regions for ±1, ±2, and ±3 standard deviations (after steady state).</p></li>
+</ul>
+</div></blockquote>
+<p>If no steady state start is provided for a variable, only the raw signal is plotted and a message is printed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>DataStream or dict</em>) – A DataStream instance or dictionary of DataFrames.</p></li>
+<li><p><strong>variables_to_plot</strong> (<em>list, optional</em>) – List of variables to plot. If None,
+all columns (except ‘time’) from the first DataFrame are used.</p></li>
+<li><p><strong>steady_state_start</strong> (<em>float or dict, optional</em>) – Either a single steady state start (float)
+applied to all variables or a dictionary mapping variable names to steady state start values.</p></li>
+<li><p><strong>save</strong> (<em>bool</em>) – If True, the generated plots are saved to the output directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Plotter.trace_plot">
+<span class="sig-name descname"><span class="pre">trace_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/plotter.html#Plotter.trace_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Plotter.trace_plot" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot individual (trace) time series data from a DataStream or a dictionary of DataFrames.
+The resulting plots are displayed and optionally saved if ‘save’ is True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>DataStream or dict</em>) – A DataStream instance or dictionary of DataFrames.</p></li>
+<li><p><strong>variables_to_plot</strong> (<em>list, optional</em>) – List of variables to plot. If None,
+all columns (except ‘time’) from the first DataFrame are used.</p></li>
+<li><p><strong>save</strong> (<em>bool, optional</em>) – If True, save the generated plots to the output directory.
+Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.Plotter.trace_plot_with_mean">
+<span class="sig-name descname"><span class="pre">trace_plot_with_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/postprocessing/plotter.html#Plotter.trace_plot_with_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.Plotter.trace_plot_with_mean" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot individual (trace) time series data from a DataStream or a dictionary of DataFrames.
+The resulting plots are displayed and optionally saved if ‘save’ is True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>DataStream or dict</em>) – A DataStream instance or dictionary of DataFrames.</p></li>
+<li><p><strong>variables_to_plot</strong> (<em>list, optional</em>) – List of variables to plot. If None,
+all columns (except ‘time’) from the first DataFrame are used.</p></li>
+<li><p><strong>save</strong> (<em>bool, optional</em>) – If True, save the generated plots to the output directory.
+Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quends.from_csv">
+<span class="sig-prename descclassname"><span class="pre">quends.</span></span><span class="sig-name descname"><span class="pre">from_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/preprocessing/csv.html#from_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.from_csv" title="Permalink to this definition">#</a></dt>
+<dd><p>Load a data stream from a CSV file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>str</em>) – The path to the CSV file.</p></li>
+<li><p><strong>variables</strong> (<em>list</em>) – Variable names (columns) to load (default: None, which loads all columns).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>DataStream</em> – A DataStream object containing the data from the CSV file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quends.from_dict">
+<span class="sig-prename descclassname"><span class="pre">quends.</span></span><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/preprocessing/dictionary.html#from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.from_dict" title="Permalink to this definition">#</a></dt>
+<dd><p>Load a data stream from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dict</strong> (<em>dict</em>) – A dictionary where keys are column names and values are lists or arrays of data.</p></li>
+<li><p><strong>variables</strong> (<em>list, optional</em>) – List of variable names (columns) to include.
+If None, all dictionary keys are used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>DataStream</em> – A DataStream object containing the data from the dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quends.from_gx">
+<span class="sig-prename descclassname"><span class="pre">quends.</span></span><span class="sig-name descname"><span class="pre">from_gx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/preprocessing/gx.html#from_gx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.from_gx" title="Permalink to this definition">#</a></dt>
+<dd><p>Load a data stream from GX outputs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quends.from_json">
+<span class="sig-prename descclassname"><span class="pre">quends.</span></span><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/preprocessing/json.html#from_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.from_json" title="Permalink to this definition">#</a></dt>
+<dd><p>Load a data stream from a JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>str</em>) – The path to the JSON file.</p></li>
+<li><p><strong>variables</strong> (<em>list, optional</em>) – List of variable names (columns) to load.
+If None, all columns are loaded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>DataStream</em> – A DataStream object containing the data from the JSON file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quends.from_netcdf">
+<span class="sig-prename descclassname"><span class="pre">quends.</span></span><span class="sig-name descname"><span class="pre">from_netcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/preprocessing/netcdf.html#from_netcdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.from_netcdf" title="Permalink to this definition">#</a></dt>
+<dd><p>Load specified variables from a NetCDF4 file into a pandas DataFrame,
+ensuring all variables have the same length, and extracting only variables
+that end with ‘_t’ or ‘_st’ from the Diagnostics group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>str</em>) – Path to the NetCDF4 file.</p></li>
+<li><p><strong>variables</strong> (<em>list, optional</em>) – List of variable names to include.
+If None, load all eligible variables.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>DataStream</em> – A DataStream object containing the data as a pandas DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quends.from_numpy">
+<span class="sig-prename descclassname"><span class="pre">quends.</span></span><span class="sig-name descname"><span class="pre">from_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">np_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/quends/preprocessing/numpy.html#from_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.from_numpy" title="Permalink to this definition">#</a></dt>
+<dd><p>Load a data stream from a NumPy array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>np_array</strong> (<em>np.ndarray</em>) – A 1D or 2D NumPy array.</p></li>
+<li><p><strong>variables</strong> (<em>list, optional</em>) – List of column names. For a 1D array, a single-column name is used.
+For a 2D array, the length of variables must match the number of columns.
+If None, default column names are assigned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>DataStream</em> – A DataStream object containing the NumPy array data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Documentation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../contributing.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Contributing</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream"><code class="docutils literal notranslate"><span class="pre">DataStream</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.__init__"><code class="docutils literal notranslate"><span class="pre">DataStream.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.__len__"><code class="docutils literal notranslate"><span class="pre">DataStream.__len__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.additional_data"><code class="docutils literal notranslate"><span class="pre">DataStream.additional_data()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.compute_statistics"><code class="docutils literal notranslate"><span class="pre">DataStream.compute_statistics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.confidence_interval"><code class="docutils literal notranslate"><span class="pre">DataStream.confidence_interval()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.cumulative_statistics"><code class="docutils literal notranslate"><span class="pre">DataStream.cumulative_statistics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.effective_sample_size"><code class="docutils literal notranslate"><span class="pre">DataStream.effective_sample_size()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.effective_sample_size_below"><code class="docutils literal notranslate"><span class="pre">DataStream.effective_sample_size_below()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.find_steady_state_rolling_variance"><code class="docutils literal notranslate"><span class="pre">DataStream.find_steady_state_rolling_variance()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.find_steady_state_std"><code class="docutils literal notranslate"><span class="pre">DataStream.find_steady_state_std()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.find_steady_state_threshold"><code class="docutils literal notranslate"><span class="pre">DataStream.find_steady_state_threshold()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.head"><code class="docutils literal notranslate"><span class="pre">DataStream.head()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.is_stationary"><code class="docutils literal notranslate"><span class="pre">DataStream.is_stationary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.mean"><code class="docutils literal notranslate"><span class="pre">DataStream.mean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.mean_uncertainty"><code class="docutils literal notranslate"><span class="pre">DataStream.mean_uncertainty()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.normalize_data"><code class="docutils literal notranslate"><span class="pre">DataStream.normalize_data()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.optimal_window_size"><code class="docutils literal notranslate"><span class="pre">DataStream.optimal_window_size()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.trim"><code class="docutils literal notranslate"><span class="pre">DataStream.trim()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.DataStream.variables"><code class="docutils literal notranslate"><span class="pre">DataStream.variables()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble"><code class="docutils literal notranslate"><span class="pre">Ensemble</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.__init__"><code class="docutils literal notranslate"><span class="pre">Ensemble.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.__len__"><code class="docutils literal notranslate"><span class="pre">Ensemble.__len__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.common_variables"><code class="docutils literal notranslate"><span class="pre">Ensemble.common_variables()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.compute_statistics"><code class="docutils literal notranslate"><span class="pre">Ensemble.compute_statistics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.confidence_interval"><code class="docutils literal notranslate"><span class="pre">Ensemble.confidence_interval()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.effective_sample_size"><code class="docutils literal notranslate"><span class="pre">Ensemble.effective_sample_size()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.get_member"><code class="docutils literal notranslate"><span class="pre">Ensemble.get_member()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.head"><code class="docutils literal notranslate"><span class="pre">Ensemble.head()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.is_stationary"><code class="docutils literal notranslate"><span class="pre">Ensemble.is_stationary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.mean"><code class="docutils literal notranslate"><span class="pre">Ensemble.mean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.mean_uncertainty"><code class="docutils literal notranslate"><span class="pre">Ensemble.mean_uncertainty()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.members"><code class="docutils literal notranslate"><span class="pre">Ensemble.members()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.summary"><code class="docutils literal notranslate"><span class="pre">Ensemble.summary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Ensemble.trim"><code class="docutils literal notranslate"><span class="pre">Ensemble.trim()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter"><code class="docutils literal notranslate"><span class="pre">Exporter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.__init__"><code class="docutils literal notranslate"><span class="pre">Exporter.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.display_dataframe"><code class="docutils literal notranslate"><span class="pre">Exporter.display_dataframe()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.display_dictionary"><code class="docutils literal notranslate"><span class="pre">Exporter.display_dictionary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.display_json"><code class="docutils literal notranslate"><span class="pre">Exporter.display_json()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.display_numpy"><code class="docutils literal notranslate"><span class="pre">Exporter.display_numpy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.save_dataframe"><code class="docutils literal notranslate"><span class="pre">Exporter.save_dataframe()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.save_dictionary"><code class="docutils literal notranslate"><span class="pre">Exporter.save_dictionary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.save_json"><code class="docutils literal notranslate"><span class="pre">Exporter.save_json()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.save_numpy"><code class="docutils literal notranslate"><span class="pre">Exporter.save_numpy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.to_dataframe"><code class="docutils literal notranslate"><span class="pre">Exporter.to_dataframe()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.to_dictionary"><code class="docutils literal notranslate"><span class="pre">Exporter.to_dictionary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.to_json"><code class="docutils literal notranslate"><span class="pre">Exporter.to_json()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Exporter.to_numpy"><code class="docutils literal notranslate"><span class="pre">Exporter.to_numpy()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter"><code class="docutils literal notranslate"><span class="pre">Plotter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.__init__"><code class="docutils literal notranslate"><span class="pre">Plotter.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.ensemble_steady_state_automatic_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_steady_state_automatic_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.ensemble_steady_state_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_steady_state_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.ensemble_trace_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_trace_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.ensemble_trace_plot_with_mean"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_trace_plot_with_mean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.format_dataset_name"><code class="docutils literal notranslate"><span class="pre">Plotter.format_dataset_name()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.plot_acf"><code class="docutils literal notranslate"><span class="pre">Plotter.plot_acf()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.plot_acf_ensemble"><code class="docutils literal notranslate"><span class="pre">Plotter.plot_acf_ensemble()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.steady_state_automatic_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.steady_state_automatic_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.steady_state_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.steady_state_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.trace_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.trace_plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.Plotter.trace_plot_with_mean"><code class="docutils literal notranslate"><span class="pre">Plotter.trace_plot_with_mean()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.from_csv"><code class="docutils literal notranslate"><span class="pre">from_csv()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.from_gx"><code class="docutils literal notranslate"><span class="pre">from_gx()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.from_json"><code class="docutils literal notranslate"><span class="pre">from_json()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.from_netcdf"><code class="docutils literal notranslate"><span class="pre">from_netcdf()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.from_numpy"><code class="docutils literal notranslate"><span class="pre">from_numpy()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on May 24, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
