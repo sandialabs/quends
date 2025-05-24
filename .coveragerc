@@ -9,7 +9,7 @@ omit =
     */__init__.py
 
 [html]
-directory = coverage_html_report
+directory = docs/_build/html/coverage
 
 [xml]
 output = coverage.xml
