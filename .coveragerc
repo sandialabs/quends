@@ -1,0 +1,15 @@
+[run]
+branch = True
+source = src/quends
+
+[report]
+omit =
+    */tests/*
+    */venv/*
+    */__init__.py
+
+[html]
+directory = coverage_html_report
+
+[xml]
+output = coverage.xml
