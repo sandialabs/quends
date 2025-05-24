@@ -27,6 +27,13 @@ def long_data():
     )
 
 
+@pytest.fixture
+def trim_data():
+    return pd.DataFrame(
+        {"time": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "A": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+    )
+
+
 # Test DataStream initialization
 # =============================================================================
 
@@ -132,3 +139,44 @@ def test_confidence_interval_long(long_data):
         "B": {"confidence interval": (1.7348254402389105, 4.265174559761089)},
     }
     assert ci_df == expected
+
+
+# Test Trim
+# =============================================================================
+
+
+def test_trim_std(trim_data):
+    ds = DataStream(trim_data)
+    trim = ds.trim(
+        column_name="A", window_size=1, method="std", start_time=3.0, threshold=4
+    )
+    expected = {"time": [3, 4, 5, 6, 7, 8, 9], "A": [4, 5, 6, 7, 8, 9, 10]}
+    expected_df = pd.DataFrame(expected)
+    pd.testing.assert_frame_equal(trim.df, expected_df)
+
+
+def test_trim_threshold(trim_data):
+    trim_data = trim_data.astype(float)
+    ds = DataStream(trim_data)
+    trim = ds.trim(
+        column_name="A", window_size=1, method="threshold", start_time=3.0, threshold=4
+    )
+    assert trim is None
+
+
+def test_trim_rolling_variance(trim_data):
+    ds = DataStream(trim_data)
+    trim = ds.trim(
+        column_name="A",
+        window_size=1,
+        method="rolling_variance",
+        start_time=3.0,
+        threshold=4,
+    )
+    assert trim is None
+
+
+def test_trim_invalid_method(trim_data):
+    ds = DataStream(trim_data)
+    with pytest.raises(ValueError):
+        ds.trim(column_name="A", method="invalid_method")
