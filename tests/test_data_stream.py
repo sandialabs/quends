@@ -214,3 +214,49 @@ def test_compute_stats_long(long_data):
         }
     }
     assert compute_stats == expected
+
+
+# Test Optimal Window Size
+# =============================================================================
+
+
+def test_optimal_window_size_simple(simple_data):
+    ds = DataStream(simple_data)
+    opt_window_size = ds.optimal_window_size(method="sliding")
+    print(opt_window_size)
+    expected = {
+        "A": {
+            "optimal_window_size": 1,
+            "min_std": 0.5773502691896258,
+            "mean": 2.0,
+            "ci": (0.8683934723883333, 3.131606527611667),
+        }
+    }
+    assert opt_window_size == expected
+
+
+def test_optimal_window_size_long(long_data):
+    ds = DataStream(long_data)
+    opt_window_size = ds.optimal_window_size(method="sliding")
+    print(opt_window_size)
+    expected = {
+        "A": {
+            "optimal_window_size": 1,
+            "min_std": 0.7071067811865476,
+            "mean": 3.0,
+            "ci": (1.6140707088743669, 4.385929291125633),
+        },
+        "B": {
+            "optimal_window_size": 1,
+            "min_std": 0.7071067811865476,
+            "mean": 3.0,
+            "ci": (1.6140707088743669, 4.385929291125633),
+        },
+    }
+    assert opt_window_size == expected
+
+
+def test_opt_window_size_invalid_method(simple_data):
+    ds = DataStream(simple_data)
+    with pytest.raises(ValueError):
+        ds.trim(column_name="A", method="invalid_method")
