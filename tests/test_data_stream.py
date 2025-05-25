@@ -1,4 +1,6 @@
 # Import statements
+import warnings
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -331,6 +333,77 @@ def test_cumulative_stats_long(long_data):
 def test_cumulative_stats_empty(nan_data):
     ds = DataStream(nan_data)
     cumulative_stats = ds.cumulative_statistics(window_size=1)
-    print(cumulative_stats)
     expected = {"A": {"error": "No data available for column 'A'"}}
     assert cumulative_stats == expected
+
+
+# Test Additional Data
+# =============================================================================
+
+
+def test_additional_data_simple(simple_data):
+    ds = DataStream(simple_data)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=UserWarning)  # Ignore UserWarnings
+        additional_data = ds.additional_data(window_size=1, method="sliding")
+    expected = {
+        "A": {
+            "A_est": 0.3910010411753345,
+            "p_est": 0.8547556456757277,
+            "n_current": 3,
+            "current_sem": 0.1528818142001956,
+            "target_sem": 0.13759363278017603,
+            "n_target": 3.393548707049326,
+            "additional_samples": 1,
+        }
+    }
+    assert additional_data == expected
+
+
+def test_additional_data_long(long_data):
+    ds = DataStream(long_data)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=UserWarning)  # Ignore UserWarnings
+        additional_data = ds.additional_data(window_size=1, method="sliding")
+    print(additional_data)
+    expected = {
+        "A": {
+            "A_est": 0.3803501348616604,
+            "p_est": 0.8838111262612045,
+            "n_current": 5,
+            "" "current_sem": 0.09171198805673249,
+            "target_sem": 0.08254078925105925,
+            "n_target": 5.633041271578334,
+            "additional_samples": 1,
+        },
+        "B": {
+            "A_est": 0.3803501348616604,
+            "p_est": 0.8838111262612045,
+            "n_current": 5,
+            "current_sem": 0.09171198805673249,
+            "target_sem": 0.08254078925105925,
+            "n_target": 5.633041271578334,
+            "additional_samples": 1,
+        },
+    }
+    assert additional_data == expected
+
+
+def mock_cumulative_statistics_missing(col_name, method, window_size):
+    return {
+        "A": {
+            "cumulative_uncertainty": [0.5, 0.4, 0.3],
+        },
+        "B": {
+            # Column B intentionally missing cumulative_uncertainty for testing
+        },
+    }
+
+
+def test_additional_data_missing_cumulative(long_data):
+    ds = DataStream(long_data)
+    ds.cumulative_statistics = mock_cumulative_statistics_missing
+    additional_data = ds.additional_data(column_name="B", reduction_factor=0.1)
+    print(additional_data)
+    expected = {"B": {"error": "No cumulative SEM data for column 'B'"}}
+    assert additional_data == expected
