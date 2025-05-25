@@ -180,3 +180,37 @@ def test_trim_invalid_method(trim_data):
     ds = DataStream(trim_data)
     with pytest.raises(ValueError):
         ds.trim(column_name="A", method="invalid_method")
+
+
+# Test Compute Statistics
+# =============================================================================
+
+
+def test_compute_stats_simple(simple_data):
+    ds = DataStream(simple_data)
+    compute_stats = ds.compute_statistics(column_name="A", window_size=1)
+    print(compute_stats)
+    expected = {
+        "A": {
+            "mean": 2.0,
+            "mean_uncertainty": 0.5773502691896258,
+            "confidence_interval": (0.8683934723883333, 3.131606527611667),
+            "pm_std": (1.4226497308103743, 2.5773502691896257),
+        }
+    }
+    assert compute_stats == expected
+
+
+def test_compute_stats_long(long_data):
+    ds = DataStream(long_data)
+    compute_stats = ds.compute_statistics(column_name="A", window_size=1)
+    print(compute_stats)
+    expected = {
+        "A": {
+            "mean": 3.0,
+            "mean_uncertainty": 0.7071067811865476,
+            "confidence_interval": (1.6140707088743669, 4.385929291125633),
+            "pm_std": (2.2928932188134525, 3.7071067811865475),
+        }
+    }
+    assert compute_stats == expected
