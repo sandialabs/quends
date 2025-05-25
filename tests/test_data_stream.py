@@ -407,3 +407,23 @@ def test_additional_data_missing_cumulative(long_data):
     print(additional_data)
     expected = {"B": {"error": "No cumulative SEM data for column 'B'"}}
     assert additional_data == expected
+
+
+# Test Effective Sample Size Below
+# =============================================================================
+
+
+def test_effective_sample_size_below_simple(simple_data):
+    ds = DataStream(simple_data)
+    effective_sample_size_below = ds.effective_sample_size_below(column_names="A")
+    print(effective_sample_size_below)
+    expected = {"A": 3}
+    assert effective_sample_size_below == expected
+
+
+def test_effective_sample_size_below_long(long_data):
+    ds = DataStream(long_data)
+    effective_sample_size_below = ds.effective_sample_size_below(column_names="A")
+    print(effective_sample_size_below)
+    expected = {"A": 5}
+    assert effective_sample_size_below == expected
