@@ -1,6 +1,8 @@
 # Import statements
+import numpy as np
 import pandas as pd
 import pytest
+from numpy.testing import assert_equal
 
 # Special imports
 from quends import DataStream
@@ -32,6 +34,11 @@ def trim_data():
     return pd.DataFrame(
         {"time": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "A": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
     )
+
+
+@pytest.fixture
+def nan_data():
+    return pd.DataFrame({"A": [None, None, None]})
 
 
 # Test DataStream initialization
@@ -260,3 +267,70 @@ def test_opt_window_size_invalid_method(simple_data):
     ds = DataStream(simple_data)
     with pytest.raises(ValueError):
         ds.trim(column_name="A", method="invalid_method")
+
+
+# Test Cumulative Statistics
+# =============================================================================
+
+
+def test_cumulative_stats_simple(simple_data):
+    ds = DataStream(simple_data)
+    cumulative_stats = ds.cumulative_statistics(window_size=1)
+    expected = {
+        "A": {
+            "cumulative_mean": [1.0, 1.5, 2.0],
+            "cumulative_uncertainty": [np.nan, 0.7071067811865476, 1.0],
+            "standard_error": [np.nan, 0.5, 0.5773502691896258],
+        }
+    }
+    assert_equal(cumulative_stats, expected)
+
+
+def test_cumulative_stats_long(long_data):
+    ds = DataStream(long_data)
+    cumulative_stats = ds.cumulative_statistics(window_size=1)
+    expected = {
+        "A": {
+            "cumulative_mean": [1.0, 1.5, 2.0, 2.5, 3.0],
+            "cumulative_uncertainty": [
+                np.nan,
+                0.7071067811865476,
+                1.0,
+                1.2909944487358056,
+                1.5811388300841898,
+            ],
+            "standard_error": [
+                np.nan,
+                0.5,
+                0.5773502691896258,
+                0.6454972243679028,
+                0.7071067811865476,
+            ],
+        },
+        "B": {
+            "cumulative_mean": [5.0, 4.5, 4.0, 3.5, 3.0],
+            "cumulative_uncertainty": [
+                np.nan,
+                0.7071067811865476,
+                1.0,
+                1.2909944487358056,
+                1.5811388300841898,
+            ],
+            "standard_error": [
+                np.nan,
+                0.5,
+                0.5773502691896258,
+                0.6454972243679028,
+                0.7071067811865476,
+            ],
+        },
+    }
+    assert_equal(cumulative_stats, expected)
+
+
+def test_cumulative_stats_empty(nan_data):
+    ds = DataStream(nan_data)
+    cumulative_stats = ds.cumulative_statistics(window_size=1)
+    print(cumulative_stats)
+    expected = {"A": {"error": "No data available for column 'A'"}}
+    assert cumulative_stats == expected
