@@ -2,7 +2,6 @@
 
 #### Evans Etrue Howard, Abeyah Calpatura, Pieterjan Robbe, Bert Debusschere
 
-[![Coverage Status](https://coveralls.io/repos/github/sandialabs/quends/badge.svg?branch=main)](https://coveralls.io/github/sandialabs/quends?branch=main)
 [![Deploy to GitHub Pages](https://github.com/sandialabs/quends/actions/workflows/deployment.yml/badge.svg)](https://github.com/sandialabs/quends/actions/workflows/deployment.yml)
 [![Run Tests](https://github.com/sandialabs/quends/actions/workflows/python-tests.yml/badge.svg)](https://github.com/sandialabs/quends/actions/workflows/python-tests.yml)
 [![pages-build-deployment](https://github.com/sandialabs/quends/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/sandialabs/quends/actions/workflows/pages/pages-build-deployment)
