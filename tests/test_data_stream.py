@@ -25,6 +25,7 @@ def simple_data():
 def long_data():
     return pd.DataFrame(
         {
+            "time": [0, 1, 2, 3, 4],
             "A": [1, 2, 3, 4, 5],
             "B": [5, 4, 3, 2, 1],
         }
@@ -33,7 +34,9 @@ def long_data():
 
 @pytest.fixture
 def stationary_data():
-    return pd.DataFrame({"A": [1, 1, 1, 1, 1], "B": [2, 2, 2, 2, 2]})
+    return pd.DataFrame(
+        {"time": [0, 1, 2, 3, 4], "A": [1, 1, 1, 1, 1], "B": [2, 2, 2, 2, 2]}
+    )
 
 
 @pytest.fixture
@@ -46,6 +49,11 @@ def trim_data():
 @pytest.fixture
 def nan_data():
     return pd.DataFrame({"A": [None, None, None]})
+
+
+@pytest.fixture
+def no_valid_data():
+    return pd.DataFrame({"time": [0, 1], "A": [1, 2]})
 
 
 # Test DataStream initialization
@@ -194,6 +202,14 @@ def test_trim_invalid_method(trim_data):
     ds = DataStream(trim_data)
     with pytest.raises(ValueError):
         ds.trim(column_name="A", method="invalid_method")
+
+
+def test_trim_missing_threshold(long_data):
+    ds = DataStream(long_data)
+    with pytest.raises(
+        ValueError, match="Threshold must be specified for the 'threshold' method."
+    ):
+        ds.trim(column_name="A", method="threshold")
 
 
 # Test Compute Statistics
@@ -453,3 +469,89 @@ def test_is_not_stationary(long_data):
     expected = {"A": False}
     print(not_stationary)
     assert not_stationary == expected
+
+
+# Test Head
+# =============================================================================
+
+
+def test_head(long_data):
+    ds = DataStream(long_data)
+    result = ds.head(5)
+    expected = pd.DataFrame(
+        {
+            "time": [0, 1, 2, 3, 4],
+            "A": [1, 2, 3, 4, 5],
+            "B": [5, 4, 3, 2, 1],
+        }
+    )
+    pd.testing.assert_frame_equal(result, expected)
+
+
+# Test Process Column
+# =============================================================================
+
+
+def test_process_column_missing_method(simple_data):
+    ds = DataStream(simple_data)
+    with pytest.raises(
+        ValueError, match="Invalid method. Choose 'sliding' or 'non-overlapping'."
+    ):
+        ds._process_column(column_data="A", estimated_window=1, method="invalid_method")
+
+
+# Test Find Steady State Std
+# =============================================================================
+
+
+def test_find_steady_state_std(trim_data):
+    ds = DataStream(trim_data)
+    result = ds.find_steady_state_std(data=ds.df, column_name="A", window_size=1)
+    expected = 0
+    assert result == expected
+
+
+def test_find_steady_state_std_non_robust(trim_data):
+    ds = DataStream(trim_data)
+    result = ds.find_steady_state_std(
+        data=ds.df, column_name="A", window_size=2, robust=False
+    )
+    expected = 3
+    assert result == expected
+
+
+def test_find_steady_state_not_valid(no_valid_data):
+    ds = DataStream(no_valid_data)
+    result = ds.find_steady_state_std(
+        data=ds.df, column_name=["time", "A"], window_size=1
+    )
+    assert result is None
+
+
+# Test Find Steady State Rolling Variance
+# =============================================================================
+
+
+def test_find_steady_state_rolling_variance_stationary(stationary_data):
+    ds = DataStream(stationary_data)
+    result = ds.find_steady_state_rolling_variance(
+        data=ds.df, column_name="A", window_size=3
+    )
+    print(result)
+    assert result is None
+
+
+def test_find_steady_state_none_rolling_variance(long_data):
+    ds = DataStream(long_data)
+    result = ds.find_steady_state_rolling_variance(
+        data=long_data, column_name="A", window_size=3, threshold=0.1
+    )
+    assert result is None
+
+
+def test_find_steady_state_rolling_variance_not_valid(no_valid_data):
+    ds = DataStream(no_valid_data)
+    result = ds.find_steady_state_rolling_variance(
+        data=ds.df, column_name="A", window_size=1
+    )
+    assert result is None
