@@ -32,6 +32,11 @@ def long_data():
 
 
 @pytest.fixture
+def stationary_data():
+    return pd.DataFrame({"A": [1, 1, 1, 1, 1], "B": [2, 2, 2, 2, 2]})
+
+
+@pytest.fixture
 def trim_data():
     return pd.DataFrame(
         {"time": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "A": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
@@ -427,3 +432,24 @@ def test_effective_sample_size_below_long(long_data):
     print(effective_sample_size_below)
     expected = {"A": 5}
     assert effective_sample_size_below == expected
+
+
+# Test Stationary
+# =============================================================================
+
+
+def test_is_stationary(stationary_data):
+    ds = DataStream(stationary_data)
+    stationary = ds.is_stationary(columns="A")
+    print(stationary)
+    expected = {"A": "Error: Invalid input, x is constant"}
+    assert stationary == expected
+
+
+def test_is_not_stationary(long_data):
+    ds = DataStream(long_data)
+    with pytest.warns(Warning):
+        not_stationary = ds.is_stationary(columns="A")
+    expected = {"A": False}
+    print(not_stationary)
+    assert not_stationary == expected
