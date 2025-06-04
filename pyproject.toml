@@ -37,3 +37,8 @@ where = ["src"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore"
+]
