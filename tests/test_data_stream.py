@@ -246,6 +246,24 @@ def test_compute_stats_long(long_data):
     assert compute_stats == expected
 
 
+def test_compute_stats_ci_not_computed(long_data):
+    ds = DataStream(long_data)
+
+    # Mocking the confidence_interval method to return None for column 'A'
+    original_ci_method = ds.confidence_interval
+    ds.confidence_interval = lambda column_name, ddof, method, window_size: {
+        "A": {"confidence interval": None}
+    }
+
+    result = ds.compute_statistics(column_name="A")
+    print(result)
+
+    # Restore the original method
+    ds.confidence_interval = original_ci_method
+
+    assert result["A"]["error"] == "Confidence interval not computed for column 'A'"
+
+
 # Test Optimal Window Size
 # =============================================================================
 
@@ -450,6 +468,28 @@ def test_effective_sample_size_below_long(long_data):
     assert effective_sample_size_below == expected
 
 
+def test_effective_sample_size_below_invalid_column(long_data):
+    ds = DataStream(long_data)
+    result = ds.effective_sample_size_below(column_names="C")
+    assert result["C"]["message"] == "Column 'C' not found in the DataStream."
+
+
+def test_effective_sample_size_below_empty_column():
+    empty_data = {
+        "time": [0, 1, 2, 3, 4],
+        "A": [None, None, None, None, None],  # Column A has no data
+        "B": [5, 4, 3, 2, 1],
+    }
+    ds = DataStream(pd.DataFrame(empty_data))
+
+    # Call the method with column 'A' which is empty
+    result = ds.effective_sample_size_below(column_names="A")
+
+    # Check the result for the expected message
+    assert result["A"]["effective_sample_size"] is None
+    assert result["A"]["message"] == "No data available for computation."
+
+
 # Test Stationary
 # =============================================================================
 
@@ -528,6 +568,50 @@ def test_find_steady_state_not_valid(no_valid_data):
     assert result is None
 
 
+# Test Find Steady State Threshold
+# =============================================================================
+
+
+def test_find_steady_state_stationary(stationary_data):
+    ds = DataStream(stationary_data)
+    result = ds.find_steady_state_threshold(
+        data=ds.df, column_name="A", window_size=2, threshold=0.1
+    )
+    assert result == 2
+
+
+def test_find_steady_state_long_data(long_data):
+    ds = DataStream(long_data)
+    result = ds.find_steady_state_threshold(
+        data=ds.df, column_name="A", window_size=2, threshold=0.1
+    )
+    assert result == 2
+
+
+def test_find_steady_state_trim_data(trim_data):
+    ds = DataStream(trim_data)
+    result = ds.find_steady_state_threshold(
+        data=ds.df, column_name="A", window_size=3, threshold=0.5
+    )
+    assert result == 4
+
+
+def test_find_steady_state_no_valid_data(no_valid_data):
+    ds = DataStream(no_valid_data)
+    result = ds.find_steady_state_threshold(
+        data=ds.df, column_name="A", window_size=2, threshold=0.5
+    )
+    assert result is None
+
+
+def test_find_steady_state_with_start_time(long_data):
+    ds = DataStream(long_data)
+    result = ds.find_steady_state_threshold(
+        data=ds.df, column_name="A", window_size=2, threshold=0.1, start_time=1
+    )
+    assert result == 3
+
+
 # Test Find Steady State Rolling Variance
 # =============================================================================
 
@@ -555,3 +639,56 @@ def test_find_steady_state_rolling_variance_not_valid(no_valid_data):
         data=ds.df, column_name="A", window_size=1
     )
     assert result is None
+
+
+# Test effective_sample_size
+# =============================================================================
+
+
+def test_effective_sample_size_empty(empty_data):
+    ds = DataStream(empty_data)
+    result = ds.effective_sample_size()
+    assert result == {}
+
+
+def test_effective_sample_size_nan(nan_data):
+    ds = DataStream(nan_data)
+    result = ds.effective_sample_size(column_names=["A"])
+    assert result["A"]["effective_sample_size"] is None
+    assert result["A"]["message"] == "No data available for computation."
+
+
+def test_effective_sample_size_simple(simple_data):
+    ds = DataStream(simple_data)
+    result = ds.effective_sample_size(column_names=["A"])
+    assert "A" in result
+    assert result["A"] is not None
+
+
+def test_effective_sample_size_long_data(long_data):
+    ds = DataStream(long_data)
+    result = ds.effective_sample_size(column_names=["A", "B"])
+    assert "A" in result
+    assert "B" in result
+    assert result["A"] is not None
+    assert result["B"] is not None
+
+
+def test_effective_sample_size_stationary(stationary_data):
+    ds = DataStream(stationary_data)
+    result = ds.effective_sample_size(column_names=["A"])
+    assert "A" in result
+    assert result["A"] is not None
+
+
+def test_effective_sample_size_trim_data(trim_data):
+    ds = DataStream(trim_data)
+    result = ds.effective_sample_size(column_names=["A"])
+    assert "A" in result
+    assert result["A"] is not None
+
+
+def test_effective_sample_size_missing_col(long_data):
+    ds = DataStream(long_data)
+    result = ds.effective_sample_size(column_names=["C"])
+    assert result["C"]["message"] == "Column 'C' not found in the DataStream."
