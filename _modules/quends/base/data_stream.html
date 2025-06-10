@@ -1,0 +1,1063 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>quends.base.data_stream &#8212; QUENDS 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/quends/base/data_stream';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jun 10, 2025"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">QUENDS 0.1.0 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../documentation/index.html">Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../documentation/quends.html">quends</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for quends.base.data_stream</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">curve_fit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinMaxScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.robust.scale</span><span class="w"> </span><span class="kn">import</span> <span class="n">mad</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.stattools</span><span class="w"> </span><span class="kn">import</span> <span class="n">acf</span><span class="p">,</span> <span class="n">adfuller</span>
+
+
+<div class="viewcode-block" id="DataStream"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DataStream</span><span class="p">:</span>
+
+<div class="viewcode-block" id="DataStream.__init__"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.__init__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="DataStream.head"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.head">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the first n rows of the DataFrame.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataStream.__len__"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.__len__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the length of this data stream.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataStream.variables"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.variables">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the variables in this data stream.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span></div>
+
+    <span class="c1"># --- Helper methods to reduce duplicate code in statistical methods ---</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of columns  based on input&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;time&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">column_name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_estimate_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the window size based on the effective sample size (ess)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">window_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ess_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">effective_sample_size</span><span class="p">(</span><span class="n">column_names</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+            <span class="n">ess_value</span> <span class="o">=</span> <span class="n">ess_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>  <span class="c1"># Default ESS to 10 if not found</span>
+            <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_data</span><span class="p">)</span> <span class="o">//</span> <span class="n">ess_value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">window_size</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">estimated_window</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processed data (short-term averages) using the specified method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_data (pd.Series): Data for the column.</span>
+<span class="sd">            estimated_window (int): Window size to use.</span>
+<span class="sd">            method (str): Either &quot;sliding&quot; or &quot;non-overlapping&quot;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.Series: Processed data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;sliding&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">column_data</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">estimated_window</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;non-overlapping&quot;</span><span class="p">:</span>
+            <span class="n">step_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">estimated_window</span> <span class="o">//</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">window_means</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">column_data</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">estimated_window</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_data</span><span class="p">)</span> <span class="o">-</span> <span class="n">estimated_window</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">step_size</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+                <span class="n">window_means</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+                    <span class="n">estimated_window</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">window_means</span><span class="p">)</span> <span class="o">*</span> <span class="n">step_size</span> <span class="o">+</span> <span class="n">estimated_window</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="n">step_size</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid method. Choose &#39;sliding&#39; or &#39;non-overlapping&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ---------- Main Methods -------------</span>
+
+<div class="viewcode-block" id="DataStream.trim"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.trim">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">trim</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">column_name</span><span class="p">,</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trims the data to start from the steady state and retains only the specified column.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_name (str): Name of the column to analyze.</span>
+<span class="sd">            window_size (int): Window size for analysis.</span>
+<span class="sd">            start_time (float): Start time for the analysis.</span>
+<span class="sd">            method (str): Method to use for steady state detection</span>
+<span class="sd">                          (&quot;std&quot;, &quot;threshold&quot;, &quot;rolling_variance&quot;).</span>
+<span class="sd">            threshold (float): Threshold value for steady state detection (used with &quot;threshold&quot; and &quot;rolling_variance&quot; methods).</span>
+<span class="sd">            robust (bool): Use median and MAD for non-normal data (used with &quot;std&quot; method).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataStream: A new DataStream instance containing the trimmed data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span>
+            <span class="n">steady_state_start_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_steady_state_std</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">robust</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;threshold&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Threshold must be specified for the &#39;threshold&#39; method.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">steady_state_start_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_steady_state_threshold</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">start_time</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;rolling_variance&quot;</span><span class="p">:</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span> <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">0.1</span>
+            <span class="n">steady_state_start_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_steady_state_rolling_variance</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">threshold</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Invalid method. Choose &#39;std&#39;, &#39;threshold&#39;, or &#39;rolling_variance&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># print(steady_state_start_time)</span>
+        <span class="k">if</span> <span class="n">steady_state_start_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">trimmed_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">steady_state_start_time</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">column_name</span><span class="p">]</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">DataStream</span><span class="p">(</span><span class="n">trimmed_df</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataStream.find_steady_state_std"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.find_steady_state_std">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_steady_state_std</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the steady-state start time based on standard deviation or robust median/MAD method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (pd.DataFrame): DataFrame containing the time series data.</span>
+<span class="sd">            column_name (str): Name of the column to analyze.</span>
+<span class="sd">            window_size (int): Window size for analysis.</span>
+<span class="sd">            start_time (float): Start time for the analysis.</span>
+<span class="sd">            robust (bool): Use median and MAD for non-normal data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Steady state start time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">start_time</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">non_zero_index</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">non_zero_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">start_time</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">non_zero_index</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">]</span>
+
+        <span class="n">filtered_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start_time</span><span class="p">]</span>
+        <span class="n">time_filtered</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">signal_filtered</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">signal_filtered</span><span class="p">)</span> <span class="o">-</span> <span class="n">window_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">remaining_data</span> <span class="o">=</span> <span class="n">signal_filtered</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span>
+            <span class="c1"># Compute central and scale values</span>
+            <span class="k">if</span> <span class="n">robust</span><span class="p">:</span>
+                <span class="n">central_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">remaining_data</span><span class="p">)</span>
+                <span class="n">scale_value</span> <span class="o">=</span> <span class="n">mad</span><span class="p">(</span><span class="n">remaining_data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">central_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">remaining_data</span><span class="p">)</span>
+                <span class="n">scale_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">remaining_data</span><span class="p">)</span>
+
+            <span class="n">within_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">remaining_data</span> <span class="o">-</span> <span class="n">central_value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">scale_value</span><span class="p">)</span>
+            <span class="n">within_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">remaining_data</span> <span class="o">-</span> <span class="n">central_value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">scale_value</span>
+            <span class="p">)</span>
+            <span class="n">within_3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">remaining_data</span> <span class="o">-</span> <span class="n">central_value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">scale_value</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">within_1</span> <span class="o">&gt;=</span> <span class="mf">0.68</span> <span class="ow">and</span> <span class="n">within_2</span> <span class="o">&gt;=</span> <span class="mf">0.95</span> <span class="ow">and</span> <span class="n">within_3</span> <span class="o">&gt;=</span> <span class="mf">0.99</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">time_filtered</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="DataStream.find_steady_state_rolling_variance"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.find_steady_state_rolling_variance">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_steady_state_rolling_variance</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.1</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the steady-state start time based on rolling variance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (pd.DataFrame): DataFrame containing the time series data.</span>
+<span class="sd">            column_name (str): Name of the column to analyze.</span>
+<span class="sd">            window_size (int): Window size for computing rolling variance.</span>
+<span class="sd">            threshold (float): Multiplier for variance threshold determination.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Steady state start time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">column_name</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="n">time_values</span> <span class="o">=</span> <span class="n">ts</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
+        <span class="n">signal_values</span> <span class="o">=</span> <span class="n">ts</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span>
+
+        <span class="n">rolling_variance</span> <span class="o">=</span> <span class="n">signal_values</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+        <span class="n">threshold_val</span> <span class="o">=</span> <span class="n">rolling_variance</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="n">threshold</span>
+        <span class="n">steady_state_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rolling_variance</span> <span class="o">&lt;</span> <span class="n">threshold_val</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">steady_state_index</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">time_values</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">steady_state_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="DataStream.normalize_data"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.normalize_data">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_data</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize data excluding the &#39;time&#39; column without modifying the original data stream.&quot;&quot;&quot;</span>
+        <span class="n">scaler</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">()</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:])</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="DataStream.find_steady_state_threshold"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.find_steady_state_threshold">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_steady_state_threshold</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the steady-state start time based on a threshold method using a sliding window approach.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (pd.DataFrame): DataFrame containing the time series data.</span>
+<span class="sd">            column_name (str): Name of the column to analyze.</span>
+<span class="sd">            window_size (int): Window size for rolling averages.</span>
+<span class="sd">            threshold (float): Threshold value for steady state detection.</span>
+<span class="sd">            start_time (float): Start time for the analysis.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Steady state start time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">start_time</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">non_zero_index</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">non_zero_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">start_time</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">non_zero_index</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">]</span>
+
+        <span class="n">normalized_data</span> <span class="o">=</span> <span class="n">DataStream</span><span class="o">.</span><span class="n">normalize_data</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="n">time_series</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">column_name</span><span class="p">]]</span>
+        <span class="n">filtered</span> <span class="o">=</span> <span class="n">time_series</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">time_series</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start_time</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">window_size</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># rolling_avg = filtered[column_name].rolling(window=window_size).mean().dropna()</span>
+        <span class="n">rolling_std</span> <span class="o">=</span> <span class="n">filtered</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span>
+            <span class="n">window</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">window_size</span><span class="p">)</span>
+        <span class="c1"># Align indices between rolling_std and time</span>
+        <span class="n">common_idx</span> <span class="o">=</span> <span class="n">filtered</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">rolling_std</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">steady_state</span> <span class="o">=</span> <span class="n">filtered</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">common_idx</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">][</span>
+            <span class="n">rolling_std</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">common_idx</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">threshold</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">steady_state</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">steady_state</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="DataStream.is_stationary"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.is_stationary">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_stationary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the specified columns in the DataStream are stationary using the ADF test.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            columns (str or list): Column name(s) to check for stationarity.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary with column names as keys and True/False as values.</span>
+<span class="sd">                  True if stationary, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">columns</span><span class="p">]</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">p_value</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">autolag</span><span class="o">=</span><span class="s2">&quot;AIC&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_value</span> <span class="o">&lt;</span> <span class="mf">0.05</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="DataStream.effective_sample_size"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.effective_sample_size">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">effective_sample_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the effective sample size (ESS) for the data using the following steps:</span>
+
+<span class="sd">        1. Determine the number of observations, n.</span>
+<span class="sd">        2. Compute the autocorrelation function (ACF) for nlags = n/3.</span>
+<span class="sd">        3. Calculate the two-tailed critical value and derive the confidence interval: CI = z_critical / sqrt(n).</span>
+<span class="sd">        4. Identify significant lags (excluding lag 0) where the absolute ACF exceeds the CI.</span>
+<span class="sd">        5. Sum the absolute ACF values at the significant lags.</span>
+<span class="sd">        6. Compute ESS using: ESS = n / (1 + 2 * sum(|ACF| at significant lags)).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_names (str or list, optional): Column(s) to compute ESS for.</span>
+<span class="sd">                If None, all columns except &#39;time&#39; are used.</span>
+<span class="sd">            alpha (float): Significance level for the confidence interval (default 0.05).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary where keys are column names and values are the estimated ESS.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Use all columns except &#39;time&#39; if none specified.</span>
+        <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;time&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">column_names</span><span class="p">]</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39; not found in the DataStream.&quot;</span>
+                <span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="n">filtered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">filtered</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;effective_sample_size&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;No data available for computation.&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered</span><span class="p">)</span>
+            <span class="c1"># Compute ACF with nlags = n/3 (converted to integer)</span>
+            <span class="n">nlags</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">acf_values</span> <span class="o">=</span> <span class="n">acf</span><span class="p">(</span><span class="n">filtered</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="n">nlags</span><span class="p">)</span>
+            <span class="c1"># Calculate the critical value for a two-tailed test.</span>
+            <span class="n">z_critical</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">conf_interval</span> <span class="o">=</span> <span class="n">z_critical</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="c1"># Identify significant lags (excluding lag 0)</span>
+            <span class="n">significant_lags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">acf_values</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">&gt;</span> <span class="n">conf_interval</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># Sum the absolute autocorrelations at the significant lags</span>
+            <span class="n">acf_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">acf_values</span><span class="p">[</span><span class="mi">1</span><span class="p">:][</span><span class="n">significant_lags</span><span class="p">]))</span>
+            <span class="n">ESS</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">acf_sum</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">ESS</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="DataStream.mean"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.mean">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the mean of the short-term averages.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_name (str or list, optional): Column(s) to compute mean for. If None, infer columns.</span>
+<span class="sd">            method (str): Method to calculate mean (&quot;sliding&quot; or &quot;non-overlapping&quot;).</span>
+<span class="sd">            window_size (int, optional): Window size for the selected method. If None, estimated from ESS.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Mean of the data for each column.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">column_name</span><span class="p">):</span>
+            <span class="n">column_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">column_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No data available for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="n">est_win</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_window</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+            <span class="n">proc_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_column</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">est_win</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">proc_data</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="DataStream.mean_uncertainty"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.mean_uncertainty">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">mean_uncertainty</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the uncertainty (standard error) of the mean of the short-term averages.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_name (str or list, optional): Column(s) to compute standard deviation for. If None, infer columns.</span>
+<span class="sd">            ddof (int): Delta degrees of freedom for standard deviation.</span>
+<span class="sd">            method (str): Method to calculate uncertainty (&quot;sliding&quot; or &quot;non-overlapping&quot;).</span>
+<span class="sd">            window_size (int, optional): Window size for the selected method. If None, estimated from ESS.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Uncertainty of the mean for each column.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">column_name</span><span class="p">):</span>
+            <span class="n">column_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">column_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No data available for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="n">est_win</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_window</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+            <span class="n">proc_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_column</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">est_win</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;sliding&quot;</span><span class="p">:</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">est_win</span> <span class="o">//</span> <span class="mi">4</span><span class="p">)</span>
+                <span class="n">effective_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">proc_data</span><span class="p">[::</span><span class="n">step</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">effective_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">proc_data</span><span class="p">)</span>
+            <span class="n">uncertainty</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">proc_data</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">effective_n</span><span class="p">)</span>
+
+            <span class="c1"># results[col] = {&quot;mean uncertainty&quot;: np.std(proc_data, ddof=ddof)}</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;mean uncertainty&quot;</span><span class="p">:</span> <span class="n">uncertainty</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="DataStream.confidence_interval"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.confidence_interval">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">confidence_interval</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the confidence interval for the mean of the short-term averages using</span>
+<span class="sd">        the mean and the uncertainty (standard error) computed from the short-term averages.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_name (str or list, optional): Column(s) to compute confidence intervals for.</span>
+<span class="sd">                If None, infer columns.</span>
+<span class="sd">            ddof (int): Delta degrees of freedom for standard deviation.</span>
+<span class="sd">            method (str): Method to calculate confidence intervals (&quot;sliding&quot; or &quot;non-overlapping&quot;).</span>
+<span class="sd">            window_size (int, optional): Window size for the selected method. If None, estimated from ESS.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Confidence interval for each column computed as:</span>
+<span class="sd">                (mean - 1.96 * mean_uncertainty, mean + 1.96 * mean_uncertainty)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">mean_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span>
+        <span class="n">uncertainty_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_uncertainty</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">column_name</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mean_results</span> <span class="ow">or</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">uncertainty_results</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Missing data for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="n">mean_val</span> <span class="o">=</span> <span class="n">mean_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span>
+            <span class="n">uncertainty_val</span> <span class="o">=</span> <span class="n">uncertainty_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean uncertainty&quot;</span><span class="p">]</span>
+            <span class="n">ci_lower</span> <span class="o">=</span> <span class="n">mean_val</span> <span class="o">-</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">uncertainty_val</span>
+            <span class="n">ci_upper</span> <span class="o">=</span> <span class="n">mean_val</span> <span class="o">+</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">uncertainty_val</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;confidence interval&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">ci_lower</span><span class="p">,</span> <span class="n">ci_upper</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="DataStream.compute_statistics"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.compute_statistics">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_statistics</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate mean, standard deviation, confidence interval, and plus-minus one standard deviation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_name (str or list, optional): Column(s) to compute statistics for. If None, infer columns.</span>
+<span class="sd">            ddof (int): Delta degrees of freedom for standard deviation.</span>
+<span class="sd">            method (str): Method to calculate statistics (&quot;sliding&quot; or &quot;non-overlapping&quot;).</span>
+<span class="sd">            window_size (int, optional): Window size for the selected method. If None, estimated from ESS.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Statistics for each column.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mean_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span>
+        <span class="n">mu_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_uncertainty</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+        <span class="n">ci_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+
+        <span class="n">statistics</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">mean_results</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mean_results</span>
+                <span class="ow">or</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mu_results</span>
+                <span class="ow">or</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ci_results</span>
+            <span class="p">):</span>
+                <span class="n">statistics</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Missing data for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="n">ci</span> <span class="o">=</span> <span class="n">ci_results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;confidence interval&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ci</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">statistics</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Confidence interval not computed for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="n">statistics</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">mean_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">:</span> <span class="n">mu_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean uncertainty&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;confidence_interval&quot;</span><span class="p">:</span> <span class="n">ci</span><span class="p">,</span>
+                <span class="s2">&quot;pm_std&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="n">mean_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">mu_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean uncertainty&quot;</span><span class="p">],</span>
+                    <span class="n">mean_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">mu_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean uncertainty&quot;</span><span class="p">],</span>
+                <span class="p">),</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">statistics</span></div>
+
+<div class="viewcode-block" id="DataStream.optimal_window_size"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.optimal_window_size">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">optimal_window_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the optimal window size that results in the lowest uncertainty (minimum std) in the mean prediction.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_name (str, optional): Column name to analyze. If None, infer the column.</span>
+<span class="sd">            method (str): Method to calculate statistics (&quot;sliding&quot; or &quot;non-overlapping&quot;).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Optimal window size, corresponding minimum std, mean, and confidence interval for each column.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;sliding&quot;</span><span class="p">,</span> <span class="s2">&quot;non-overlapping&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid method. Choose &#39;sliding&#39; or &#39;non-overlapping&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">column_name</span><span class="p">):</span>
+            <span class="n">column_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">column_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No data available for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="n">max_window_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_data</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">std_results</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">stats_store</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_window_size</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+                <span class="n">stats_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_statistics</span><span class="p">(</span>
+                    <span class="n">column_name</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window</span>
+                <span class="p">)</span>
+                <span class="n">std_val</span> <span class="o">=</span> <span class="n">stats_res</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">)</span>
+                <span class="n">mean_val</span> <span class="o">=</span> <span class="n">stats_res</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+                <span class="n">ci_val</span> <span class="o">=</span> <span class="n">stats_res</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;confidence_interval&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">std_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">std_results</span><span class="p">[</span><span class="n">window</span><span class="p">]</span> <span class="o">=</span> <span class="n">std_val</span>
+                    <span class="n">stats_store</span><span class="p">[</span><span class="n">window</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">mean_val</span><span class="p">,</span> <span class="s2">&quot;ci&quot;</span><span class="p">:</span> <span class="n">ci_val</span><span class="p">}</span>
+
+            <span class="n">optimal_window</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="nb">min</span><span class="p">(</span><span class="n">std_results</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">std_results</span><span class="o">.</span><span class="n">get</span><span class="p">)</span> <span class="k">if</span> <span class="n">std_results</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;optimal_window_size&quot;</span><span class="p">:</span> <span class="n">optimal_window</span><span class="p">,</span>
+                <span class="s2">&quot;min_std&quot;</span><span class="p">:</span> <span class="n">std_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">optimal_window</span><span class="p">),</span>
+                <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">stats_store</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">optimal_window</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;ci&quot;</span><span class="p">:</span> <span class="n">stats_store</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">optimal_window</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ci&quot;</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="DataStream.cumulative_statistics"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.cumulative_statistics">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">cumulative_statistics</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute cumulative statistics (cumulative mean, std, and standard error) for the data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_name (str or list, optional): Column(s) to compute cumulative statistics for. If None, infer columns.</span>
+<span class="sd">            method (str): Method to calculate statistics (&quot;sliding&quot; or &quot;non-overlapping&quot;).</span>
+<span class="sd">            window_size (int, optional): Window size for the selected method. If None, estimated from ESS.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Cumulative statistics for each column.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">column_name</span><span class="p">):</span>
+            <span class="n">column_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">column_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No data available for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="n">est_win</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_window</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+            <span class="n">proc_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_column</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">est_win</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+            <span class="n">cumulative_mean</span> <span class="o">=</span> <span class="n">proc_data</span><span class="o">.</span><span class="n">expanding</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">cumulative_std</span> <span class="o">=</span> <span class="n">proc_data</span><span class="o">.</span><span class="n">expanding</span><span class="p">()</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">proc_data</span><span class="o">.</span><span class="n">expanding</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+            <span class="n">standard_error</span> <span class="o">=</span> <span class="n">cumulative_std</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;cumulative_mean&quot;</span><span class="p">:</span> <span class="n">cumulative_mean</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                <span class="s2">&quot;cumulative_uncertainty&quot;</span><span class="p">:</span> <span class="n">cumulative_std</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                <span class="s2">&quot;standard_error&quot;</span><span class="p">:</span> <span class="n">standard_error</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="DataStream.additional_data"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.additional_data">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">additional_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;sliding&quot;</span><span class="p">,</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">reduction_factor</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For each specified column, compute cumulative statistics on the processed data, fit a power‐law</span>
+<span class="sd">        SEM model of the form:</span>
+
+<span class="sd">            SEM(n) = A / (n^p)</span>
+
+<span class="sd">        to the observed cumulative standard error (SEM) values, and then estimate how many additional</span>
+<span class="sd">        samples are required to reduce the current SEM by the given reduction factor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_name (str or list, optional): Column(s) to compute additional samples for.</span>
+<span class="sd">                If None, use all columns except &#39;time&#39;.</span>
+<span class="sd">            ddof (int): Degrees of freedom for standard deviation.</span>
+<span class="sd">            method (str): Processing method (&quot;sliding&quot; or &quot;non-overlapping&quot;).</span>
+<span class="sd">            window_size (int, optional): Window size for processing data.</span>
+<span class="sd">            reduction_factor (float): Fraction by which to reduce the current SEM</span>
+<span class="sd">                (e.g. 0.1 for a 10% reduction; target SEM = (1 - reduction_factor) * current SEM).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: For each column, a dictionary containing:</span>
+<span class="sd">                - &#39;A_est&#39;: estimated A parameter,</span>
+<span class="sd">                - &#39;p_est&#39;: estimated exponent p,</span>
+<span class="sd">                - &#39;n_current&#39;: current number of samples (from cumulative statistics),</span>
+<span class="sd">                - &#39;current_sem&#39;: current SEM (at n_current),</span>
+<span class="sd">                - &#39;target_sem&#39;: target SEM,</span>
+<span class="sd">                - &#39;n_target&#39;: estimated total samples required,</span>
+<span class="sd">                - &#39;additional_samples&#39;: additional samples needed (n_target - n_current).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get cumulative statistics computed on the processed data (using your cumulative_statistics method)</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumulative_statistics</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Get the list of columns to process</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">column_name</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;cumulative_uncertainty&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="p">{}):</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No cumulative SEM data for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Estimate window size used for processing</span>
+            <span class="n">column_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="n">est_win</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_window</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+
+            <span class="c1"># Convert cumulative uncertainty to a NumPy array</span>
+            <span class="n">cum_sem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;cumulative_uncertainty&quot;</span><span class="p">])</span>
+            <span class="n">n_current</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cum_sem</span><span class="p">)</span>
+            <span class="n">cumulative_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_current</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Remove any NaN or infinite values (typically the first sample might be NaN)</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">cum_sem</span><span class="p">)</span>
+            <span class="n">valid_count</span> <span class="o">=</span> <span class="n">cumulative_count</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+            <span class="n">valid_sem</span> <span class="o">=</span> <span class="n">cum_sem</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_count</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Not enough valid data points for fitting.&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Estimate window size used for processing</span>
+            <span class="n">column_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="n">est_win</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_window</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+
+            <span class="c1"># Define the power-law SEM model: SEM(n) = A / (n^p)</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">power_law_model</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">A</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="n">p</span><span class="p">)</span>
+
+            <span class="c1"># Fit the model to the observed SEM data with an initial guess.</span>
+            <span class="n">popt</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">power_law_model</span><span class="p">,</span> <span class="n">valid_count</span><span class="p">,</span> <span class="n">valid_sem</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+            <span class="n">A_est</span><span class="p">,</span> <span class="n">p_est</span> <span class="o">=</span> <span class="n">popt</span>
+            <span class="n">p_est</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">p_est</span><span class="p">)</span>
+
+            <span class="c1"># Use the full data length as the current sample count.</span>
+            <span class="c1"># current_sem = valid_sem[-1]</span>
+            <span class="n">current_sem</span> <span class="o">=</span> <span class="n">power_law_model</span><span class="p">(</span><span class="n">n_current</span><span class="p">,</span> <span class="n">A_est</span><span class="p">,</span> <span class="n">p_est</span><span class="p">)</span>
+            <span class="n">target_sem</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">reduction_factor</span><span class="p">)</span> <span class="o">*</span> <span class="n">current_sem</span>
+            <span class="n">n_target</span> <span class="o">=</span> <span class="p">(</span><span class="n">A_est</span> <span class="o">/</span> <span class="n">target_sem</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">p_est</span><span class="p">)</span>
+            <span class="n">additional_samples</span> <span class="o">=</span> <span class="n">n_target</span> <span class="o">-</span> <span class="n">n_current</span>
+
+            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;non-overlapping&quot;</span><span class="p">:</span>
+                <span class="n">additional_samples</span> <span class="o">*=</span> <span class="n">est_win</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;A_est&quot;</span><span class="p">:</span> <span class="n">A_est</span><span class="p">,</span>
+                <span class="s2">&quot;p_est&quot;</span><span class="p">:</span> <span class="n">p_est</span><span class="p">,</span>
+                <span class="s2">&quot;n_current&quot;</span><span class="p">:</span> <span class="n">n_current</span><span class="p">,</span>
+                <span class="s2">&quot;current_sem&quot;</span><span class="p">:</span> <span class="n">current_sem</span><span class="p">,</span>
+                <span class="s2">&quot;target_sem&quot;</span><span class="p">:</span> <span class="n">target_sem</span><span class="p">,</span>
+                <span class="s2">&quot;n_target&quot;</span><span class="p">:</span> <span class="n">n_target</span><span class="p">,</span>
+                <span class="s2">&quot;additional_samples&quot;</span><span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">additional_samples</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="DataStream.effective_sample_size_below"><a class="viewcode-back" href="../../../documentation/quends.html#quends.DataStream.effective_sample_size_below">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">effective_sample_size_below</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        .. |ACF| replace:: Autocorrelation Function</span>
+
+<span class="sd">        Compute the effective sample size (ESS) for each specified column using a weighted</span>
+<span class="sd">        autocorrelation approach where &quot;significant&quot; lags are defined as all lags up to (but not including)</span>
+<span class="sd">        the first lag at which the absolute ACF drops below the 95% confidence interval.</span>
+
+<span class="sd">        The steps are:</span>
+
+<span class="sd">        1. Determine the number of observations, n.</span>
+<span class="sd">        2. Compute the autocorrelation function (ACF) for nlags = int(n/3).</span>
+<span class="sd">        3. Calculate the two-tailed critical value:</span>
+<span class="sd">            z_critical = norm.ppf(1 - alpha/2),</span>
+<span class="sd">            and then the confidence interval:</span>
+<span class="sd">            conf_interval = z_critical / sqrt(n).</span>
+<span class="sd">        4. Find the first lag (excluding lag 0) where |ACF| &lt; conf_interval.</span>
+<span class="sd">        5. Sum the absolute ACF values for all lags before that drop.</span>
+<span class="sd">        6. Compute ESS using:</span>
+<span class="sd">            ESS = n / (1 + 2 * sum(|ACF| at lags before drop))</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_names (str or list, optional): Column(s) for which to compute ESS.</span>
+<span class="sd">                If None, all columns except &#39;time&#39; are used.</span>
+<span class="sd">            alpha (float): Significance level for the confidence interval (default 0.05).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary with keys as column names and values as the estimated ESS.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Use all columns except &#39;time&#39; if none specified.</span>
+        <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;time&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">column_names</span><span class="p">]</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39; not found in the DataStream.&quot;</span>
+                <span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="n">filtered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">filtered</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;effective_sample_size&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;No data available for computation.&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered</span><span class="p">)</span>
+            <span class="c1"># Use nlags = int(n/3) for ACF computation.</span>
+            <span class="n">nlags</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">acf_values</span> <span class="o">=</span> <span class="n">acf</span><span class="p">(</span><span class="n">filtered</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="n">nlags</span><span class="p">,</span> <span class="n">fft</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="c1"># Compute critical value for a two-tailed test.</span>
+            <span class="n">z_critical</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">conf_interval</span> <span class="o">=</span> <span class="n">z_critical</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+            <span class="c1"># Find the first lag (excluding lag 0) where |ACF| &lt; conf_interval.</span>
+            <span class="n">significant_idx</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">acf_values</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">acf_values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">conf_interval</span><span class="p">:</span>
+                    <span class="n">significant_idx</span> <span class="o">=</span> <span class="n">i</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">significant_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># If no such lag is found, consider all lags except lag 0.</span>
+                <span class="n">significant_lags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">acf_values</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">significant_lags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">significant_idx</span><span class="p">)</span>
+
+            <span class="c1"># Sum the absolute ACF values for the significant lags.</span>
+            <span class="n">acf_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">acf_values</span><span class="p">[</span><span class="n">significant_lags</span><span class="p">]))</span>
+            <span class="n">ESS</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">acf_sum</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">ESS</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">results</span></div></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Jun 10, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
