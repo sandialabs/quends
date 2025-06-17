@@ -1,5 +1,14 @@
-import math
+"""
+data_stream.py
 
+Provides the DataStream class for statistical analysis, steady-state detection, stationarity testing,
+and uncertainty quantification on time series data (as pandas DataFrames). Designed for scientific
+simulation outputs and ensemble data workflows.
+
+Author: [Your Name]
+"""
+
+import math
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
@@ -10,49 +19,139 @@ from statsmodels.tsa.stattools import acf, adfuller
 
 
 class DataStream:
+    """
+    A wrapper for time-series data (pandas DataFrame) that provides rich statistical and
+    steady-state analysis for simulation and experimental outputs.
+
+    This class enables:
+      - Steady-state trimming (using std, threshold, or rolling-variance methods)
+      - Stationarity testing (ADF)
+      - Effective sample size calculation
+      - Mean, uncertainty, and confidence interval computation (with windowing)
+      - Cumulative statistics and power-law SEM extrapolation
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        The time series data. Must have a 'time' column and one or more data columns.
+
+    Examples
+    --------
+    >>> ds = DataStream(my_dataframe)
+    >>> ds.mean('flux', method='sliding', window_size=20)
+    >>> trimmed = ds.trim('flux', method='std')
+    """
 
     def __init__(self, df: pd.DataFrame):
+        """
+        Initialize a DataStream object.
+
+        Parameters
+        ----------
+        df : pandas.DataFrame
+            DataFrame containing 'time' and data columns.
+        """
         self.df = df
 
     def head(self, n=5):
-        """Returns the first n rows of the DataFrame."""
+        """
+        Return the first n rows of the underlying DataFrame.
+
+        Parameters
+        ----------
+        n : int, optional
+            Number of rows to return (default: 5).
+
+        Returns
+        -------
+        pandas.DataFrame
+            The first n rows.
+        """
         return self.df.head(n)
 
     def __len__(self):
-        """Returns the length of this data stream."""
+        """
+        Return the length (number of rows) of the DataStream.
+
+        Returns
+        -------
+        int
+            Number of data points (rows).
+        """
         return len(self.df)
 
     def variables(self):
-        """Returns the variables in this data stream."""
+        """
+        List the variable (column) names in the DataStream.
+
+        Returns
+        -------
+        pandas.Index
+            Names of the columns in the DataFrame.
+        """
         return self.df.columns
 
-    # --- Helper methods to reduce duplicate code in statistical methods ---
+    # --- Internal Helper Methods ---
 
     def _get_columns(self, column_name):
-        """Return list of columns  based on input"""
+        """
+        Infer a list of columns to operate on based on user input.
+
+        Parameters
+        ----------
+        column_name : str, list, or None
+            Single column name, list of names, or None (use all except 'time').
+
+        Returns
+        -------
+        list of str
+            The column names to process.
+        """
         if column_name is None:
             return [col for col in self.df.columns if col != "time"]
         return [column_name] if isinstance(column_name, str) else column_name
 
     def _estimate_window(self, col, column_data, window_size):
-        """Estimate the window size based on the effective sample size (ess)"""
+        """
+        Estimate a window size for rolling/statistics based on ESS or user input.
+
+        Parameters
+        ----------
+        col : str
+            Column name.
+        column_data : pandas.Series
+            Data to analyze.
+        window_size : int or None
+            User-provided window, or None to estimate.
+
+        Returns
+        -------
+        int
+            Window size to use.
+        """
         if window_size is None:
             ess_results = self.effective_sample_size(column_names=col)
-            ess_value = ess_results.get(col, 10)  # Default ESS to 10 if not found
+            ess_value = ess_results.get(col, 10)
             return max(5, len(column_data) // ess_value)
         return window_size
 
     def _process_column(self, column_data, estimated_window, method):
         """
-        Processed data (short-term averages) using the specified method.
+        Apply windowed averaging (sliding or non-overlapping) to a column.
 
-        Args:
-            column_data (pd.Series): Data for the column.
-            estimated_window (int): Window size to use.
-            method (str): Either "sliding" or "non-overlapping".
+        Parameters
+        ----------
+        column_data : pandas.Series
+            Data to process.
+        estimated_window : int
+            Window size to use.
+        method : {"sliding", "non-overlapping"}
+            Windowing approach.
 
-        Returns:
-            pd.Series: Processed data.
+        Returns
+        -------
+        pandas.Series
+            Series of window means.
         """
         if method == "sliding":
             return column_data.rolling(window=estimated_window).mean().dropna()
@@ -73,7 +172,9 @@ class DataStream:
         else:
             raise ValueError("Invalid method. Choose 'sliding' or 'non-overlapping'.")
 
-    # ---------- Main Methods -------------
+    # =======================
+    #    Main Functionality
+    # =======================
 
     def trim(
         self,
@@ -85,19 +186,27 @@ class DataStream:
         robust=True,
     ):
         """
-        Trims the data to start from the steady state and retains only the specified column.
+        Trim the DataStream to start from steady-state using a chosen method.
 
-        Args:
-            column_name (str): Name of the column to analyze.
-            window_size (int): Window size for analysis.
-            start_time (float): Start time for the analysis.
-            method (str): Method to use for steady state detection
-                          ("std", "threshold", "rolling_variance").
-            threshold (float): Threshold value for steady state detection (used with "threshold" and "rolling_variance" methods).
-            robust (bool): Use median and MAD for non-normal data (used with "std" method).
+        Parameters
+        ----------
+        column_name : str
+            Name of the column to analyze.
+        window_size : int, optional
+            Window size for rolling/statistics (default: 10).
+        start_time : float, optional
+            Start time for the analysis (default: 0.0).
+        method : {"std", "threshold", "rolling_variance"}, optional
+            Method for steady-state detection.
+        threshold : float or None, optional
+            Threshold for steady-state (used in "threshold"/"rolling_variance").
+        robust : bool, optional
+            Use robust median/MAD (for "std" method).
 
-        Returns:
-            DataStream: A new DataStream instance containing the trimmed data.
+        Returns
+        -------
+        DataStream
+            New DataStream with trimmed data, from steady-state onward.
         """
         if method == "std":
             steady_state_start_time = self.find_steady_state_std(
@@ -121,7 +230,6 @@ class DataStream:
                 "Invalid method. Choose 'std', 'threshold', or 'rolling_variance'."
             )
 
-        # print(steady_state_start_time)
         if steady_state_start_time is not None:
             trimmed_df = self.df.loc[
                 self.df["time"] >= steady_state_start_time, ["time", column_name]
@@ -133,17 +241,28 @@ class DataStream:
         data, column_name, window_size=10, start_time=0.0, robust=True
     ):
         """
-        Find the steady-state start time based on standard deviation or robust median/MAD method.
+        Locate the onset of steady-state using std or median/MAD windows.
 
-        Args:
-            data (pd.DataFrame): DataFrame containing the time series data.
-            column_name (str): Name of the column to analyze.
-            window_size (int): Window size for analysis.
-            start_time (float): Start time for the analysis.
-            robust (bool): Use median and MAD for non-normal data.
+        This method slides a window and checks if the fraction of values within 1, 2, and 3 std/MAD
+        matches the theoretical normal-distribution probabilities (0.68, 0.95, 0.99).
 
-        Returns:
-            float: Steady state start time.
+        Parameters
+        ----------
+        data : pandas.DataFrame
+            DataFrame with the time series.
+        column_name : str
+            Column to analyze.
+        window_size : int, optional
+            Window size (default: 10).
+        start_time : float, optional
+            Start time (default: 0.0).
+        robust : bool, optional
+            Use median/MAD if True, else mean/std (default: True).
+
+        Returns
+        -------
+        float or None
+            Detected steady-state start time, or None if not found.
         """
         if start_time == 0.0:
             non_zero_index = data[data[column_name] > 0].index.min()
@@ -156,7 +275,6 @@ class DataStream:
 
         for i in range(len(signal_filtered) - window_size + 1):
             remaining_data = signal_filtered[i:]
-            # Compute central and scale values
             if robust:
                 central_value = np.median(remaining_data)
                 scale_value = mad(remaining_data)
@@ -174,7 +292,6 @@ class DataStream:
 
             if within_1 >= 0.68 and within_2 >= 0.95 and within_3 >= 0.99:
                 return time_filtered[i]
-
         return None
 
     @staticmethod
@@ -182,16 +299,23 @@ class DataStream:
         data, column_name, window_size=50, threshold=0.1
     ):
         """
-        Find the steady-state start time based on rolling variance.
+        Locate steady-state onset using rolling variance below a threshold.
 
-        Args:
-            data (pd.DataFrame): DataFrame containing the time series data.
-            column_name (str): Name of the column to analyze.
-            window_size (int): Window size for computing rolling variance.
-            threshold (float): Multiplier for variance threshold determination.
+        Parameters
+        ----------
+        data : pandas.DataFrame
+            Time series data.
+        column_name : str
+            Column to analyze.
+        window_size : int, optional
+            Window size for rolling variance (default: 50).
+        threshold : float, optional
+            Relative threshold for variance (default: 0.1).
 
-        Returns:
-            float: Steady state start time.
+        Returns
+        -------
+        float or None
+            Detected steady-state start time, or None if not found.
         """
         ts = data[["time", column_name]].dropna()
         time_values = ts["time"]
@@ -207,7 +331,19 @@ class DataStream:
 
     @staticmethod
     def normalize_data(df):
-        """Normalize data excluding the 'time' column without modifying the original data stream."""
+        """
+        Normalize data columns (excluding 'time') to [0, 1] for robust analysis.
+
+        Parameters
+        ----------
+        df : pandas.DataFrame
+            DataFrame to normalize.
+
+        Returns
+        -------
+        pandas.DataFrame
+            Normalized DataFrame.
+        """
         scaler = MinMaxScaler()
         df.iloc[:, 1:] = scaler.fit_transform(df.iloc[:, 1:])
         return df
@@ -217,17 +353,25 @@ class DataStream:
         data, column_name, window_size, threshold, start_time=0.0
     ):
         """
-        Find the steady-state start time based on a threshold method using a sliding window approach.
+        Detect steady-state start time based on rolling std below a fixed threshold.
 
-        Args:
-            data (pd.DataFrame): DataFrame containing the time series data.
-            column_name (str): Name of the column to analyze.
-            window_size (int): Window size for rolling averages.
-            threshold (float): Threshold value for steady state detection.
-            start_time (float): Start time for the analysis.
+        Parameters
+        ----------
+        data : pandas.DataFrame
+            Input time series.
+        column_name : str
+            Data column to analyze.
+        window_size : int
+            Rolling window size.
+        threshold : float
+            Std threshold for detection.
+        start_time : float, optional
+            Start time (default: 0.0).
 
-        Returns:
-            float: Steady state start time.
+        Returns
+        -------
+        float or None
+            Detected steady-state time, or None if not found.
         """
         if start_time == 0.0:
             non_zero_index = data[data[column_name] > 0].index.min()
@@ -241,30 +385,30 @@ class DataStream:
         if len(filtered) < window_size:
             return None
 
-        # rolling_avg = filtered[column_name].rolling(window=window_size).mean().dropna()
         rolling_std = filtered[column_name].rolling(window=window_size).std().rolling(
             window=window_size
         ).std() / np.sqrt(window_size)
-        # Align indices between rolling_std and time
         common_idx = filtered.index.intersection(rolling_std.index)
         steady_state = filtered.loc[common_idx, "time"][
             rolling_std.loc[common_idx] < threshold
         ]
-
         if not steady_state.empty:
             return steady_state.iloc[0]
         return None
 
     def is_stationary(self, columns):
         """
-        Check if the specified columns in the DataStream are stationary using the ADF test.
+        Test for stationarity using the Augmented Dickey-Fuller (ADF) test.
 
-        Args:
-            columns (str or list): Column name(s) to check for stationarity.
+        Parameters
+        ----------
+        columns : str or list of str
+            Name(s) of columns to test.
 
-        Returns:
-            dict: A dictionary with column names as keys and True/False as values.
-                  True if stationary, False otherwise.
+        Returns
+        -------
+        dict
+            {column: True/False (stationary), or error message}
         """
         if isinstance(columns, str):
             columns = [columns]
@@ -281,24 +425,20 @@ class DataStream:
 
     def effective_sample_size(self, column_names=None, alpha=0.05):
         """
-        Compute the effective sample size (ESS) for the data using the following steps:
+        Estimate effective sample size (ESS) accounting for autocorrelation.
 
-        1. Determine the number of observations, n.
-        2. Compute the autocorrelation function (ACF) for nlags = n/3.
-        3. Calculate the two-tailed critical value and derive the confidence interval: CI = z_critical / sqrt(n).
-        4. Identify significant lags (excluding lag 0) where the absolute ACF exceeds the CI.
-        5. Sum the absolute ACF values at the significant lags.
-        6. Compute ESS using: ESS = n / (1 + 2 * sum(|ACF| at significant lags)).
+        Parameters
+        ----------
+        column_names : str, list, or None, optional
+            Columns to analyze (default: all except 'time').
+        alpha : float, optional
+            Significance level for critical ACF value (default: 0.05).
 
-        Args:
-            column_names (str or list, optional): Column(s) to compute ESS for.
-                If None, all columns except 'time' are used.
-            alpha (float): Significance level for the confidence interval (default 0.05).
-
-        Returns:
-            dict: A dictionary where keys are column names and values are the estimated ESS.
+        Returns
+        -------
+        dict
+            {column: ESS}
         """
-        # Use all columns except 'time' if none specified.
         if column_names is None:
             column_names = [col for col in self.df.columns if col != "time"]
         elif isinstance(column_names, str):
@@ -321,15 +461,11 @@ class DataStream:
                 continue
 
             n = len(filtered)
-            # Compute ACF with nlags = n/3 (converted to integer)
             nlags = int(n / 4)
             acf_values = acf(filtered, nlags=nlags)
-            # Calculate the critical value for a two-tailed test.
             z_critical = norm.ppf(1 - alpha / 2)
             conf_interval = z_critical / np.sqrt(n)
-            # Identify significant lags (excluding lag 0)
             significant_lags = np.where(np.abs(acf_values[1:]) > conf_interval)[0]
-            # Sum the absolute autocorrelations at the significant lags
             acf_sum = np.sum(np.abs(acf_values[1:][significant_lags]))
             ESS = n / (1 + 2 * acf_sum)
             results[col] = int(np.ceil(ESS))
@@ -337,15 +473,21 @@ class DataStream:
 
     def mean(self, column_name=None, method="non-overlapping", window_size=None):
         """
-        Compute the mean of the short-term averages.
+        Compute mean of (windowed) short-term averages.
 
-        Args:
-            column_name (str or list, optional): Column(s) to compute mean for. If None, infer columns.
-            method (str): Method to calculate mean ("sliding" or "non-overlapping").
-            window_size (int, optional): Window size for the selected method. If None, estimated from ESS.
+        Parameters
+        ----------
+        column_name : str, list, or None, optional
+            Columns to process (default: all except 'time').
+        method : {"sliding", "non-overlapping"}, optional
+            Type of window averaging (default: "non-overlapping").
+        window_size : int or None, optional
+            Window size for averaging (default: estimated from ESS).
 
-        Returns:
-            dict: Mean of the data for each column.
+        Returns
+        -------
+        dict
+            {column: {"mean": float}}
         """
         results = {}
         for col in self._get_columns(column_name):
@@ -363,16 +505,23 @@ class DataStream:
         self, column_name=None, ddof=1, method="non-overlapping", window_size=None
     ):
         """
-        Compute the uncertainty (standard error) of the mean of the short-term averages.
+        Compute uncertainty (standard error) of mean of short-term averages.
 
-        Args:
-            column_name (str or list, optional): Column(s) to compute standard deviation for. If None, infer columns.
-            ddof (int): Delta degrees of freedom for standard deviation.
-            method (str): Method to calculate uncertainty ("sliding" or "non-overlapping").
-            window_size (int, optional): Window size for the selected method. If None, estimated from ESS.
+        Parameters
+        ----------
+        column_name : str, list, or None, optional
+            Columns to process.
+        ddof : int, optional
+            Delta degrees of freedom for std (default: 1).
+        method : {"sliding", "non-overlapping"}, optional
+            Window method (default: "non-overlapping").
+        window_size : int or None, optional
+            Window size.
 
-        Returns:
-            dict: Uncertainty of the mean for each column.
+        Returns
+        -------
+        dict
+            {column: {"mean uncertainty": float}}
         """
         results = {}
         for col in self._get_columns(column_name):
@@ -391,7 +540,6 @@ class DataStream:
                 effective_n = len(proc_data)
             uncertainty = np.std(proc_data, ddof=ddof) / np.sqrt(effective_n)
 
-            # results[col] = {"mean uncertainty": np.std(proc_data, ddof=ddof)}
             results[col] = {"mean uncertainty": uncertainty}
         return results
 
@@ -399,19 +547,23 @@ class DataStream:
         self, column_name=None, ddof=1, method="non-overlapping", window_size=None
     ):
         """
-        Compute the confidence interval for the mean of the short-term averages using
-        the mean and the uncertainty (standard error) computed from the short-term averages.
+        Compute 95% confidence interval for the mean of windowed short-term averages.
 
-        Args:
-            column_name (str or list, optional): Column(s) to compute confidence intervals for.
-                If None, infer columns.
-            ddof (int): Delta degrees of freedom for standard deviation.
-            method (str): Method to calculate confidence intervals ("sliding" or "non-overlapping").
-            window_size (int, optional): Window size for the selected method. If None, estimated from ESS.
+        Parameters
+        ----------
+        column_name : str, list, or None, optional
+            Columns to analyze.
+        ddof : int, optional
+            Delta degrees of freedom for std.
+        method : {"sliding", "non-overlapping"}, optional
+            Windowing method.
+        window_size : int or None, optional
+            Window size.
 
-        Returns:
-            dict: Confidence interval for each column computed as:
-                (mean - 1.96 * mean_uncertainty, mean + 1.96 * mean_uncertainty)
+        Returns
+        -------
+        dict
+            {column: {"confidence interval": (lower, upper)}}
         """
         results = {}
 
@@ -436,16 +588,23 @@ class DataStream:
         self, column_name=None, ddof=1, method="non-overlapping", window_size=None
     ):
         """
-        Calculate mean, standard deviation, confidence interval, and plus-minus one standard deviation.
+        Compute mean, uncertainty, confidence interval, and ±std for columns.
 
-        Args:
-            column_name (str or list, optional): Column(s) to compute statistics for. If None, infer columns.
-            ddof (int): Delta degrees of freedom for standard deviation.
-            method (str): Method to calculate statistics ("sliding" or "non-overlapping").
-            window_size (int, optional): Window size for the selected method. If None, estimated from ESS.
+        Parameters
+        ----------
+        column_name : str, list, or None, optional
+            Columns to process.
+        ddof : int, optional
+            Degrees of freedom for std.
+        method : {"sliding", "non-overlapping"}, optional
+            Windowing method.
+        window_size : int or None, optional
+            Window size.
 
-        Returns:
-            dict: Statistics for each column.
+        Returns
+        -------
+        dict
+            {column: {...statistics...}}
         """
         mean_results = self.mean(column_name, method=method, window_size=window_size)
         mu_results = self.mean_uncertainty(
@@ -485,14 +644,19 @@ class DataStream:
 
     def optimal_window_size(self, column_name=None, method="non-overlapping"):
         """
-        Returns the optimal window size that results in the lowest uncertainty (minimum std) in the mean prediction.
+        Find the window size that minimizes mean uncertainty (std) for a column.
 
-        Args:
-            column_name (str, optional): Column name to analyze. If None, infer the column.
-            method (str): Method to calculate statistics ("sliding" or "non-overlapping").
+        Parameters
+        ----------
+        column_name : str, list, or None, optional
+            Columns to process.
+        method : {"sliding", "non-overlapping"}, optional
+            Window method.
 
-        Returns:
-            dict: Optimal window size, corresponding minimum std, mean, and confidence interval for each column.
+        Returns
+        -------
+        dict
+            {column: {...optimal window, std, mean, ci...}}
         """
         if method not in ["sliding", "non-overlapping"]:
             raise ValueError("Invalid method. Choose 'sliding' or 'non-overlapping'.")
@@ -534,15 +698,21 @@ class DataStream:
         self, column_name=None, method="non-overlapping", window_size=None
     ):
         """
-        Compute cumulative statistics (cumulative mean, std, and standard error) for the data.
+        Compute cumulative statistics: mean, std, and SEM (std error of mean) as function of sample size.
 
-        Args:
-            column_name (str or list, optional): Column(s) to compute cumulative statistics for. If None, infer columns.
-            method (str): Method to calculate statistics ("sliding" or "non-overlapping").
-            window_size (int, optional): Window size for the selected method. If None, estimated from ESS.
+        Parameters
+        ----------
+        column_name : str, list, or None, optional
+            Columns to process.
+        method : {"sliding", "non-overlapping"}, optional
+            Window method.
+        window_size : int or None, optional
+            Window size.
 
-        Returns:
-            dict: Cumulative statistics for each column.
+        Returns
+        -------
+        dict
+            {column: {"cumulative_mean": [...], "cumulative_uncertainty": [...], "standard_error": [...]} }
         """
         results = {}
         for col in self._get_columns(column_name):
@@ -574,40 +744,32 @@ class DataStream:
         reduction_factor=0.1,
     ):
         """
-        For each specified column, compute cumulative statistics on the processed data, fit a power‐law
-        SEM model of the form:
+        Fit a power-law SEM(n) = A/n^p to cumulative SEM, and estimate extra samples
+        needed to reduce SEM by a given factor.
 
-            SEM(n) = A / (n^p)
+        Parameters
+        ----------
+        column_name : str, list, or None, optional
+            Columns to process.
+        ddof : int, optional
+            Degrees of freedom for std.
+        method : {"sliding", "non-overlapping"}, optional
+            Windowing method.
+        window_size : int or None, optional
+            Window size.
+        reduction_factor : float, optional
+            Fractional SEM reduction target (e.g. 0.1 for 10%).
 
-        to the observed cumulative standard error (SEM) values, and then estimate how many additional
-        samples are required to reduce the current SEM by the given reduction factor.
-
-        Args:
-            column_name (str or list, optional): Column(s) to compute additional samples for.
-                If None, use all columns except 'time'.
-            ddof (int): Degrees of freedom for standard deviation.
-            method (str): Processing method ("sliding" or "non-overlapping").
-            window_size (int, optional): Window size for processing data.
-            reduction_factor (float): Fraction by which to reduce the current SEM
-                (e.g. 0.1 for a 10% reduction; target SEM = (1 - reduction_factor) * current SEM).
-
-        Returns:
-            dict: For each column, a dictionary containing:
-                - 'A_est': estimated A parameter,
-                - 'p_est': estimated exponent p,
-                - 'n_current': current number of samples (from cumulative statistics),
-                - 'current_sem': current SEM (at n_current),
-                - 'target_sem': target SEM,
-                - 'n_target': estimated total samples required,
-                - 'additional_samples': additional samples needed (n_target - n_current).
+        Returns
+        -------
+        dict
+            {column: {...fit results, n_target, additional_samples...}}
         """
-        # Get cumulative statistics computed on the processed data (using your cumulative_statistics method)
         stats = self.cumulative_statistics(
             column_name, method=method, window_size=window_size
         )
         results = {}
 
-        # Get the list of columns to process
         columns = self._get_columns(column_name)
 
         for col in columns:
@@ -615,16 +777,13 @@ class DataStream:
                 results[col] = {"error": f"No cumulative SEM data for column '{col}'"}
                 continue
 
-            # Estimate window size used for processing
             column_data = self.df[col].dropna()
             est_win = self._estimate_window(col, column_data, window_size)
 
-            # Convert cumulative uncertainty to a NumPy array
             cum_sem = np.array(stats[col]["cumulative_uncertainty"])
             n_current = len(cum_sem)
             cumulative_count = np.arange(1, n_current + 1)
 
-            # Remove any NaN or infinite values (typically the first sample might be NaN)
             mask = np.isfinite(cum_sem)
             valid_count = cumulative_count[mask]
             valid_sem = cum_sem[mask]
@@ -633,21 +792,13 @@ class DataStream:
                 results[col] = {"error": "Not enough valid data points for fitting."}
                 continue
 
-            # Estimate window size used for processing
-            column_data = self.df[col].dropna()
-            est_win = self._estimate_window(col, column_data, window_size)
-
-            # Define the power-law SEM model: SEM(n) = A / (n^p)
             def power_law_model(n, A, p):
                 return A / (n**p)
 
-            # Fit the model to the observed SEM data with an initial guess.
             popt, _ = curve_fit(power_law_model, valid_count, valid_sem, p0=[1.0, 0.5])
             A_est, p_est = popt
             p_est = abs(p_est)
 
-            # Use the full data length as the current sample count.
-            # current_sem = valid_sem[-1]
             current_sem = power_law_model(n_current, A_est, p_est)
             target_sem = (1 - reduction_factor) * current_sem
             n_target = (A_est / target_sem) ** (1 / p_est)
@@ -668,34 +819,20 @@ class DataStream:
 
     def effective_sample_size_below(self, column_names=None, alpha=0.05):
         """
-        .. |ACF| replace:: Autocorrelation Function
+        Estimate ESS using all lags up to where |ACF| drops below confidence bound.
 
-        Compute the effective sample size (ESS) for each specified column using a weighted
-        autocorrelation approach where "significant" lags are defined as all lags up to (but not including)
-        the first lag at which the absolute ACF drops below the 95% confidence interval.
+        Parameters
+        ----------
+        column_names : str, list, or None, optional
+            Columns to analyze.
+        alpha : float, optional
+            Confidence interval significance level (default: 0.05).
 
-        The steps are:
-
-        1. Determine the number of observations, n.
-        2. Compute the autocorrelation function (ACF) for nlags = int(n/3).
-        3. Calculate the two-tailed critical value:
-            z_critical = norm.ppf(1 - alpha/2),
-            and then the confidence interval:
-            conf_interval = z_critical / sqrt(n).
-        4. Find the first lag (excluding lag 0) where |ACF| < conf_interval.
-        5. Sum the absolute ACF values for all lags before that drop.
-        6. Compute ESS using:
-            ESS = n / (1 + 2 * sum(|ACF| at lags before drop))
-
-        Args:
-            column_names (str or list, optional): Column(s) for which to compute ESS.
-                If None, all columns except 'time' are used.
-            alpha (float): Significance level for the confidence interval (default 0.05).
-
-        Returns:
-            dict: A dictionary with keys as column names and values as the estimated ESS.
+        Returns
+        -------
+        dict
+            {column: ESS}
         """
-        # Use all columns except 'time' if none specified.
         if column_names is None:
             column_names = [col for col in self.df.columns if col != "time"]
         elif isinstance(column_names, str):
@@ -718,27 +855,23 @@ class DataStream:
                 continue
 
             n = len(filtered)
-            # Use nlags = int(n/3) for ACF computation.
             nlags = int(n / 3)
             acf_values = acf(filtered, nlags=nlags, fft=False)
-            # Compute critical value for a two-tailed test.
             z_critical = norm.ppf(1 - alpha / 2)
             conf_interval = z_critical / np.sqrt(n)
 
-            # Find the first lag (excluding lag 0) where |ACF| < conf_interval.
             significant_idx = None
             for i in range(1, len(acf_values)):
                 if np.abs(acf_values[i]) < conf_interval:
                     significant_idx = i
                     break
             if significant_idx is None:
-                # If no such lag is found, consider all lags except lag 0.
                 significant_lags = np.arange(1, len(acf_values))
             else:
                 significant_lags = np.arange(1, significant_idx)
 
-            # Sum the absolute ACF values for the significant lags.
             acf_sum = np.sum(np.abs(acf_values[significant_lags]))
             ESS = n / (1 + 2 * acf_sum)
             results[col] = int(np.floor(ESS))
         return results
+
