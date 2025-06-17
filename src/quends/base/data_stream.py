@@ -5,7 +5,7 @@ Provides the DataStream class for statistical analysis, steady-state detection, 
 and uncertainty quantification on time series data (as pandas DataFrames). Designed for scientific
 simulation outputs and ensemble data workflows.
 
-Author: [Your Name]
+Author: 
 """
 
 import math
@@ -1325,8 +1325,10 @@ class DataStream:
             results[col] = int(np.ceil(ESS))
         return results
 
-    def mean(self, column_name=None, method="non-overlapping", window_size=None):
+    # ========== Private Statistical Helpers ==========
+    def _mean(self, column_name=None, method="non-overlapping", window_size=None):
         """
+<<<<<<< HEAD
         Compute mean of (windowed) short-term averages.
 
         Parameters
@@ -1352,11 +1354,26 @@ class DataStream:
             return {col: val["mean"] for col, val in results.items() if "mean" in val}
         col = column_name if isinstance(column_name, str) else list(results.keys())[0]
         return results[col]["mean"]
+=======
+        Helper for windowed mean calculation (private).
+        """
+        results = {}
+        for col in self._get_columns(column_name):
+            column_data = self.df[col].dropna()
+            if column_data.empty:
+                results[col] = {"error": f"No data available for column '{col}'"}
+                continue
+            est_win = self._estimate_window(col, column_data, window_size)
+            proc_data = self._process_column(column_data, est_win, method)
+            results[col] = {"mean": np.mean(proc_data), "window_size": est_win}
+        return results
+>>>>>>> 64326bf (Improvement of the docstring in  data_stream.py)
 
-    def mean_uncertainty(
+    def _mean_uncertainty(
         self, column_name=None, ddof=1, method="non-overlapping", window_size=None
     ):
         """
+<<<<<<< HEAD
 <<<<<<< HEAD
         Legacy wrapper for test compatibility. Returns only mean_uncertainty (not dict).
         """
@@ -1389,6 +1406,9 @@ class DataStream:
         -------
         dict
             {column: {"mean uncertainty": float}}
+=======
+        Helper for standard error of windowed mean (private).
+>>>>>>> 64326bf (Improvement of the docstring in  data_stream.py)
         """
         results = {}
         for col in self._get_columns(column_name):
@@ -1396,25 +1416,23 @@ class DataStream:
             if column_data.empty:
                 results[col] = {"error": f"No data available for column '{col}'"}
                 continue
-
             est_win = self._estimate_window(col, column_data, window_size)
             proc_data = self._process_column(column_data, est_win, method)
-
             if method == "sliding":
                 step = max(1, est_win // 4)
                 effective_n = len(proc_data[::step])
             else:
                 effective_n = len(proc_data)
             uncertainty = np.std(proc_data, ddof=ddof) / np.sqrt(effective_n)
-
-            results[col] = {"mean uncertainty": uncertainty}
+            results[col] = {"mean_uncertainty": uncertainty, "window_size": est_win}
         return results
 >>>>>>> dd52230 (Improvement of the docstring in  data_stream.py)
 
-    def confidence_interval(
+    def _confidence_interval(
         self, column_name=None, ddof=1, method="non-overlapping", window_size=None
     ):
         """
+<<<<<<< HEAD
 <<<<<<< HEAD
         Legacy wrapper for test compatibility. Returns only CI tuple.
 =======
@@ -1439,6 +1457,14 @@ class DataStream:
         """
         results = self._confidence_interval(
             column_name=column_name, ddof=ddof, method=method, window_size=window_size
+=======
+        Helper for 95% confidence interval of windowed mean (private).
+        """
+        results = {}
+        mean_results = self._mean(column_name, method=method, window_size=window_size)
+        uncertainty_results = self._mean_uncertainty(
+            column_name, ddof=ddof, method=method, window_size=window_size
+>>>>>>> 64326bf (Improvement of the docstring in  data_stream.py)
         )
 <<<<<<< HEAD
         if column_name is None:
@@ -1452,70 +1478,91 @@ class DataStream:
             if col not in mean_results or col not in uncertainty_results:
                 results[col] = {"error": f"Missing data for column '{col}'"}
                 continue
-
             mean_val = mean_results[col]["mean"]
-            uncertainty_val = uncertainty_results[col]["mean uncertainty"]
+            uncertainty_val = uncertainty_results[col]["mean_uncertainty"]
             ci_lower = mean_val - 1.96 * uncertainty_val
             ci_upper = mean_val + 1.96 * uncertainty_val
-            results[col] = {"confidence interval": (ci_lower, ci_upper)}
+            results[col] = {
+                "confidence_interval": (ci_lower, ci_upper),
+                "window_size": mean_results[col]["window_size"],
+            }
         return results
+
+    # =======================
+    #    Main Functionality
+    # =======================
 
     def compute_statistics(
         self, column_name=None, ddof=1, method="non-overlapping", window_size=None
     ):
         """
-        Compute mean, uncertainty, confidence interval, and ±std for columns.
+        Calculate summary statistics for each column:
+        mean, standard error (uncertainty), confidence interval, ±std, effective sample size (ESS),
+        and window size used.
 
         Parameters
         ----------
         column_name : str, list, or None, optional
-            Columns to process.
+            Columns to compute statistics for. If None, infer columns.
         ddof : int, optional
-            Degrees of freedom for std.
+            Delta degrees of freedom for standard deviation.
         method : {"sliding", "non-overlapping"}, optional
-            Windowing method.
-        window_size : int or None, optional
-            Window size.
+            Method to calculate statistics.
+        window_size : int, optional
+            Window size for the selected method. If None, estimated from ESS.
 
         Returns
         -------
         dict
-            {column: {...statistics...}}
+            For each column, a dictionary with:
+              - 'mean'
+              - 'mean_uncertainty'
+              - 'confidence_interval'
+              - 'pm_std'
+              - 'effective_sample_size'
+              - 'window_size'
         """
-        mean_results = self.mean(column_name, method=method, window_size=window_size)
-        mu_results = self.mean_uncertainty(
-            column_name, ddof=ddof, method=method, window_size=window_size
-        )
-        ci_results = self.confidence_interval(
-            column_name, ddof=ddof, method=method, window_size=window_size
-        )
-
         statistics = {}
-        for col in mean_results.keys():
-            if (
-                col not in mean_results
-                or col not in mu_results
-                or col not in ci_results
-            ):
-                statistics[col] = {"error": f"Missing data for column '{col}'"}
+        columns = self._get_columns(column_name)
+
+        mean_results = self._mean(column_name, method=method, window_size=window_size)
+        mu_results = self._mean_uncertainty(
+            column_name, ddof=ddof, method=method, window_size=window_size
+        )
+        ci_results = self._confidence_interval(
+            column_name, ddof=ddof, method=method, window_size=window_size
+        )
+
+        for col in columns:
+            column_data = self.df[col].dropna()
+            if column_data.empty:
+                statistics[col] = {"error": f"No data available for column '{col}'"}
                 continue
 
-            ci = ci_results[col].get("confidence interval")
-            if ci is None:
-                statistics[col] = {
-                    "error": f"Confidence interval not computed for column '{col}'"
-                }
-                continue
+            # Effective sample size (ESS) for this column
+            ess_dict = self.effective_sample_size(column_names=col)
+            ess_val = ess_dict.get(col, 10)  # fallback if not available
+
+            mean_val = mean_results[col]["mean"]
+            mean_uncertainty = mu_results[col]["mean_uncertainty"]
+            ci = ci_results[col]["confidence_interval"]
+            est_win = mean_results[col]["window_size"]
 
             statistics[col] = {
-                "mean": mean_results[col]["mean"],
-                "mean_uncertainty": mu_results[col]["mean uncertainty"],
+                "mean": mean_val,
+                "mean_uncertainty": mean_uncertainty,
                 "confidence_interval": ci,
+<<<<<<< HEAD
                 "pm_std": (
                     mean_results[col]["mean"] - mu_results[col]["mean uncertainty"],
                     mean_results[col]["mean"] + mu_results[col]["mean uncertainty"],
                 ),
 >>>>>>> dd52230 (Improvement of the docstring in  data_stream.py)
+=======
+                "pm_std": (mean_val - mean_uncertainty, mean_val + mean_uncertainty),
+                "effective_sample_size": ess_val,
+                "window_size": est_win,
+>>>>>>> 64326bf (Improvement of the docstring in  data_stream.py)
             }
         col = column_name if isinstance(column_name, str) else list(results.keys())[0]
         return results[col]["confidence_interval"]
