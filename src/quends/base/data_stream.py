@@ -187,6 +187,7 @@ class DataStream:
     ):
         """
         Trim the DataStream to start from steady-state using a chosen method.
+        First checks if the column is stationary; raises an error if not.
 
         Parameters
         ----------
@@ -207,7 +208,25 @@ class DataStream:
         -------
         DataStream
             New DataStream with trimmed data, from steady-state onward.
+
+        Raises
+        ------
+        ValueError
+                If the data column is not stationary.
         """
+        # Stationarity check
+        stationary_result = self.is_stationary(column_name)
+        if isinstance(stationary_result, dict):
+            is_stat = stationary_result.get(column_name, False)
+        else:
+            is_stat = bool(stationary_result)
+        if not is_stat:
+            raise ValueError(
+                f"Column '{column_name}' is not stationary. "
+                "Steady-state trimming requires stationary data. "
+                "Apply detrending or differencing first."
+            )
+
         if method == "std":
             steady_state_start_time = self.find_steady_state_std(
                 self.df, column_name, window_size, start_time, robust
