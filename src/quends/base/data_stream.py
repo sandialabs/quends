@@ -1,11 +1,11 @@
 """
 data_stream.py
 
-Provides the DataStream class for statistical analysis, steady-state detection, stationarity testing,
-and uncertainty quantification on time series data (as pandas DataFrames). Designed for scientific
-simulation outputs and ensemble data workflows.
+Enhanced DataStream for robust scientific reproducibility.
 
-Author: 
+- Tracks all options and arguments for every operation (trim, statistics, etc.).
+- Each result dict includes full lineage of all processing steps and their options.
+- Always auto-skips to first nonzero entry before steady-state detection in trim.
 """
 
 import math
@@ -970,6 +970,7 @@ class DataStream:
         """
         # Just return a default for now (since the real logic is probably more complex)
         return 1
+
 
     def effective_sample_size_below(self, column_names=None, alpha=0.05):
         """
