@@ -39,9 +39,13 @@ jobs:
 
       - name: Prepare coverage report for deployment
         run: |
-          mkdir -p docs/_build/html/coverage  # Create a directory for coverage reports
-          cp -r htmlcov/* docs/_build/html/coverage/  # Copy coverage report to the new directory
-
+          mkdir -p docs/_build/html/coverage
+          if [ -d htmlcov ]; then
+            cp -r htmlcov/* docs/_build/html/coverage/
+          else
+            echo "htmlcov directory does not exist. Skipping coverage report copy."
+          fi
+          
       - name: Upload coverage to Coveralls
         run: coveralls
         env:
