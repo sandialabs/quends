@@ -5,7 +5,7 @@ Provides the DataStream class for statistical analysis, steady-state detection, 
 and uncertainty quantification on time series data (as pandas DataFrames). Designed for scientific
 simulation outputs and ensemble data workflows.
 
-Author: [Your Name]
+Author: 
 """
 
 import math
