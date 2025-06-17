@@ -1,5 +1,14 @@
-import math
+"""
+data_stream.py
 
+Provides the DataStream class for statistical analysis, steady-state detection, stationarity testing,
+and uncertainty quantification on time series data (as pandas DataFrames). Designed for scientific
+simulation outputs and ensemble data workflows.
+
+Author: [Your Name]
+"""
+
+import math
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
