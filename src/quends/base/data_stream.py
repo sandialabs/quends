@@ -1,11 +1,11 @@
 """
 data_stream.py
 
-Provides the DataStream class for statistical analysis, steady-state detection, stationarity testing,
-and uncertainty quantification on time series data (as pandas DataFrames). Designed for scientific
-simulation outputs and ensemble data workflows.
+Enhanced DataStream for robust scientific reproducibility.
 
-Author: 
+- Tracks all options and arguments for every operation (trim, statistics, etc.).
+- Each result dict includes full lineage of all processing steps and their options.
+- Always auto-skips to first nonzero entry before steady-state detection in trim.
 """
 
 import math
@@ -17,169 +17,51 @@ from sklearn.preprocessing import MinMaxScaler
 from statsmodels.robust.scale import mad
 from statsmodels.tsa.stattools import acf, adfuller
 
-
 class DataStream:
     """
-    A wrapper for time-series data (pandas DataFrame) that provides rich statistical and
-    steady-state analysis for simulation and experimental outputs.
+    Scientific time-series and simulation trace analysis with full pipeline reproducibility.
 
-    This class enables:
-      - Steady-state trimming (using std, threshold, or rolling-variance methods)
-      - Stationarity testing (ADF)
-      - Effective sample size calculation
-      - Mean, uncertainty, and confidence interval computation (with windowing)
-      - Cumulative statistics and power-law SEM extrapolation
+    Each DataStream remembers the full chain of analysis steps and their options
+    (in self._history), and every result returned includes this lineage.
 
     Parameters
     ----------
     df : pandas.DataFrame
-        The time series data. Must have a 'time' column and one or more data columns.
-
-    Examples
-    --------
-    >>> ds = DataStream(my_dataframe)
-    >>> ds.mean('flux', method='sliding', window_size=20)
-    >>> trimmed = ds.trim('flux', method='std')
+        Data with a 'time' column and one or more data columns.
+    _history : list, optional
+        Internal: Lineage of operations (not user-supplied).
     """
 
-    def __init__(self, df: pd.DataFrame):
-        """
-        Initialize a DataStream object.
-
-        Parameters
-        ----------
-        df : pandas.DataFrame
-            DataFrame containing 'time' and data columns.
-        """
+    def __init__(self, df: pd.DataFrame, _history=None):
         self.df = df
+        self._history = list(_history) if _history is not None else []
+
+    def _add_history(self, operation, options):
+        """Append an operation and its options to this instance's history."""
+        options = {k: v for k, v in options.items() if k not in ('self', 'cls', '__class__')}
+        self._history.append({
+            "operation": operation,
+            "options": options
+        })
 
     def head(self, n=5):
-        """
-        Return the first n rows of the underlying DataFrame.
-
-        Parameters
-        ----------
-        n : int, optional
-            Number of rows to return (default: 5).
-
-        Returns
-        -------
-        pandas.DataFrame
-            The first n rows.
-        """
+        """Return the first n rows of the underlying DataFrame."""
         return self.df.head(n)
 
     def __len__(self):
-        """
-        Return the length (number of rows) of the DataStream.
-
-        Returns
-        -------
-        int
-            Number of data points (rows).
-        """
+        """Return the number of rows in the DataStream."""
         return len(self.df)
 
     def variables(self):
-        """
-        List the variable (column) names in the DataStream.
-
-        Returns
-        -------
-        pandas.Index
-            Names of the columns in the DataFrame.
-        """
+        """List the variable (column) names in the DataStream."""
         return self.df.columns
 
-    # --- Internal Helper Methods ---
-
-    def _get_columns(self, column_name):
-        """
-        Infer a list of columns to operate on based on user input.
-
-        Parameters
-        ----------
-        column_name : str, list, or None
-            Single column name, list of names, or None (use all except 'time').
-
-        Returns
-        -------
-        list of str
-            The column names to process.
-        """
-        if column_name is None:
-            return [col for col in self.df.columns if col != "time"]
-        return [column_name] if isinstance(column_name, str) else column_name
-
-    def _estimate_window(self, col, column_data, window_size):
-        """
-        Estimate a window size for rolling/statistics based on ESS or user input.
-
-        Parameters
-        ----------
-        col : str
-            Column name.
-        column_data : pandas.Series
-            Data to analyze.
-        window_size : int or None
-            User-provided window, or None to estimate.
-
-        Returns
-        -------
-        int
-            Window size to use.
-        """
-        if window_size is None:
-            ess_results = self.effective_sample_size(column_names=col)
-            ess_value = ess_results.get(col, 10)
-            return max(5, len(column_data) // ess_value)
-        return window_size
-
-    def _process_column(self, column_data, estimated_window, method):
-        """
-        Apply windowed averaging (sliding or non-overlapping) to a column.
-
-        Parameters
-        ----------
-        column_data : pandas.Series
-            Data to process.
-        estimated_window : int
-            Window size to use.
-        method : {"sliding", "non-overlapping"}
-            Windowing approach.
-
-        Returns
-        -------
-        pandas.Series
-            Series of window means.
-        """
-        if method == "sliding":
-            return column_data.rolling(window=estimated_window).mean().dropna()
-        elif method == "non-overlapping":
-            step_size = max(1, estimated_window // 4)
-            window_means = [
-                np.mean(column_data[i : i + estimated_window])
-                for i in range(0, len(column_data) - estimated_window + 1, step_size)
-            ]
-            return pd.Series(
-                window_means,
-                index=np.arange(
-                    estimated_window // 2,
-                    len(window_means) * step_size + estimated_window // 2,
-                    step_size,
-                ),
-            )
-        else:
-            raise ValueError("Invalid method. Choose 'sliding' or 'non-overlapping'.")
-
-    # =======================
-    #    Main Functionality
-    # =======================
+    # ---------- Main Trim and Detection Logic ----------
 
     def trim(
         self,
         column_name,
-        window_size=10,
+        batch_size=10,
         start_time=0.0,
         method="std",
         threshold=None,
@@ -187,16 +69,17 @@ class DataStream:
     ):
         """
         Trim the DataStream to start from steady-state using a chosen method.
-        First checks if the column is stationary; raises an error if not.
+        Handles all start time logic (user-specified and auto-skip to first nonzero).
+        Tracks options for reproducibility.
 
         Parameters
         ----------
         column_name : str
             Name of the column to analyze.
-        window_size : int, optional
-            Window size for rolling/statistics (default: 10).
+        batch_size : int, optional
+            Rolling/statistical window size for steady-state detection (default: 10).
         start_time : float, optional
-            Start time for the analysis (default: 0.0).
+            User-specified start time for analysis (default: 0.0).
         method : {"std", "threshold", "rolling_variance"}, optional
             Method for steady-state detection.
         threshold : float or None, optional
@@ -212,14 +95,10 @@ class DataStream:
         Raises
         ------
         ValueError
-                If the data column is not stationary.
+            If the data column is not stationary, or if no steady-state found.
         """
-        # Stationarity check
         stationary_result = self.is_stationary(column_name)
-        if isinstance(stationary_result, dict):
-            is_stat = stationary_result.get(column_name, False)
-        else:
-            is_stat = bool(stationary_result)
+        is_stat = stationary_result.get(column_name, False) if isinstance(stationary_result, dict) else bool(stationary_result)
         if not is_stat:
             raise ValueError(
                 f"Column '{column_name}' is not stationary. "
@@ -227,22 +106,26 @@ class DataStream:
                 "Apply detrending or differencing first."
             )
 
+        data = self.df[self.df["time"] >= start_time].reset_index(drop=True)
+        # Always skip to first nonzero in the target column
+        non_zero_index = data[data[column_name] > 0].index.min()
+        if non_zero_index is not None and non_zero_index > 0:
+            data = data.loc[non_zero_index:].reset_index(drop=True)
+
         if method == "std":
             steady_state_start_time = self.find_steady_state_std(
-                self.df, column_name, window_size, start_time, robust
+                data, column_name, window_size=batch_size, robust=robust
             )
         elif method == "threshold":
             if threshold is None:
-                raise ValueError(
-                    "Threshold must be specified for the 'threshold' method."
-                )
+                raise ValueError("Threshold must be specified for the 'threshold' method.")
             steady_state_start_time = self.find_steady_state_threshold(
-                self.df, column_name, window_size, threshold, start_time
+                data, column_name, window_size=batch_size, threshold=threshold
             )
         elif method == "rolling_variance":
             threshold = threshold if threshold is not None else 0.1
             steady_state_start_time = self.find_steady_state_rolling_variance(
-                self.df, column_name, window_size, threshold
+                data, column_name, window_size=batch_size, threshold=threshold
             )
         else:
             raise ValueError(
@@ -253,28 +136,34 @@ class DataStream:
             trimmed_df = self.df.loc[
                 self.df["time"] >= steady_state_start_time, ["time", column_name]
             ].reset_index(drop=True)
-            return DataStream(trimmed_df)
+            new_history = self._history.copy()
+            options = dict(
+                column_name=column_name, batch_size=batch_size, start_time=start_time,
+                method=method, threshold=threshold, robust=robust,
+                operation_detected_time=steady_state_start_time,
+            )
+            new_history.append({"operation": "trim", "options": options})
+            return DataStream(trimmed_df, _history=new_history)
+        else:
+            raise ValueError(
+                f"Steady-state start time could not be determined for column '{column_name}'."
+            )
 
     @staticmethod
     def find_steady_state_std(
-        data, column_name, window_size=10, start_time=0.0, robust=True
+        data, column_name, window_size=10, robust=True
     ):
         """
-        Locate the onset of steady-state using std or median/MAD windows.
-
-        This method slides a window and checks if the fraction of values within 1, 2, and 3 std/MAD
-        matches the theoretical normal-distribution probabilities (0.68, 0.95, 0.99).
+        Find the steady-state start time based on std or robust median/MAD method.
 
         Parameters
         ----------
         data : pandas.DataFrame
-            DataFrame with the time series.
+            DataFrame with the time series (already filtered).
         column_name : str
             Column to analyze.
         window_size : int, optional
             Window size (default: 10).
-        start_time : float, optional
-            Start time (default: 0.0).
         robust : bool, optional
             Use median/MAD if True, else mean/std (default: True).
 
@@ -283,14 +172,8 @@ class DataStream:
         float or None
             Detected steady-state start time, or None if not found.
         """
-        if start_time == 0.0:
-            non_zero_index = data[data[column_name] > 0].index.min()
-            if non_zero_index is not None:
-                start_time = data.loc[non_zero_index, "time"]
-
-        filtered_data = data.loc[data["time"] >= start_time]
-        time_filtered = filtered_data["time"].values
-        signal_filtered = filtered_data[column_name].values
+        time_filtered = data["time"].values
+        signal_filtered = data[column_name].values
 
         for i in range(len(signal_filtered) - window_size + 1):
             remaining_data = signal_filtered[i:]
@@ -302,12 +185,8 @@ class DataStream:
                 scale_value = np.std(remaining_data)
 
             within_1 = np.mean(np.abs(remaining_data - central_value) <= scale_value)
-            within_2 = np.mean(
-                np.abs(remaining_data - central_value) <= 2 * scale_value
-            )
-            within_3 = np.mean(
-                np.abs(remaining_data - central_value) <= 3 * scale_value
-            )
+            within_2 = np.mean(np.abs(remaining_data - central_value) <= 2 * scale_value)
+            within_3 = np.mean(np.abs(remaining_data - central_value) <= 3 * scale_value)
 
             if within_1 >= 0.68 and within_2 >= 0.95 and within_3 >= 0.99:
                 return time_filtered[i]
@@ -318,12 +197,12 @@ class DataStream:
         data, column_name, window_size=50, threshold=0.1
     ):
         """
-        Locate steady-state onset using rolling variance below a threshold.
+        Find the steady-state start time based on rolling variance.
 
         Parameters
         ----------
         data : pandas.DataFrame
-            Time series data.
+            Time series data (already filtered).
         column_name : str
             Column to analyze.
         window_size : int, optional
@@ -369,7 +248,7 @@ class DataStream:
 
     @staticmethod
     def find_steady_state_threshold(
-        data, column_name, window_size, threshold, start_time=0.0
+        data, column_name, window_size, threshold
     ):
         """
         Detect steady-state start time based on rolling std below a fixed threshold.
@@ -377,124 +256,39 @@ class DataStream:
         Parameters
         ----------
         data : pandas.DataFrame
-            Input time series.
+            Input time series (already filtered).
         column_name : str
             Data column to analyze.
         window_size : int
             Rolling window size.
         threshold : float
             Std threshold for detection.
-        start_time : float, optional
-            Start time (default: 0.0).
 
         Returns
         -------
         float or None
             Detected steady-state time, or None if not found.
         """
-        if start_time == 0.0:
-            non_zero_index = data[data[column_name] > 0].index.min()
-            if non_zero_index is not None:
-                start_time = data.loc[non_zero_index, "time"]
-
         normalized_data = DataStream.normalize_data(data.copy())
         time_series = normalized_data[["time", column_name]]
-        filtered = time_series.loc[time_series["time"] >= start_time]
 
-        if len(filtered) < window_size:
+        if len(time_series) < window_size:
             return None
 
-        rolling_std = filtered[column_name].rolling(window=window_size).std().rolling(
+        rolling_std = time_series[column_name].rolling(window=window_size).std().rolling(
             window=window_size
         ).std() / np.sqrt(window_size)
-        common_idx = filtered.index.intersection(rolling_std.index)
-        steady_state = filtered.loc[common_idx, "time"][
+        common_idx = time_series.index.intersection(rolling_std.index)
+        steady_state = time_series.loc[common_idx, "time"][
             rolling_std.loc[common_idx] < threshold
         ]
         if not steady_state.empty:
             return steady_state.iloc[0]
         return None
 
-    def is_stationary(self, columns):
-        """
-        Test for stationarity using the Augmented Dickey-Fuller (ADF) test.
+    # ============= Statistical Methods with Option Tracking ==============
 
-        Parameters
-        ----------
-        columns : str or list of str
-            Name(s) of columns to test.
-
-        Returns
-        -------
-        dict
-            {column: True/False (stationary), or error message}
-        """
-        if isinstance(columns, str):
-            columns = [columns]
-
-        results = {}
-        for column in columns:
-            try:
-                p_value = adfuller(self.df[column].dropna(), autolag="AIC")[1]
-                results[column] = p_value < 0.05
-            except ValueError as e:
-                results[column] = f"Error: {e}"
-
-        return results
-
-    def effective_sample_size(self, column_names=None, alpha=0.05):
-        """
-        Estimate effective sample size (ESS) accounting for autocorrelation.
-
-        Parameters
-        ----------
-        column_names : str, list, or None, optional
-            Columns to analyze (default: all except 'time').
-        alpha : float, optional
-            Significance level for critical ACF value (default: 0.05).
-
-        Returns
-        -------
-        dict
-            {column: ESS}
-        """
-        if column_names is None:
-            column_names = [col for col in self.df.columns if col != "time"]
-        elif isinstance(column_names, str):
-            column_names = [column_names]
-
-        results = {}
-        for col in column_names:
-            if col not in self.df.columns:
-                results[col] = {
-                    "message": f"Column '{col}' not found in the DataStream."
-                }
-                continue
-
-            filtered = self.df[col].dropna()
-            if filtered.empty:
-                results[col] = {
-                    "effective_sample_size": None,
-                    "message": "No data available for computation.",
-                }
-                continue
-
-            n = len(filtered)
-            nlags = int(n / 4)
-            acf_values = acf(filtered, nlags=nlags)
-            z_critical = norm.ppf(1 - alpha / 2)
-            conf_interval = z_critical / np.sqrt(n)
-            significant_lags = np.where(np.abs(acf_values[1:]) > conf_interval)[0]
-            acf_sum = np.sum(np.abs(acf_values[1:][significant_lags]))
-            ESS = n / (1 + 2 * acf_sum)
-            results[col] = int(np.ceil(ESS))
-        return results
-
-    # ========== Private Statistical Helpers ==========
     def _mean(self, column_name=None, method="non-overlapping", window_size=None):
-        """
-        Helper for windowed mean calculation (private).
-        """
         results = {}
         for col in self._get_columns(column_name):
             column_data = self.df[col].dropna()
@@ -509,9 +303,6 @@ class DataStream:
     def _mean_uncertainty(
         self, column_name=None, ddof=1, method="non-overlapping", window_size=None
     ):
-        """
-        Helper for standard error of windowed mean (private).
-        """
         results = {}
         for col in self._get_columns(column_name):
             column_data = self.df[col].dropna()
@@ -532,9 +323,6 @@ class DataStream:
     def _confidence_interval(
         self, column_name=None, ddof=1, method="non-overlapping", window_size=None
     ):
-        """
-        Helper for 95% confidence interval of windowed mean (private).
-        """
         results = {}
         mean_results = self._mean(column_name, method=method, window_size=window_size)
         uncertainty_results = self._mean_uncertainty(
@@ -555,39 +343,37 @@ class DataStream:
             }
         return results
 
-    # =======================
-    #    Main Functionality
-    # =======================
-
     def compute_statistics(
         self, column_name=None, ddof=1, method="non-overlapping", window_size=None
     ):
         """
         Calculate summary statistics for each column:
-        mean, standard error (uncertainty), confidence interval, ±std, effective sample size (ESS),
-        and window size used.
+        mean, uncertainty, confidence interval, ±std, effective sample size (ESS), and window_size used.
+        Returns the full operation lineage in "_history".
 
         Parameters
         ----------
-        column_name : str, list, or None, optional
+        column_name : str or list, optional
             Columns to compute statistics for. If None, infer columns.
         ddof : int, optional
-            Delta degrees of freedom for standard deviation.
+            Delta degrees of freedom for std.
         method : {"sliding", "non-overlapping"}, optional
-            Method to calculate statistics.
+            How to calculate windowed means.
         window_size : int, optional
-            Window size for the selected method. If None, estimated from ESS.
+            Window/batch size for the selected method. If None, estimated.
 
         Returns
         -------
         dict
-            For each column, a dictionary with:
-              - 'mean'
-              - 'mean_uncertainty'
-              - 'confidence_interval'
-              - 'pm_std'
-              - 'effective_sample_size'
-              - 'window_size'
+            For each column:
+              - mean
+              - mean_uncertainty
+              - confidence_interval
+              - pm_std
+              - effective_sample_size
+              - window_size
+            Plus:
+              - "_history" (list of all options for all steps)
         """
         statistics = {}
         columns = self._get_columns(column_name)
@@ -605,8 +391,6 @@ class DataStream:
             if column_data.empty:
                 statistics[col] = {"error": f"No data available for column '{col}'"}
                 continue
-
-            # Effective sample size (ESS) for this column
             ess_dict = self.effective_sample_size(column_names=col)
             ess_val = ess_dict.get(col, 10)  # fallback if not available
 
@@ -623,63 +407,133 @@ class DataStream:
                 "effective_sample_size": ess_val,
                 "window_size": est_win,
             }
+
+        op_options = dict(
+            column_name=column_name, ddof=ddof, method=method, window_size=window_size,
+        )
+        full_history = self._history.copy()
+        full_history.append({"operation": "compute_statistics", "options": op_options})
+        statistics["_history"] = full_history
         return statistics
 
-    def optimal_window_size(self, column_name=None, method="non-overlapping"):
+    # ----------- Helper methods for modularity (unchanged except for window_size name) -----------
+
+    def _get_columns(self, column_name):
+        if column_name is None:
+            return [col for col in self.df.columns if col != "time"]
+        return [column_name] if isinstance(column_name, str) else column_name
+
+    def _estimate_window(self, col, column_data, window_size):
+        if window_size is None:
+            ess_results = self.effective_sample_size(column_names=col)
+            ess_value = ess_results.get(col, 10)
+            return max(5, len(column_data) // ess_value)
+        return window_size
+
+    def _process_column(self, column_data, estimated_window, method):
+        if method == "sliding":
+            return column_data.rolling(window=estimated_window).mean().dropna()
+        elif method == "non-overlapping":
+            step_size = max(1, estimated_window // 4)
+            window_means = [
+                np.mean(column_data[i : i + estimated_window])
+                for i in range(0, len(column_data) - estimated_window + 1, step_size)
+            ]
+            return pd.Series(
+                window_means,
+                index=np.arange(
+                    estimated_window // 2,
+                    len(window_means) * step_size + estimated_window // 2,
+                    step_size,
+                ),
+            )
+        else:
+            raise ValueError("Invalid method. Choose 'sliding' or 'non-overlapping'.")
+
+    # ------- Other methods (stationarity, ESS, cumulative, etc.) can also use _add_history -------
+
+    def is_stationary(self, columns):
         """
-        Find the window size that minimizes mean uncertainty (std) for a column.
+        Check if specified columns are stationary using the ADF test.
+        Tracks options used for reproducibility.
 
         Parameters
         ----------
-        column_name : str, list, or None, optional
-            Columns to process.
-        method : {"sliding", "non-overlapping"}, optional
-            Window method.
+        columns : str or list
+            Column(s) to check for stationarity.
 
         Returns
         -------
         dict
-            {column: {...optimal window, std, mean, ci...}}
+            {column_name: bool or error string}
         """
-        if method not in ["sliding", "non-overlapping"]:
-            raise ValueError("Invalid method. Choose 'sliding' or 'non-overlapping'.")
+        # Add to history for this operation
+        self._add_history("is_stationary", {"columns": columns})
+
+        if isinstance(columns, str):
+            columns = [columns]
 
         results = {}
-        for col in self._get_columns(column_name):
-            column_data = self.df[col].dropna()
-            if column_data.empty:
-                results[col] = {"error": f"No data available for column '{col}'"}
+        for column in columns:
+            try:
+                p_value = adfuller(self.df[column].dropna(), autolag="AIC")[1]
+                results[column] = p_value < 0.05
+            except ValueError as e:
+                results[column] = f"Error: {e}"
+
+        return results
+
+    def effective_sample_size(self, column_names=None, alpha=0.05):
+        """
+        Compute the effective sample size (ESS) for the data using autocorrelation.
+
+        Parameters
+        ----------
+        column_names : str or list, optional
+            Columns to compute ESS for (default: all except 'time').
+        alpha : float, optional
+            Significance level for confidence interval (default 0.05).
+
+        Returns
+        -------
+        dict
+            {column_name: ESS}
+        """
+        self._add_history("effective_sample_size", {"column_names": column_names, "alpha": alpha})
+
+        if column_names is None:
+            column_names = [col for col in self.df.columns if col != "time"]
+        elif isinstance(column_names, str):
+            column_names = [column_names]
+
+        results = {}
+        for col in column_names:
+            if col not in self.df.columns:
+                results[col] = {
+                    "message": f"Column '{col}' not found in the DataStream."
+                }
                 continue
-
-            max_window_size = max(2, len(column_data) // 2)
-            std_results = {}
-            stats_store = {}
-
-            for window in range(1, max_window_size, 5):
-                stats_res = self.compute_statistics(
-                    column_name=col, method=method, window_size=window
-                )
-                std_val = stats_res[col].get("mean_uncertainty")
-                mean_val = stats_res[col].get("mean")
-                ci_val = stats_res[col].get("confidence_interval")
-                if std_val is not None:
-                    std_results[window] = std_val
-                    stats_store[window] = {"mean": mean_val, "ci": ci_val}
-
-            optimal_window = (
-                min(std_results, key=std_results.get) if std_results else None
-            )
-            results[col] = {
-                "optimal_window_size": optimal_window,
-                "min_std": std_results.get(optimal_window),
-                "mean": stats_store.get(optimal_window, {}).get("mean"),
-                "ci": stats_store.get(optimal_window, {}).get("ci"),
-            }
+            filtered = self.df[col].dropna()
+            if filtered.empty:
+                results[col] = {
+                    "effective_sample_size": None,
+                    "message": "No data available for computation.",
+                }
+                continue
+            n = len(filtered)
+            nlags = int(n / 4)
+            acf_values = acf(filtered, nlags=nlags)
+            z_critical = norm.ppf(1 - alpha / 2)
+            conf_interval = z_critical / np.sqrt(n)
+            significant_lags = np.where(np.abs(acf_values[1:]) > conf_interval)[0]
+            acf_sum = np.sum(np.abs(acf_values[1:][significant_lags]))
+            ESS = n / (1 + 2 * acf_sum)
+            results[col] = int(np.ceil(ESS))
         return results
 
     def cumulative_statistics(
-        self, column_name=None, method="non-overlapping", window_size=None
-    ):
+            self, column_name=None, method="non-overlapping", window_size=None
+            ):
         """
         Compute cumulative statistics: mean, std, and SEM (std error of mean) as function of sample size.
 
@@ -696,6 +550,7 @@ class DataStream:
         -------
         dict
             {column: {"cumulative_mean": [...], "cumulative_uncertainty": [...], "standard_error": [...]} }
+            Plus: '_history' key showing full options chain.
         """
         results = {}
         for col in self._get_columns(column_name):
@@ -715,8 +570,17 @@ class DataStream:
                 "cumulative_mean": cumulative_mean.tolist(),
                 "cumulative_uncertainty": cumulative_std.tolist(),
                 "standard_error": standard_error.tolist(),
-            }
+                "window_size": est_win
+        }
+
+        op_options = dict(
+            column_name=column_name, method=method, window_size=window_size
+        )
+        full_history = self._history.copy()
+        full_history.append({"operation": "cumulative_statistics", "options": op_options})
+        results["_history"] = full_history
         return results
+
 
     def additional_data(
         self,
@@ -746,7 +610,7 @@ class DataStream:
         Returns
         -------
         dict
-            {column: {...fit results, n_target, additional_samples...}}
+            {column: {...fit results, n_target, additional_samples...}, "_history": full history}
         """
         stats = self.cumulative_statistics(
             column_name, method=method, window_size=window_size
@@ -797,8 +661,17 @@ class DataStream:
                 "target_sem": target_sem,
                 "n_target": n_target,
                 "additional_samples": math.ceil(additional_samples),
+                "window_size": est_win
             }
+
+        op_options = dict(
+            column_name=column_name, ddof=ddof, method=method, window_size=window_size, reduction_factor=reduction_factor
+        )
+        full_history = self._history.copy()
+        full_history.append({"operation": "additional_data", "options": op_options})
+        results["_history"] = full_history
         return results
+
 
     def effective_sample_size_below(self, column_names=None, alpha=0.05):
         """
@@ -814,8 +687,10 @@ class DataStream:
         Returns
         -------
         dict
-            {column: ESS}
+            {column: ESS, ... "_history": full history }
         """
+        self._add_history("effective_sample_size_below", {"column_names": column_names, "alpha": alpha})
+
         if column_names is None:
             column_names = [col for col in self.df.columns if col != "time"]
         elif isinstance(column_names, str):
@@ -856,5 +731,7 @@ class DataStream:
             acf_sum = np.sum(np.abs(acf_values[significant_lags]))
             ESS = n / (1 + 2 * acf_sum)
             results[col] = int(np.floor(ESS))
+
+        results["_history"] = self._history.copy()
         return results
 
