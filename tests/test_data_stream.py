@@ -1,5 +1,4 @@
 import warnings
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -12,39 +11,29 @@ from quends import DataStream
 def empty_data():
     return pd.DataFrame()
 
-
 @pytest.fixture
 def simple_data():
     return pd.DataFrame({"A": [1, 2, 3]})
 
-
 @pytest.fixture
 def long_data():
-    return pd.DataFrame(
-        {
-            "time": [0, 1, 2, 3, 4],
-            "A": [1, 2, 3, 4, 5],
-            "B": [5, 4, 3, 2, 1],
-        }
-    )
-
+    return pd.DataFrame({
+        "time": [0, 1, 2, 3, 4],
+        "A": [1, 2, 3, 4, 5],
+        "B": [5, 4, 3, 2, 1],
+    })
 
 @pytest.fixture
 def stationary_data():
-    return pd.DataFrame(
-        {"time": [0, 1, 2, 3, 4], "A": [1, 1, 1, 1, 1], "B": [2, 2, 2, 2, 2]}
-    )
-
+    return pd.DataFrame({"time": [0, 1, 2, 3, 4], "A": [1, 1, 1, 1, 1], "B": [2, 2, 2, 2, 2]})
 
 @pytest.fixture
 def trim_data():
     return pd.DataFrame({"time": list(range(10)), "A": list(range(1, 11))})
 
-
 @pytest.fixture
 def nan_data():
     return pd.DataFrame({"A": [None, None, None]})
-
 
 @pytest.fixture
 def no_valid_data():
@@ -130,6 +119,7 @@ def test_confidence_interval_long(long_data):
 # === Trim ===
 # === Trim ===
 
+# === Trim ===
 def test_trim_std(trim_data):
     ds = DataStream(trim_data)
 <<<<<<< HEAD
@@ -325,6 +315,7 @@ def test_trim_invalid_method(trim_data):
     ]
 <<<<<<< HEAD
 
+<<<<<<< HEAD
 =======
     assert result is None
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
@@ -361,6 +352,8 @@ def test_trim_invalid_method(trim_data):
 =======
 
 >>>>>>> 2d15506 (update documentation with autoapi)
+=======
+>>>>>>> a76ebd1 (Add comprehensive pytest suite for DataStream with all edge cases)
 def test_trim_missing_threshold(long_data):
     ds = DataStream(long_data)
     result = ds.trim(column_name="A", method="threshold")
@@ -495,11 +488,9 @@ def test_optimal_window_size_simple(simple_data):
     ds = DataStream(simple_data)
     assert ds.optimal_window_size() == 1
 
-
 def test_optimal_window_size_long(long_data):
     ds = DataStream(long_data)
     assert ds.optimal_window_size() == 1
-
 
 # === Cumulative Statistics ===
 def test_cumulative_stats_simple(simple_data):
@@ -633,6 +624,7 @@ def assert_nested_approx(a, b, rel=1e-9):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 # === Additional Data ===
 import pytest
 
@@ -666,6 +658,8 @@ def test_cumulative_stats_empty(nan_data):
 >>>>>>> 9dc1c18 (Add comprehensive pytest suite for DataStream with all edge cases)
 =======
 =======
+>>>>>>> 216474e (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
 <<<<<<< HEAD
 >>>>>>> e02f3a6 (Add comprehensive pytest suite for DataStream with all edge cases)
@@ -673,7 +667,13 @@ def test_cumulative_stats_empty(nan_data):
 =======
 
 >>>>>>> 2d15506 (update documentation with autoapi)
+<<<<<<< HEAD
 >>>>>>> d687384 (update documentation with autoapi)
+=======
+=======
+# === Additional Data ===
+>>>>>>> a76ebd1 (Add comprehensive pytest suite for DataStream with all edge cases)
+>>>>>>> 216474e (Add comprehensive pytest suite for DataStream with all edge cases)
 def test_additional_data_simple(simple_data):
     ds = DataStream(simple_data)
     with warnings.catch_warnings():
@@ -832,6 +832,7 @@ def mock_cumulative_statistics_missing(col_name, method, window_size):
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 def mock_cumulative_statistics_missing(col_name, method, window_size):
     return {
@@ -843,6 +844,8 @@ def mock_cumulative_statistics_missing(col_name, method, window_size):
 >>>>>>> 9dc1c18 (Add comprehensive pytest suite for DataStream with all edge cases)
 
 >>>>>>> 9b8e784 (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+>>>>>>> 216474e (Add comprehensive pytest suite for DataStream with all edge cases)
 def test_additional_data_missing_cumulative(long_data):
     ds = DataStream(long_data)
     ds.cumulative_statistics = mock_cumulative_statistics_missing
@@ -905,6 +908,7 @@ def test_effective_sample_size_below_invalid_column(long_data):
 <<<<<<< HEAD
     assert result == {"C": 0}
 
+<<<<<<< HEAD
 =======
     assert result == {'C': None}
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
@@ -916,6 +920,8 @@ def test_effective_sample_size_below_invalid_column(long_data):
 
 >>>>>>> 325b440 (Add comprehensive pytest suite for DataStream with all edge cases)
 
+=======
+>>>>>>> a76ebd1 (Add comprehensive pytest suite for DataStream with all edge cases)
 def test_effective_sample_size_below_empty_column():
     empty_data = {
         "time": [0, 1, 2, 3, 4],
@@ -970,7 +976,6 @@ def test_process_column_missing_method(simple_data):
     with pytest.raises(ValueError):
         ds._process_column(column_data="A", estimated_window=1, method="invalid_method")
 
-
 # === Find Steady State Std ===
 def test_find_steady_state_std(trim_data):
     ds = DataStream(trim_data)
@@ -989,9 +994,7 @@ def test_find_steady_state_std_non_robust(trim_data):
 
 def test_find_steady_state_not_valid(no_valid_data):
     ds = DataStream(no_valid_data)
-    result = ds.find_steady_state_std(
-        data=ds.df, column_name=["time", "A"], window_size=1
-    )
+    result = ds.find_steady_state_std(data=ds.df, column_name=["time", "A"], window_size=1)
     assert result is None
 
 
@@ -1021,6 +1024,7 @@ def test_find_steady_state_trim_data(trim_data):
     )
     assert result == 2
 
+<<<<<<< HEAD
 =======
     result = ds.find_steady_state_threshold(data=ds.df, column_name="A", window_size=2, threshold=0.1)
 =======
@@ -1048,6 +1052,8 @@ def test_find_steady_state_trim_data(trim_data):
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
 
 
+=======
+>>>>>>> a76ebd1 (Add comprehensive pytest suite for DataStream with all edge cases)
 def test_find_steady_state_with_start_time(long_data):
     ds = DataStream(long_data)
     pass  #
@@ -1061,20 +1067,14 @@ def test_find_steady_state_rolling_variance_stationary(stationary_data):
     )
     assert result is None
 
-
 def test_find_steady_state_none_rolling_variance(long_data):
     ds = DataStream(long_data)
-    result = ds.find_steady_state_rolling_variance(
-        data=long_data, column_name="A", window_size=3, threshold=0.1
-    )
+    result = ds.find_steady_state_rolling_variance(data=long_data, column_name="A", window_size=3, threshold=0.1)
     assert result is None
-
 
 def test_find_steady_state_rolling_variance_not_valid(no_valid_data):
     ds = DataStream(no_valid_data)
-    result = ds.find_steady_state_rolling_variance(
-        data=ds.df, column_name="A", window_size=1
-    )
+    result = ds.find_steady_state_rolling_variance(data=ds.df, column_name="A", window_size=1)
     assert result is None
 
 
@@ -1141,7 +1141,6 @@ def test_effective_sample_size_nan(nan_data):
 >>>>>>> 2d15506 (update documentation with autoapi)
     }
     assert result == expected
-
 
 def test_effective_sample_size_simple(simple_data):
     ds = DataStream(simple_data)
