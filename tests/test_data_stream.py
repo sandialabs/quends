@@ -1,5 +1,4 @@
 import warnings
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -12,39 +11,29 @@ from quends import DataStream
 def empty_data():
     return pd.DataFrame()
 
-
 @pytest.fixture
 def simple_data():
     return pd.DataFrame({"A": [1, 2, 3]})
 
-
 @pytest.fixture
 def long_data():
-    return pd.DataFrame(
-        {
-            "time": [0, 1, 2, 3, 4],
-            "A": [1, 2, 3, 4, 5],
-            "B": [5, 4, 3, 2, 1],
-        }
-    )
-
+    return pd.DataFrame({
+        "time": [0, 1, 2, 3, 4],
+        "A": [1, 2, 3, 4, 5],
+        "B": [5, 4, 3, 2, 1],
+    })
 
 @pytest.fixture
 def stationary_data():
-    return pd.DataFrame(
-        {"time": [0, 1, 2, 3, 4], "A": [1, 1, 1, 1, 1], "B": [2, 2, 2, 2, 2]}
-    )
-
+    return pd.DataFrame({"time": [0, 1, 2, 3, 4], "A": [1, 1, 1, 1, 1], "B": [2, 2, 2, 2, 2]})
 
 @pytest.fixture
 def trim_data():
     return pd.DataFrame({"time": list(range(10)), "A": list(range(1, 11))})
 
-
 @pytest.fixture
 def nan_data():
     return pd.DataFrame({"A": [None, None, None]})
-
 
 @pytest.fixture
 def no_valid_data():
@@ -119,6 +108,7 @@ def test_confidence_interval_long(long_data):
 # === Trim ===
 # === Trim ===
 
+# === Trim ===
 def test_trim_std(trim_data):
     ds = DataStream(trim_data)
     result = ds.trim(column_name="A", batch_size=1, method="std", start_time=3.0, threshold=4)
@@ -197,7 +187,6 @@ def test_trim_invalid_method(trim_data):
             'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
         }}
     ]
-
 
 def test_trim_missing_threshold(long_data):
     ds = DataStream(long_data)
@@ -295,11 +284,9 @@ def test_optimal_window_size_simple(simple_data):
     ds = DataStream(simple_data)
     assert ds.optimal_window_size() == 1
 
-
 def test_optimal_window_size_long(long_data):
     ds = DataStream(long_data)
     assert ds.optimal_window_size() == 1
-
 
 # === Cumulative Statistics ===
 def test_cumulative_stats_simple(simple_data):
@@ -421,6 +408,7 @@ def assert_nested_approx(a, b, rel=1e-9):
         assert a == b
 
 
+# === Additional Data ===
 def test_additional_data_simple(simple_data):
     ds = DataStream(simple_data)
     with warnings.catch_warnings():
@@ -498,7 +486,6 @@ def test_additional_data_long(long_data):
 def mock_cumulative_statistics_missing(col_name, method, window_size):
     return {"A": {"cumulative_uncertainty": [0.5, 0.4, 0.3]}, "B": {}}
 
-
 def test_additional_data_missing_cumulative(long_data):
     ds = DataStream(long_data)
     ds.cumulative_statistics = mock_cumulative_statistics_missing
@@ -536,7 +523,6 @@ def test_effective_sample_size_below_invalid_column(long_data):
     ds = DataStream(long_data)
     result = ds.effective_sample_size_below(column_names="C")
     assert result == {"C": 0}
-
 
 def test_effective_sample_size_below_empty_column():
     empty_data = {
@@ -579,7 +565,6 @@ def test_process_column_missing_method(simple_data):
     with pytest.raises(ValueError):
         ds._process_column(column_data="A", estimated_window=1, method="invalid_method")
 
-
 # === Find Steady State Std ===
 def test_find_steady_state_std(trim_data):
     ds = DataStream(trim_data)
@@ -598,9 +583,7 @@ def test_find_steady_state_std_non_robust(trim_data):
 
 def test_find_steady_state_not_valid(no_valid_data):
     ds = DataStream(no_valid_data)
-    result = ds.find_steady_state_std(
-        data=ds.df, column_name=["time", "A"], window_size=1
-    )
+    result = ds.find_steady_state_std(data=ds.df, column_name=["time", "A"], window_size=1)
     assert result is None
 
 
@@ -628,7 +611,6 @@ def test_find_steady_state_trim_data(trim_data):
     )
     assert result == 2
 
-
 def test_find_steady_state_with_start_time(long_data):
     ds = DataStream(long_data)
     pass  #
@@ -642,20 +624,14 @@ def test_find_steady_state_rolling_variance_stationary(stationary_data):
     )
     assert result is None
 
-
 def test_find_steady_state_none_rolling_variance(long_data):
     ds = DataStream(long_data)
-    result = ds.find_steady_state_rolling_variance(
-        data=long_data, column_name="A", window_size=3, threshold=0.1
-    )
+    result = ds.find_steady_state_rolling_variance(data=long_data, column_name="A", window_size=3, threshold=0.1)
     assert result is None
-
 
 def test_find_steady_state_rolling_variance_not_valid(no_valid_data):
     ds = DataStream(no_valid_data)
-    result = ds.find_steady_state_rolling_variance(
-        data=ds.df, column_name="A", window_size=1
-    )
+    result = ds.find_steady_state_rolling_variance(data=ds.df, column_name="A", window_size=1)
     assert result is None
 
 
@@ -692,7 +668,6 @@ def test_effective_sample_size_nan(nan_data):
         ],
     }
     assert result == expected
-
 
 def test_effective_sample_size_simple(simple_data):
     ds = DataStream(simple_data)
