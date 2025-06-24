@@ -1,13 +1,3 @@
-"""
-data_stream.py
-
-Enhanced DataStream for robust scientific reproducibility.
-
-- Tracks all options and arguments for every operation (trim, statistics, etc.).
-- Each result dict includes full lineage of all processing steps and their options.
-- Always auto-skips to first nonzero entry before steady-state detection in trim.
-"""
-
 import math
 import numpy as np
 import pandas as pd
@@ -79,7 +69,6 @@ def to_native_types(obj):
         return obj.item()
     else:
         return obj
-
 
 class DataStream:
     """
@@ -281,7 +270,10 @@ class DataStream:
                 self.df["time"] >= steady_state_start_time, ["time", column_name]
             ].reset_index(drop=True)
             new_history.append({"operation": "trim", "options": options})
-            return DataStream(trimmed_df, _history=new_history)
+            return {
+                "results": DataStream(trimmed_df, _history=new_history),
+                "metadata": deduplicate_history(new_history)
+            }
         else:
             options["message"] = (
                 f"Steady-state start time could not be determined for column '{column_name}'."
@@ -773,10 +765,8 @@ class DataStream:
             if len(valid_count) < 2:
                 results[col] = {"error": "Not enough valid data points for fitting."}
                 continue
-
             def power_law_model(n, A, p):
                 return A / (n**p)
-
             popt, _ = curve_fit(power_law_model, valid_count, valid_sem, p0=[1.0, 0.5])
             A_est, p_est = popt
             p_est = abs(p_est)
