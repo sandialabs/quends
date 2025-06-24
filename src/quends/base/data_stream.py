@@ -961,7 +961,6 @@ class DataStream:
         # Just return a default for now (since the real logic is probably more complex)
         return 1
 
-
     def effective_sample_size_below(self, column_names=None, alpha=0.05):
         """
         Stub for compatibility with legacy test. Returns dummy value.
