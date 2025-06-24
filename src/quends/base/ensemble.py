@@ -1,72 +1,39 @@
 import numpy as np
 import pandas as pd
-import numpy as np
-import pandas as pd
-from typing import List   # <--- Add this line
+from typing import List, Dict, Any
 
 from quends.base.data_stream import DataStream
-...
-
-
-from quends.base.data_stream import DataStream
-
 
 class Ensemble:
     """
-    Represents an ensemble of DataStream objects.
-
-    Attributes:
-        data_streams (list): List of DataStream instances.
+    Represents an ensemble of DataStream objects with full reproducibility and
+    flexible ensemble statistics: mean, mean uncertainty, confidence interval,
+    classic and robust ESS, with full metadata propagation.
     """
-
-    def __init__(self, data_streams):
-        # Validate input type and content.
-        if not isinstance(data_streams, list):
-            raise ValueError("data_streams must be a list of DataStream objects.")
-        if not data_streams:
-            raise ValueError("The list of data streams is empty.")
+    def __init__(self, data_streams: List[DataStream]):
+        if not isinstance(data_streams, list) or not data_streams:
+            raise ValueError("Provide a non-empty list of DataStream objects.")
         if not all(isinstance(ds, DataStream) for ds in data_streams):
-            raise ValueError("Each ensemble member must be a DataStream instance.")
+            raise ValueError("All ensemble members must be DataStream instances.")
         self.data_streams = data_streams
 
     def __len__(self):
-        """Return the number of ensemble members."""
         return len(self.data_streams)
 
     def head(self, n=5):
-        """
-        Return the first n rows of each ensemble member.
-
-        Returns:
-            dict: Keys are member indices; values are DataFrame heads.
-        """
         return {i: ds.head(n) for i, ds in enumerate(self.data_streams)}
 
     def get_member(self, index):
-        """Return a specific ensemble member by index."""
         return self.data_streams[index]
 
     def members(self):
-        """Return the list of all ensemble members."""
         return self.data_streams
 
     def common_variables(self):
-        """
-        Return a sorted list of variable names common to all members (excluding 'time').
-        """
-        # Create a list of sets (each member's columns except 'time')
         all_cols = [set(ds.df.columns) - {"time"} for ds in self.data_streams]
-        # Return the sorted intersection if available
         return sorted(list(set.intersection(*all_cols))) if all_cols else []
 
     def summary(self):
-        """
-        Print and return a summary of the ensemble: number of members, common variables,
-        and a brief summary (number of samples, columns, head) for each member.
-
-        Returns:
-            dict: Overall summary dictionary.
-        """
         summary_dict = {
             f"Member {i}": {
                 "n_samples": len(ds.df),
@@ -91,707 +58,53 @@ class Ensemble:
             print(pd.DataFrame(info["head"]))
         return overall_summary
 
-    def trim(
-        self,
-        column_name,
-        window_size=10,
-        start_time=0.0,
-        method="std",
-        threshold=None,
-        robust=True,
-    ):
-        """
-        Trim each ensemble member by calling its trim() method.
-        Only members that return a non-None trimmed DataStream are kept.
+    # ---------------- Core Internal Statistical Methods ----------------
+    def _mean(self, ds: DataStream, column_name=None, method="non-overlapping", window_size=None):
+        return ds._mean(column_name, method=method, window_size=window_size)
 
-        Args:
-            column_name (str or list): Column(s) to trim.
-            window_size (int): Window size for analysis.
-            start_time (float): Start time threshold.
-            method (str): Method to detect steady state ("std", "threshold", or "rolling_variance").
-            threshold (float): Threshold for detection (if required).
-            robust (bool): Use robust statistics if True.
+    def _mean_uncertainty(self, ds: DataStream, column_name=None, ddof=1, method="non-overlapping", window_size=None):
+        return ds._mean_uncertainty(column_name, ddof=ddof, method=method, window_size=window_size)
 
-        Returns:
-            Ensemble: A new Ensemble with trimmed members (or None if none succeed).
-        """
-        trimmed = [
-            ds.trim(
-                column_name,
-                window_size=window_size,
-                start_time=start_time,
-                method=method,
-                threshold=threshold,
-                robust=robust,
-            )
-            for ds in self.data_streams
-        ]
-        trimmed_members = [t for t in trimmed if t is not None]
-        if not trimmed_members:
-            print(
-                "None of the ensemble members could be trimmed with the specified parameters."
-            )
-            return None
-        return Ensemble(trimmed_members)
+    def _confidence_interval(self, ds: DataStream, column_name=None, ddof=1, method="non-overlapping", window_size=None):
+        return ds._confidence_interval(column_name, ddof=ddof, method=method, window_size=window_size)
 
-    def is_stationary(self, columns):
-        """
-        Check stationarity of the specified columns in each ensemble member.
+    def _classic_ess(self, ds: DataStream, column_names=None, alpha=0.05):
+        return ds.effective_sample_size(column_names, alpha)
 
-        Args:
-            columns (str or list): Column(s) to test.
+    def _robust_ess(self, ds: DataStream, column_names=None, **kwargs):
+        return ds.ess_robust(column_names, **kwargs)
 
-        Returns:
-            dict: Keys are member indices, values are test results.
-        """
-        return {
-            f"Member {i}": ds.is_stationary(columns)
-            for i, ds in enumerate(self.data_streams)
+    # --------- Utility: Average-ensemble DataStream (Technique 0) ---------
+    def compute_average_ensemble(self, members: List[DataStream] = None):
+        data_streams = members if members is not None else self.data_streams
+        data_frames: Dict[str, pd.DataFrame] = {
+            f"Member {i}": ds.df for i, ds in enumerate(data_streams)
         }
-
-    def effective_sample_size(self, column_names=None, alpha=0.05):
-        """
-        Compute the effective sample size (ESS) for specified columns in each member.
-
-        Args:
-            column_names (str or list): Columns to analyze. Defaults to all except 'time'.
-            max_plot_lags (int): Maximum lags for ACF.
-            alpha (float): Significance level.
-
-        Returns:
-            dict: ESS results per member.
-        """
-        return {
-            f"Member {i}": ds.effective_sample_size(column_names, alpha)
-            for i, ds in enumerate(self.data_streams)
+        if not data_frames:
+            raise ValueError("No data streams provided for ensemble averaging.")
+        shortest_df = min(data_frames.values(), key=lambda df: len(df))
+        short_times = shortest_df['time'].values
+        resampled = {
+            name: self.resample_to_short_intervals(shortest_df, df)
+            for name, df in data_frames.items()
         }
+        ensemble_avg = shortest_df[['time']].copy().reset_index(drop=True)
+        for col in shortest_df.columns:
+            if col == 'time':
+                continue
+            arrays = [df[col].to_numpy() for df in resampled.values()]
+            ensemble_avg[col] = np.mean(arrays, axis=0)
+        return DataStream(ensemble_avg)
 
-    # ---------------- Ensemble Statistical Methods ----------------
-    # Technique 0: Process each member individually.
-    # Technique 1: Aggregate raw data across members and return both aggregated & individual.
-    # Technique 2: Aggregate individual member statistics using weighted formulas.
-
-    def mean(
-        self, column_name=None, method="non-overlapping", window_size=None, technique=0
-    ):
-        """
-        Compute the mean for the ensemble.
-
-        Technique 0: Returns individual member means.
-        Technique 1: Aggregates raw data from members, then computes mean.
-        Technique 2: Computes a weighted mean using each member's processed data length as weight.
-
-        Returns:
-            dict: Dictionary with "Individual Members" and "Member Ensemble" keys.
-        """
-        if technique == 0:
-            return {
-                f"Member {i}": ds.mean(
-                    column_name, method=method, window_size=window_size
-                )
-                for i, ds in enumerate(self.data_streams)
-            }
-        elif technique == 1:
-            individual = {
-                f"Member {i}": ds.mean(
-                    column_name, method=method, window_size=window_size
-                )
-                for i, ds in enumerate(self.data_streams)
-            }
-            cols = (
-                [column_name]
-                if isinstance(column_name, str)
-                else self.common_variables() if column_name is None else column_name
-            )
-            aggregated = {
-                col: pd.concat(
-                    [
-                        ds.df[col]
-                        for ds in self.data_streams
-                        if col in ds.df.columns and not ds.df[col].empty
-                    ],
-                    axis=0,
-                    ignore_index=True,
-                )
-                for col in cols
-            }
-            if aggregated:
-                agg_df = pd.concat(aggregated, axis=1)
-                ds_agg = DataStream(agg_df)
-                agg_result = ds_agg.mean(
-                    list(agg_df.columns), method=method, window_size=window_size
-                )
-            else:
-                agg_result = {}
-            return {"Member Ensemble": agg_result, "Individual Members": individual}
-        elif technique == 2:
-            # Technique 2: Weighted average of individual member means.
-            member_means = {}
-            member_weights = {}
-            for i, ds in enumerate(self.data_streams):
-                key = f"Member {i}"
-                res = ds.mean(column_name, method=method, window_size=window_size)
-                member_means[key] = res
-                member_weights[key] = {}
-                # Determine columns for weighting.
-                if column_name is None:
-                    cols = ds.df.columns.drop("time")
-                elif isinstance(column_name, str):
-                    cols = [column_name]
-                else:
-                    cols = column_name
-                for col in cols:
-                    if col in ds.df.columns:
-                        col_data = ds.df[col].dropna()
-                        if col_data.empty:
-                            member_weights[key][col] = 0
-                        else:
-                            est_win = ds._estimate_window(col, col_data, window_size)
-                            processed = ds._process_column(col_data, est_win, method)
-                            member_weights[key][col] = len(processed)
-            if column_name is None:
-                agg_cols = self.common_variables()
-            elif isinstance(column_name, str):
-                agg_cols = [column_name]
-            else:
-                agg_cols = column_name
-            ensemble_mean = {}
-            for col in agg_cols:
-                values, weights = [], []
-                for i in range(len(self.data_streams)):
-                    key = f"Member {i}"
-                    if key in member_means and col in member_means[key]:
-                        values.append(member_means[key][col]["mean"])
-                        weights.append(member_weights.get(key, {}).get(col, 0))
-                if values and np.sum(weights) > 0:
-                    ensemble_mean[col] = np.sum(
-                        np.array(weights) * np.array(values)
-                    ) / np.sum(weights)
-            return {
-                "Individual Members": member_means,
-                "Member Ensemble": ensemble_mean,
-            }
-
-    def mean_uncertainty(
-        self,
-        column_name=None,
-        ddof=1,
-        method="non-overlapping",
-        window_size=None,
-        technique=0,
-    ):
-        """
-        Compute the mean uncertainty for the ensemble.
-
-        Technique 0: Returns individual member uncertainties.
-
-        Technique 1: Aggregates raw data and computes uncertainty on the concatenated Series.
-
-        Technique 2: Computes a weighted aggregation using:
-            - For each member, the weight is the number of processed data points.
-            - The ensemble uncertainty is computed as: SEM = sqrt(Σ nᵢ (uᵢ² + (μᵢ - μ_w)²) / Σ nᵢ) / sqrt(Σ nᵢ).
-            - The weighted average uncertainty is also returned.
-
-        Returns:
-            dict: A dictionary containing:
-                - "Individual Members": Individual member uncertainties.
-                - "Member Ensemble": A dictionary with column names as keys and their uncertainties as values, structured as:
-                                    {col: {"mean_uncertainty": SEM, "mean_uncertainty_average": weighted_avg}}.
-        """
-        if technique == 0:
-            return {
-                f"Member {i}": ds.mean_uncertainty(
-                    column_name, ddof=ddof, method=method, window_size=window_size
-                )
-                for i, ds in enumerate(self.data_streams)
-            }
-        elif technique == 1:
-            individual = {
-                f"Member {i}": ds.mean_uncertainty(
-                    column_name, ddof=ddof, method=method, window_size=window_size
-                )
-                for i, ds in enumerate(self.data_streams)
-            }
-            cols = (
-                [column_name]
-                if isinstance(column_name, str)
-                else self.common_variables() if column_name is None else column_name
-            )
-            aggregated = {
-                col: pd.concat(
-                    [
-                        ds.df[col]
-                        for ds in self.data_streams
-                        if col in ds.df.columns and not ds.df[col].empty
-                    ],
-                    axis=0,
-                    ignore_index=True,
-                )
-                for col in cols
-            }
-            if aggregated:
-                agg_df = pd.concat(aggregated, axis=1)
-                ds_agg = DataStream(agg_df)
-                agg_result = ds_agg.mean_uncertainty(
-                    list(agg_df.columns),
-                    ddof=ddof,
-                    method=method,
-                    window_size=window_size,
-                )
-            else:
-                agg_result = {}
-            # Compute arithmetic average of individual uncertainties.
-            member_unc_vals = {}
-            for col in cols:
-                vals = [
-                    individual[f"Member {i}"][col]["mean uncertainty"]
-                    for i in range(len(self.data_streams))
-                    if col in individual[f"Member {i}"]
-                ]
-                if vals:
-                    member_unc_vals[col] = np.mean(vals)
-            return {
-                "Member Ensemble": {
-                    "mean_uncertainty": agg_result,
-                    "mean_uncertainty_average": member_unc_vals,
-                },
-                "Individual Members": individual,
-            }
-        elif technique == 2:
-            # Technique 2: Weighted aggregation for mean uncertainty.
-            member_unc = {}
-            member_means = {}
-            member_weights = {}
-            for i, ds in enumerate(self.data_streams):
-                key = f"Member {i}"
-                res_mean = ds.mean(column_name, method=method, window_size=window_size)
-                res_unc = ds.mean_uncertainty(
-                    column_name, ddof=ddof, method=method, window_size=window_size
-                )
-                member_means[key] = res_mean
-                member_unc[key] = res_unc
-                member_weights[key] = {}
-                if column_name is None:
-                    cols = ds.df.columns.drop("time")
-                elif isinstance(column_name, str):
-                    cols = [column_name]
-                else:
-                    cols = column_name
-                for col in cols:
-                    if col in ds.df.columns:
-                        col_data = ds.df[col].dropna()
-                        if col_data.empty:
-                            member_weights[key][col] = 0
-                        else:
-                            est_win = ds._estimate_window(col, col_data, window_size)
-                            processed = ds._process_column(col_data, est_win, method)
-                            member_weights[key][col] = len(processed)
-            if column_name is None:
-                agg_cols = self.common_variables()
-            elif isinstance(column_name, str):
-                agg_cols = [column_name]
-            else:
-                agg_cols = column_name
-            ensemble_unc = {}
-            for col in agg_cols:
-                # For weighted aggregation, we need individual member means and uncertainties.
-                mu_vals, u_vals, weights = [], [], []
-                for i in range(len(self.data_streams)):
-                    key = f"Member {i}"
-                    if (
-                        key in member_means
-                        and col in member_means[key]
-                        and key in member_unc
-                        and col in member_unc[key]
-                    ):
-                        mu_vals.append(member_means[key][col]["mean"])
-                        u_vals.append(member_unc[key][col]["mean uncertainty"])
-                        weights.append(member_weights.get(key, {}).get(col, 0))
-                if mu_vals and np.sum(weights) > 0:
-                    weights = np.array(weights)
-                    mu_vals = np.array(mu_vals)
-                    u_vals = np.array(u_vals)
-                    # Weighted average of member means.
-                    weighted_mu = np.sum(weights * mu_vals) / np.sum(weights)
-                    # Weighted average of member uncertainties.
-                    weighted_avg_unc = np.sum(weights * u_vals) / np.sum(weights)
-                    # Weighted variance: sum_i [w_i * (u_i^2 + (mu_i - weighted_mu)^2)] / sum_i(w_i)
-                    weighted_var = np.sum(
-                        weights * (u_vals**2 + (mu_vals - weighted_mu) ** 2)
-                    ) / np.sum(weights)
-                    # Ensemble uncertainty defined as the SEM of the individual uncertainties:
-                    ensemble_sem = np.sqrt(weighted_var) / np.sqrt(np.sum(weights))
-                    ensemble_unc[col] = {
-                        "mean_uncertainty": ensemble_sem,
-                        "mean_uncertainty_average": weighted_avg_unc,
-                    }
-            return {"Individual Members": member_unc, "Member Ensemble": ensemble_unc}
-
-    def confidence_interval(
-        self,
-        column_name=None,
-        ddof=1,
-        method="non-overlapping",
-        window_size=None,
-        technique=0,
-    ):
-        """
-        Compute confidence intervals for the ensemble.
-
-        Technique 0: Returns individual members' CIs.
-
-        Technique 1: Aggregates raw data then computes CI.
-
-        Technique 2: Computes weighted ensemble mean and uncertainty and then derives CI as:
-                   CI = (weighted_mean - 1.96*weighted_uncertainty, weighted_mean + 1.96*weighted_uncertainty)
-
-        Returns:
-            dict: A dictionary containing:
-            - "Individual Members": Confidence intervals for individual members.
-            - "Member Ensemble": Confidence interval for the ensemble.
-        """
-        if technique == 0:
-            results = {}
-            for i, ds in enumerate(self.data_streams):
-                m_res = ds.mean(column_name, method=method, window_size=window_size)
-                u_res = ds.mean_uncertainty(
-                    column_name, ddof=ddof, method=method, window_size=window_size
-                )
-                ci = {
-                    col: (
-                        m_res[col]["mean"] - 1.96 * u_res[col]["mean uncertainty"],
-                        m_res[col]["mean"] + 1.96 * u_res[col]["mean uncertainty"],
-                    )
-                    for col in ds._get_columns(column_name)
-                    if col in m_res and col in u_res
-                }
-                results[f"Member {i}"] = ci
-            return results
-        elif technique == 1:
-            individual = {}
-            for i, ds in enumerate(self.data_streams):
-                m_res = ds.mean(column_name, method=method, window_size=window_size)
-                u_res = ds.mean_uncertainty(
-                    column_name, ddof=ddof, method=method, window_size=window_size
-                )
-                ci = {
-                    col: (
-                        m_res[col]["mean"] - 1.96 * u_res[col]["mean uncertainty"],
-                        m_res[col]["mean"] + 1.96 * u_res[col]["mean uncertainty"],
-                    )
-                    for col in ds._get_columns(column_name)
-                    if col in m_res and col in u_res
-                }
-                individual[f"Member {i}"] = ci
-            cols = (
-                [column_name]
-                if isinstance(column_name, str)
-                else self.common_variables() if column_name is None else column_name
-            )
-            aggregated = {
-                col: pd.concat(
-                    [
-                        ds.df[col]
-                        for ds in self.data_streams
-                        if col in ds.df.columns and not ds.df[col].empty
-                    ],
-                    axis=0,
-                    ignore_index=True,
-                )
-                for col in cols
-            }
-            if aggregated:
-                agg_df = pd.concat(aggregated, axis=1)
-                ds_agg = DataStream(agg_df)
-                m_agg = ds_agg.mean(
-                    list(agg_df.columns), method=method, window_size=window_size
-                )
-                u_agg = ds_agg.mean_uncertainty(
-                    list(agg_df.columns),
-                    ddof=ddof,
-                    method=method,
-                    window_size=window_size,
-                )
-                ci_agg = {
-                    col: (
-                        m_agg[col]["mean"] - 1.96 * u_agg[col]["mean uncertainty"],
-                        m_agg[col]["mean"] + 1.96 * u_agg[col]["mean uncertainty"],
-                    )
-                    for col in agg_df.columns
-                    if col in m_agg and col in u_agg
-                }
-            else:
-                ci_agg = {}
-            return {"Member Ensemble": ci_agg, "Individual Members": individual}
-        elif technique == 2:
-            # Technique 2: Weighted aggregation of individual members' CIs.
-            individual = {}
-            member_cis = {}
-            for i, ds in enumerate(self.data_streams):
-                m_res = ds.mean(column_name, method=method, window_size=window_size)
-                u_res = ds.mean_uncertainty(
-                    column_name, ddof=ddof, method=method, window_size=window_size
-                )
-                ci = {
-                    col: (
-                        m_res[col]["mean"] - 1.96 * u_res[col]["mean uncertainty"],
-                        m_res[col]["mean"] + 1.96 * u_res[col]["mean uncertainty"],
-                    )
-                    for col in ds._get_columns(column_name)
-                    if col in m_res and col in u_res
-                }
-                individual[f"Member {i}"] = ci
-                member_cis[f"Member {i}"] = ci
-            cols = (
-                [column_name]
-                if isinstance(column_name, str)
-                else self.common_variables() if column_name is None else column_name
-            )
-            # Use weighted mean and weighted uncertainty from technique 2.
-            ensemble_mean = self.mean(
-                column_name, method=method, window_size=window_size, technique=2
-            )["Member Ensemble"]
-            ensemble_unc = self.mean_uncertainty(
-                column_name,
-                ddof=ddof,
-                method=method,
-                window_size=window_size,
-                technique=2,
-            )["Member Ensemble"]
-            ensemble_ci = {}
-            for col in cols:
-                if col in ensemble_mean and col in ensemble_unc:
-                    m = ensemble_mean[col]
-                    u = ensemble_unc[col]["mean_uncertainty"]
-                    ensemble_ci[col] = (m - 1.96 * u, m + 1.96 * u)
-            return {"Individual Members": member_cis, "Member Ensemble": ensemble_ci}
-
-    def compute_statistics(
-        self,
-        column_name=None,
-        ddof=1,
-        method="non-overlapping",
-        window_size=None,
-        technique=0,
-    ):
-        """
-        Compute statistics (mean, mean uncertainty, confidence interval, and ±1 std) for each member,
-        then aggregate them for the ensemble.
-
-        Technique 0: Process each member individually.
-        Technique 1: Aggregate raw data then compute statistics.
-        Technique 2: Compute individual member statistics and aggregate using weighted formulas.
-
-        Returns:
-            dict: {"Individual Members": {...}, "Member Ensemble": {...}}
-        """
-        if technique == 0:
-            results = {}
-            for i, ds in enumerate(self.data_streams):
-                m_res = ds.mean(column_name, method=method, window_size=window_size)
-                u_res = ds.mean_uncertainty(
-                    column_name, ddof=ddof, method=method, window_size=window_size
-                )
-                ci_res = ds.confidence_interval(
-                    column_name, ddof=ddof, method=method, window_size=window_size
-                )
-                stats = {
-                    col: {
-                        "mean": m_res[col]["mean"],
-                        "mean_uncertainty": u_res[col]["mean uncertainty"],
-                        "confidence_interval": ci_res[col]["confidence interval"],
-                        "pm_std": (
-                            m_res[col]["mean"] - u_res[col]["mean uncertainty"],
-                            m_res[col]["mean"] + u_res[col]["mean uncertainty"],
-                        ),
-                    }
-                    for col in ds._get_columns(column_name)
-                    if col in m_res and col in u_res and col in ci_res
-                }
-                results[f"Member {i}"] = stats
-            return results
-        elif technique == 1:
-            individual = {}
-            for i, ds in enumerate(self.data_streams):
-                m_res = ds.mean(column_name, method=method, window_size=window_size)
-                u_res = ds.mean_uncertainty(
-                    column_name, ddof=ddof, method=method, window_size=window_size
-                )
-                ci_res = ds.confidence_interval(
-                    column_name, ddof=ddof, method=method, window_size=window_size
-                )
-                stats = {
-                    col: {
-                        "mean": m_res[col]["mean"],
-                        "mean_uncertainty": u_res[col]["mean uncertainty"],
-                        "confidence_interval": ci_res[col]["confidence interval"],
-                        "pm_std": (
-                            m_res[col]["mean"] - u_res[col]["mean uncertainty"],
-                            m_res[col]["mean"] + u_res[col]["mean uncertainty"],
-                        ),
-                    }
-                    for col in ds._get_columns(column_name)
-                    if col in m_res and col in u_res and col in ci_res
-                }
-                individual[f"Member {i}"] = stats
-            cols = (
-                [column_name]
-                if isinstance(column_name, str)
-                else self.common_variables() if column_name is None else column_name
-            )
-            aggregated = {
-                col: pd.concat(
-                    [
-                        ds.df[col]
-                        for ds in self.data_streams
-                        if col in ds.df.columns and not ds.df[col].empty
-                    ],
-                    axis=0,
-                    ignore_index=True,
-                )
-                for col in cols
-            }
-            if aggregated:
-                agg_df = pd.concat(aggregated, axis=1)
-                ds_agg = DataStream(agg_df)
-                m_agg = ds_agg.mean(
-                    list(agg_df.columns), method=method, window_size=window_size
-                )
-                u_agg = ds_agg.mean_uncertainty(
-                    list(agg_df.columns),
-                    ddof=ddof,
-                    method=method,
-                    window_size=window_size,
-                )
-                ci_agg = ds_agg.confidence_interval(
-                    list(agg_df.columns),
-                    ddof=ddof,
-                    method=method,
-                    window_size=window_size,
-                )
-                agg_result = {
-                    col: {
-                        "mean": m_agg[col]["mean"],
-                        "mean_uncertainty": u_agg[col]["mean uncertainty"],
-                        "confidence_interval": ci_agg[col]["confidence interval"],
-                        "pm_std": (
-                            m_agg[col]["mean"] - u_agg[col]["mean uncertainty"],
-                            m_agg[col]["mean"] + u_agg[col]["mean uncertainty"],
-                        ),
-                    }
-                    for col in agg_df.columns
-                    if col in m_agg and col in u_agg and col in ci_agg
-                }
-            else:
-                agg_result = {}
-            return {"Member Ensemble": agg_result, "Individual Members": individual}
-        elif technique == 2:
-            # Technique 2: Compute individual member statistics and then aggregate them using weighted formulas.
-            member_stats = {}
-            for i, ds in enumerate(self.data_streams):
-                m_res = ds.mean(column_name, method=method, window_size=window_size)
-                u_res = ds.mean_uncertainty(
-                    column_name, ddof=ddof, method=method, window_size=window_size
-                )
-                ci_res = ds.confidence_interval(
-                    column_name, ddof=ddof, method=method, window_size=window_size
-                )
-                stats = {
-                    col: {
-                        "mean": m_res[col]["mean"],
-                        "mean_uncertainty": u_res[col]["mean uncertainty"],
-                        "confidence_interval": ci_res[col]["confidence interval"],
-                        "pm_std": (
-                            m_res[col]["mean"] - u_res[col]["mean uncertainty"],
-                            m_res[col]["mean"] + u_res[col]["mean uncertainty"],
-                        ),
-                    }
-                    for col in ds._get_columns(column_name)
-                    if col in m_res and col in u_res and col in ci_res
-                }
-                member_stats[f"Member {i}"] = stats
-
-            cols = (
-                [column_name]
-                if isinstance(column_name, str)
-                else self.common_variables() if column_name is None else column_name
-            )
-            # For each column, aggregate the statistics using weighted formulas.
-            ensemble_stats = {}
-            for col in cols:
-                means = []
-                uncs = []
-                lowers = []
-                uppers = []
-                weights = []
-                for i in range(len(self.data_streams)):
-                    key = f"Member {i}"
-                    if key in member_stats and col in member_stats[key]:
-                        m_i = member_stats[key][col]["mean"]
-                        u_i = member_stats[key][col]["mean_uncertainty"]
-                        # Weight based on processed data length.
-                        col_data = (
-                            self.data_streams[i].df[col].dropna()
-                            if col in self.data_streams[i].df.columns
-                            else pd.Series()
-                        )
-                        w_i = 0
-                        if not col_data.empty:
-                            est_win = self.data_streams[i]._estimate_window(
-                                col, col_data, window_size
-                            )
-                            processed = self.data_streams[i]._process_column(
-                                col_data, est_win, method
-                            )
-                            w_i = len(processed)
-                        if w_i > 0:
-                            means.append(m_i)
-                            uncs.append(u_i)
-                            weights.append(w_i)
-                            lowers.append(
-                                member_stats[key][col]["confidence_interval"][0]
-                            )
-                            uppers.append(
-                                member_stats[key][col]["confidence_interval"][1]
-                            )
-                if means and np.sum(weights) > 0:
-                    weights = np.array(weights)
-                    means = np.array(means)
-                    uncs = np.array(uncs)
-                    weighted_mean = np.sum(weights * means) / np.sum(weights)
-                    # Weighted variance: sum_i[w_i * (u_i^2 + (m_i - weighted_mean)^2)] / sum_i[w_i]
-                    weighted_var = np.sum(
-                        weights * (uncs**2 + (means - weighted_mean) ** 2)
-                    ) / np.sum(weights)
-                    ensemble_unc = np.sqrt(weighted_var) / np.sqrt(np.sum(weights))
-                    ensemble_stats[col] = {
-                        "mean": weighted_mean,
-                        "mean_uncertainty": ensemble_unc,
-                        "mean_uncertainty_average": np.sum(weights * uncs)
-                        / np.sum(weights),
-                        "confidence_interval": (np.mean(lowers), np.mean(uppers)),
-                        "pm_std": (
-                            weighted_mean - ensemble_unc,
-                            weighted_mean + ensemble_unc,
-                        ),
-                    }
-            return {
-                "Individual Members": member_stats,
-                "Member Ensemble": ensemble_stats,
-            }
-
-    def resample_to_short_intervals(self,
-                                    short_df: pd.DataFrame,
-                                    long_df: pd.DataFrame):
+    def resample_to_short_intervals(self, short_df: pd.DataFrame, long_df: pd.DataFrame):
         short_times = short_df['time'].values
-        long_times  = long_df['time'].values
-        indices     = np.searchsorted(long_times, short_times)
-
+        long_times = long_df['time'].values
+        indices = np.searchsorted(long_times, short_times)
         out = pd.DataFrame({'time': short_times.copy()})
         for col in long_df.columns:
             if col == 'time':
                 continue
-            vals  = long_df[col].values
+            vals = long_df[col].values
             means = []
             for start, end in zip(indices[:-1], indices[1:]):
                 seg = vals[start:end]
@@ -801,42 +114,228 @@ class Ensemble:
             out[col] = means
         return out
 
-    def compute_average_ensemble(
-        self,
-        members: List[DataStream] = None
-    ):
-        """
-        Align each member’s DataFrame to the shortest time grid
-        and compute the pointwise ensemble mean.
-        """
-        # use passed-in list or the one stored on self
-        data_streams = members if members is not None else self.data_streams
+    # --------- Metadata Utility ---------
+    @staticmethod
+    def collect_histories(ds_list: List[DataStream]):
+        return [getattr(ds, "_history", []) for ds in ds_list]
 
-        # build a dict of raw DataFrames
-        data_frames: Dict[str, pd.DataFrame] = {
-            f"Member {i}": ds.df
-            for i, ds in enumerate(data_streams)
-        }
+    # --------- Ensemble Statistical Methods (with Metadata) ---------
+    def mean(self, column_name=None, method="non-overlapping", window_size=None, technique=0):
+        metadata = {}
+        if technique == 0:
+            avg_ds = self.compute_average_ensemble()
+            result = self._mean(avg_ds, column_name, method, window_size)
+            metadata["average_ensemble"] = getattr(avg_ds, "_history", [])
+        elif technique == 1:
+            # Aggregate all data
+            cols = (
+                [column_name] if isinstance(column_name, str)
+                else self.common_variables() if column_name is None else column_name
+            )
+            aggregated = {
+                col: pd.concat([ds.df[col] for ds in self.data_streams
+                                if col in ds.df.columns and not ds.df[col].empty], axis=0, ignore_index=True)
+                for col in cols
+            }
+            if aggregated:
+                agg_df = pd.concat(aggregated, axis=1)
+                ds_agg = DataStream(agg_df)
+                result = self._mean(ds_agg, list(agg_df.columns), method, window_size)
+                metadata["aggregated"] = getattr(ds_agg, "_history", [])
+            else:
+                result = {}
+                metadata["aggregated"] = []
+        elif technique == 2:
+            # Weighted mean of per-member
+            member_means = []
+            weights = []
+            col_list = [column_name] if isinstance(column_name, str) else self.common_variables()
+            for ds in self.data_streams:
+                stat = self._mean(ds, column_name, method, window_size)
+                for col in col_list:
+                    if col in stat:
+                        val = stat[col]["mean"]
+                        n = len(ds.df)  # or use processed count
+                        member_means.append(val)
+                        weights.append(n)
+            weights = np.array(weights)
+            vals = np.array(member_means)
+            if weights.sum() > 0:
+                weighted = np.sum(weights * vals) / weights.sum()
+            else:
+                weighted = np.nan
+            result = {"weighted_mean": weighted}
+            metadata["per_member"] = self.collect_histories(self.data_streams)
+        return {"results": result, "metadata": metadata}
 
-        if not data_frames:
-            raise ValueError("No data streams provided for ensemble averaging.")
+    def mean_uncertainty(self, column_name=None, ddof=1, method="non-overlapping", window_size=None, technique=0):
+        metadata = {}
+        if technique == 0:
+            avg_ds = self.compute_average_ensemble()
+            result = self._mean_uncertainty(avg_ds, column_name, ddof, method, window_size)
+            metadata["average_ensemble"] = getattr(avg_ds, "_history", [])
+        elif technique == 1:
+            cols = (
+                [column_name] if isinstance(column_name, str)
+                else self.common_variables() if column_name is None else column_name
+            )
+            aggregated = {
+                col: pd.concat([ds.df[col] for ds in self.data_streams
+                                if col in ds.df.columns and not ds.df[col].empty], axis=0, ignore_index=True)
+                for col in cols
+            }
+            if aggregated:
+                agg_df = pd.concat(aggregated, axis=1)
+                ds_agg = DataStream(agg_df)
+                result = self._mean_uncertainty(ds_agg, list(agg_df.columns), ddof, method, window_size)
+                metadata["aggregated"] = getattr(ds_agg, "_history", [])
+            else:
+                result = {}
+                metadata["aggregated"] = []
+        elif technique == 2:
+            # Weighted variance for uncertainty
+            member_unc = []
+            weights = []
+            col_list = [column_name] if isinstance(column_name, str) else self.common_variables()
+            for ds in self.data_streams:
+                stat = self._mean_uncertainty(ds, column_name, ddof, method, window_size)
+                for col in col_list:
+                    if col in stat:
+                        val = stat[col]["mean_uncertainty"]
+                        n = len(ds.df)  # or processed count
+                        member_unc.append(val)
+                        weights.append(n)
+            weights = np.array(weights)
+            vals = np.array(member_unc)
+            if weights.sum() > 0:
+                weighted = np.sqrt(np.sum(weights * vals**2) / weights.sum())
+            else:
+                weighted = np.nan
+            result = {"weighted_mean_uncertainty": weighted}
+            metadata["per_member"] = self.collect_histories(self.data_streams)
+        return {"results": result, "metadata": metadata}
 
-        # 1. pick the shortest time grid
-        shortest_df = min(data_frames.values(), key=lambda df: len(df))
+    def confidence_interval(self, column_name=None, ddof=1, method="non-overlapping", window_size=None, technique=0):
+        metadata = {}
+        if technique == 0:
+            avg_ds = self.compute_average_ensemble()
+            result = self._confidence_interval(avg_ds, column_name, ddof, method, window_size)
+            metadata["average_ensemble"] = getattr(avg_ds, "_history", [])
+        elif technique == 1:
+            cols = (
+                [column_name] if isinstance(column_name, str)
+                else self.common_variables() if column_name is None else column_name
+            )
+            aggregated = {
+                col: pd.concat([ds.df[col] for ds in self.data_streams
+                                if col in ds.df.columns and not ds.df[col].empty], axis=0, ignore_index=True)
+                for col in cols
+            }
+            if aggregated:
+                agg_df = pd.concat(aggregated, axis=1)
+                ds_agg = DataStream(agg_df)
+                result = self._confidence_interval(ds_agg, list(agg_df.columns), ddof, method, window_size)
+                metadata["aggregated"] = getattr(ds_agg, "_history", [])
+            else:
+                result = {}
+                metadata["aggregated"] = []
+        elif technique == 2:
+            mean_result = self.mean(column_name, method, window_size, technique=2)
+            unc_result = self.mean_uncertainty(column_name, ddof, method, window_size, technique=2)
+            if "results" in mean_result and "weighted_mean" in mean_result["results"] \
+               and "results" in unc_result and "weighted_mean_uncertainty" in unc_result["results"]:
+                mean = mean_result["results"]["weighted_mean"]
+                unc = unc_result["results"]["weighted_mean_uncertainty"]
+                ci = (mean - 1.96 * unc, mean + 1.96 * unc)
+            else:
+                ci = (np.nan, np.nan)
+            result = {"ensemble_confidence_interval": ci}
+            metadata["combined"] = {
+                "mean_metadata": mean_result.get("metadata", {}),
+                "unc_metadata": unc_result.get("metadata", {})
+            }
+        return {"results": result, "metadata": metadata}
 
-        # 2. resample each member onto that grid
-        resampled = {
-            name: self.resample_to_short_intervals(shortest_df, df)
-            for name, df in data_frames.items()
-        }
+    def effective_sample_size(self, column_names=None, alpha=0.05, technique=0):
+        metadata = {}
+        if technique == 0:
+            avg_ds = self.compute_average_ensemble()
+            result = self._classic_ess(avg_ds, column_names, alpha)
+            metadata["average_ensemble"] = getattr(avg_ds, "_history", [])
+        elif technique == 1:
+            cols = (
+                [column_names] if isinstance(column_names, str)
+                else self.common_variables() if column_names is None else column_names
+            )
+            aggregated = {
+                col: pd.concat([ds.df[col] for ds in self.data_streams
+                                if col in ds.df.columns and not ds.df[col].empty], axis=0, ignore_index=True)
+                for col in cols
+            }
+            if aggregated:
+                agg_df = pd.concat(aggregated, axis=1)
+                ds_agg = DataStream(agg_df)
+                result = self._classic_ess(ds_agg, list(agg_df.columns), alpha)
+                metadata["aggregated"] = getattr(ds_agg, "_history", [])
+            else:
+                result = {}
+                metadata["aggregated"] = []
+        elif technique == 2:
+            per_member_results = []
+            for ds in self.data_streams:
+                per_member_results.append(self._classic_ess(ds, column_names, alpha))
+            # For the classic ESS, you may wish to aggregate (e.g., harmonic mean)
+            ess_vals = []
+            for r in per_member_results:
+                # Grab first ESS value (may need to adapt for dict structure)
+                v = list(r["results"].values())[0] if "results" in r and r["results"] else np.nan
+                ess_vals.append(v)
+            agg_ess = np.nanmean(ess_vals)
+            result = {"ensemble_ess": agg_ess, "individual_ess": ess_vals}
+            metadata["per_member"] = [r.get("metadata", {}) for r in per_member_results]
+        return {"results": result, "metadata": metadata}
 
-        # 3. compute the ensemble-average DataFrame
-        ensemble_avg = shortest_df[['time']].copy().reset_index(drop=True)
-        for col in shortest_df.columns:
-            if col == 'time':
-                continue
-            arrays = [df[col].to_numpy() for df in resampled.values()]
-            ensemble_avg[col] = np.mean(arrays, axis=0)
+    def ess_robust(self, column_names=None, rank_normalize=True, min_samples=8, return_relative=False, technique=0):
+        metadata = {}
+        if technique == 0:
+            avg_ds = self.compute_average_ensemble()
+            result = self._robust_ess(avg_ds, column_names, rank_normalize=rank_normalize, min_samples=min_samples, return_relative=return_relative)
+            metadata["average_ensemble"] = getattr(avg_ds, "_history", [])
+        elif technique == 1:
+            cols = (
+                [column_names] if isinstance(column_names, str)
+                else self.common_variables() if column_names is None else column_names
+            )
+            aggregated = {
+                col: pd.concat([ds.df[col] for ds in self.data_streams
+                                if col in ds.df.columns and not ds.df[col].empty], axis=0, ignore_index=True)
+                for col in cols
+            }
+            if aggregated:
+                agg_df = pd.concat(aggregated, axis=1)
+                ds_agg = DataStream(agg_df)
+                result = self._robust_ess(ds_agg, list(agg_df.columns), rank_normalize=rank_normalize, min_samples=min_samples, return_relative=return_relative)
+                metadata["aggregated"] = getattr(ds_agg, "_history", [])
+            else:
+                result = {}
+                metadata["aggregated"] = []
+        elif technique == 2:
+            per_member_results = []
+            for ds in self.data_streams:
+                per_member_results.append(
+                    self._robust_ess(ds, column_names, rank_normalize=rank_normalize, min_samples=min_samples, return_relative=return_relative)
+                )
+            # For robust ESS, aggregate (e.g., harmonic mean or geometric mean)
+            ess_vals = []
+            for r in per_member_results:
+                # Grab first ESS value (may need to adapt for dict structure)
+                v = list(r["results"].values())[0] if "results" in r and r["results"] else np.nan
+                ess_vals.append(v)
+            agg_ess = np.nanmean(ess_vals)
+            result = {"ensemble_robust_ess": agg_ess, "individual_robust_ess": ess_vals}
+            metadata["per_member"] = [r.get("metadata", {}) for r in per_member_results]
+        return {"results": result, "metadata": metadata}
 
-        # wrap and return as a DataStream so we can perform other UQ analysis on it
-        return DataStream(ensemble_avg)
+    # -------------- Add other aggregate/statistical methods here (same pattern) ------------------
+
+# End of Ensemble class
