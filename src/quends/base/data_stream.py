@@ -90,7 +90,7 @@ class DataStream:
         Records of all operations performed, including their options.
     """
 
-    def __init__(self, df: pd.DataFrame, _history=None):):
+    def __init__(self, df: pd.DataFrame, _history=None):
         """
         Initialize a DataStream.
 
