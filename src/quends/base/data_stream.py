@@ -199,10 +199,10 @@ class DataStream:
             }
         """
         # --------- COMPATIBILITY PATCH: window_size or batch_size --------------
-        if window_size is not None and batch_size != 10:  # 10 is your default batch_size
-            print("Warning: Both window_size and batch_size were specified. Using window_size.")
-        if window_size is not None:
-            batch_size = window_size
+        #if window_size is not None and batch_size != 10:  # 10 is your default batch_size
+        #    print("Warning: Both window_size and batch_size were specified. Using window_size.")
+        #if window_size is not None:
+        #    batch_size = window_size
         # -----------------------------------------------------------------------
         stationary_result = self.is_stationary(column_name)
         is_stat = stationary_result.get(column_name, False) if isinstance(stationary_result, dict) else bool(stationary_result)
