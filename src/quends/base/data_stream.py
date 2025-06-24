@@ -194,12 +194,16 @@ class DataStream:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     def __init__(self, df: pd.DataFrame):
         """
         Initialize a DataStream object.
 >>>>>>> dd52230 (Improvement of the docstring in  data_stream.py)
 =======
     def __init__(self, df: pd.DataFrame, _history=None):):
+=======
+    def __init__(self, df: pd.DataFrame, _history=None):
+>>>>>>> 26c7740 (Fix syntax error: remove unmatched parenthesis in __init__)
         """
         Initialize a DataStream.
 >>>>>>> f08ccff (Update: improvements to data_stream, ensemble, and exporter modules)
