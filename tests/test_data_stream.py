@@ -379,32 +379,90 @@ def test_effective_sample_size_empty(empty_data):
 def test_effective_sample_size_nan(nan_data):
     ds = DataStream(nan_data)
     result = ds.effective_sample_size(column_names=["A"])
-    assert result["A"]["effective_sample_size"] is None
-    assert result["A"]["message"] == "No data available for computation."
+    expected = {
+        'results': {
+            'A': {
+                'effective_sample_size': None,
+                'message': 'No data available for computation.'
+            }
+        },
+        'metadata': [
+            {
+                'operation': 'effective_sample_size',
+                'options': {'column_names': ['A'], 'alpha': 0.05}
+            }
+        ]
+    }
+    assert result == expected
 
 def test_effective_sample_size_simple(simple_data):
     ds = DataStream(simple_data)
     result = ds.effective_sample_size(column_names=["A"])
-    assert "A" in result and result["A"] is not None
+    expected = {
+        'results': {'A': 3},
+        'metadata': [
+            {
+                'operation': 'effective_sample_size',
+                'options': {'column_names': ['A'], 'alpha': 0.05}
+            }
+        ]
+    }
+    assert result == expected
 
 def test_effective_sample_size_long_data(long_data):
     ds = DataStream(long_data)
     result = ds.effective_sample_size(column_names=["A", "B"])
-    assert "A" in result and result["A"] is not None
-    assert "B" in result and result["B"] is not None
+    expected = {
+        'results': {'A': 5, 'B': 5},
+        'metadata': [
+            {
+                'operation': 'effective_sample_size',
+                'options': {'column_names': ['A', 'B'], 'alpha': 0.05}
+            }
+        ]
+    }
+    assert result == expected
 
 def test_effective_sample_size_stationary(stationary_data):
     ds = DataStream(stationary_data)
     result = ds.effective_sample_size(column_names=["A"])
-    assert "A" in result and result["A"] is not None
+    expected = {
+        'results': {'A': 5},
+        'metadata': [
+            {
+                'operation': 'effective_sample_size',
+                'options': {'column_names': ['A'], 'alpha': 0.05}
+            }
+        ]
+    }
+    assert result == expected
 
 def test_effective_sample_size_trim_data(trim_data):
     ds = DataStream(trim_data)
     result = ds.effective_sample_size(column_names=["A"])
-    assert "A" in result and result["A"] is not None
+    expected = {
+        'results': {'A': 5},
+        'metadata': [
+            {
+                'operation': 'effective_sample_size',
+                'options': {'column_names': ['A'], 'alpha': 0.05}
+            }
+        ]
+    }
+    assert result == expected
 
 def test_effective_sample_size_missing_col(long_data):
     ds = DataStream(long_data)
     result = ds.effective_sample_size(column_names=["C"])
-    assert result["C"]["message"] == "Column 'C' not found in the DataStream."
-
+    expected = {
+        'results': {
+            'C': {'message': "Column 'C' not found in the DataStream."}
+        },
+        'metadata': [
+            {
+                'operation': 'effective_sample_size',
+                'options': {'column_names': ['C'], 'alpha': 0.05}
+            }
+        ]
+    }
+    assert result == expected
