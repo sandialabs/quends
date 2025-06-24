@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 import pandas as pd
-
+import pprint
 
 class Exporter:
     """
@@ -66,7 +66,7 @@ class Exporter:
 
         Args:
             data: DataFrame, dict, NumPy array, or any structure convertible to DataFrame.
-
+        
         Returns:
             pd.DataFrame: The converted DataFrame.
         """
@@ -87,9 +87,12 @@ class Exporter:
         Convert input data to a dictionary, and make all types native Python.
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> e2d33a2 (fix autodocumentation for sphinx using autoapi)
+=======
+>>>>>>> 92f9e8f (Update: improvements to data_stream, ensemble, and exporter modules)
 <<<<<<< HEAD
 
 =======
@@ -100,7 +103,13 @@ class Exporter:
 =======
 
 >>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
+<<<<<<< HEAD
 >>>>>>> e2d33a2 (fix autodocumentation for sphinx using autoapi)
+=======
+=======
+        
+>>>>>>> cc8c448 (Update: improvements to data_stream, ensemble, and exporter modules)
+>>>>>>> 92f9e8f (Update: improvements to data_stream, ensemble, and exporter modules)
         Args:
             data: dict, DataFrame, or NumPy array.
 
@@ -199,7 +208,7 @@ class Exporter:
     def display_numpy(self, data):
         """
         Display data as a NumPy array.
-
+        
         Args:
             data: Data convertible to a NumPy array.
         """
@@ -240,7 +249,7 @@ class Exporter:
     def save_dictionary(self, data, file_name="data_dictionary.json"):
         """
         Save data as a JSON file representing a dictionary.
-
+        
         Args:
             data: Data convertible to a dictionary.
             file_name (str): Name of the file (default: 'data_dictionary.json').
@@ -254,7 +263,6 @@ class Exporter:
     def save_numpy(self, data, file_name="data.npy"):
         """
         Save data as a NumPy array file.
-
         Args:
             data: Data convertible to a NumPy array.
             file_name (str): Name of the file (default: 'data.npy').
@@ -269,9 +277,12 @@ class Exporter:
         Save data as a JSON file (with all native types).
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> e2d33a2 (fix autodocumentation for sphinx using autoapi)
+=======
+>>>>>>> 92f9e8f (Update: improvements to data_stream, ensemble, and exporter modules)
 <<<<<<< HEAD
 
 =======
@@ -282,7 +293,13 @@ class Exporter:
 =======
 
 >>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
+<<<<<<< HEAD
 >>>>>>> e2d33a2 (fix autodocumentation for sphinx using autoapi)
+=======
+=======
+        
+>>>>>>> cc8c448 (Update: improvements to data_stream, ensemble, and exporter modules)
+>>>>>>> 92f9e8f (Update: improvements to data_stream, ensemble, and exporter modules)
         Args:
             data: Data convertible to JSON.
             file_name (str): Name of the file (default: 'data.json').
@@ -292,3 +309,4 @@ class Exporter:
         with open(file_path, "w") as f:
             f.write(j)
         print(f"JSON saved to {file_path}")
+
