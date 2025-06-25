@@ -213,20 +213,33 @@ def test_trim_invalid_method(trim_data):
 =======
     expected = {
         'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-        'metadata': [{
-            'operation': 'trim',
-            'column_name': 'A',
-            'window_size': 1,
-            'method': 'invalid_method',
-            'start_time': None,
-            'threshold': None
-        }],
+        'metadata': [
+            {
+                'operation': 'is_stationary',
+                'options': {'columns': 'A'}
+            },
+            {
+                'operation': 'trim',
+                'options': {
+                    'batch_size': 10,
+                    'column_name': 'A',
+                    'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+                    'method': 'invalid_method',
+                    'robust': True,
+                    'start_time': 0.0,
+                    'threshold': None,
+                }
+            }
+        ],
         'results': None
     }
     assert result == expected
 
+<<<<<<< HEAD
 >>>>>>> 325b440 (Add comprehensive pytest suite for DataStream with all edge cases)
 
+=======
+>>>>>>> 16e8bdf (Add comprehensive pytest suite for DataStream with all edge cases)
 def test_trim_missing_threshold(long_data):
     ds = DataStream(long_data)
     result = ds.trim(column_name="A", method="threshold")
@@ -253,14 +266,24 @@ def test_trim_missing_threshold(long_data):
 =======
     expected = {
         'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-        'metadata': [{
-            'operation': 'trim',
-            'column_name': 'A',
-            'window_size': 1,
-            'method': 'threshold',
-            'start_time': None,
-            'threshold': None
-        }],
+        'metadata': [
+            {
+                'operation': 'is_stationary',
+                'options': {'columns': 'A'}
+            },
+            {
+                'operation': 'trim',
+                'options': {
+                    'batch_size': 10,
+                    'column_name': 'A',
+                    'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+                    'method': 'threshold',
+                    'robust': True,
+                    'start_time': 0.0,
+                    'threshold': None,
+                }
+            }
+        ],
         'results': None
     }
     assert result == expected
