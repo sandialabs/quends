@@ -1,9 +1,12 @@
 import os
 import sys
 
+from sphinx_gallery.sorting import ExplicitOrder, _SortKey
+
 # Add the src directory to the Python path
 sys.path.insert(0, os.path.abspath("../src"))  # Adjust this path if necessary
 sys.path.insert(0, os.path.abspath("../src/quends"))
+sys.path.insert(0, os.path.abspath("../examples/tutorial"))
 
 print("Python path:", sys.path)  # This will help you verify the path
 
@@ -70,3 +73,40 @@ html_short_title = f"{project}-{version}"
 napoleon_use_ivar = True
 napoleon_use_rtype = False
 napoleon_use_param = False
+
+
+# Add extensions
+extensions = [
+    "matplotlib.sphinxext.plot_directive",
+    "IPython.sphinxext.ipython_console_highlighting",
+    "IPython.sphinxext.ipython_directive",
+    "sphinx_automodapi.automodapi",
+    "sphinx_gallery.gen_gallery",
+]
+
+
+examples_tutorial = [
+    "datastream_guide.py",
+]
+example_dirs = ["../examples/tutorial"]
+gallery_dirs = ["auto_tutorials"]
+
+
+class ExamplesExplicitOrder(_SortKey):
+
+    def __call__(self, filename):
+        return examples_tutorial.index(filename)
+
+
+sphinx_gallery_conf = {
+    "examples_dirs": example_dirs,
+    "gallery_dirs": gallery_dirs,
+    "subsection_order": ExplicitOrder(
+        [
+            "../examples/tutorial",
+        ]
+    ),
+    "within_subsection_order": ExamplesExplicitOrder,
+    "filename_pattern": r".*",
+    "matplotlib_animations": True,
+}
