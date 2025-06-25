@@ -18,6 +18,12 @@ providing ensemble-level aggregation, statistical summaries, and metadata histor
 """
 
 
+"""
+Module: ensemble.py
+
+Defines the Ensemble class for handling collections of DataStream objects,
+providing ensemble-level aggregation, statistical summaries, and metadata history.
+"""
 class Ensemble:
     """
     Manages an ensemble of DataStream instances, enabling multi-stream analysis.
