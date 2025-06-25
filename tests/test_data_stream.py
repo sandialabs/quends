@@ -190,6 +190,7 @@ def test_trim_invalid_method(trim_data):
     ds = DataStream(trim_data)
     result = ds.trim(column_name="A", method="invalid_method")
 <<<<<<< HEAD
+<<<<<<< HEAD
     assert isinstance(result, DataStream)
     assert result.df.empty
     assert list(result.df.columns) == ["time", "A"]
@@ -209,10 +210,27 @@ def test_trim_invalid_method(trim_data):
 =======
     assert result is None
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+    expected = {
+        'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+        'metadata': [{
+            'operation': 'trim',
+            'column_name': 'A',
+            'window_size': 1,
+            'method': 'invalid_method',
+            'start_time': None,
+            'threshold': None
+        }],
+        'results': None
+    }
+    assert result == expected
+
+>>>>>>> 325b440 (Add comprehensive pytest suite for DataStream with all edge cases)
 
 def test_trim_missing_threshold(long_data):
     ds = DataStream(long_data)
     result = ds.trim(column_name="A", method="threshold")
+<<<<<<< HEAD
 <<<<<<< HEAD
     assert isinstance(result, DataStream)
     assert result.df.empty
@@ -232,6 +250,22 @@ def test_trim_missing_threshold(long_data):
     ]
 =======
     assert result is None
+=======
+    expected = {
+        'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+        'metadata': [{
+            'operation': 'trim',
+            'column_name': 'A',
+            'window_size': 1,
+            'method': 'threshold',
+            'start_time': None,
+            'threshold': None
+        }],
+        'results': None
+    }
+    assert result == expected
+
+>>>>>>> 325b440 (Add comprehensive pytest suite for DataStream with all edge cases)
 
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
 
@@ -677,11 +711,16 @@ def test_effective_sample_size_below_invalid_column(long_data):
     ds = DataStream(long_data)
     result = ds.effective_sample_size_below(column_names="C")
 <<<<<<< HEAD
+<<<<<<< HEAD
     assert result == {"C": 0}
 
 =======
     assert result == {'C': None}
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+    assert result == {'C': 0}
+
+>>>>>>> 325b440 (Add comprehensive pytest suite for DataStream with all edge cases)
 
 def test_effective_sample_size_below_empty_column():
     empty_data = {
@@ -692,10 +731,15 @@ def test_effective_sample_size_below_empty_column():
     ds = DataStream(pd.DataFrame(empty_data))
     result = ds.effective_sample_size_below(column_names="A")
 <<<<<<< HEAD
+<<<<<<< HEAD
     assert result == {"A": 0}
 =======
     assert result == {'A': None}
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+    assert result == {'A': 0}
+
+>>>>>>> 325b440 (Add comprehensive pytest suite for DataStream with all edge cases)
 
 
 # === Stationary ===
