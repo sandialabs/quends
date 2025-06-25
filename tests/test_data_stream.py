@@ -409,6 +409,22 @@ def assert_nested_approx(a, b, rel=1e-9):
 
 
 # === Additional Data ===
+import pytest
+
+def assert_nested_approx(a, b, rel=1e-9):
+    if isinstance(a, dict) and isinstance(b, dict):
+        assert a.keys() == b.keys()
+        for k in a:
+            assert_nested_approx(a[k], b[k], rel=rel)
+    elif isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):
+        assert len(a) == len(b)
+        for i, j in zip(a, b):
+            assert_nested_approx(i, j, rel=rel)
+    elif isinstance(a, float) and isinstance(b, float):
+        assert a == pytest.approx(b, rel=rel)
+    else:
+        assert a == b
+
 def test_additional_data_simple(simple_data):
     ds = DataStream(simple_data)
     with warnings.catch_warnings():
@@ -742,3 +758,4 @@ def test_effective_sample_size_missing_col(long_data):
         ],
     }
     assert result == expected
+
