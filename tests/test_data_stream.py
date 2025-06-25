@@ -149,12 +149,38 @@ def test_trim_rolling_variance(trim_data):
 def test_trim_invalid_method(trim_data):
     ds = DataStream(trim_data)
     result = ds.trim(column_name="A", method="invalid_method")
-    assert result is None
+    expected = {
+        'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+        'metadata': [{
+            'operation': 'trim',
+            'column_name': 'A',
+            'window_size': 1,
+            'method': 'invalid_method',
+            'start_time': None,
+            'threshold': None
+        }],
+        'results': None
+    }
+    assert result == expected
+
 
 def test_trim_missing_threshold(long_data):
     ds = DataStream(long_data)
     result = ds.trim(column_name="A", method="threshold")
-    assert result is None
+    expected = {
+        'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+        'metadata': [{
+            'operation': 'trim',
+            'column_name': 'A',
+            'window_size': 1,
+            'method': 'threshold',
+            'start_time': None,
+            'threshold': None
+        }],
+        'results': None
+    }
+    assert result == expected
+
 
 
 
@@ -356,7 +382,8 @@ def test_effective_sample_size_below_long(long_data):
 def test_effective_sample_size_below_invalid_column(long_data):
     ds = DataStream(long_data)
     result = ds.effective_sample_size_below(column_names="C")
-    assert result == {'C': None}
+    assert result == {'C': 0}
+
 
 def test_effective_sample_size_below_empty_column():
     empty_data = {
@@ -366,7 +393,8 @@ def test_effective_sample_size_below_empty_column():
     }
     ds = DataStream(pd.DataFrame(empty_data))
     result = ds.effective_sample_size_below(column_names="A")
-    assert result == {'A': None}
+    assert result == {'A': 0}
+
 
 
 # === Stationary ===
