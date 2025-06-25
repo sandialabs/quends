@@ -57,22 +57,18 @@ data_stream_gx.is_stationary(["HeatFlux_st", "Wg_st", "Phi2_t"])
 #
 
 # Trim the data based on standard deviation method
-trimmed_df = data_stream_gx.trim(
-    column_name="HeatFlux_st", window_size=50, method="std"
-)
+trimmed_df = data_stream_gx.trim(column_name="HeatFlux_st", batch_size=50, method="std")
 # View trimmed data
 trimmed_df.head()
 
 # %%
-new_trimmed_df = trimmed_df.trim(
-    column_name="HeatFlux_st", window_size=50, method="std"
-)
+new_trimmed_df = trimmed_df.trim(column_name="HeatFlux_st", method="std")
 new_trimmed_df.head()
 
 # %%
 # Trim the data based on threshold method
 trimmed_df = data_stream_gx.trim(
-    column_name="HeatFlux_st", window_size=50, method="threshold", threshold=0.1
+    column_name="HeatFlux_st", batch_size=50, method="threshold", threshold=0.1
 )
 # View trimmed data
 trimmed_df.head()
@@ -80,7 +76,7 @@ trimmed_df.head()
 # %%
 # Trim the data based on rolling variance method
 trimmed_df = data_stream_gx.trim(
-    column_name="HeatFlux_st", window_size=50, method="rolling_variance", threshold=0.10
+    column_name="HeatFlux_st", batch_size=50, method="rolling_variance", threshold=0.10
 )
 # View trimmed data
 trimmed_df.head()
@@ -182,18 +178,38 @@ data_stream_cg.head()
 len(data_stream_cg)
 
 # Trim the data based on threshold method
-trimmed_df = data_stream_cg.trim(
-    column_name="Q_D/Q_GBD", window_size=10, method="std", robust=True
-)
+trimmed_df = data_stream_cg.trim(column_name="Q_D/Q_GBD", method="std", robust=True)
 # View trimmed data
+print(trimmed_df)
 trimmed_df.head()
 
 # %%
-# Compute Statistics with the method "sliding"
-stats = trimmed_df.compute_statistics(method="sliding")
-print(stats)
+# To check if data stream is stationary
+data_stream_cg.is_stationary("Q_D/Q_GBD")
 
 # %%
-# Compute Statistics
-stats = trimmed_df.compute_statistics()
-print(stats)
+# To Plot for DataStream
+plotter = qnds.Plotter()
+plotter.trace_plot(data_stream_cg, ["Q_D/Q_GBD"])
+
+# %%
+plotter.trace_plot(trimmed_df)
+
+# %%
+plotter.steady_state_automatic_plot(data_stream_cg, ["Q_D/Q_GBD"])
+
+# %%
+plotter.steady_state_automatic_plot(trimmed_df)
+
+# %%
+plotter.steady_state_plot(data_stream_cg, ["Q_D/Q_GBD"], 158.59)
+
+# %%
+# To show additional data use:
+addition_info = trimmed_df.additional_data(method="sliding")
+print(addition_info)
+
+# %%
+# To add a reduction factor
+addition_info = trimmed_df.additional_data(reduction_factor=0.2)
+print(addition_info)
