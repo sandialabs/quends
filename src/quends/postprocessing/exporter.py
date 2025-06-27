@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 import pandas as pd
-import pprint
+
 
 class Exporter:
     """
@@ -38,7 +38,7 @@ class Exporter:
         elif isinstance(obj, np.integer):
             return int(obj)
         # Support for legacy float32/float64 directly (NumPy 2.x compatibility)
-        elif type(obj).__name__ in ['float32', 'float64', 'int32', 'int64']:
+        elif type(obj).__name__ in ["float32", "float64", "int32", "int64"]:
             return obj.item()
         else:
             return obj
@@ -225,4 +225,3 @@ class Exporter:
         with open(file_path, "w") as f:
             f.write(j)
         print(f"JSON saved to {file_path}")
-
