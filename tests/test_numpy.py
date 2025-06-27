@@ -2,10 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from quends import (
-    DataStream,
-    from_numpy,
-)
+from quends import DataStream, from_numpy
 
 
 # Test loading a valid 1D NumPy array
