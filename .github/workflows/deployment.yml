@@ -30,6 +30,7 @@ jobs:
 
       - name: Build Sphinx documentation
         run: |
+          rm -rf docs/autoapi/*
           sphinx-build -b html docs docs/_build/html  # Adjust paths as necessary
 
       - name: Run tests with coverage
