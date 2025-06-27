@@ -25,10 +25,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
 <<<<<<< HEAD
+<<<<<<< HEAD
           pip install sphinx sphinx_rtd_theme myst_parser sphinx-book-theme sphinx-autoapi sphinx-autodoc-typehints
 =======
           pip install sphinx sphinx_rtd_theme myst_parser sphinx-book-theme autoapi sphinx-autodoc-typehints
 >>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
+=======
+          pip install sphinx sphinx_rtd_theme myst_parser sphinx-book-theme sphinx-autoapi sphinx-autodoc-typehints
+>>>>>>> fb23a78 (update deployment.yml)
           pip install .[dev]  # Install your development dependencies
           pip install coveralls
 
