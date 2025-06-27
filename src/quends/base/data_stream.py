@@ -179,6 +179,7 @@ def to_native_types(obj):
     else:
         return obj
 
+
 class DataStream:
     """
     A pipeline for time-series and simulation trace analysis with provenance tracking.
@@ -485,7 +486,7 @@ class DataStream:
             new_history.append({"operation": "trim", "options": options})
             return {
                 "results": DataStream(trimmed_df, _history=new_history),
-                "metadata": deduplicate_history(new_history)
+                "metadata": deduplicate_history(new_history),
             }
         else:
             options["message"] = (
@@ -978,8 +979,10 @@ class DataStream:
             if len(valid_count) < 2:
                 results[col] = {"error": "Not enough valid data points for fitting."}
                 continue
+
             def power_law_model(n, A, p):
                 return A / (n**p)
+
             popt, _ = curve_fit(power_law_model, valid_count, valid_sem, p0=[1.0, 0.5])
             A_est, p_est = popt
             p_est = abs(p_est)

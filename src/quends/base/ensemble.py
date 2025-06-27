@@ -2,9 +2,12 @@ from typing import Dict, List
 
 import numpy as np
 import pandas as pd
+<<<<<<< HEAD
 import numpy as np
 import pandas as pd
 from typing import List   # <--- Add this line
+=======
+>>>>>>> 51a3f50 (update documentation with autoapi)
 
 from quends.base.data_stream import DataStream
 ...
