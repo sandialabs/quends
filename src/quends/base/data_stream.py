@@ -43,8 +43,9 @@ def to_native_types(obj):
 
     This function walks through dictionaries, lists, tuples, NumPy scalars, and arrays,
     converting them into Python built-ins:
-      - NumPy scalar → Python int or float
-      - NumPy array  → Python list (recursively)
+
+    - NumPy scalar → Python int or float
+    - NumPy array  → Python list (recursively)
 
     Parameters
     ----------
@@ -122,13 +123,13 @@ class DataStream:
 
         Parameters
         ----------
-        n : int, default=5
-            Number of rows to return.
+        n : int, optional
+            Number of rows to return. Defaults to 5.
 
         Returns
         -------
         pandas.DataFrame
-            The first `n` rows of `self.df`.
+            The first `n` rows of the DataFrame.
         """
         return self.df.head(n)
 
