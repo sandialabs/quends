@@ -160,7 +160,20 @@ Module Contents
 
 
 
+<<<<<<< HEAD
    .. py:method:: trim(column_name, batch_size=10, start_time=0.0, method='std', threshold=None, robust=True)
+=======
+   .. py:method:: trim(column_name, window_size = 10, start_time = 0.0, method = 'std', threshold = None, robust = True)
+
+      Apply steady-state trimming to each member on `column_name`.
+
+      Returns
+      -------
+      dict
+          { 'results': Ensemble or None,
+            'metadata': Dict[str, Any] }
+
+>>>>>>> 5f4c24e (Update documentation with tutorials)
 
 
    .. py:method:: is_stationary(columns)

@@ -46,6 +46,7 @@ extlinks = {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 extensions += ["autoapi.extension"]
 
 autoapi_dirs = ["../src/quends"]  # Where the QUENDS source code is
@@ -91,6 +92,8 @@ autoapi_own_page_level = "module"
 autoapi_keep_files = False  # Keep the AutoAPI generated files on the filesystem
 >>>>>>> 2d15506 (update documentation with autoapi)
 
+=======
+>>>>>>> ddd6dea (Update documentation with tutorials)
 html_theme = "sphinx_book_theme"
 
 html_use_smartypants = True

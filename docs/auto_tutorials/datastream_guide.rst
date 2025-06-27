@@ -669,7 +669,17 @@ Trim the data based on rolling variance method
     )
 
     # Gather results
+<<<<<<< HEAD
     trimmed.head()
+=======
+    trimmed_df = trimmed["results"]
+
+    # Return trimmed data
+    if trimmed_df is not None:
+        print(trimmed_df.head())
+    else:
+        print("Trim returned None (no data trimmed or steady state not found).")
+>>>>>>> 5f4c24e (Update documentation with tutorials)
 
 
 
@@ -1338,7 +1348,11 @@ Trim the data based on threshold method
 
  .. code-block:: none
 
+<<<<<<< HEAD
     <quends.base.data_stream.DataStream object at 0x13fbcfc20>
+=======
+    {'results': <quends.base.data_stream.DataStream object at 0x13b5d2fc0>, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'Q_D/Q_GBD'}}, {'operation': 'trim', 'options': {'column_name': 'Q_D/Q_GBD', 'batch_size': 10, 'start_time': 0.0, 'method': 'std', 'threshold': None, 'robust': True, 'sss_start': 208.0}}]}
+>>>>>>> 5f4c24e (Update documentation with tutorials)
 
 
 
@@ -1513,12 +1527,48 @@ To Plot for DataStream
 
  .. code-block:: none
 
+<<<<<<< HEAD
     For Q_D/Q_GBD, no manual steady state start provided. Plotting raw signal.
+=======
+
+    [<Axes: title={'center': 'Q_D/Q_GBD'}, xlabel='Time'>]
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 219-230
+
+.. code-block:: Python
+
+    plotter.trace_plot(trimmed_df)
+>>>>>>> 5f4c24e (Update documentation with tutorials)
+
+    # # %%
+    # plotter.steady_state_automatic_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
+
+    # # %%
+    # plotter.steady_state_automatic_plot(trimmed_df)
+
+    # # %%
+    # plotter.steady_state_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
 
 
 
 
+<<<<<<< HEAD
 .. GENERATED FROM PYTHON SOURCE LINES 215-216
+=======
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    [<Axes: title={'center': 'Q_D/Q_GBD'}, xlabel='Time'>]
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 231-232
+>>>>>>> 5f4c24e (Update documentation with tutorials)
 
 To show additional data use:
 
@@ -1537,12 +1587,20 @@ To show additional data use:
 
  .. code-block:: none
 
+<<<<<<< HEAD
     {'HeatFlux_st': {'A_est': 0.03170698677588585, 'p_est': 0.5410018913986299, 'n_current': 99, 'current_sem': 0.00263944463499645, 'target_sem': 0.002375500171496805, 'n_target': 120.28580081212739, 'additional_samples': 22, 'window_size': 24}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'HeatFlux_st'}}, {'operation': 'trim', 'options': {'column_name': 'HeatFlux_st', 'batch_size': 50, 'start_time': 0.0, 'method': 'threshold', 'threshold': 0.1, 'robust': True, 'sss_start': 158.59277222661015}}, {'operation': 'effective_sample_size', 'options': {'column_names': 'HeatFlux_st', 'alpha': 0.05}}, {'operation': 'additional_data', 'options': {'column_name': None, 'ddof': 1, 'method': 'sliding', 'window_size': None, 'reduction_factor': 0.1}}]}
+=======
+    {'Q_D/Q_GBD': {'A_est': 2.376475090920045, 'p_est': 0.08416377237904193, 'n_current': 1287, 'current_sem': 1.3008265896454756, 'target_sem': 1.170743930680928, 'n_target': 4500.39460785471, 'additional_samples': 3214, 'window_size': 47}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'Q_D/Q_GBD'}}, {'operation': 'trim', 'options': {'column_name': 'Q_D/Q_GBD', 'batch_size': 10, 'start_time': 0.0, 'method': 'std', 'threshold': None, 'robust': True, 'sss_start': 208.0}}, {'operation': 'effective_sample_size', 'options': {'column_names': 'Q_D/Q_GBD', 'alpha': 0.05}}, {'operation': 'additional_data', 'options': {'column_name': None, 'ddof': 1, 'method': 'sliding', 'window_size': None, 'reduction_factor': 0.1}}]}
+>>>>>>> 5f4c24e (Update documentation with tutorials)
 
 
 
 
+<<<<<<< HEAD
 .. GENERATED FROM PYTHON SOURCE LINES 220-221
+=======
+.. GENERATED FROM PYTHON SOURCE LINES 236-237
+>>>>>>> 5f4c24e (Update documentation with tutorials)
 
 To add a reduction factor
 
@@ -1560,7 +1618,11 @@ To add a reduction factor
 
  .. code-block:: none
 
+<<<<<<< HEAD
     {'HeatFlux_st': {'A_est': 0.03170698677588585, 'p_est': 0.5410018913986299, 'n_current': 99, 'current_sem': 0.00263944463499645, 'target_sem': 0.00211155570799716, 'n_target': 149.54291116020593, 'additional_samples': 51, 'window_size': 24}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'HeatFlux_st'}}, {'operation': 'trim', 'options': {'column_name': 'HeatFlux_st', 'batch_size': 50, 'start_time': 0.0, 'method': 'threshold', 'threshold': 0.1, 'robust': True, 'sss_start': 158.59277222661015}}, {'operation': 'effective_sample_size', 'options': {'column_names': 'HeatFlux_st', 'alpha': 0.05}}, {'operation': 'additional_data', 'options': {'column_name': None, 'ddof': 1, 'method': 'sliding', 'window_size': None, 'reduction_factor': 0.2}}]}
+=======
+    {'Q_D/Q_GBD': {'A_est': 2.376475090920045, 'p_est': 0.08416377237904193, 'n_current': 1287, 'current_sem': 1.3008265896454756, 'target_sem': 1.0406612717163806, 'n_target': 18239.974946813512, 'additional_samples': 16953, 'window_size': 47}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'Q_D/Q_GBD'}}, {'operation': 'trim', 'options': {'column_name': 'Q_D/Q_GBD', 'batch_size': 10, 'start_time': 0.0, 'method': 'std', 'threshold': None, 'robust': True, 'sss_start': 208.0}}, {'operation': 'effective_sample_size', 'options': {'column_names': 'Q_D/Q_GBD', 'alpha': 0.05}}, {'operation': 'additional_data', 'options': {'column_name': None, 'ddof': 1, 'method': 'sliding', 'window_size': None, 'reduction_factor': 0.2}}]}
+>>>>>>> 5f4c24e (Update documentation with tutorials)
 
 
 
@@ -1568,7 +1630,11 @@ To add a reduction factor
 
 .. rst-class:: sphx-glr-timing
 
+<<<<<<< HEAD
    **Total running time of the script:** (0 minutes 2.173 seconds)
+=======
+   **Total running time of the script:** (0 minutes 1.483 seconds)
+>>>>>>> 5f4c24e (Update documentation with tutorials)
 
 
 .. _sphx_glr_download_auto_tutorials_datastream_guide.py:
