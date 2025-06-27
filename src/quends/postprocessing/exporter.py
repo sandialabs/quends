@@ -66,7 +66,6 @@ class Exporter:
 
         Args:
             data: DataFrame, dict, NumPy array, or any structure convertible to DataFrame.
-        
         Returns:
             pd.DataFrame: The converted DataFrame.
         """
@@ -88,11 +87,14 @@ class Exporter:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> e2d33a2 (fix autodocumentation for sphinx using autoapi)
 =======
 >>>>>>> 92f9e8f (Update: improvements to data_stream, ensemble, and exporter modules)
+=======
+>>>>>>> 81bfb7f (fix autodocumentation for sphinx using autoapi)
 <<<<<<< HEAD
 
 =======
@@ -109,7 +111,12 @@ class Exporter:
 =======
         
 >>>>>>> cc8c448 (Update: improvements to data_stream, ensemble, and exporter modules)
+<<<<<<< HEAD
 >>>>>>> 92f9e8f (Update: improvements to data_stream, ensemble, and exporter modules)
+=======
+=======
+>>>>>>> 350c152 (fix autodocumentation for sphinx using autoapi)
+>>>>>>> 81bfb7f (fix autodocumentation for sphinx using autoapi)
         Args:
             data: dict, DataFrame, or NumPy array.
 
@@ -208,7 +215,6 @@ class Exporter:
     def display_numpy(self, data):
         """
         Display data as a NumPy array.
-        
         Args:
             data: Data convertible to a NumPy array.
         """
@@ -249,7 +255,6 @@ class Exporter:
     def save_dictionary(self, data, file_name="data_dictionary.json"):
         """
         Save data as a JSON file representing a dictionary.
-        
         Args:
             data: Data convertible to a dictionary.
             file_name (str): Name of the file (default: 'data_dictionary.json').
@@ -263,6 +268,7 @@ class Exporter:
     def save_numpy(self, data, file_name="data.npy"):
         """
         Save data as a NumPy array file.
+
         Args:
             data: Data convertible to a NumPy array.
             file_name (str): Name of the file (default: 'data.npy').
@@ -278,11 +284,14 @@ class Exporter:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> e2d33a2 (fix autodocumentation for sphinx using autoapi)
 =======
 >>>>>>> 92f9e8f (Update: improvements to data_stream, ensemble, and exporter modules)
+=======
+>>>>>>> 81bfb7f (fix autodocumentation for sphinx using autoapi)
 <<<<<<< HEAD
 
 =======
@@ -299,7 +308,12 @@ class Exporter:
 =======
         
 >>>>>>> cc8c448 (Update: improvements to data_stream, ensemble, and exporter modules)
+<<<<<<< HEAD
 >>>>>>> 92f9e8f (Update: improvements to data_stream, ensemble, and exporter modules)
+=======
+=======
+>>>>>>> 350c152 (fix autodocumentation for sphinx using autoapi)
+>>>>>>> 81bfb7f (fix autodocumentation for sphinx using autoapi)
         Args:
             data: Data convertible to JSON.
             file_name (str): Name of the file (default: 'data.json').
