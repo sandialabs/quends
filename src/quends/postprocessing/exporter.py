@@ -50,7 +50,6 @@ class Exporter:
 
         Args:
             data: DataFrame, dict, NumPy array, or any structure convertible to DataFrame.
-        
         Returns:
             pd.DataFrame: The converted DataFrame.
         """
@@ -69,7 +68,6 @@ class Exporter:
     def to_dictionary(self, data):
         """
         Convert input data to a dictionary, and make all types native Python.
-        
         Args:
             data: dict, DataFrame, or NumPy array.
 
@@ -154,7 +152,6 @@ class Exporter:
     def display_numpy(self, data):
         """
         Display data as a NumPy array.
-        
         Args:
             data: Data convertible to a NumPy array.
         """
@@ -188,7 +185,6 @@ class Exporter:
     def save_dictionary(self, data, file_name="data_dictionary.json"):
         """
         Save data as a JSON file representing a dictionary.
-        
         Args:
             data: Data convertible to a dictionary.
             file_name (str): Name of the file (default: 'data_dictionary.json').
@@ -202,6 +198,7 @@ class Exporter:
     def save_numpy(self, data, file_name="data.npy"):
         """
         Save data as a NumPy array file.
+
         Args:
             data: Data convertible to a NumPy array.
             file_name (str): Name of the file (default: 'data.npy').
@@ -214,7 +211,6 @@ class Exporter:
     def save_json(self, data, file_name="data.json"):
         """
         Save data as a JSON file (with all native types).
-        
         Args:
             data: Data convertible to JSON.
             file_name (str): Name of the file (default: 'data.json').
