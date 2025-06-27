@@ -56,28 +56,42 @@ data_stream_gx.is_stationary(["HeatFlux_st", "Wg_st", "Phi2_t"])
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 
+# %%
 # Trim the data based on standard deviation method
-trimmed_df = data_stream_gx.trim(column_name="HeatFlux_st", batch_size=50, method="std")
-# View trimmed data
-trimmed_df.head()
 
-# %%
-new_trimmed_df = trimmed_df.trim(column_name="HeatFlux_st", method="std")
-new_trimmed_df.head()
+# Returns: Dictionary with keys like "results" and "metadata"
+trimmed = data_stream_gx.trim(column_name="HeatFlux_st", batch_size=50, method="std")
 
-# %%
-# Trim the data based on threshold method
-trimmed_df = data_stream_gx.trim(
-    column_name="HeatFlux_st", batch_size=50, method="threshold", threshold=0.1
-)
-# View trimmed data
+# Gather results from dictionary
+trimmed_df = trimmed["results"]
+
+# Print first 5 rows of dataframe
 trimmed_df.head()
 
 # %%
 # Trim the data based on rolling variance method
-trimmed_df = data_stream_gx.trim(
+trimmed = data_stream_gx.trim(
     column_name="HeatFlux_st", batch_size=50, method="rolling_variance", threshold=0.10
 )
+
+# Gather results
+trimmed_df = trimmed["results"]
+
+# Return trimmed data
+if trimmed_df is not None:
+    print(trimmed_df.head())
+else:
+    print("Trim returned None (no data trimmed or steady state not found).")
+
+# %%
+# Trim the data based on threshold method
+trimmed = data_stream_gx.trim(
+    column_name="HeatFlux_st", batch_size=50, method="threshold", threshold=0.1
+)
+
+# Gather results
+trimmed_df = trimmed["results"]
+
 # View trimmed data
 trimmed_df.head()
 
@@ -103,16 +117,18 @@ print(ess_df)
 stats = trimmed_df.compute_statistics(method="sliding")
 print(stats)
 
+stats_df = stats["HeatFlux_st"]
+
 # %%
 # Exporter
 # Below Displays the information as a DataFrame
 exporter = qnds.Exporter()
-exporter.display_dataframe(stats)
+exporter.display_dataframe(stats_df)
 
 # %%
 # Below Displays the information in JSON
 
-exporter.display_json(stats)
+exporter.display_json(stats_df)
 
 # %%
 # Other statistical methods
@@ -155,8 +171,10 @@ print(optimal_df)
 
 # %%
 # Cumlative Statistics
-cumulative_df = trimmed_df.cumulative_statistics()
-print(cumulative_df)
+cumulative = trimmed_df.cumulative_statistics()
+print(cumulative)
+
+cumulative_df = cumulative["HeatFlux_st"]
 
 # %%
 # Display Cumulative Statistics as a DataFrame
@@ -177,10 +195,15 @@ data_stream_cg.head()
 # Get the number of rows
 len(data_stream_cg)
 
+# %%
 # Trim the data based on threshold method
-trimmed_df = data_stream_cg.trim(column_name="Q_D/Q_GBD", method="std", robust=True)
+trimmed_ = data_stream_cg.trim(column_name="Q_D/Q_GBD", method="std", robust=True)
 # View trimmed data
-print(trimmed_df)
+print(trimmed_)
+
+
+# %%
+trimmed_df = trimmed_["results"]
 trimmed_df.head()
 
 # %%
