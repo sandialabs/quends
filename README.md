@@ -104,7 +104,7 @@ Examples are shown in the `examples/notebooks` directories.
     ```
 
 ## Documentation
-For comprehensive information on how to use the QUENDS package, please refer to our [official documentation](https://sandialabs.github.io/quends/documentation/index.html). 
+For comprehensive information on how to use the QUENDS package, please refer to our [official documentation](https://sandialabs.github.io/quends/autoapi/quends/index.html). 
 
 ## Summary
 Key functionalities include:
