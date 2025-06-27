@@ -218,14 +218,14 @@ plotter.trace_plot(data_stream_cg, ["Q_D/Q_GBD"])
 # %%
 plotter.trace_plot(trimmed_df)
 
-# %%
-plotter.steady_state_automatic_plot(data_stream_cg, ["Q_D/Q_GBD"])
+# # %%
+# plotter.steady_state_automatic_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
 
-# %%
-plotter.steady_state_automatic_plot(trimmed_df)
+# # %%
+# plotter.steady_state_automatic_plot(trimmed_df)
 
-# %%
-plotter.steady_state_plot(data_stream_cg, ["Q_D/Q_GBD"], 158.59)
+# # %%
+# plotter.steady_state_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
 
 # %%
 # To show additional data use:

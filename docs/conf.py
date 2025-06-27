@@ -44,25 +44,6 @@ extlinks = {
     "pr": ("https://github.com/sandialabs/quends/pull/%s", "PR #%s"),
 }
 
-extensions += ["autoapi.extension"]
-
-autoapi_dirs = ["../src/quends"]  # Where the QUENDS source code is
-autoapi_type = "python"
-autoapi_add_toctree_entry = True
-
-autoapi_template_dir = "_templates/autoapi"  # Templates for AutoAPI documentation
-suppress_warnings = ["autoapi"]
-autoapi_options = [
-    "members",
-    "undoc-members",
-    "show-inheritance",
-    "show-module-summary",
-    "imported-members",
-]
-
-autoapi_own_page_level = "module"
-autoapi_keep_files = False  # Keep the AutoAPI generated files on the filesystem
-
 html_theme = "sphinx_book_theme"
 
 html_use_smartypants = True
@@ -74,6 +55,9 @@ napoleon_use_ivar = True
 napoleon_use_rtype = False
 napoleon_use_param = False
 
+autodoc_docstring_signature = True
+napoleon_google_docstring = True
+napoleon_numpy_docstring = True
 
 # Add extensions
 extensions = [
@@ -110,3 +94,25 @@ sphinx_gallery_conf = {
     "filename_pattern": r".*",
     "matplotlib_animations": True,
 }
+
+extensions += ["autoapi.extension"]
+
+autoapi_dirs = ["../src/quends"]  # Where the QUENDS source code is
+autoapi_type = "python"
+autoapi_add_toctree_entry = True
+
+autoapi_template_dir = "_templates/autoapi"  # Templates for AutoAPI documentation
+suppress_warnings = ["autoapi"]
+autoapi_options = [
+    "members",
+    "undoc-members",
+    "show-inheritance",
+    "show-module-summary",
+    "imported-members",
+]
+
+autodoc_typehints = "description"
+autoapi_own_page_level = "module"
+autoapi_keep_files = True  # Keep the AutoAPI generated files on the filesystem
+
+print("AutoAPI directories:", autoapi_dirs)

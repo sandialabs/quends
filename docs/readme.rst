@@ -72,7 +72,7 @@ To install the package, you can choose one of the following methods:
 Documentation
 =============
 
-https://sandialabs.github.io/quends/documentation/index.html
+https://quends.readthedocs.io/
 
 Development
 ===========
@@ -101,8 +101,5 @@ Note, to combine the coverage data from all the tox environments run:
 Coverage
 ========
 
-You can view the coverage report |coveralls|.
+You can view the coverage report `here <https://coveralls.io/github/sandialabs/quends?branch=main>`_.
 
-.. |coveralls| image:: https://coveralls.io/repos/github/sandialabs/quends/badge.svg?branch=main
-    :target: https://coveralls.io/github/sandialabs/quends?branch=main
-    :alt: Coverage Status

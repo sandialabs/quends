@@ -1,4 +1,13 @@
 {
+ "addition_info": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
  "ci_df": [
   {
    "is_class": false,
@@ -423,52 +432,6 @@
    "module": "quends",
    "module_short": "quends",
    "name": "Plotter"
-  }
- ],
- "plotter.steady_state_automatic_plot": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.postprocessing.plotter",
-   "module_short": "quends.postprocessing.plotter",
-   "name": "Plotter.steady_state_automatic_plot"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.postprocessing",
-   "module_short": "quends.postprocessing",
-   "name": "Plotter.steady_state_automatic_plot"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "Plotter.steady_state_automatic_plot"
-  }
- ],
- "plotter.steady_state_plot": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.postprocessing.plotter",
-   "module_short": "quends.postprocessing.plotter",
-   "name": "Plotter.steady_state_plot"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.postprocessing",
-   "module_short": "quends.postprocessing",
-   "name": "Plotter.steady_state_plot"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "Plotter.steady_state_plot"
   }
  ],
  "plotter.trace_plot": [

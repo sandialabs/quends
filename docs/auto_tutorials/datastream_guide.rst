@@ -672,7 +672,7 @@ Trim the data based on rolling variance method
     )
 
     # Gather results
-    trimmed_df = trimmed["results"] 
+    trimmed_df = trimmed["results"]
 
     # Return trimmed data
     if trimmed_df is not None:
@@ -1087,7 +1087,7 @@ Cumlative Statistics
     cumulative = trimmed_df.cumulative_statistics()
     print(cumulative)
 
-    cumulative_df = cumulative['HeatFlux_st']
+    cumulative_df = cumulative["HeatFlux_st"]
 
 
 
@@ -1267,7 +1267,7 @@ Trim the data based on threshold method
 
  .. code-block:: none
 
-    {'results': <quends.base.data_stream.DataStream object at 0x133dc7c20>, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'Q_D/Q_GBD'}}, {'operation': 'trim', 'options': {'column_name': 'Q_D/Q_GBD', 'batch_size': 10, 'start_time': 0.0, 'method': 'std', 'threshold': None, 'robust': True, 'sss_start': 208.0}}]}
+    {'results': <quends.base.data_stream.DataStream object at 0x13b5d2fc0>, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'Q_D/Q_GBD'}}, {'operation': 'trim', 'options': {'column_name': 'Q_D/Q_GBD', 'batch_size': 10, 'start_time': 0.0, 'method': 'std', 'threshold': None, 'robust': True, 'sss_start': 208.0}}]}
 
 
 
@@ -1389,11 +1389,20 @@ To Plot for DataStream
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 219-221
+.. GENERATED FROM PYTHON SOURCE LINES 219-230
 
 .. code-block:: Python
 
     plotter.trace_plot(trimmed_df)
+
+    # # %%
+    # plotter.steady_state_automatic_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
+
+    # # %%
+    # plotter.steady_state_automatic_plot(trimmed_df)
+
+    # # %%
+    # plotter.steady_state_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
 
 
 
@@ -1408,43 +1417,6 @@ To Plot for DataStream
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 222-224
-
-.. code-block:: Python
-
-    plotter.steady_state_automatic_plot(data_stream_cg, ["Q_D/Q_GBD"])
-
-
-
-.. rst-class:: sphx-glr-script-out
-
-.. code-block:: pytb
-
-    Traceback (most recent call last):
-      File "/Users/adcalpa/quends/examples/tutorial/datastream_guide.py", line 222, in <module>
-        plotter.steady_state_automatic_plot(data_stream_cg, ["Q_D/Q_GBD"])
-      File "/Users/adcalpa/quends/src/quends/postprocessing/plotter.py", line 360, in steady_state_automatic_plot
-        trimmed_ds = ds.trim(
-                     ^^^^^^^^
-    TypeError: DataStream.trim() got an unexpected keyword argument 'window_size'
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 225-227
-
-.. code-block:: Python
-
-    plotter.steady_state_automatic_plot(trimmed_df)
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 228-230
-
-.. code-block:: Python
-
-    plotter.steady_state_plot(data_stream_cg, ["Q_D/Q_GBD"], 158.59)
-
-
 .. GENERATED FROM PYTHON SOURCE LINES 231-232
 
 To show additional data use:
@@ -1455,6 +1427,18 @@ To show additional data use:
 
     addition_info = trimmed_df.additional_data(method="sliding")
     print(addition_info)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    {'Q_D/Q_GBD': {'A_est': 2.376475090920045, 'p_est': 0.08416377237904193, 'n_current': 1287, 'current_sem': 1.3008265896454756, 'target_sem': 1.170743930680928, 'n_target': 4500.39460785471, 'additional_samples': 3214, 'window_size': 47}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'Q_D/Q_GBD'}}, {'operation': 'trim', 'options': {'column_name': 'Q_D/Q_GBD', 'batch_size': 10, 'start_time': 0.0, 'method': 'std', 'threshold': None, 'robust': True, 'sss_start': 208.0}}, {'operation': 'effective_sample_size', 'options': {'column_names': 'Q_D/Q_GBD', 'alpha': 0.05}}, {'operation': 'additional_data', 'options': {'column_name': None, 'ddof': 1, 'method': 'sliding', 'window_size': None, 'reduction_factor': 0.1}}]}
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 236-237
@@ -1469,9 +1453,21 @@ To add a reduction factor
     print(addition_info)
 
 
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    {'Q_D/Q_GBD': {'A_est': 2.376475090920045, 'p_est': 0.08416377237904193, 'n_current': 1287, 'current_sem': 1.3008265896454756, 'target_sem': 1.0406612717163806, 'n_target': 18239.974946813512, 'additional_samples': 16953, 'window_size': 47}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'Q_D/Q_GBD'}}, {'operation': 'trim', 'options': {'column_name': 'Q_D/Q_GBD', 'batch_size': 10, 'start_time': 0.0, 'method': 'std', 'threshold': None, 'robust': True, 'sss_start': 208.0}}, {'operation': 'effective_sample_size', 'options': {'column_names': 'Q_D/Q_GBD', 'alpha': 0.05}}, {'operation': 'additional_data', 'options': {'column_name': None, 'ddof': 1, 'method': 'sliding', 'window_size': None, 'reduction_factor': 0.2}}]}
+
+
+
+
+
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.562 seconds)
+   **Total running time of the script:** (0 minutes 1.483 seconds)
 
 
 .. _sphx_glr_download_auto_tutorials_datastream_guide.py:
