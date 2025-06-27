@@ -1,7 +1,7 @@
 import pandas as pd
 
-from ..base.data_stream import (
-    DataStream,  # Adjust import based on your module structure
+from ..base.data_stream import (  # Adjust import based on your module structure
+    DataStream,
 )
 
 
