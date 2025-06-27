@@ -8,7 +8,7 @@ Contents
    readme
    installation
    usage
-   documentation/index
+   autoapi/index
    contributing
    authors
    changelog
