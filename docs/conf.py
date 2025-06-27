@@ -44,6 +44,7 @@ extlinks = {
     "pr": ("https://github.com/sandialabs/quends/pull/%s", "PR #%s"),
 }
 
+<<<<<<< HEAD
 extensions += ["autoapi.extension"]
 
 autoapi_dirs = ["../src/quends"]  # Where the QUENDS source code is
@@ -51,6 +52,15 @@ autoapi_type = "python"
 autoapi_add_toctree_entry = True
 
 autoapi_template_dir = "_templates/autoapi"  # Templates for AutoAPI documentation
+=======
+extensions += ['autoapi.extension']
+
+autoapi_dirs = ['../src/quends'] # Where the QUENDS source code is
+autoapi_type = "python"
+autoapi_add_toctree_entry = True
+
+autoapi_template_dir = "_templates/autoapi" # Templates for AutoAPI documentation
+>>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
 suppress_warnings = ["autoapi"]
 autoapi_options = [
     "members",
@@ -60,8 +70,13 @@ autoapi_options = [
     "imported-members",
 ]
 
+<<<<<<< HEAD
 autoapi_own_page_level = "module"
 autoapi_keep_files = False  # Keep the AutoAPI generated files on the filesystem
+=======
+autoapi_own_page_level = 'module'
+autoapi_keep_files = False # Keep the AutoAPI generated files on the filesystem
+>>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
 
 html_theme = "sphinx_book_theme"
 

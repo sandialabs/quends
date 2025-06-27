@@ -145,8 +145,9 @@ def to_native_types(obj):
 
     This function walks through dictionaries, lists, tuples, NumPy scalars, and arrays,
     converting them into Python built-ins:
-      - NumPy scalar → Python int or float
-      - NumPy array  → Python list (recursively)
+
+    - NumPy scalar → Python int or float
+    - NumPy array  → Python list (recursively)
 
     Parameters
     ----------
@@ -293,13 +294,19 @@ class DataStream:
 
         Parameters
         ----------
+<<<<<<< HEAD
         n : int, default=5
             Number of rows to return.
 >>>>>>> f08ccff (Update: improvements to data_stream, ensemble, and exporter modules)
+=======
+        n : int, optional
+            Number of rows to return. Defaults to 5.
+>>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
 
         Returns
         -------
         pandas.DataFrame
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
             The first `n` rows of the DataFrame.
@@ -1135,6 +1142,9 @@ class DataStream:
         """Return the first n rows of the underlying DataFrame."""
 =======
             The first `n` rows of `self.df`.
+=======
+            The first `n` rows of the DataFrame.
+>>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
         """
 >>>>>>> f08ccff (Update: improvements to data_stream, ensemble, and exporter modules)
         return self.df.head(n)
