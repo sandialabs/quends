@@ -1,4 +1,5 @@
 import math
+
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
@@ -9,6 +10,9 @@ from statsmodels.tsa.stattools import acf, adfuller
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
 
 def deduplicate_history(history):
     """
@@ -35,6 +39,7 @@ def deduplicate_history(history):
     # Reverse to keep last call
     for entry in reversed(history):
         op = entry["operation"]
+<<<<<<< HEAD
         if op not in seen:
             out.append(entry)
             seen.add(op)
@@ -134,10 +139,13 @@ def deduplicate_history(history):
     # Reverse to keep last call
     for entry in reversed(history):
         op = entry['operation']
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
         if op not in seen:
             out.append(entry)
             seen.add(op)
     return list(reversed(out))
+
 
 def to_native_types(obj):
     """
@@ -170,6 +178,7 @@ def to_native_types(obj):
         return obj.item()
     else:
         return obj
+
 
 class DataStream:
     """
@@ -240,12 +249,19 @@ class DataStream:
 
         Private helper; not intended for external use.
         """
+<<<<<<< HEAD
         options = {k: v for k, v in options.items() if k not in ('self', 'cls', '__class__')}
         self._history.append({
             "operation": operation,
             "options": options
         })
 >>>>>>> accec82 (Improvement of the updated the trimin  data_stream.py)
+=======
+        options = {
+            k: v for k, v in options.items() if k not in ("self", "cls", "__class__")
+        }
+        self._history.append({"operation": operation, "options": options})
+>>>>>>> 2d15506 (update documentation with autoapi)
 
     def _add_history(self, operation, options):
         """
@@ -1243,17 +1259,32 @@ class DataStream:
 >>>>>>> e66b052 (Update: improvements to data_stream, ensemble, and exporter modules)
         """
         # --------- COMPATIBILITY PATCH: window_size or batch_size --------------
+<<<<<<< HEAD
         if window_size is not None and batch_size != 10:  # 10 is your default batch_size
             print("Warning: Both window_size and batch_size were specified. Using window_size.")
         if window_size is not None:
             batch_size = window_size
+=======
+        # if window_size is not None and batch_size != 10:  # 10 is your default batch_size
+        #    print("Warning: Both window_size and batch_size were specified. Using window_size.")
+        # if window_size is not None:
+        #    batch_size = window_size
+>>>>>>> d687384 (update documentation with autoapi)
         # -----------------------------------------------------------------------
         stationary_result = self.is_stationary(column_name)
-        is_stat = stationary_result.get(column_name, False) if isinstance(stationary_result, dict) else bool(stationary_result)
+        is_stat = (
+            stationary_result.get(column_name, False)
+            if isinstance(stationary_result, dict)
+            else bool(stationary_result)
+        )
         new_history = self._history.copy()
         options = dict(
-            column_name=column_name, batch_size=batch_size, start_time=start_time,
-            method=method, threshold=threshold, robust=robust,
+            column_name=column_name,
+            batch_size=batch_size,
+            start_time=start_time,
+            method=method,
+            threshold=threshold,
+            robust=robust,
         )
         if not is_stat:
             options["message"] = (
@@ -1261,8 +1292,12 @@ class DataStream:
                 "Steady-state trimming requires stationary data."
             )
             new_history.append({"operation": "trim", "options": options})
-            return {"results": None, "metadata": deduplicate_history(new_history), "message": options["message"]}
-            #return {"results": None, "metadata": deduplicate_history(new_history)}
+            return {
+                "results": None,
+                "metadata": deduplicate_history(new_history),
+                "message": options["message"],
+            }
+            # return {"results": None, "metadata": deduplicate_history(new_history)}
 
         data = self.df[self.df["time"] >= start_time].reset_index(drop=True)
         non_zero_index = data[data[column_name] > 0].index.min()
@@ -1276,7 +1311,9 @@ class DataStream:
             )
         elif method == "threshold":
             if threshold is None:
-                options["message"] = "Threshold must be specified for the 'threshold' method."
+                options["message"] = (
+                    "Threshold must be specified for the 'threshold' method."
+                )
                 new_history.append({"operation": "trim", "options": options})
                 return {"results": None, "metadata": deduplicate_history(new_history)}
             steady_state_start_time = self.find_steady_state_threshold(
@@ -1288,11 +1325,13 @@ class DataStream:
                 data, column_name, window_size=batch_size, threshold=threshold
             )
         else:
-            options["message"] = "Invalid method. Choose 'std', 'threshold', or 'rolling_variance'."
+            options["message"] = (
+                "Invalid method. Choose 'std', 'threshold', or 'rolling_variance'."
+            )
             new_history.append({"operation": "trim", "options": options})
             return {"results": None, "metadata": deduplicate_history(new_history)}
 
-        options['sss_start'] = steady_state_start_time
+        options["sss_start"] = steady_state_start_time
         if steady_state_start_time is not None:
             trimmed_df = self.df.loc[
                 self.df["time"] >= steady_state_start_time, ["time", column_name]
@@ -1300,20 +1339,22 @@ class DataStream:
             new_history.append({"operation": "trim", "options": options})
             return {
                 "results": DataStream(trimmed_df, _history=new_history),
-                "metadata": deduplicate_history(new_history)
+                "metadata": deduplicate_history(new_history),
             }
         else:
             options["message"] = (
                 f"Steady-state start time could not be determined for column '{column_name}'."
             )
             new_history.append({"operation": "trim", "options": options})
-            return {"results": None, "metadata": deduplicate_history(new_history), "message": options["message"]}
-            #return {"results": None, "metadata": deduplicate_history(new_history)}
+            return {
+                "results": None,
+                "metadata": deduplicate_history(new_history),
+                "message": options["message"],
+            }
+            # return {"results": None, "metadata": deduplicate_history(new_history)}
 
     @staticmethod
-    def find_steady_state_std(
-        data, column_name, window_size=10, robust=True
-    ):
+    def find_steady_state_std(data, column_name, window_size=10, robust=True):
         """
         Identify the earliest time point when the signal remains within ±1/2/3σ proportions.
 
@@ -1343,8 +1384,12 @@ class DataStream:
                 central_value = np.mean(remaining_data)
                 scale_value = np.std(remaining_data)
             within_1 = np.mean(np.abs(remaining_data - central_value) <= scale_value)
-            within_2 = np.mean(np.abs(remaining_data - central_value) <= 2 * scale_value)
-            within_3 = np.mean(np.abs(remaining_data - central_value) <= 3 * scale_value)
+            within_2 = np.mean(
+                np.abs(remaining_data - central_value) <= 2 * scale_value
+            )
+            within_3 = np.mean(
+                np.abs(remaining_data - central_value) <= 3 * scale_value
+            )
             if within_1 >= 0.68 and within_2 >= 0.95 and within_3 >= 0.99:
                 return time_filtered[i]
         return None
@@ -1397,9 +1442,7 @@ class DataStream:
         return df
 
     @staticmethod
-    def find_steady_state_threshold(
-        data, column_name, window_size, threshold
-    ):
+    def find_steady_state_threshold(data, column_name, window_size, threshold):
         """
         Use rolling standard deviation on normalized data to detect steady-state.
 
@@ -1872,7 +1915,9 @@ class DataStream:
         dict
             {'results': {col: ESS_int or message}, 'metadata': history}
         """
-        self._add_history("effective_sample_size", {"column_names": column_names, "alpha": alpha})
+        self._add_history(
+            "effective_sample_size", {"column_names": column_names, "alpha": alpha}
+        )
         if column_names is None:
             column_names = [col for col in self.df.columns if col != "time"]
         elif isinstance(column_names, str):
@@ -1960,7 +2005,13 @@ class DataStream:
             return ess, ess / n
         return ess
 
-    def ess_robust(self, column_names=None, rank_normalize=False, min_samples=8, return_relative=False):
+    def ess_robust(
+        self,
+        column_names=None,
+        rank_normalize=False,
+        min_samples=8,
+        return_relative=False,
+    ):
         """
         Wrapper for `robust_effective_sample_size` over multiple columns.
 
@@ -1978,12 +2029,15 @@ class DataStream:
         dict
             {'results': {col: ESS or tuple}, 'metadata': history}
         """
-        self._add_history("ess_robust", {
-            "column_names": column_names,
-            "rank_normalize": rank_normalize,
-            "min_samples": min_samples,
-            "return_relative": return_relative,
-        })
+        self._add_history(
+            "ess_robust",
+            {
+                "column_names": column_names,
+                "rank_normalize": rank_normalize,
+                "min_samples": min_samples,
+                "return_relative": return_relative,
+            },
+        )
         if column_names is None:
             column_names = [col for col in self.df.columns if col != "time"]
         elif isinstance(column_names, str):
@@ -1994,14 +2048,18 @@ class DataStream:
                 results[col] = {"error": f"Column '{col}' not found."}
                 continue
             x = self.df[col].dropna().values
-            ess = self.robust_effective_sample_size(x, rank_normalize=rank_normalize, min_samples=min_samples, return_relative=return_relative)
+            ess = self.robust_effective_sample_size(
+                x,
+                rank_normalize=rank_normalize,
+                min_samples=min_samples,
+                return_relative=return_relative,
+            )
             results[col] = ess
         metadata = deduplicate_history(self._history)
         return {"results": to_native_types(results), "metadata": metadata}
 
     # --------- Statistical summaries (unchanged except metadata) --------
     def _mean(self, column_name=None, method="non-overlapping", window_size=None):
-
         """
         Compute block or sliding window means for each column.
 
@@ -2015,10 +2073,15 @@ class DataStream:
                 continue
             est_win = self._estimate_window(col, column_data, window_size)
             proc_data = self._process_column(column_data, est_win, method)
-            results[col] = {"mean": float(np.mean(proc_data)), "window_size": int(est_win)}
+            results[col] = {
+                "mean": float(np.mean(proc_data)),
+                "window_size": int(est_win),
+            }
         return results
 
-    def _mean_uncertainty(self, column_name=None, ddof=1, method="non-overlapping", window_size=None):
+    def _mean_uncertainty(
+        self, column_name=None, ddof=1, method="non-overlapping", window_size=None
+    ):
         """
         Estimate the standard error of the mean via block/sliding windows.
 
@@ -2038,10 +2101,15 @@ class DataStream:
             else:
                 effective_n = len(proc_data)
             uncertainty = float(np.std(proc_data, ddof=ddof) / np.sqrt(effective_n))
-            results[col] = {"mean_uncertainty": uncertainty, "window_size": int(est_win)}
+            results[col] = {
+                "mean_uncertainty": uncertainty,
+                "window_size": int(est_win),
+            }
         return results
 
-    def _confidence_interval(self, column_name=None, ddof=1, method="non-overlapping", window_size=None):
+    def _confidence_interval(
+        self, column_name=None, ddof=1, method="non-overlapping", window_size=None
+    ):
         """
         Build 95% confidence intervals around block/sliding means.
 
@@ -2115,14 +2183,19 @@ class DataStream:
                 "window_size": est_win,
             }
         op_options = dict(
-            column_name=column_name, ddof=ddof, method=method, window_size=window_size,
+            column_name=column_name,
+            ddof=ddof,
+            method=method,
+            window_size=window_size,
         )
         full_history = self._history.copy()
         full_history.append({"operation": "compute_statistics", "options": op_options})
         statistics["metadata"] = deduplicate_history(full_history)
         return to_native_types(statistics)
 
-    def cumulative_statistics(self, column_name=None, method="non-overlapping", window_size=None):
+    def cumulative_statistics(
+        self, column_name=None, method="non-overlapping", window_size=None
+    ):
         """
         Generate cumulative mean and uncertainty time series for each column.
 
@@ -2150,7 +2223,9 @@ class DataStream:
             column_name=column_name, method=method, window_size=window_size
         )
         full_history = self._history.copy()
-        full_history.append({"operation": "cumulative_statistics", "options": op_options})
+        full_history.append(
+            {"operation": "cumulative_statistics", "options": op_options}
+        )
         results["metadata"] = deduplicate_history(full_history)
         return to_native_types(results)
 
@@ -2187,8 +2262,10 @@ class DataStream:
             if len(valid_count) < 2:
                 results[col] = {"error": "Not enough valid data points for fitting."}
                 continue
+
             def power_law_model(n, A, p):
                 return A / (n**p)
+
             popt, _ = curve_fit(power_law_model, valid_count, valid_sem, p0=[1.0, 0.5])
             A_est, p_est = popt
             p_est = abs(p_est)
@@ -2209,7 +2286,11 @@ class DataStream:
                 "window_size": int(est_win),
             }
         op_options = dict(
-            column_name=column_name, ddof=ddof, method=method, window_size=window_size, reduction_factor=reduction_factor
+            column_name=column_name,
+            ddof=ddof,
+            method=method,
+            window_size=window_size,
+            reduction_factor=reduction_factor,
         )
         full_history = self._history.copy()
         full_history.append({"operation": "additional_data", "options": op_options})
@@ -2243,7 +2324,9 @@ class DataStream:
             if isinstance(ess_results, dict) and "results" in ess_results:
                 ess_val = ess_results["results"].get(col, 10)
             else:
-                ess_val = ess_results.get(col, 10) if isinstance(ess_results, dict) else 10
+                ess_val = (
+                    ess_results.get(col, 10) if isinstance(ess_results, dict) else 10
+                )
             # Avoid division by zero or negative
             try:
                 ess_val = max(1, int(round(ess_val)))
@@ -2252,9 +2335,7 @@ class DataStream:
             return max(5, len(column_data) // ess_val)
         return window_size
 
-
-
-    #def _estimate_window(self, col, column_data, window_size):
+    # def _estimate_window(self, col, column_data, window_size):
     #    if window_size is None:
     #        ess_results = self.effective_sample_size(column_names=col)
     #        ess_value = ess_results["results"].get(col, 10)
@@ -2278,7 +2359,7 @@ class DataStream:
         if method == "sliding":
             return column_data.rolling(window=estimated_window).mean().dropna()
         elif method == "non-overlapping":
-            step_size = max(1, estimated_window) #max(1, estimated_window // 4)
+            step_size = max(1, estimated_window)  # max(1, estimated_window // 4)
             window_means = [
                 np.mean(column_data[i : i + estimated_window])
                 for i in range(0, len(column_data) - estimated_window + 1, step_size)
@@ -2345,38 +2426,54 @@ class DataStream:
 >>>>>>> f08ccff (Update: improvements to data_stream, ensemble, and exporter modules)
 =======
 
-
-
     # === Compatibility wrappers for legacy tests ===
 
     def mean(self, column_name=None, method="non-overlapping", window_size=None):
         """
         Legacy wrapper for test compatibility. Returns only mean (not dict).
         """
-        results = self._mean(column_name=column_name, method=method, window_size=window_size)
+        results = self._mean(
+            column_name=column_name, method=method, window_size=window_size
+        )
         if column_name is None:
             # Return dict of means for all columns
             return {col: val["mean"] for col, val in results.items() if "mean" in val}
         col = column_name if isinstance(column_name, str) else list(results.keys())[0]
         return results[col]["mean"]
 
-    def mean_uncertainty(self, column_name=None, ddof=1, method="non-overlapping", window_size=None):
+    def mean_uncertainty(
+        self, column_name=None, ddof=1, method="non-overlapping", window_size=None
+    ):
         """
         Legacy wrapper for test compatibility. Returns only mean_uncertainty (not dict).
         """
-        results = self._mean_uncertainty(column_name=column_name, ddof=ddof, method=method, window_size=window_size)
+        results = self._mean_uncertainty(
+            column_name=column_name, ddof=ddof, method=method, window_size=window_size
+        )
         if column_name is None:
-            return {col: val["mean_uncertainty"] for col, val in results.items() if "mean_uncertainty" in val}
+            return {
+                col: val["mean_uncertainty"]
+                for col, val in results.items()
+                if "mean_uncertainty" in val
+            }
         col = column_name if isinstance(column_name, str) else list(results.keys())[0]
         return results[col]["mean_uncertainty"]
 
-    def confidence_interval(self, column_name=None, ddof=1, method="non-overlapping", window_size=None):
+    def confidence_interval(
+        self, column_name=None, ddof=1, method="non-overlapping", window_size=None
+    ):
         """
         Legacy wrapper for test compatibility. Returns only CI tuple.
         """
-        results = self._confidence_interval(column_name=column_name, ddof=ddof, method=method, window_size=window_size)
+        results = self._confidence_interval(
+            column_name=column_name, ddof=ddof, method=method, window_size=window_size
+        )
         if column_name is None:
-            return {col: val["confidence_interval"] for col, val in results.items() if "confidence_interval" in val}
+            return {
+                col: val["confidence_interval"]
+                for col, val in results.items()
+                if "confidence_interval" in val
+            }
         col = column_name if isinstance(column_name, str) else list(results.keys())[0]
         return results[col]["confidence_interval"]
 
@@ -2391,7 +2488,7 @@ class DataStream:
         """
         Stub for compatibility with legacy test. Returns dummy value.
         """
-    # We could implement a real one if needed; for now, return 0 for all columns.
+        # We could implement a real one if needed; for now, return 0 for all columns.
         if column_names is None:
             column_names = [col for col in self.df.columns if col != "time"]
         elif isinstance(column_names, str):

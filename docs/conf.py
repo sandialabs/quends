@@ -45,6 +45,7 @@ extlinks = {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 extensions += ["autoapi.extension"]
 
 autoapi_dirs = ["../src/quends"]  # Where the QUENDS source code is
@@ -54,13 +55,20 @@ autoapi_add_toctree_entry = True
 autoapi_template_dir = "_templates/autoapi"  # Templates for AutoAPI documentation
 =======
 extensions += ['autoapi.extension']
+=======
+extensions += ["autoapi.extension"]
+>>>>>>> 2d15506 (update documentation with autoapi)
 
-autoapi_dirs = ['../src/quends'] # Where the QUENDS source code is
+autoapi_dirs = ["../src/quends"]  # Where the QUENDS source code is
 autoapi_type = "python"
 autoapi_add_toctree_entry = True
 
+<<<<<<< HEAD
 autoapi_template_dir = "_templates/autoapi" # Templates for AutoAPI documentation
 >>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
+=======
+autoapi_template_dir = "_templates/autoapi"  # Templates for AutoAPI documentation
+>>>>>>> 2d15506 (update documentation with autoapi)
 suppress_warnings = ["autoapi"]
 autoapi_options = [
     "members",
@@ -71,12 +79,17 @@ autoapi_options = [
 ]
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 autoapi_own_page_level = "module"
 autoapi_keep_files = False  # Keep the AutoAPI generated files on the filesystem
 =======
 autoapi_own_page_level = 'module'
 autoapi_keep_files = False # Keep the AutoAPI generated files on the filesystem
 >>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
+=======
+autoapi_own_page_level = "module"
+autoapi_keep_files = False  # Keep the AutoAPI generated files on the filesystem
+>>>>>>> 2d15506 (update documentation with autoapi)
 
 html_theme = "sphinx_book_theme"
 

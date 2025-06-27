@@ -113,6 +113,7 @@ def test_confidence_interval_simple(simple_data):
 def test_confidence_interval_long(long_data):
     ds = DataStream(long_data)
 <<<<<<< HEAD
+<<<<<<< HEAD
     expected = {"A": (0.54, 4.46), "B": (1.54, 5.46)}
 =======
     expected = {
@@ -120,6 +121,9 @@ def test_confidence_interval_long(long_data):
         "B": (1.54, 5.46)
     }
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+    expected = {"A": (0.54, 4.46), "B": (1.54, 5.46)}
+>>>>>>> 2d15506 (update documentation with autoapi)
     assert ds.confidence_interval(window_size=2) == expected
 
 
@@ -128,6 +132,7 @@ def test_confidence_interval_long(long_data):
 
 def test_trim_std(trim_data):
     ds = DataStream(trim_data)
+<<<<<<< HEAD
     result = ds.trim(column_name="A", batch_size=1, method="std", start_time=3.0, threshold=4)
     assert isinstance(result, DataStream)
     assert result.df.empty
@@ -144,10 +149,38 @@ def test_trim_std(trim_data):
             'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
         }}
     ]
+=======
+    expected = {
+        "results": None,
+        "metadata": [
+            {"operation": "is_stationary", "options": {"columns": "A"}},
+            {
+                "operation": "trim",
+                "options": {
+                    "column_name": "A",
+                    "batch_size": 1,
+                    "start_time": 3.0,
+                    "method": "std",
+                    "threshold": 4,
+                    "robust": True,
+                    "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+                },
+            },
+        ],
+        "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+    }
+    assert (
+        ds.trim(
+            column_name="A", batch_size=1, method="std", start_time=3.0, threshold=4
+        )
+        == expected
+    )
+>>>>>>> 2d15506 (update documentation with autoapi)
 
 
 def test_trim_threshold(trim_data):
     ds = DataStream(trim_data.astype(float))
+<<<<<<< HEAD
     result = ds.trim(column_name="A", batch_size=1, method="threshold", start_time=3.0, threshold=4)
     assert isinstance(result, DataStream)
     assert result.df.empty
@@ -164,10 +197,42 @@ def test_trim_threshold(trim_data):
             'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
         }}
     ]
+=======
+    expected = {
+        "results": None,
+        "metadata": [
+            {"operation": "is_stationary", "options": {"columns": "A"}},
+            {
+                "operation": "trim",
+                "options": {
+                    "column_name": "A",
+                    "batch_size": 1,
+                    "start_time": 3.0,
+                    "method": "threshold",
+                    "threshold": 4,
+                    "robust": True,
+                    "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+                },
+            },
+        ],
+        "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+    }
+    assert (
+        ds.trim(
+            column_name="A",
+            batch_size=1,
+            method="threshold",
+            start_time=3.0,
+            threshold=4,
+        )
+        == expected
+    )
+>>>>>>> 2d15506 (update documentation with autoapi)
 
 
 def test_trim_rolling_variance(trim_data):
     ds = DataStream(trim_data)
+<<<<<<< HEAD
     result = ds.trim(column_name="A", batch_size=1, method="rolling_variance", start_time=3.0, threshold=4)
     assert isinstance(result, DataStream)
     assert result.df.empty
@@ -184,6 +249,37 @@ def test_trim_rolling_variance(trim_data):
             'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
         }}
     ]
+=======
+    expected = {
+        "results": None,
+        "metadata": [
+            {"operation": "is_stationary", "options": {"columns": "A"}},
+            {
+                "operation": "trim",
+                "options": {
+                    "column_name": "A",
+                    "batch_size": 1,
+                    "start_time": 3.0,
+                    "method": "rolling_variance",
+                    "threshold": 4,
+                    "robust": True,
+                    "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+                },
+            },
+        ],
+        "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+    }
+    assert (
+        ds.trim(
+            column_name="A",
+            batch_size=1,
+            method="rolling_variance",
+            start_time=3.0,
+            threshold=4,
+        )
+        == expected
+    )
+>>>>>>> 2d15506 (update documentation with autoapi)
 
 
 def test_trim_invalid_method(trim_data):
@@ -212,34 +308,35 @@ def test_trim_invalid_method(trim_data):
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
 =======
     expected = {
-        'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-        'metadata': [
+        "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+        "metadata": [
+            {"operation": "is_stationary", "options": {"columns": "A"}},
             {
-                'operation': 'is_stationary',
-                'options': {'columns': 'A'}
+                "operation": "trim",
+                "options": {
+                    "batch_size": 10,
+                    "column_name": "A",
+                    "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+                    "method": "invalid_method",
+                    "robust": True,
+                    "start_time": 0.0,
+                    "threshold": None,
+                },
             },
-            {
-                'operation': 'trim',
-                'options': {
-                    'batch_size': 10,
-                    'column_name': 'A',
-                    'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-                    'method': 'invalid_method',
-                    'robust': True,
-                    'start_time': 0.0,
-                    'threshold': None,
-                }
-            }
         ],
-        'results': None
+        "results": None,
     }
     assert result == expected
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> 325b440 (Add comprehensive pytest suite for DataStream with all edge cases)
 
 =======
 >>>>>>> 16e8bdf (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+
+>>>>>>> 2d15506 (update documentation with autoapi)
 def test_trim_missing_threshold(long_data):
     ds = DataStream(long_data)
     result = ds.trim(column_name="A", method="threshold")
@@ -265,34 +362,34 @@ def test_trim_missing_threshold(long_data):
     assert result is None
 =======
     expected = {
-        'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-        'metadata': [
+        "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+        "metadata": [
+            {"operation": "is_stationary", "options": {"columns": "A"}},
             {
-                'operation': 'is_stationary',
-                'options': {'columns': 'A'}
+                "operation": "trim",
+                "options": {
+                    "batch_size": 10,
+                    "column_name": "A",
+                    "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+                    "method": "threshold",
+                    "robust": True,
+                    "start_time": 0.0,
+                    "threshold": None,
+                },
             },
-            {
-                'operation': 'trim',
-                'options': {
-                    'batch_size': 10,
-                    'column_name': 'A',
-                    'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-                    'method': 'threshold',
-                    'robust': True,
-                    'start_time': 0.0,
-                    'threshold': None,
-                }
-            }
         ],
-        'results': None
+        "results": None,
     }
     assert result == expected
 
 >>>>>>> 325b440 (Add comprehensive pytest suite for DataStream with all edge cases)
 
+<<<<<<< HEAD
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
 
 
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
 # === Compute Statistics ===
 def test_compute_stats_simple(simple_data):
     ds = DataStream(simple_data)
@@ -479,9 +576,13 @@ def test_cumulative_stats_empty(nan_data):
 import pytest
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+
+>>>>>>> 2d15506 (update documentation with autoapi)
 def assert_nested_approx(a, b, rel=1e-9):
     if isinstance(a, dict) and isinstance(b, dict):
         assert a.keys() == b.keys()
@@ -496,6 +597,7 @@ def assert_nested_approx(a, b, rel=1e-9):
     else:
         assert a == b
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 <<<<<<< HEAD
@@ -535,7 +637,13 @@ def test_cumulative_stats_empty(nan_data):
 =======
 =======
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+<<<<<<< HEAD
 >>>>>>> e02f3a6 (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+=======
+
+>>>>>>> 2d15506 (update documentation with autoapi)
+>>>>>>> d687384 (update documentation with autoapi)
 def test_additional_data_simple(simple_data):
     ds = DataStream(simple_data)
     with warnings.catch_warnings():
@@ -543,6 +651,9 @@ def test_additional_data_simple(simple_data):
         result = ds.additional_data(window_size=1, method="sliding")
     expected = {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
         "A": {
             "A_est": 0.3910010411753345,
             "p_est": 0.8547556456757277,
@@ -552,6 +663,7 @@ def test_additional_data_simple(simple_data):
             "n_target": 3.393548707049326,
             "additional_samples": 1,
             "window_size": 1,
+<<<<<<< HEAD
         },
         "metadata": [
             {
@@ -578,20 +690,25 @@ def test_additional_data_simple(simple_data):
             'n_target': 3.393548707049326,
             'additional_samples': 1,
             'window_size': 1,
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
         },
-        'metadata': [{
-            'operation': 'additional_data',
-            'options': {
-                'column_name': None,
-                'ddof': 1,
-                'method': 'sliding',
-                'window_size': 1,
-                'reduction_factor': 0.1,
+        "metadata": [
+            {
+                "operation": "additional_data",
+                "options": {
+                    "column_name": None,
+                    "ddof": 1,
+                    "method": "sliding",
+                    "window_size": 1,
+                    "reduction_factor": 0.1,
+                },
             }
-        }]
+        ],
     }
     assert_nested_approx(result, expected)
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+
 
 def test_additional_data_long(long_data):
     ds = DataStream(long_data)
@@ -600,6 +717,9 @@ def test_additional_data_long(long_data):
         result = ds.additional_data(window_size=1, method="sliding")
     expected = {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
         "A": {
             "A_est": 0.3803501348616604,
             "p_est": 0.8838111262612045,
@@ -609,6 +729,7 @@ def test_additional_data_long(long_data):
             "n_target": 5.633041271578334,
             "additional_samples": 1,
             "window_size": 1,
+<<<<<<< HEAD
         },
         "B": {
             "A_est": 0.3803501348616604,
@@ -642,28 +763,36 @@ def test_additional_data_long(long_data):
             'n_target': 5.633041271578334,
             'additional_samples': 1,
             'window_size': 1,
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
         },
-        'B': {
-            'A_est': 0.3803501348616604,
-            'p_est': 0.8838111262612045,
-            'n_current': 5,
-            'current_sem': 0.09171198805673249,
-            'target_sem': 0.08254078925105925,
-            'n_target': 5.633041271578334,
-            'additional_samples': 1,
-            'window_size': 1,
+        "B": {
+            "A_est": 0.3803501348616604,
+            "p_est": 0.8838111262612045,
+            "n_current": 5,
+            "current_sem": 0.09171198805673249,
+            "target_sem": 0.08254078925105925,
+            "n_target": 5.633041271578334,
+            "additional_samples": 1,
+            "window_size": 1,
         },
-        'metadata': [{
-            'operation': 'additional_data',
-            'options': {
-                'column_name': None,
-                'ddof': 1,
-                'method': 'sliding',
-                'window_size': 1,
-                'reduction_factor': 0.1,
+        "metadata": [
+            {
+                "operation": "additional_data",
+                "options": {
+                    "column_name": None,
+                    "ddof": 1,
+                    "method": "sliding",
+                    "window_size": 1,
+                    "reduction_factor": 0.1,
+                },
             }
+<<<<<<< HEAD
         }]
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+        ],
+>>>>>>> 2d15506 (update documentation with autoapi)
     }
     assert_nested_approx(result, expected)
 
@@ -691,6 +820,9 @@ def test_additional_data_missing_cumulative(long_data):
     expected = {
         "B": {"error": "No cumulative SEM data for column 'B'"},
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
         "metadata": [
             {
                 "operation": "additional_data",
@@ -701,6 +833,7 @@ def test_additional_data_missing_cumulative(long_data):
                     "reduction_factor": 0.1,
                     "window_size": None,
                 },
+<<<<<<< HEAD
             }
         ],
 =======
@@ -715,6 +848,10 @@ def test_additional_data_missing_cumulative(long_data):
             }
         }]
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+            }
+        ],
+>>>>>>> 2d15506 (update documentation with autoapi)
     }
     assert additional_data == expected
 
@@ -735,6 +872,7 @@ def test_effective_sample_size_below_invalid_column(long_data):
     result = ds.effective_sample_size_below(column_names="C")
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     assert result == {"C": 0}
 
 =======
@@ -742,6 +880,9 @@ def test_effective_sample_size_below_invalid_column(long_data):
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
 =======
     assert result == {'C': 0}
+=======
+    assert result == {"C": 0}
+>>>>>>> 2d15506 (update documentation with autoapi)
 
 >>>>>>> 325b440 (Add comprehensive pytest suite for DataStream with all edge cases)
 
@@ -755,6 +896,7 @@ def test_effective_sample_size_below_empty_column():
     result = ds.effective_sample_size_below(column_names="A")
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     assert result == {"A": 0}
 =======
     assert result == {'A': None}
@@ -763,6 +905,9 @@ def test_effective_sample_size_below_empty_column():
     assert result == {'A': 0}
 
 >>>>>>> 325b440 (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+    assert result == {"A": 0}
+>>>>>>> 2d15506 (update documentation with autoapi)
 
 
 # === Stationary ===
@@ -824,6 +969,7 @@ def test_find_steady_state_not_valid(no_valid_data):
 def test_find_steady_state_stationary(stationary_data):
     ds = DataStream(stationary_data)
 <<<<<<< HEAD
+<<<<<<< HEAD
     result = ds.find_steady_state_threshold(
         data=ds.df, column_name="A", window_size=2, threshold=0.1
     )
@@ -847,18 +993,30 @@ def test_find_steady_state_trim_data(trim_data):
 
 =======
     result = ds.find_steady_state_threshold(data=ds.df, column_name="A", window_size=2, threshold=0.1)
+=======
+    result = ds.find_steady_state_threshold(
+        data=ds.df, column_name="A", window_size=2, threshold=0.1
+    )
+>>>>>>> 2d15506 (update documentation with autoapi)
     assert result == 1
+
 
 def test_find_steady_state_long_data(long_data):
     ds = DataStream(long_data)
-    result = ds.find_steady_state_threshold(data=ds.df, column_name="A", window_size=2, threshold=0.1)
+    result = ds.find_steady_state_threshold(
+        data=ds.df, column_name="A", window_size=2, threshold=0.1
+    )
     assert result is None
+
 
 def test_find_steady_state_trim_data(trim_data):
     ds = DataStream(trim_data)
-    result = ds.find_steady_state_threshold(data=ds.df, column_name="A", window_size=3, threshold=0.5)
+    result = ds.find_steady_state_threshold(
+        data=ds.df, column_name="A", window_size=3, threshold=0.5
+    )
     assert result == 2
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+
 
 def test_find_steady_state_with_start_time(long_data):
     ds = DataStream(long_data)
@@ -895,6 +1053,7 @@ def test_effective_sample_size_empty(empty_data):
     ds = DataStream(empty_data)
     expected = {
 <<<<<<< HEAD
+<<<<<<< HEAD
         "results": {},
         "metadata": [
             {
@@ -905,12 +1064,20 @@ def test_effective_sample_size_empty(empty_data):
 =======
         'results': {},
         'metadata': [
+=======
+        "results": {},
+        "metadata": [
+>>>>>>> 2d15506 (update documentation with autoapi)
             {
-                'operation': 'effective_sample_size',
-                'options': {'alpha': 0.05, 'column_names': None}
+                "operation": "effective_sample_size",
+                "options": {"alpha": 0.05, "column_names": None},
             }
+<<<<<<< HEAD
         ]
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+        ],
+>>>>>>> 2d15506 (update documentation with autoapi)
     }
     assert ds.effective_sample_size() == expected
 
@@ -920,6 +1087,9 @@ def test_effective_sample_size_nan(nan_data):
     result = ds.effective_sample_size(column_names=["A"])
     expected = {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
         "results": {
             "A": {
                 "effective_sample_size": None,
@@ -932,10 +1102,13 @@ def test_effective_sample_size_nan(nan_data):
                 "options": {"column_names": ["A"], "alpha": 0.05},
             }
         ],
+<<<<<<< HEAD
 =======
         'results': {'A': {'effective_sample_size': None, 'message': 'No data available for computation.'}},
         'metadata': [{'operation': 'effective_sample_size', 'options': {'column_names': ['A'], 'alpha': 0.05}}]
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
     }
     assert result == expected
 
@@ -945,6 +1118,9 @@ def test_effective_sample_size_simple(simple_data):
     result = ds.effective_sample_size(column_names=["A"])
     expected = {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
         "results": {"A": 3},
         "metadata": [
             {
@@ -952,10 +1128,13 @@ def test_effective_sample_size_simple(simple_data):
                 "options": {"column_names": ["A"], "alpha": 0.05},
             }
         ],
+<<<<<<< HEAD
 =======
         'results': {'A': 3},
         'metadata': [{'operation': 'effective_sample_size', 'options': {'column_names': ['A'], 'alpha': 0.05}}]
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
     }
     assert result == expected
 
@@ -965,6 +1144,9 @@ def test_effective_sample_size_long_data(long_data):
     result = ds.effective_sample_size(column_names=["A", "B"])
     expected = {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
         "results": {"A": 5, "B": 5},
         "metadata": [
             {
@@ -972,10 +1154,13 @@ def test_effective_sample_size_long_data(long_data):
                 "options": {"column_names": ["A", "B"], "alpha": 0.05},
             }
         ],
+<<<<<<< HEAD
 =======
         'results': {'A': 5, 'B': 5},
         'metadata': [{'operation': 'effective_sample_size', 'options': {'column_names': ['A', 'B'], 'alpha': 0.05}}]
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
     }
     assert result == expected
 
@@ -985,6 +1170,9 @@ def test_effective_sample_size_stationary(stationary_data):
     result = ds.effective_sample_size(column_names=["A"])
     expected = {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
         "results": {"A": 5},
         "metadata": [
             {
@@ -992,10 +1180,13 @@ def test_effective_sample_size_stationary(stationary_data):
                 "options": {"column_names": ["A"], "alpha": 0.05},
             }
         ],
+<<<<<<< HEAD
 =======
         'results': {'A': 5},
         'metadata': [{'operation': 'effective_sample_size', 'options': {'column_names': ['A'], 'alpha': 0.05}}]
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
     }
     assert result == expected
 
@@ -1005,6 +1196,9 @@ def test_effective_sample_size_trim_data(trim_data):
     result = ds.effective_sample_size(column_names=["A"])
     expected = {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
         "results": {"A": 5},
         "metadata": [
             {
@@ -1012,10 +1206,13 @@ def test_effective_sample_size_trim_data(trim_data):
                 "options": {"column_names": ["A"], "alpha": 0.05},
             }
         ],
+<<<<<<< HEAD
 =======
         'results': {'A': 5},
         'metadata': [{'operation': 'effective_sample_size', 'options': {'column_names': ['A'], 'alpha': 0.05}}]
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
     }
     assert result == expected
 
@@ -1025,6 +1222,9 @@ def test_effective_sample_size_missing_col(long_data):
     result = ds.effective_sample_size(column_names=["C"])
     expected = {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2d15506 (update documentation with autoapi)
         "results": {"C": {"message": "Column 'C' not found in the DataStream."}},
         "metadata": [
             {
@@ -1032,6 +1232,7 @@ def test_effective_sample_size_missing_col(long_data):
                 "options": {"column_names": ["C"], "alpha": 0.05},
             }
         ],
+<<<<<<< HEAD
     }
     assert result == expected
 =======
@@ -1041,3 +1242,7 @@ def test_effective_sample_size_missing_col(long_data):
     assert result == expected
 
 >>>>>>> f0a8eff (Add comprehensive pytest suite for DataStream with all edge cases)
+=======
+    }
+    assert result == expected
+>>>>>>> 2d15506 (update documentation with autoapi)
