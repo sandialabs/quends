@@ -250,6 +250,7 @@ class DataStream:
         Private helper; not intended for external use.
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         options = {k: v for k, v in options.items() if k not in ('self', 'cls', '__class__')}
         self._history.append({
             "operation": operation,
@@ -269,6 +270,8 @@ class DataStream:
 
         Private helper; not intended for external use.
         """
+=======
+>>>>>>> 7cafd50 (Merge origin/main into trim_fix — resolved conflict in data_stream.py)
         options = {k: v for k, v in options.items() if k not in ('self', 'cls', '__class__')}
         self._history.append({
             "operation": operation,
