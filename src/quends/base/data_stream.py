@@ -272,10 +272,7 @@ class DataStream:
                 self.df["time"] >= steady_state_start_time, ["time", column_name]
             ].reset_index(drop=True)
             new_history.append({"operation": "trim", "options": options})
-            return {
-                "results": DataStream(trimmed_df, _history=new_history),
-                "metadata": deduplicate_history(new_history),
-            }
+            return DataStream(trimmed_df, _history=new_history)
         else:
             options["message"] = (
                 f"Steady-state start time could not be determined for column '{column_name}'."
