@@ -886,12 +886,9 @@ class Plotter:
         plt.show()
         plt.close(fig)
 
-
-    def plot_ensemble(self,
-                      ensemble_obj,
-                      variables_to_plot=None,
-                      show_plots=False,
-                      save=False):
+    def plot_ensemble(
+        self, ensemble_obj, variables_to_plot=None, show_plots=False, save=False
+    ):
         """
         Plot each ensemble member together with the ensemble average,
         arranged in 2 columns and as many rows as needed.
@@ -899,8 +896,7 @@ class Plotter:
         """
         # 1) collect each member’s DataFrame
         member_dfs = {
-            f"Member {i}": ds.df
-            for i, ds in enumerate(ensemble_obj.data_streams)
+            f"Member {i}": ds.df for i, ds in enumerate(ensemble_obj.data_streams)
         }
 
         # 2) compute the ensemble average DataStream and add it
@@ -924,9 +920,7 @@ class Plotter:
 
         # 5) create figure
         fig, axes = plt.subplots(
-            nrows, ncols,
-            figsize=(7 * ncols, 7 * nrows),
-            squeeze=False
+            nrows, ncols, figsize=(7 * ncols, 7 * nrows), squeeze=False
         )
         axes = axes.flatten()
 
@@ -935,16 +929,16 @@ class Plotter:
             ax = axes[idx]
             for name, df in member_dfs.items():
                 if name == "Ensemble Average":
-                    ax.plot(df["time"], df[var],
-                            label=name,
-                            color="black",
-                            linewidth=2.5,
-                            zorder=5)
+                    ax.plot(
+                        df["time"],
+                        df[var],
+                        label=name,
+                        color="black",
+                        linewidth=2.5,
+                        zorder=5,
+                    )
                 else:
-                    ax.plot(df["time"], df[var],
-                            label=name,
-                            alpha=0.3,
-                            linewidth=1.0)
+                    ax.plot(df["time"], df[var], label=name, alpha=0.3, linewidth=1.0)
             ax.set_title(var, fontsize=14)
             ax.set_xlabel("Time", fontsize=12)
             ax.set_ylabel(var, fontsize=12)
@@ -961,12 +955,13 @@ class Plotter:
         # y-offset = 5% per legend row
         legend_y = -0.05 * legend_nrow
         fig.legend(
-            handles, labels,
+            handles,
+            labels,
             loc="lower center",
             bbox_to_anchor=(0.5, legend_y),
             ncol=legend_ncol,
             fontsize="small",
-            frameon=False
+            frameon=False,
         )
 
         # 9) tighten layout, reserving bottom space = 5%*rows + 2%
@@ -975,10 +970,7 @@ class Plotter:
 
         # 10) save/show
         if save:
-            outpath = os.path.join(
-                self.output_dir,
-                "ensemble_members_and_average.png"
-            )
+            outpath = os.path.join(self.output_dir, "ensemble_members_and_average.png")
             fig.savefig(outpath, dpi=150)
         if show_plots:
             plt.show()

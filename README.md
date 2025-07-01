@@ -8,7 +8,7 @@
 [![pages-build-deployment](https://github.com/sandialabs/quends/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/sandialabs/quends/actions/workflows/pages/pages-build-deployment)
 
 ## Overview
-This project focuses on uncertainty quantification in plasma turbulent simulations. It includes modules for loading and processing NetCDF and CSV datasets, estimating steady states, computing effective sample sizes, and running uncertainty quantification analyses. The project is structured into multiple Python scripts, each handling different aspects of the analysis. The following Python scripts are included:
+This project focuses on uncertainty quantification in plasma turbulent simulations. It includes modules for loading and processing NetCDF and CSV datasets, estimating steady states, computing effective sample sizes, and running uncertainty quantification analyses. The project is structured into multiple Python scripts, each handling different aspects of the analysis. To see more information on documentation, etc... visit our website [here](https://sandialabs.github.io/quends/).
 
 ## Table of Contents
 
@@ -104,7 +104,7 @@ Examples are shown in the `examples/notebooks` directories.
     ```
 
 ## Documentation
-For comprehensive information on how to use the QUENDS package, please refer to our [official documentation](https://sandialabs.github.io/quends/documentation/index.html). 
+For comprehensive information on how to use the QUENDS package, please refer to our [official documentation](https://sandialabs.github.io/quends/autoapi/quends/index.html). 
 
 ## Summary
 Key functionalities include:

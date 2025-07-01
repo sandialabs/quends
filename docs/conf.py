@@ -41,6 +41,25 @@ extlinks = {
     "pr": ("https://github.com/sandialabs/quends/pull/%s", "PR #%s"),
 }
 
+extensions += ["autoapi.extension"]
+
+autoapi_dirs = ["../src/quends"]  # Where the QUENDS source code is
+autoapi_type = "python"
+autoapi_add_toctree_entry = True
+
+autoapi_template_dir = "_templates/autoapi"  # Templates for AutoAPI documentation
+suppress_warnings = ["autoapi"]
+autoapi_options = [
+    "members",
+    "undoc-members",
+    "show-inheritance",
+    "show-module-summary",
+    "imported-members",
+]
+
+autoapi_own_page_level = "module"
+autoapi_keep_files = False  # Keep the AutoAPI generated files on the filesystem
+
 html_theme = "sphinx_book_theme"
 
 html_use_smartypants = True

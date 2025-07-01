@@ -4,10 +4,7 @@ import os
 import numpy as np
 import pytest
 
-from quends import (
-    DataStream,
-    from_json,
-)
+from quends import DataStream, from_json
 
 
 # Fixture to create a temporary JSON file

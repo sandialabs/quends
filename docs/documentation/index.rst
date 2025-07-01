@@ -1,7 +1,0 @@
-Documentation
-===============
-
-.. toctree::
-    :glob:
-
-    quends*
