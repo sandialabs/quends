@@ -121,6 +121,7 @@ class DataStream:
             "operation": operation,
             "options": options
         })
+        
     def get_metadata(self):
         """
         Return the deduplicated operation history for this DataStream.
