@@ -115,11 +115,23 @@ class DataStream:
 
         Private helper; not intended for external use.
         """
-        options = {
-            k: v for k, v in options.items() if k not in ("self", "cls", "__class__")
-        }
-        self._history.append({"operation": operation, "options": options})
-
+        options = {k: v for k, v in options.items() if k not in ('self', 'cls', '__class__')}
+        self._history.append({
+            "operation": operation,
+            "options": options
+        })
+        
+    def get_metadata(self):
+        """
+        Return the deduplicated operation history for this DataStream.
+        Returns
+        -------
+            list of dict
+            The deduplicated operation history, with options for each operation.
+        """
+        return deduplicate_history(self._history)
+    
+    
     def head(self, n=5):
         """
         Return the first `n` rows of the underlying DataFrame.
