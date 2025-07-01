@@ -376,6 +376,7 @@ class DataStream:
         Trim the DataStream to its steady-state portion based on a chosen detection method.
         Always returns a DataStream (possibly empty if trim fails), with operation metadata
         and any messages stored in the _history attribute.
+<<<<<<< HEAD
 =======
         List the variable (column) names in the DataStream.
 
@@ -388,6 +389,8 @@ class DataStream:
 
     # --- Internal Helper Methods ---
 >>>>>>> dd52230 (Improvement of the docstring in  data_stream.py)
+=======
+>>>>>>> 0c3e55a (WIP: local updates to data_stream.py before merging main)
 
         Parameters
         ----------
