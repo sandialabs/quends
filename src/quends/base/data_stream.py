@@ -37,6 +37,8 @@ def deduplicate_history(history):
             seen.add(op)
     return list(reversed(out))
 
+
+
 def to_native_types(obj):
     """
     Recursively convert NumPy scalar and array types in nested structures to native Python types.
@@ -115,7 +117,17 @@ class DataStream:
             "operation": operation,
             "options": options
         })
-
+    def get_metadata(self):
+        """
+        Return the deduplicated operation history for this DataStream.
+        Returns
+        -------
+            list of dict
+            The deduplicated operation history, with options for each operation.
+        """
+        return deduplicate_history(self._history)
+    
+    
     def head(self, n=5):
         """
         Return the first `n` rows of the underlying DataFrame.
@@ -165,11 +177,8 @@ class DataStream:
     ):
         """
         Trim the DataStream to its steady-state portion based on a chosen detection method.
-
-        Records the trim operation in history and returns a dict containing:
-          - 'results': a new DataStream of trimmed data or None if trimming failed.
-          - 'metadata': deduplicated operation lineage.
-          - optionally 'message' on failure.
+        Always returns a DataStream (possibly empty if trim fails), with operation metadata
+        and any messages stored in the _history attribute.
 
         Parameters
         ----------
@@ -181,9 +190,9 @@ class DataStream:
             Earliest time to consider in the analysis.
         method : {'std', 'threshold', 'rolling_variance'}, default='std'
             Detection method:
-              - 'std': sliding std-based criteria (requires stationarity).
-              - 'threshold': rolling-std threshold (requires `threshold`).
-              - 'rolling_variance': comparison to mean variance times `threshold`.
+            - 'std': sliding std-based criteria (requires stationarity).
+            - 'threshold': rolling-std threshold (requires `threshold`).
+            - 'rolling_variance': comparison to mean variance times `threshold`.
         threshold : float or None
             Threshold value for the 'threshold' or 'rolling_variance' methods.
         robust : bool, default=True
@@ -191,19 +200,11 @@ class DataStream:
 
         Returns
         -------
-        dict
-            {
-              'results': DataStream or None,
-              'metadata': list of dict,
-              'message': str (if occurred)
-            }
+        DataStream
+            New DataStream containing the trimmed data, or empty if trimming failed.
+            Operation metadata and any messages are in the ._history attribute.
         """
-        # --------- COMPATIBILITY PATCH: window_size or batch_size --------------
-        #if window_size is not None and batch_size != 10:  # 10 is your default batch_size
-        #    print("Warning: Both window_size and batch_size were specified. Using window_size.")
-        #if window_size is not None:
-        #    batch_size = window_size
-        # -----------------------------------------------------------------------
+        # Check for stationarity
         stationary_result = self.is_stationary(column_name)
         is_stat = stationary_result.get(column_name, False) if isinstance(stationary_result, dict) else bool(stationary_result)
         new_history = self._history.copy()
@@ -217,14 +218,17 @@ class DataStream:
                 "Steady-state trimming requires stationary data."
             )
             new_history.append({"operation": "trim", "options": options})
-            return {"results": None, "metadata": deduplicate_history(new_history), "message": options["message"]}
-            #return {"results": None, "metadata": deduplicate_history(new_history)}
+            # Return a DataStream with an empty dataframe, but history is preserved
+            empty_df = self.df.iloc[0:0].copy()
+            return DataStream(empty_df, _history=new_history)
 
+        # Preprocess
         data = self.df[self.df["time"] >= start_time].reset_index(drop=True)
         non_zero_index = data[data[column_name] > 0].index.min()
         if non_zero_index is not None and non_zero_index > 0:
             data = data.loc[non_zero_index:].reset_index(drop=True)
 
+        # Steady-state detection
         if method == "std":
             steady_state_start_time = self.find_steady_state_std(
                 data, column_name, window_size=batch_size, robust=robust
@@ -233,7 +237,7 @@ class DataStream:
             if threshold is None:
                 options["message"] = "Threshold must be specified for the 'threshold' method."
                 new_history.append({"operation": "trim", "options": options})
-                return {"results": None, "metadata": deduplicate_history(new_history)}
+                return DataStream(self.df.iloc[0:0].copy(), _history=new_history)
             steady_state_start_time = self.find_steady_state_threshold(
                 data, column_name, window_size=batch_size, threshold=threshold
             )
@@ -245,7 +249,7 @@ class DataStream:
         else:
             options["message"] = "Invalid method. Choose 'std', 'threshold', or 'rolling_variance'."
             new_history.append({"operation": "trim", "options": options})
-            return {"results": None, "metadata": deduplicate_history(new_history)}
+            return DataStream(self.df.iloc[0:0].copy(), _history=new_history)
 
         options['sss_start'] = steady_state_start_time
         if steady_state_start_time is not None:
@@ -253,17 +257,13 @@ class DataStream:
                 self.df["time"] >= steady_state_start_time, ["time", column_name]
             ].reset_index(drop=True)
             new_history.append({"operation": "trim", "options": options})
-            return {
-                "results": DataStream(trimmed_df, _history=new_history),
-                "metadata": deduplicate_history(new_history)
-            }
+            return DataStream(trimmed_df, _history=new_history)
         else:
             options["message"] = (
                 f"Steady-state start time could not be determined for column '{column_name}'."
             )
             new_history.append({"operation": "trim", "options": options})
-            return {"results": None, "metadata": deduplicate_history(new_history), "message": options["message"]}
-            #return {"results": None, "metadata": deduplicate_history(new_history)}
+            return DataStream(self.df.iloc[0:0].copy(), _history=new_history)
 
     @staticmethod
     def find_steady_state_std(
