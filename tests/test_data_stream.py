@@ -133,6 +133,9 @@ def test_confidence_interval_long(long_data):
 def test_trim_std(trim_data):
     ds = DataStream(trim_data)
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8351b99 (Update tests for DataStream to reflect recent changes)
     result = ds.trim(column_name="A", batch_size=1, method="std", start_time=3.0, threshold=4)
     assert isinstance(result, DataStream)
     assert result.df.empty
@@ -149,6 +152,7 @@ def test_trim_std(trim_data):
             'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
         }}
     ]
+<<<<<<< HEAD
 =======
     expected = {
         "results": None,
@@ -176,11 +180,16 @@ def test_trim_std(trim_data):
         == expected
     )
 >>>>>>> 2d15506 (update documentation with autoapi)
+=======
+>>>>>>> 8351b99 (Update tests for DataStream to reflect recent changes)
 
 
 def test_trim_threshold(trim_data):
     ds = DataStream(trim_data.astype(float))
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8351b99 (Update tests for DataStream to reflect recent changes)
     result = ds.trim(column_name="A", batch_size=1, method="threshold", start_time=3.0, threshold=4)
     assert isinstance(result, DataStream)
     assert result.df.empty
@@ -197,6 +206,7 @@ def test_trim_threshold(trim_data):
             'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
         }}
     ]
+<<<<<<< HEAD
 =======
     expected = {
         "results": None,
@@ -228,11 +238,16 @@ def test_trim_threshold(trim_data):
         == expected
     )
 >>>>>>> 2d15506 (update documentation with autoapi)
+=======
+>>>>>>> 8351b99 (Update tests for DataStream to reflect recent changes)
 
 
 def test_trim_rolling_variance(trim_data):
     ds = DataStream(trim_data)
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8351b99 (Update tests for DataStream to reflect recent changes)
     result = ds.trim(column_name="A", batch_size=1, method="rolling_variance", start_time=3.0, threshold=4)
     assert isinstance(result, DataStream)
     assert result.df.empty
@@ -249,6 +264,7 @@ def test_trim_rolling_variance(trim_data):
             'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
         }}
     ]
+<<<<<<< HEAD
 =======
     expected = {
         "results": None,
@@ -280,6 +296,8 @@ def test_trim_rolling_variance(trim_data):
         == expected
     )
 >>>>>>> 2d15506 (update documentation with autoapi)
+=======
+>>>>>>> 8351b99 (Update tests for DataStream to reflect recent changes)
 
 
 def test_trim_invalid_method(trim_data):
@@ -287,6 +305,9 @@ def test_trim_invalid_method(trim_data):
     result = ds.trim(column_name="A", method="invalid_method")
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8351b99 (Update tests for DataStream to reflect recent changes)
     assert isinstance(result, DataStream)
     assert result.df.empty
     assert list(result.df.columns) == ["time", "A"]
@@ -302,6 +323,7 @@ def test_trim_invalid_method(trim_data):
             'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
         }}
     ]
+<<<<<<< HEAD
 
 =======
     assert result is None
@@ -327,6 +349,8 @@ def test_trim_invalid_method(trim_data):
         "results": None,
     }
     assert result == expected
+=======
+>>>>>>> 8351b99 (Update tests for DataStream to reflect recent changes)
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -342,6 +366,9 @@ def test_trim_missing_threshold(long_data):
     result = ds.trim(column_name="A", method="threshold")
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 8351b99 (Update tests for DataStream to reflect recent changes)
     assert isinstance(result, DataStream)
     assert result.df.empty
     # Expect columns: ["time", "A", "B"] since that's what the DataFrame originally has.
@@ -358,6 +385,7 @@ def test_trim_missing_threshold(long_data):
             'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
         }}
     ]
+<<<<<<< HEAD
 =======
     assert result is None
 =======
@@ -381,6 +409,8 @@ def test_trim_missing_threshold(long_data):
         "results": None,
     }
     assert result == expected
+=======
+>>>>>>> 8351b99 (Update tests for DataStream to reflect recent changes)
 
 >>>>>>> 325b440 (Add comprehensive pytest suite for DataStream with all edge cases)
 
