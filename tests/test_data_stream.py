@@ -116,151 +116,107 @@ def test_confidence_interval_long(long_data):
     assert ds.confidence_interval(window_size=2) == expected
 
 
-# === Trim ===
+# === Trim ===# === Trim ===
+
 def test_trim_std(trim_data):
     ds = DataStream(trim_data)
-    expected = {
-        "results": None,
-        "metadata": [
-            {"operation": "is_stationary", "options": {"columns": "A"}},
-            {
-                "operation": "trim",
-                "options": {
-                    "column_name": "A",
-                    "batch_size": 1,
-                    "start_time": 3.0,
-                    "method": "std",
-                    "threshold": 4,
-                    "robust": True,
-                    "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-                },
-            },
-        ],
-        "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-    }
-    assert (
-        ds.trim(
-            column_name="A", batch_size=1, method="std", start_time=3.0, threshold=4
-        )
-        == expected
-    )
+    result = ds.trim(column_name="A", batch_size=1, method="std", start_time=3.0, threshold=4)
+    assert isinstance(result, DataStream)
+    assert result.df.empty
+    assert list(result.df.columns) == ["time", "A"]
+    assert result._history == [
+        {'operation': 'is_stationary', 'options': {'columns': 'A'}},
+        {'operation': 'trim', 'options': {
+            'column_name': 'A',
+            'batch_size': 1,
+            'start_time': 3.0,
+            'method': 'std',
+            'threshold': 4,
+            'robust': True,
+            'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
+        }}
+    ]
 
 
 def test_trim_threshold(trim_data):
     ds = DataStream(trim_data.astype(float))
-    expected = {
-        "results": None,
-        "metadata": [
-            {"operation": "is_stationary", "options": {"columns": "A"}},
-            {
-                "operation": "trim",
-                "options": {
-                    "column_name": "A",
-                    "batch_size": 1,
-                    "start_time": 3.0,
-                    "method": "threshold",
-                    "threshold": 4,
-                    "robust": True,
-                    "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-                },
-            },
-        ],
-        "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-    }
-    assert (
-        ds.trim(
-            column_name="A",
-            batch_size=1,
-            method="threshold",
-            start_time=3.0,
-            threshold=4,
-        )
-        == expected
-    )
+    result = ds.trim(column_name="A", batch_size=1, method="threshold", start_time=3.0, threshold=4)
+    assert isinstance(result, DataStream)
+    assert result.df.empty
+    assert list(result.df.columns) == ["time", "A"]
+    assert result._history == [
+        {'operation': 'is_stationary', 'options': {'columns': 'A'}},
+        {'operation': 'trim', 'options': {
+            'column_name': 'A',
+            'batch_size': 1,
+            'start_time': 3.0,
+            'method': 'threshold',
+            'threshold': 4,
+            'robust': True,
+            'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
+        }}
+    ]
 
 
 def test_trim_rolling_variance(trim_data):
     ds = DataStream(trim_data)
-    expected = {
-        "results": None,
-        "metadata": [
-            {"operation": "is_stationary", "options": {"columns": "A"}},
-            {
-                "operation": "trim",
-                "options": {
-                    "column_name": "A",
-                    "batch_size": 1,
-                    "start_time": 3.0,
-                    "method": "rolling_variance",
-                    "threshold": 4,
-                    "robust": True,
-                    "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-                },
-            },
-        ],
-        "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-    }
-    assert (
-        ds.trim(
-            column_name="A",
-            batch_size=1,
-            method="rolling_variance",
-            start_time=3.0,
-            threshold=4,
-        )
-        == expected
-    )
+    result = ds.trim(column_name="A", batch_size=1, method="rolling_variance", start_time=3.0, threshold=4)
+    assert isinstance(result, DataStream)
+    assert result.df.empty
+    assert list(result.df.columns) == ["time", "A"]
+    assert result._history == [
+        {'operation': 'is_stationary', 'options': {'columns': 'A'}},
+        {'operation': 'trim', 'options': {
+            'column_name': 'A',
+            'batch_size': 1,
+            'start_time': 3.0,
+            'method': 'rolling_variance',
+            'threshold': 4,
+            'robust': True,
+            'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
+        }}
+    ]
 
 
 def test_trim_invalid_method(trim_data):
     ds = DataStream(trim_data)
     result = ds.trim(column_name="A", method="invalid_method")
-    expected = {
-        "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-        "metadata": [
-            {"operation": "is_stationary", "options": {"columns": "A"}},
-            {
-                "operation": "trim",
-                "options": {
-                    "batch_size": 10,
-                    "column_name": "A",
-                    "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-                    "method": "invalid_method",
-                    "robust": True,
-                    "start_time": 0.0,
-                    "threshold": None,
-                },
-            },
-        ],
-        "results": None,
-    }
-    assert result == expected
+    assert isinstance(result, DataStream)
+    assert result.df.empty
+    assert list(result.df.columns) == ["time", "A"]
+    assert result._history == [
+        {'operation': 'is_stationary', 'options': {'columns': 'A'}},
+        {'operation': 'trim', 'options': {
+            'column_name': 'A',
+            'batch_size': 10,
+            'start_time': 0.0,
+            'method': 'invalid_method',
+            'threshold': None,
+            'robust': True,
+            'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
+        }}
+    ]
 
 
 def test_trim_missing_threshold(long_data):
     ds = DataStream(long_data)
     result = ds.trim(column_name="A", method="threshold")
-    expected = {
-        "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-        "metadata": [
-            {"operation": "is_stationary", "options": {"columns": "A"}},
-            {
-                "operation": "trim",
-                "options": {
-                    "batch_size": 10,
-                    "column_name": "A",
-                    "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-                    "method": "threshold",
-                    "robust": True,
-                    "start_time": 0.0,
-                    "threshold": None,
-                },
-            },
-        ],
-        "results": None,
-    }
-    assert result == expected
-
+    assert isinstance(result, DataStream)
+    assert result.df.empty
+    # Expect columns: ["time", "A", "B"] since that's what the DataFrame originally has.
+    assert set(result.df.columns) == set(["time", "A", "B"])
+    assert result._history == [
+        {'operation': 'is_stationary', 'options': {'columns': 'A'}},
+        {'operation': 'trim', 'options': {
+            'column_name': 'A',
+            'batch_size': 10,
+            'start_time': 0.0,
+            'method': 'threshold',
+            'threshold': None,
+            'robust': True,
+            'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
+        }}
+    ]
 
 # === Compute Statistics ===
 def test_compute_stats_simple(simple_data):
