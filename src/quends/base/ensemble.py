@@ -287,28 +287,11 @@ class Ensemble:
         return [getattr(ds, "_history", []) for ds in ds_list]
 
     # ========== TRIM ==========
-    def trim(
-        self,
-        column_name: str,
-        window_size: int = 10,
-        start_time: float = 0.0,
-        method: str = "std",
-        threshold: float = None,
-        robust: bool = True,
-    ) -> Dict:
-        """
-        Apply steady-state trimming to each member on `column_name`.
-
-        Returns
-        -------
-        dict
-            { 'results': Ensemble or None,
-              'metadata': Dict[str, Any] }
-        """
+    def trim(self, column_name, batch_size=10, start_time=0.0, method="std", threshold=None, robust=True):
         trimmed = [
             ds.trim(
                 column_name,
-                batch_size=window_size,
+                batch_size=batch_size,
                 start_time=start_time,
                 method=method,
                 threshold=threshold,
@@ -316,11 +299,14 @@ class Ensemble:
             )
             for ds in self.data_streams
         ]
-        trimmed_members = [t["results"] for t in trimmed if t["results"] is not None]
-        trimmed_meta = {f"Member {i}": t.get("metadata") for i, t in enumerate(trimmed)}
+        # Only keep non-empty, valid DataStreams
+        trimmed_members = [t for t in trimmed if t is not None and (hasattr(t, 'df') and not t.df.empty)]
         if not trimmed_members:
-            return {"results": None, "metadata": trimmed_meta}
-        return {"results": Ensemble(trimmed_members), "metadata": trimmed_meta}
+            raise ValueError("No ensemble members survived trimming (all failed or empty)!")
+        return Ensemble(trimmed_members)
+
+
+
 
     # ========== IS_STATIONARY ==========
     def is_stationary(self, columns) -> Dict:
