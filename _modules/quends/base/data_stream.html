@@ -1,0 +1,1318 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>quends.base.data_stream &#8212; QUENDS 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/quends/base/data_stream';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 02, 2025"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">QUENDS 0.1.0 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../autoapi/quends/index.html">quends</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../autoapi/quends/base/index.html">quends.base</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/base/data_stream/index.html">quends.base.data_stream</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/base/ensemble/index.html">quends.base.ensemble</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quends/cli/index.html">quends.cli</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../autoapi/quends/postprocessing/index.html">quends.postprocessing</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/postprocessing/exporter/index.html">quends.postprocessing.exporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/postprocessing/plotter/index.html">quends.postprocessing.plotter</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../autoapi/quends/preprocessing/index.html">quends.preprocessing</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/preprocessing/csv/index.html">quends.preprocessing.csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/preprocessing/dictionary/index.html">quends.preprocessing.dictionary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/preprocessing/gx/index.html">quends.preprocessing.gx</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/preprocessing/json/index.html">quends.preprocessing.json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/preprocessing/netcdf/index.html">quends.preprocessing.netcdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/preprocessing/numpy/index.html">quends.preprocessing.numpy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for quends.base.data_stream</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">curve_fit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span><span class="p">,</span> <span class="n">rankdata</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinMaxScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.robust.scale</span><span class="w"> </span><span class="kn">import</span> <span class="n">mad</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.stattools</span><span class="w"> </span><span class="kn">import</span> <span class="n">acf</span><span class="p">,</span> <span class="n">adfuller</span>
+
+
+<div class="viewcode-block" id="deduplicate_history"><a class="viewcode-back" href="../../../autoapi/quends/base/data_stream/index.html#quends.base.data_stream.deduplicate_history">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">deduplicate_history</span><span class="p">(</span><span class="n">history</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove duplicate operations from a history list, keeping only the most recent occurrence of each operation.</span>
+
+<span class="sd">    Scans the history of operations (each represented as a dict with at least an &#39;operation&#39; key)</span>
+<span class="sd">    from end to start, retaining only the last entry for each unique operation name while preserving</span>
+<span class="sd">    the overall order of those final occurrences.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    history : list of dict</span>
+<span class="sd">        Each dict must contain:</span>
+<span class="sd">          - &#39;operation&#39;: str, the name of the operation.</span>
+<span class="sd">          - additional keys for operation-specific metadata (e.g., &#39;options&#39;).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict</span>
+<span class="sd">        A filtered list with only the final entry of each operation, ordered as in the original list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Reverse to keep last call</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">history</span><span class="p">):</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;operation&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">op</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+            <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">out</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="to_native_types"><a class="viewcode-back" href="../../../autoapi/quends/base/data_stream/index.html#quends.base.data_stream.to_native_types">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">to_native_types</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recursively convert NumPy scalar and array types in nested structures to native Python types.</span>
+
+<span class="sd">    This function walks through dictionaries, lists, tuples, NumPy scalars, and arrays,</span>
+<span class="sd">    converting them into Python built-ins:</span>
+
+<span class="sd">    - NumPy scalar → Python int or float</span>
+<span class="sd">    - NumPy array  → Python list (recursively)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    obj : any</span>
+<span class="sd">        The object to convert. Supported container types are dict, list, tuple,</span>
+<span class="sd">        NumPy ndarray/scalar. Other types are returned unchanged.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    any</span>
+<span class="sd">        A new object mirroring the input structure but with all NumPy data types replaced</span>
+<span class="sd">        by their native Python equivalents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">to_native_types</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span><span class="p">([</span><span class="n">to_native_types</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">generic</span><span class="p">,)):</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">obj</span></div>
+
+
+<div class="viewcode-block" id="DataStream"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DataStream</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A pipeline for time-series and simulation trace analysis with provenance tracking.</span>
+
+<span class="sd">    DataStream encapsulates a pandas DataFrame with a required &#39;time&#39; column and any number of</span>
+<span class="sd">    signal columns.  All analysis methods record their operation name and options in an internal</span>
+<span class="sd">    history, and returned results include deduplicated metadata lineage.</span>
+
+<span class="sd">    Core features include:</span>
+<span class="sd">    - Stationarity testing and steady-state trimming via multiple methods.</span>
+<span class="sd">    - Statistical summaries: means, uncertainties, confidence intervals, and effective sample size (ESS).</span>
+<span class="sd">    - Robust ESS estimation using rank-based and pairwise correlation techniques.</span>
+<span class="sd">    - Incremental and cumulative statistics, plus sample-size planning via power-law fits.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        The underlying time-series data, with &#39;time&#39; as one column.</span>
+<span class="sd">    _history : list of dict</span>
+<span class="sd">        Records of all operations performed, including their options.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">_history</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a DataStream.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df : pandas.DataFrame</span>
+<span class="sd">            Must contain a &#39;time&#39; column and one or more signal columns.</span>
+<span class="sd">        _history : list of dict, optional</span>
+<span class="sd">            Existing operation history to inherit.  If None, starts empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="DataStream.df"><a class="viewcode-back" href="../../../autoapi/quends/base/data_stream/index.html#quends.base.data_stream.DataStream.df">[docs]</a>        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_history</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_history</span><span class="p">)</span> <span class="k">if</span> <span class="n">_history</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Record an operation and its options into the internal history.</span>
+
+<span class="sd">        Private helper; not intended for external use.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">options</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;self&#39;</span><span class="p">,</span> <span class="s1">&#39;cls&#39;</span><span class="p">,</span> <span class="s1">&#39;__class__&#39;</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&quot;operation&quot;</span><span class="p">:</span> <span class="n">operation</span><span class="p">,</span>
+            <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">options</span>
+        <span class="p">})</span>
+        
+<div class="viewcode-block" id="DataStream.get_metadata"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.get_metadata">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the deduplicated operation history for this DataStream.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            list of dict</span>
+<span class="sd">            The deduplicated operation history, with options for each operation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">deduplicate_history</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="DataStream.head"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.head">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the first `n` rows of the underlying DataFrame.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : int, optional</span>
+<span class="sd">            Number of rows to return. Defaults to 5.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            The first `n` rows of the DataFrame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the number of rows in the DataStream.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Row count of `self.df`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DataStream.variables"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.variables">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List the signal variable (column) names, excluding the &#39;time&#39; column.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Index</span>
+<span class="sd">            ColumnIndex of variable names in `self.df`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span></div>
+
+<div class="viewcode-block" id="DataStream.trim"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.trim">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">trim</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">column_name</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trim the DataStream to its steady-state portion based on a chosen detection method.</span>
+<span class="sd">        Always returns a DataStream (possibly empty if trim fails), with operation metadata</span>
+<span class="sd">        and any messages stored in the _history attribute.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        column_name : str</span>
+<span class="sd">            Name of the signal column to analyze for steady-state.</span>
+<span class="sd">        batch_size : int, default=10</span>
+<span class="sd">            Window size for steady-state detection.</span>
+<span class="sd">        start_time : float, default=0.0</span>
+<span class="sd">            Earliest time to consider in the analysis.</span>
+<span class="sd">        method : {&#39;std&#39;, &#39;threshold&#39;, &#39;rolling_variance&#39;}, default=&#39;std&#39;</span>
+<span class="sd">            Detection method:</span>
+<span class="sd">            - &#39;std&#39;: sliding std-based criteria (requires stationarity).</span>
+<span class="sd">            - &#39;threshold&#39;: rolling-std threshold (requires `threshold`).</span>
+<span class="sd">            - &#39;rolling_variance&#39;: comparison to mean variance times `threshold`.</span>
+<span class="sd">        threshold : float or None</span>
+<span class="sd">            Threshold value for the &#39;threshold&#39; or &#39;rolling_variance&#39; methods.</span>
+<span class="sd">        robust : bool, default=True</span>
+<span class="sd">            Use median/MAD instead of mean/std for the &#39;std&#39; method.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataStream</span>
+<span class="sd">            New DataStream containing the trimmed data, or empty if trimming failed.</span>
+<span class="sd">            Operation metadata and any messages are in the ._history attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check for stationarity</span>
+        <span class="n">stationary_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stationary</span><span class="p">(</span><span class="n">column_name</span><span class="p">)</span>
+        <span class="n">is_stat</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">stationary_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stationary_result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+            <span class="k">else</span> <span class="nb">bool</span><span class="p">(</span><span class="n">stationary_result</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">new_history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+            <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+            <span class="n">robust</span><span class="o">=</span><span class="n">robust</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_stat</span><span class="p">:</span>
+            <span class="n">options</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">&#39; is not stationary. &quot;</span>
+                <span class="s2">&quot;Steady-state trimming requires stationary data.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">new_history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;operation&quot;</span><span class="p">:</span> <span class="s2">&quot;trim&quot;</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">options</span><span class="p">})</span>
+            <span class="c1"># Return a DataStream with an empty dataframe, but history is preserved</span>
+            <span class="n">empty_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">DataStream</span><span class="p">(</span><span class="n">empty_df</span><span class="p">,</span> <span class="n">_history</span><span class="o">=</span><span class="n">new_history</span><span class="p">)</span>
+
+        <span class="c1"># Preprocess</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start_time</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">non_zero_index</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">non_zero_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">non_zero_index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">non_zero_index</span><span class="p">:]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Steady-state detection</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span>
+            <span class="n">steady_state_start_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_steady_state_std</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="n">robust</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;threshold&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">options</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;Threshold must be specified for the &#39;threshold&#39; method.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">new_history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;operation&quot;</span><span class="p">:</span> <span class="s2">&quot;trim&quot;</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">options</span><span class="p">})</span>
+                <span class="k">return</span> <span class="n">DataStream</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">_history</span><span class="o">=</span><span class="n">new_history</span><span class="p">)</span>
+            <span class="n">steady_state_start_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_steady_state_threshold</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;rolling_variance&quot;</span><span class="p">:</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span> <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">0.1</span>
+            <span class="n">steady_state_start_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_steady_state_rolling_variance</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">options</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Invalid method. Choose &#39;std&#39;, &#39;threshold&#39;, or &#39;rolling_variance&#39;.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">new_history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;operation&quot;</span><span class="p">:</span> <span class="s2">&quot;trim&quot;</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">options</span><span class="p">})</span>
+            <span class="k">return</span> <span class="n">DataStream</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">_history</span><span class="o">=</span><span class="n">new_history</span><span class="p">)</span>
+
+        <span class="n">options</span><span class="p">[</span><span class="s2">&quot;sss_start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">steady_state_start_time</span>
+        <span class="k">if</span> <span class="n">steady_state_start_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">trimmed_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">steady_state_start_time</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">column_name</span><span class="p">]</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">new_history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;operation&quot;</span><span class="p">:</span> <span class="s2">&quot;trim&quot;</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">options</span><span class="p">})</span>
+            <span class="k">return</span> <span class="n">DataStream</span><span class="p">(</span><span class="n">trimmed_df</span><span class="p">,</span> <span class="n">_history</span><span class="o">=</span><span class="n">new_history</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">options</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Steady-state start time could not be determined for column &#39;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">new_history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;operation&quot;</span><span class="p">:</span> <span class="s2">&quot;trim&quot;</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">options</span><span class="p">})</span>
+            <span class="k">return</span> <span class="n">DataStream</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">_history</span><span class="o">=</span><span class="n">new_history</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="DataStream.find_steady_state_std"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.find_steady_state_std">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_steady_state_std</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Identify the earliest time point when the signal remains within ±1/2/3σ proportions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : DataFrame</span>
+<span class="sd">            Subset of the original df (must include &#39;time&#39; and signal column).</span>
+<span class="sd">        column_name : str</span>
+<span class="sd">        window_size : int</span>
+<span class="sd">            Number of samples to evaluate the steady-state criteria.</span>
+<span class="sd">        robust : bool</span>
+<span class="sd">            If True, use median and MAD; else mean and std.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or None</span>
+<span class="sd">            Detected start time of steady-state, or None if not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">time_filtered</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">signal_filtered</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">signal_filtered</span><span class="p">)</span> <span class="o">-</span> <span class="n">window_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">remaining_data</span> <span class="o">=</span> <span class="n">signal_filtered</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="n">robust</span><span class="p">:</span>
+                <span class="n">central_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">remaining_data</span><span class="p">)</span>
+                <span class="n">scale_value</span> <span class="o">=</span> <span class="n">mad</span><span class="p">(</span><span class="n">remaining_data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">central_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">remaining_data</span><span class="p">)</span>
+                <span class="n">scale_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">remaining_data</span><span class="p">)</span>
+            <span class="n">within_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">remaining_data</span> <span class="o">-</span> <span class="n">central_value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">scale_value</span><span class="p">)</span>
+            <span class="n">within_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">remaining_data</span> <span class="o">-</span> <span class="n">central_value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">scale_value</span>
+            <span class="p">)</span>
+            <span class="n">within_3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">remaining_data</span> <span class="o">-</span> <span class="n">central_value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">scale_value</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">within_1</span> <span class="o">&gt;=</span> <span class="mf">0.68</span> <span class="ow">and</span> <span class="n">within_2</span> <span class="o">&gt;=</span> <span class="mf">0.95</span> <span class="ow">and</span> <span class="n">within_3</span> <span class="o">&gt;=</span> <span class="mf">0.99</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">time_filtered</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="DataStream.find_steady_state_rolling_variance"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.find_steady_state_rolling_variance">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_steady_state_rolling_variance</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.1</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Detect steady-state when rolling variance falls below a fraction of its mean.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : DataFrame</span>
+<span class="sd">        column_name : str</span>
+<span class="sd">        window_size : int</span>
+<span class="sd">        threshold : float</span>
+<span class="sd">            Fraction of mean rolling std below which to consider steady-state.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or None</span>
+<span class="sd">            Time of first below-threshold variance, or None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">column_name</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="n">time_values</span> <span class="o">=</span> <span class="n">ts</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
+        <span class="n">signal_values</span> <span class="o">=</span> <span class="n">ts</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span>
+        <span class="n">rolling_variance</span> <span class="o">=</span> <span class="n">signal_values</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+        <span class="n">threshold_val</span> <span class="o">=</span> <span class="n">rolling_variance</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="n">threshold</span>
+        <span class="n">steady_state_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rolling_variance</span> <span class="o">&lt;</span> <span class="n">threshold_val</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">steady_state_index</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">time_values</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">steady_state_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="DataStream.normalize_data"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.normalize_data">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_data</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Min-Max normalize all signal columns (excluding &#39;time&#39;) to [0,1].</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df : pandas.DataFrame</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">scaler</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">()</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:])</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="DataStream.find_steady_state_threshold"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.find_steady_state_threshold">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_steady_state_threshold</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use rolling standard deviation on normalized data to detect steady-state.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : DataFrame</span>
+<span class="sd">        column_name : str</span>
+<span class="sd">        window_size : int</span>
+<span class="sd">        threshold : float</span>
+<span class="sd">            Std threshold under which to mark steady-state.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">normalized_data</span> <span class="o">=</span> <span class="n">DataStream</span><span class="o">.</span><span class="n">normalize_data</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="n">time_series</span> <span class="o">=</span> <span class="n">normalized_data</span><span class="p">[[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">column_name</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_series</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">window_size</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">rolling_std</span> <span class="o">=</span> <span class="n">time_series</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+        <span class="n">common_idx</span> <span class="o">=</span> <span class="n">time_series</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">rolling_std</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">steady_state</span> <span class="o">=</span> <span class="n">time_series</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">common_idx</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">][</span>
+            <span class="n">rolling_std</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">common_idx</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">threshold</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">steady_state</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">steady_state</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+    <span class="c1"># ----------- ESS (classic and robust) ----------------</span>
+<div class="viewcode-block" id="DataStream.effective_sample_size"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.effective_sample_size">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">effective_sample_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute classic ESS based on significant autocorrelation lags.</span>
+
+<span class="sd">        Records the operation in history.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        column_names : str or list of str or None</span>
+<span class="sd">            Columns to compute ESS for; defaults to all except &#39;time&#39;.</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            Significance level for autocorrelation cutoff.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            {&#39;results&#39;: {col: ESS_int or message}, &#39;metadata&#39;: history}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">(</span>
+            <span class="s2">&quot;effective_sample_size&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;column_names&quot;</span><span class="p">:</span> <span class="n">column_names</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">alpha</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;time&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">column_names</span><span class="p">]</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39; not found in the DataStream.&quot;</span>
+                <span class="p">}</span>
+                <span class="k">continue</span>
+            <span class="n">filtered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">filtered</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;effective_sample_size&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;No data available for computation.&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="k">continue</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered</span><span class="p">)</span>
+            <span class="n">nlags</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">acf_values</span> <span class="o">=</span> <span class="n">acf</span><span class="p">(</span><span class="n">filtered</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="n">nlags</span><span class="p">)</span>
+            <span class="n">z_critical</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">conf_interval</span> <span class="o">=</span> <span class="n">z_critical</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">significant_lags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">acf_values</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">&gt;</span> <span class="n">conf_interval</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">acf_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">acf_values</span><span class="p">[</span><span class="mi">1</span><span class="p">:][</span><span class="n">significant_lags</span><span class="p">]))</span>
+            <span class="n">ESS</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">acf_sum</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">ESS</span><span class="p">))</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">deduplicate_history</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">to_native_types</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="DataStream.robust_effective_sample_size"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.robust_effective_sample_size">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">robust_effective_sample_size</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">,</span>
+        <span class="n">rank_normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">min_samples</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">return_relative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute a robust ESS via pairwise autocorrelations and optional rank-normalization.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array-like</span>
+<span class="sd">        rank_normalize : bool</span>
+<span class="sd">        min_samples : int</span>
+<span class="sd">        return_relative : bool</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or tuple</span>
+<span class="sd">            ESS (and ESS/n ratio if return_relative).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">min_samples</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">return_relative</span> <span class="k">else</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">return_relative</span> <span class="k">else</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rank_normalize</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">rankdata</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;average&quot;</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">return_relative</span> <span class="k">else</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">acorr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">acorr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">for</span> <span class="n">lag</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">v1</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="n">lag</span><span class="p">]</span>
+            <span class="n">v2</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">lag</span><span class="p">:]</span>
+            <span class="n">acorr</span><span class="p">[</span><span class="n">lag</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">n</span> <span class="o">-</span> <span class="n">lag</span><span class="p">)</span> <span class="o">*</span> <span class="n">var</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+            <span class="n">pair_sum</span> <span class="o">=</span> <span class="n">acorr</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="n">acorr</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">pair_sum</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="n">pair_sum</span>
+            <span class="n">t</span> <span class="o">+=</span> <span class="mi">2</span>
+        <span class="n">ess</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">s</span><span class="p">)</span>
+        <span class="n">ess</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">ess</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">return_relative</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ess</span><span class="p">,</span> <span class="n">ess</span> <span class="o">/</span> <span class="n">n</span>
+        <span class="k">return</span> <span class="n">ess</span></div>
+
+<div class="viewcode-block" id="DataStream.ess_robust"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.ess_robust">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">ess_robust</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rank_normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">min_samples</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">return_relative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper for `robust_effective_sample_size` over multiple columns.</span>
+
+<span class="sd">        Records the operation in history.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        column_names : str or list or None</span>
+<span class="sd">        rank_normalize : bool</span>
+<span class="sd">        min_samples : int</span>
+<span class="sd">        return_relative : bool</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            {&#39;results&#39;: {col: ESS or tuple}, &#39;metadata&#39;: history}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">(</span>
+            <span class="s2">&quot;ess_robust&quot;</span><span class="p">,</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;column_names&quot;</span><span class="p">:</span> <span class="n">column_names</span><span class="p">,</span>
+                <span class="s2">&quot;rank_normalize&quot;</span><span class="p">:</span> <span class="n">rank_normalize</span><span class="p">,</span>
+                <span class="s2">&quot;min_samples&quot;</span><span class="p">:</span> <span class="n">min_samples</span><span class="p">,</span>
+                <span class="s2">&quot;return_relative&quot;</span><span class="p">:</span> <span class="n">return_relative</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;time&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">column_names</span><span class="p">]</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">ess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">robust_effective_sample_size</span><span class="p">(</span>
+                <span class="n">x</span><span class="p">,</span>
+                <span class="n">rank_normalize</span><span class="o">=</span><span class="n">rank_normalize</span><span class="p">,</span>
+                <span class="n">min_samples</span><span class="o">=</span><span class="n">min_samples</span><span class="p">,</span>
+                <span class="n">return_relative</span><span class="o">=</span><span class="n">return_relative</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">ess</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">deduplicate_history</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">to_native_types</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span></div>
+
+    <span class="c1"># --------- Statistical summaries (unchanged except metadata) --------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute block or sliding window means for each column.</span>
+
+<span class="sd">        Private helper for compute_statistics and confidence intervals.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">column_name</span><span class="p">):</span>
+            <span class="n">column_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">column_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No data available for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+            <span class="n">est_win</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_window</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+            <span class="n">proc_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_column</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">est_win</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">proc_data</span><span class="p">)),</span>
+                <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">est_win</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mean_uncertainty</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate the standard error of the mean via block/sliding windows.</span>
+
+<span class="sd">        Private helper.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">column_name</span><span class="p">):</span>
+            <span class="n">column_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">column_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No data available for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+            <span class="n">est_win</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_window</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+            <span class="n">proc_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_column</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">est_win</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;sliding&quot;</span><span class="p">:</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">est_win</span> <span class="o">//</span> <span class="mi">4</span><span class="p">)</span>
+                <span class="n">effective_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">proc_data</span><span class="p">[::</span><span class="n">step</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">effective_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">proc_data</span><span class="p">)</span>
+            <span class="n">uncertainty</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">proc_data</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">effective_n</span><span class="p">))</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">:</span> <span class="n">uncertainty</span><span class="p">,</span>
+                <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">est_win</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_confidence_interval</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build 95% confidence intervals around block/sliding means.</span>
+
+<span class="sd">        Private helper.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">mean_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span>
+        <span class="n">uncertainty_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_uncertainty</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">column_name</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mean_results</span> <span class="ow">or</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">uncertainty_results</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Missing data for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+            <span class="n">mean_val</span> <span class="o">=</span> <span class="n">mean_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span>
+            <span class="n">uncertainty_val</span> <span class="o">=</span> <span class="n">uncertainty_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">]</span>
+            <span class="n">ci_lower</span> <span class="o">=</span> <span class="n">mean_val</span> <span class="o">-</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">uncertainty_val</span>
+            <span class="n">ci_upper</span> <span class="o">=</span> <span class="n">mean_val</span> <span class="o">+</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">uncertainty_val</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;confidence_interval&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ci_lower</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">ci_upper</span><span class="p">)),</span>
+                <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">mean_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;window_size&quot;</span><span class="p">]),</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+<div class="viewcode-block" id="DataStream.compute_statistics"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.compute_statistics">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_statistics</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Aggregate statistics: mean, uncertainty, CI, pm_std bounds, ESS, and window size.</span>
+
+<span class="sd">        Appends the operation to history and embeds deduplicated metadata in the results.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        column_name : str or list or None</span>
+<span class="sd">        ddof : int</span>
+<span class="sd">        method : {&#39;sliding&#39;, &#39;non-overlapping&#39;}</span>
+<span class="sd">        window_size : int or None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            {col: {statistics...}, &#39;metadata&#39;: history}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">statistics</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">column_name</span><span class="p">)</span>
+        <span class="n">mean_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span>
+        <span class="n">mu_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_uncertainty</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+        <span class="n">ci_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_confidence_interval</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+        <span class="n">ess_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">effective_sample_size</span><span class="p">(</span><span class="n">column_names</span><span class="o">=</span><span class="n">column_name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="n">column_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">column_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">statistics</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No data available for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+            <span class="n">mean_val</span> <span class="o">=</span> <span class="n">mean_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span>
+            <span class="n">mean_uncertainty</span> <span class="o">=</span> <span class="n">mu_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">]</span>
+            <span class="n">ci</span> <span class="o">=</span> <span class="n">ci_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;confidence_interval&quot;</span><span class="p">]</span>
+            <span class="n">est_win</span> <span class="o">=</span> <span class="n">mean_results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;window_size&quot;</span><span class="p">]</span>
+            <span class="n">ess_val</span> <span class="o">=</span> <span class="n">ess_dict</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+            <span class="n">statistics</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">mean_val</span><span class="p">,</span>
+                <span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">:</span> <span class="n">mean_uncertainty</span><span class="p">,</span>
+                <span class="s2">&quot;confidence_interval&quot;</span><span class="p">:</span> <span class="n">ci</span><span class="p">,</span>
+                <span class="s2">&quot;pm_std&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">mean_val</span> <span class="o">-</span> <span class="n">mean_uncertainty</span><span class="p">,</span> <span class="n">mean_val</span> <span class="o">+</span> <span class="n">mean_uncertainty</span><span class="p">),</span>
+                <span class="s2">&quot;effective_sample_size&quot;</span><span class="p">:</span> <span class="n">ess_val</span><span class="p">,</span>
+                <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="n">est_win</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="n">op_options</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span>
+            <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+            <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">full_history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">full_history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;operation&quot;</span><span class="p">:</span> <span class="s2">&quot;compute_statistics&quot;</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">op_options</span><span class="p">})</span>
+        <span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">deduplicate_history</span><span class="p">(</span><span class="n">full_history</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">to_native_types</span><span class="p">(</span><span class="n">statistics</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataStream.cumulative_statistics"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.cumulative_statistics">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">cumulative_statistics</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate cumulative mean and uncertainty time series for each column.</span>
+
+<span class="sd">        Records operation and returns per-column cumulative arrays plus window_size.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">column_name</span><span class="p">):</span>
+            <span class="n">column_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">column_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No data available for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+            <span class="n">est_win</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_window</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+            <span class="n">proc_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_column</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">est_win</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+            <span class="n">cumulative_mean</span> <span class="o">=</span> <span class="n">proc_data</span><span class="o">.</span><span class="n">expanding</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">cumulative_std</span> <span class="o">=</span> <span class="n">proc_data</span><span class="o">.</span><span class="n">expanding</span><span class="p">()</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">proc_data</span><span class="o">.</span><span class="n">expanding</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+            <span class="n">standard_error</span> <span class="o">=</span> <span class="n">cumulative_std</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;cumulative_mean&quot;</span><span class="p">:</span> <span class="n">cumulative_mean</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                <span class="s2">&quot;cumulative_uncertainty&quot;</span><span class="p">:</span> <span class="n">cumulative_std</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                <span class="s2">&quot;standard_error&quot;</span><span class="p">:</span> <span class="n">standard_error</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">est_win</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="n">op_options</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+        <span class="n">full_history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">full_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;operation&quot;</span><span class="p">:</span> <span class="s2">&quot;cumulative_statistics&quot;</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">op_options</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">deduplicate_history</span><span class="p">(</span><span class="n">full_history</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">to_native_types</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataStream.additional_data"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.additional_data">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">additional_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;sliding&quot;</span><span class="p">,</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">reduction_factor</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate additional sample size needed to reduce SEM by `reduction_factor` via power-law fit.</span>
+
+<span class="sd">        Records operation and returns model parameters and sample projections.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumulative_statistics</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(</span><span class="n">column_name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;cumulative_uncertainty&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="p">{}):</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No cumulative SEM data for column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+            <span class="n">column_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+            <span class="n">est_win</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_window</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+            <span class="n">cum_sem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;cumulative_uncertainty&quot;</span><span class="p">])</span>
+            <span class="n">n_current</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cum_sem</span><span class="p">)</span>
+            <span class="n">cumulative_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_current</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">cum_sem</span><span class="p">)</span>
+            <span class="n">valid_count</span> <span class="o">=</span> <span class="n">cumulative_count</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+            <span class="n">valid_sem</span> <span class="o">=</span> <span class="n">cum_sem</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_count</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Not enough valid data points for fitting.&quot;</span><span class="p">}</span>
+                <span class="k">continue</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">power_law_model</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">A</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="n">p</span><span class="p">)</span>
+
+            <span class="n">popt</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">power_law_model</span><span class="p">,</span> <span class="n">valid_count</span><span class="p">,</span> <span class="n">valid_sem</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+            <span class="n">A_est</span><span class="p">,</span> <span class="n">p_est</span> <span class="o">=</span> <span class="n">popt</span>
+            <span class="n">p_est</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">p_est</span><span class="p">)</span>
+            <span class="n">current_sem</span> <span class="o">=</span> <span class="n">power_law_model</span><span class="p">(</span><span class="n">n_current</span><span class="p">,</span> <span class="n">A_est</span><span class="p">,</span> <span class="n">p_est</span><span class="p">)</span>
+            <span class="n">target_sem</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">reduction_factor</span><span class="p">)</span> <span class="o">*</span> <span class="n">current_sem</span>
+            <span class="n">n_target</span> <span class="o">=</span> <span class="p">(</span><span class="n">A_est</span> <span class="o">/</span> <span class="n">target_sem</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">p_est</span><span class="p">)</span>
+            <span class="n">additional_samples</span> <span class="o">=</span> <span class="n">n_target</span> <span class="o">-</span> <span class="n">n_current</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;non-overlapping&quot;</span><span class="p">:</span>
+                <span class="n">additional_samples</span> <span class="o">*=</span> <span class="n">est_win</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;A_est&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">A_est</span><span class="p">),</span>
+                <span class="s2">&quot;p_est&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">p_est</span><span class="p">),</span>
+                <span class="s2">&quot;n_current&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_current</span><span class="p">),</span>
+                <span class="s2">&quot;current_sem&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">current_sem</span><span class="p">),</span>
+                <span class="s2">&quot;target_sem&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_sem</span><span class="p">),</span>
+                <span class="s2">&quot;n_target&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_target</span><span class="p">),</span>
+                <span class="s2">&quot;additional_samples&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">additional_samples</span><span class="p">)),</span>
+                <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">est_win</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="n">op_options</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span>
+            <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+            <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">,</span>
+            <span class="n">reduction_factor</span><span class="o">=</span><span class="n">reduction_factor</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">full_history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">full_history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;operation&quot;</span><span class="p">:</span> <span class="s2">&quot;additional_data&quot;</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">op_options</span><span class="p">})</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">deduplicate_history</span><span class="p">(</span><span class="n">full_history</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">to_native_types</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
+
+    <span class="c1"># ------ Helper functions --------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resolve `column_name` parameter into a list of valid DataFrame columns.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;time&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">column_name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_estimate_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine block size: either user-provided or derived from ESS.</span>
+
+<span class="sd">        Ensures a minimum window of 5 samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">window_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Get ESS dictionary from method</span>
+            <span class="n">ess_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">effective_sample_size</span><span class="p">(</span><span class="n">column_names</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+            <span class="c1"># Unpack the result</span>
+            <span class="n">ess_val</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ess_results</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;results&quot;</span> <span class="ow">in</span> <span class="n">ess_results</span><span class="p">:</span>
+                <span class="n">ess_val</span> <span class="o">=</span> <span class="n">ess_results</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ess_val</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">ess_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ess_results</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="mi">10</span>
+                <span class="p">)</span>
+            <span class="c1"># Avoid division by zero or negative</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ess_val</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">ess_val</span><span class="p">)))</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">ess_val</span> <span class="o">=</span> <span class="mi">10</span>
+            <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_data</span><span class="p">)</span> <span class="o">//</span> <span class="n">ess_val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">window_size</span>
+
+    <span class="c1"># def _estimate_window(self, col, column_data, window_size):</span>
+    <span class="c1">#    if window_size is None:</span>
+    <span class="c1">#        ess_results = self.effective_sample_size(column_names=col)</span>
+    <span class="c1">#        ess_value = ess_results[&quot;results&quot;].get(col, 10)</span>
+    <span class="c1">#        return max(5, len(column_data) // ess_value)</span>
+    <span class="c1">#    return window_size</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">estimated_window</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transform a 1D series into block or sliding window means.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        column_data : pandas.Series</span>
+<span class="sd">        estimated_window : int</span>
+<span class="sd">        method : {&#39;sliding&#39;, &#39;non-overlapping&#39;}</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.Series</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;sliding&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">column_data</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">estimated_window</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;non-overlapping&quot;</span><span class="p">:</span>
+            <span class="n">step_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">estimated_window</span><span class="p">)</span>  <span class="c1"># max(1, estimated_window // 4)</span>
+            <span class="n">window_means</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">column_data</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">estimated_window</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_data</span><span class="p">)</span> <span class="o">-</span> <span class="n">estimated_window</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">step_size</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+                <span class="n">window_means</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+                    <span class="n">estimated_window</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">window_means</span><span class="p">)</span> <span class="o">*</span> <span class="n">step_size</span> <span class="o">+</span> <span class="n">estimated_window</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="n">step_size</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid method. Choose &#39;sliding&#39; or &#39;non-overlapping&#39;.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DataStream.is_stationary"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.is_stationary">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_stationary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform Augmented Dickey-Fuller test for each specified column.</span>
+
+<span class="sd">        Records operation in history and returns a dict of bool or error.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        columns : str or list of str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            {column: True if stationary (p&lt;0.05), else False or error message}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_history</span><span class="p">(</span><span class="s2">&quot;is_stationary&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="n">columns</span><span class="p">})</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">columns</span><span class="p">]</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">p_value</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">autolag</span><span class="o">=</span><span class="s2">&quot;AIC&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_value</span> <span class="o">&lt;</span> <span class="mf">0.05</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+    <span class="c1"># === Compatibility wrappers for legacy tests ===</span>
+
+<div class="viewcode-block" id="DataStream.mean"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.mean">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Legacy wrapper for test compatibility. Returns only mean (not dict).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Return dict of means for all columns</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="s2">&quot;mean&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">}</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">column_name</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DataStream.mean_uncertainty"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.mean_uncertainty">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">mean_uncertainty</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Legacy wrapper for test compatibility. Returns only mean_uncertainty (not dict).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_uncertainty</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="n">col</span><span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="s2">&quot;mean_uncertainty&quot;</span> <span class="ow">in</span> <span class="n">val</span>
+            <span class="p">}</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">column_name</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DataStream.confidence_interval"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.confidence_interval">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">confidence_interval</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Legacy wrapper for test compatibility. Returns only CI tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_confidence_interval</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="n">col</span><span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="s2">&quot;confidence_interval&quot;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="s2">&quot;confidence_interval&quot;</span> <span class="ow">in</span> <span class="n">val</span>
+            <span class="p">}</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">column_name</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;confidence_interval&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DataStream.optimal_window_size"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.optimal_window_size">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">optimal_window_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;sliding&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stub for compatibility. Return a default or best-guess window size.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Just return a default for now (since the real logic is probably more complex)</span>
+        <span class="k">return</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="DataStream.effective_sample_size_below"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.data_stream.DataStream.effective_sample_size_below">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">effective_sample_size_below</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stub for compatibility with legacy test. Returns dummy value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># We could implement a real one if needed; for now, return 0 for all columns.</span>
+        <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;time&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">column_names</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">}</span></div></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Jul 02, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

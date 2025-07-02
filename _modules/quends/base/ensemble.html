@@ -1,0 +1,1266 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>quends.base.ensemble &#8212; QUENDS 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/quends/base/ensemble';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jul 02, 2025"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">QUENDS 0.1.0 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../autoapi/quends/index.html">quends</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../autoapi/quends/base/index.html">quends.base</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/base/data_stream/index.html">quends.base.data_stream</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/base/ensemble/index.html">quends.base.ensemble</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../autoapi/quends/cli/index.html">quends.cli</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../autoapi/quends/postprocessing/index.html">quends.postprocessing</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/postprocessing/exporter/index.html">quends.postprocessing.exporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/postprocessing/plotter/index.html">quends.postprocessing.plotter</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../autoapi/quends/preprocessing/index.html">quends.preprocessing</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/preprocessing/csv/index.html">quends.preprocessing.csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/preprocessing/dictionary/index.html">quends.preprocessing.dictionary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/preprocessing/gx/index.html">quends.preprocessing.gx</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/preprocessing/json/index.html">quends.preprocessing.json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/preprocessing/netcdf/index.html">quends.preprocessing.netcdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../autoapi/quends/preprocessing/numpy/index.html">quends.preprocessing.numpy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for quends.base.ensemble</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">quends.base.data_stream</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataStream</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module: ensemble.py</span>
+
+<span class="sd">Defines the Ensemble class for handling collections of DataStream objects,</span>
+<span class="sd">providing ensemble-level aggregation, statistical summaries, and metadata history.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Ensemble"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Ensemble</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manages an ensemble of DataStream instances, enabling multi-stream analysis.</span>
+
+<span class="sd">    Provides methods for:</span>
+<span class="sd">      - Simple accessors (.head, .get_member, .members).</span>
+<span class="sd">      - Identifying common variables across streams.</span>
+<span class="sd">      - Generating an average-ensemble stream aligned to the shortest time grid.</span>
+<span class="sd">      - Applying DataStream methods (mean, uncertainty, CI, ESS) at the ensemble level</span>
+<span class="sd">        via three techniques: average-ensemble, aggregate-then-statistics, and weighted.</span>
+<span class="sd">      - Tracking per-stream and ensemble metadata histories for reproducibility.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_streams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DataStream</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the ensemble with a non-empty list of DataStream objects.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data_streams : List[DataStream]</span>
+<span class="sd">            List of DataStream instances to include.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If input is not a list, is empty, or contains non-DataStream items.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_streams</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">data_streams</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Provide a non-empty list of DataStream objects.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">DataStream</span><span class="p">)</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">data_streams</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All ensemble members must be DataStream instances.&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="Ensemble.data_streams"><a class="viewcode-back" href="../../../autoapi/quends/base/ensemble/index.html#quends.base.ensemble.Ensemble.data_streams">[docs]</a>        <span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span> <span class="o">=</span> <span class="n">data_streams</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of members in the ensemble.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Ensemble.head"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.head">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve the first `n` rows from each DataStream member.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : int</span>
+<span class="sd">            Number of rows to return per stream.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Dict[int, pandas.DataFrame]</span>
+<span class="sd">            Mapping from member index to its DataFrame head.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">ds</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">)}</span></div>
+
+<div class="viewcode-block" id="Ensemble.get_member"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.get_member">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_member</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch a specific ensemble member by index.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        index : int</span>
+<span class="sd">            Zero-based index of the DataStream in the ensemble.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataStream</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IndexError</span>
+<span class="sd">            If `index` is out of bounds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Ensemble.members"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.members">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">members</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List all ensemble members.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[DataStream]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span></div>
+
+<div class="viewcode-block" id="Ensemble.common_variables"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.common_variables">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">common_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Identify variable columns shared by all members, excluding &#39;time&#39;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_cols</span> <span class="o">=</span> <span class="p">[</span><span class="nb">set</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">}</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">all_cols</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="o">*</span><span class="n">all_cols</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="Ensemble.summary"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.summary">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Print and return a structured summary of ensemble members.</span>
+
+<span class="sd">        Includes each member&#39;s sample count, column list, and head rows.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            { &#39;n_members&#39;: int,</span>
+<span class="sd">              &#39;common_variables&#39;: List[str],</span>
+<span class="sd">              &#39;members&#39;: { &#39;Member i&#39;: { &#39;n_samples&#39;: int,</span>
+<span class="sd">                                          &#39;columns&#39;: List[str],</span>
+<span class="sd">                                          &#39;head&#39;: dict } } }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">summary_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">),</span>
+                <span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span>
+                <span class="s2">&quot;head&quot;</span><span class="p">:</span> <span class="n">ds</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">),</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">overall_summary</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;n_members&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">),</span>
+            <span class="s2">&quot;common_variables&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_variables</span><span class="p">(),</span>
+            <span class="s2">&quot;members&quot;</span><span class="p">:</span> <span class="n">summary_dict</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ensemble Summary:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of ensemble members: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Common variables:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_variables</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">member</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">summary_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">member</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Number of samples: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;n_samples&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Columns: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;columns&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Head:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;head&quot;</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">overall_summary</span></div>
+
+    <span class="c1"># ========== Core DataStream Method Shortcuts ==========</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mean</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ds</span><span class="p">:</span> <span class="n">DataStream</span><span class="p">,</span>
+        <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">ds</span><span class="o">.</span><span class="n">_mean</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mean_uncertainty</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ds</span><span class="p">:</span> <span class="n">DataStream</span><span class="p">,</span>
+        <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">ds</span><span class="o">.</span><span class="n">_mean_uncertainty</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_confidence_interval</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ds</span><span class="p">:</span> <span class="n">DataStream</span><span class="p">,</span>
+        <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">ds</span><span class="o">.</span><span class="n">_confidence_interval</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_classic_ess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ds</span><span class="p">:</span> <span class="n">DataStream</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ds</span><span class="o">.</span><span class="n">effective_sample_size</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_robust_ess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ds</span><span class="p">:</span> <span class="n">DataStream</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ds</span><span class="o">.</span><span class="n">ess_robust</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># ========== Average-Ensemble Construction ==========</span>
+<div class="viewcode-block" id="Ensemble.compute_average_ensemble"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.compute_average_ensemble">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_average_ensemble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">members</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DataStream</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a DataStream whose columns are the elementwise mean across members,</span>
+<span class="sd">        aligned on the shortest time grid.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        members : List[DataStream], optional</span>
+<span class="sd">            Subset of streams to average; defaults to all.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataStream</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If no streams are provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data_streams</span> <span class="o">=</span> <span class="n">members</span> <span class="k">if</span> <span class="n">members</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span>
+        <span class="n">data_frames</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_streams</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data_frames</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No data streams provided for ensemble averaging.&quot;</span><span class="p">)</span>
+        <span class="n">shortest_df</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">data_frames</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+        <span class="n">short_times</span> <span class="o">=</span> <span class="n">shortest_df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">resampled</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">resample_to_short_intervals</span><span class="p">(</span><span class="n">shortest_df</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">data_frames</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="n">ensemble_avg</span> <span class="o">=</span> <span class="n">shortest_df</span><span class="p">[[</span><span class="s2">&quot;time&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">shortest_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">arrays</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">resampled</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+            <span class="n">ensemble_avg</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">arrays</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DataStream</span><span class="p">(</span><span class="n">ensemble_avg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Ensemble.resample_to_short_intervals"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.resample_to_short_intervals">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">resample_to_short_intervals</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">short_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">long_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Align `long_df` onto `short_df.time` by block-averaging between boundaries.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        short_df : pandas.DataFrame</span>
+<span class="sd">            Reference DataFrame with the shortest time series.</span>
+<span class="sd">        long_df : pandas.DataFrame</span>
+<span class="sd">            Stream to resample.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            Resampled data matching `short_df.time`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">short_times</span> <span class="o">=</span> <span class="n">short_df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">long_times</span> <span class="o">=</span> <span class="n">long_df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">long_times</span><span class="p">,</span> <span class="n">short_times</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">short_times</span><span class="o">.</span><span class="n">copy</span><span class="p">()})</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">long_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">long_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">means</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">])</span> <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="n">start</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">idx</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="p">]</span>
+            <span class="n">tail</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">:]</span>
+            <span class="n">means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">tail</span><span class="p">)</span> <span class="k">if</span> <span class="n">tail</span><span class="o">.</span><span class="n">size</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">means</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+    <span class="c1"># ========== Utility ==========</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Ensemble.collect_histories"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.collect_histories">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">collect_histories</span><span class="p">(</span><span class="n">ds_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DataStream</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gather `_history` lists from each DataStream in `ds_list`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ds_list : List[DataStream]</span>
+<span class="sd">            Streams whose histories to collect.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[List[dict]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">ds_list</span><span class="p">]</span></div>
+
+    <span class="c1"># ========== TRIM ==========</span>
+<div class="viewcode-block" id="Ensemble.trim"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.trim">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">trim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">trimmed</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">ds</span><span class="o">.</span><span class="n">trim</span><span class="p">(</span>
+                <span class="n">column_name</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+                <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+                <span class="n">robust</span><span class="o">=</span><span class="n">robust</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span>
+        <span class="p">]</span>
+        <span class="c1"># Only keep non-empty, valid DataStreams</span>
+        <span class="n">trimmed_members</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trimmed</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s1">&#39;df&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">trimmed_members</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No ensemble members survived trimming (all failed or empty)!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Ensemble</span><span class="p">(</span><span class="n">trimmed_members</span><span class="p">)</span></div>
+
+
+
+
+    <span class="c1"># ========== IS_STATIONARY ==========</span>
+<div class="viewcode-block" id="Ensemble.is_stationary"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.is_stationary">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_stationary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Test stationarity for `columns` across all members.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            { &#39;results&#39;: {Member i: {col: bool or error}},</span>
+<span class="sd">              &#39;metadata&#39;: {Member i: history} }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">is_stationary</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
+            <span class="n">meta</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">results</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">meta</span><span class="p">}</span></div>
+
+    <span class="c1"># ========== EFFECTIVE SAMPLE SIZE ==========</span>
+<div class="viewcode-block" id="Ensemble.effective_sample_size"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.effective_sample_size">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">effective_sample_size</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">technique</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute classic ESS via three techniques:</span>
+<span class="sd">          0 - on average-ensemble</span>
+<span class="sd">          1 - on concatenated aggregate</span>
+<span class="sd">          2 - per-member then aggregate</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            { &#39;results&#39;: ..., &#39;metadata&#39;: ... }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">avg_ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_average_ensemble</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classic_ess</span><span class="p">(</span><span class="n">avg_ds</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;average_ensemble&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">avg_ds</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">elif</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span><span class="n">column_names</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_variables</span><span class="p">()</span> <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">column_names</span>
+            <span class="p">)</span>
+            <span class="n">aggregated</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">col</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span>
+                        <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">empty</span>
+                    <span class="p">],</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="n">aggregated</span><span class="p">:</span>
+                <span class="n">agg_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">aggregated</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">ds_agg</span> <span class="o">=</span> <span class="n">DataStream</span><span class="p">(</span><span class="n">agg_df</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classic_ess</span><span class="p">(</span><span class="n">ds_agg</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">agg_df</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">alpha</span><span class="p">)</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;aggregated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ds_agg</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;aggregated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Per-member ESS</span>
+            <span class="n">per_member_results</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">per_member_meta</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classic_ess</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+                <span class="n">per_member_results</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;results&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">res</span>
+                <span class="p">)</span>
+                <span class="n">per_member_meta</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">)</span>
+            <span class="c1"># Aggregate: mean, harmonic mean, etc.</span>
+            <span class="n">ess_vals</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">per_member_results</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">ess</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ess</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ess</span><span class="p">):</span>
+                            <span class="n">ess_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ess</span><span class="p">)</span>
+            <span class="n">agg_ess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">ess_vals</span><span class="p">)</span> <span class="k">if</span> <span class="n">ess_vals</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ensemble_ess&quot;</span><span class="p">:</span> <span class="n">agg_ess</span><span class="p">,</span> <span class="s2">&quot;individual_ess&quot;</span><span class="p">:</span> <span class="n">per_member_results</span><span class="p">}</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;per_member&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">per_member_meta</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span></div>
+
+    <span class="c1"># ========== ESS ROBUST ==========</span>
+<div class="viewcode-block" id="Ensemble.ess_robust"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.ess_robust">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">ess_robust</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">column_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rank_normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">min_samples</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">return_relative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">technique</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute robust ESS (rank-based) via three techniques.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            { &#39;results&#39;: ..., &#39;metadata&#39;: ... }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">avg_ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_average_ensemble</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robust_ess</span><span class="p">(</span>
+                <span class="n">avg_ds</span><span class="p">,</span>
+                <span class="n">column_names</span><span class="p">,</span>
+                <span class="n">rank_normalize</span><span class="o">=</span><span class="n">rank_normalize</span><span class="p">,</span>
+                <span class="n">min_samples</span><span class="o">=</span><span class="n">min_samples</span><span class="p">,</span>
+                <span class="n">return_relative</span><span class="o">=</span><span class="n">return_relative</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;average_ensemble&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">avg_ds</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">elif</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span><span class="n">column_names</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_variables</span><span class="p">()</span> <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">column_names</span>
+            <span class="p">)</span>
+            <span class="n">aggregated</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">col</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span>
+                        <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">empty</span>
+                    <span class="p">],</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="n">aggregated</span><span class="p">:</span>
+                <span class="n">agg_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">aggregated</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">ds_agg</span> <span class="o">=</span> <span class="n">DataStream</span><span class="p">(</span><span class="n">agg_df</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robust_ess</span><span class="p">(</span>
+                    <span class="n">ds_agg</span><span class="p">,</span>
+                    <span class="nb">list</span><span class="p">(</span><span class="n">agg_df</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span>
+                    <span class="n">rank_normalize</span><span class="o">=</span><span class="n">rank_normalize</span><span class="p">,</span>
+                    <span class="n">min_samples</span><span class="o">=</span><span class="n">min_samples</span><span class="p">,</span>
+                    <span class="n">return_relative</span><span class="o">=</span><span class="n">return_relative</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;aggregated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ds_agg</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;aggregated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Per-member robust ESS</span>
+            <span class="n">per_member_results</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">per_member_meta</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_robust_ess</span><span class="p">(</span>
+                    <span class="n">ds</span><span class="p">,</span>
+                    <span class="n">column_names</span><span class="p">,</span>
+                    <span class="n">rank_normalize</span><span class="o">=</span><span class="n">rank_normalize</span><span class="p">,</span>
+                    <span class="n">min_samples</span><span class="o">=</span><span class="n">min_samples</span><span class="p">,</span>
+                    <span class="n">return_relative</span><span class="o">=</span><span class="n">return_relative</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">per_member_results</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;results&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">res</span>
+                <span class="p">)</span>
+                <span class="n">per_member_meta</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">)</span>
+            <span class="c1"># Aggregate: mean, harmonic mean, etc.</span>
+            <span class="n">ess_vals</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">per_member_results</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">ess</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ess</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ess</span><span class="p">):</span>
+                            <span class="n">ess_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ess</span><span class="p">)</span>
+            <span class="n">agg_ess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">ess_vals</span><span class="p">)</span> <span class="k">if</span> <span class="n">ess_vals</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;ensemble_robust_ess&quot;</span><span class="p">:</span> <span class="n">agg_ess</span><span class="p">,</span>
+                <span class="s2">&quot;individual_robust_ess&quot;</span><span class="p">:</span> <span class="n">per_member_results</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;per_member&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">per_member_meta</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span></div>
+
+    <span class="c1"># ========== MEAN ==========</span>
+<div class="viewcode-block" id="Ensemble.mean"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.mean">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">technique</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute ensemble mean via three techniques:</span>
+<span class="sd">          0 - average-ensemble</span>
+<span class="sd">          1 - aggregate-then-statistics</span>
+<span class="sd">          2 - weighted per-member</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            { &#39;results&#39;: ..., &#39;metadata&#39;: ... }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">avg_ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_average_ensemble</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">(</span><span class="n">avg_ds</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;average_ensemble&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">avg_ds</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">elif</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span><span class="n">column_name</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_variables</span><span class="p">()</span> <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">column_name</span>
+            <span class="p">)</span>
+            <span class="n">aggregated</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">col</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span>
+                        <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">empty</span>
+                    <span class="p">],</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="n">aggregated</span><span class="p">:</span>
+                <span class="n">agg_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">aggregated</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">ds_agg</span> <span class="o">=</span> <span class="n">DataStream</span><span class="p">(</span><span class="n">agg_df</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">(</span><span class="n">ds_agg</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">agg_df</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;aggregated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ds_agg</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;aggregated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Per-member means and weights</span>
+            <span class="n">member_means</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">member_weights</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">):</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">member_means</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+                <span class="n">member_weights</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">cols</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span>
+                    <span class="k">else</span> <span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">column_name</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                        <span class="n">col_data</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">col_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                            <span class="n">est_win</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">_estimate_window</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">col_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+                            <span class="n">processed</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">_process_column</span><span class="p">(</span><span class="n">col_data</span><span class="p">,</span> <span class="n">est_win</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+                            <span class="n">member_weights</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">processed</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">member_weights</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">agg_cols</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">common_variables</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="p">([</span><span class="n">column_name</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">column_name</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">ensemble_mean</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">agg_cols</span><span class="p">:</span>
+                <span class="n">values</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">)):</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">member_means</span> <span class="ow">and</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">member_means</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                        <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">member_means</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">])</span>
+                        <span class="n">weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">member_weights</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">values</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ensemble_mean</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+                    <span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;individual&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;Member Ensemble&quot;</span><span class="p">:</span> <span class="n">ensemble_mean</span><span class="p">,</span>
+                <span class="s2">&quot;Individual Members&quot;</span><span class="p">:</span> <span class="n">member_means</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span></div>
+
+    <span class="c1"># ========== MEAN UNCERTAINTY ==========</span>
+<div class="viewcode-block" id="Ensemble.mean_uncertainty"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.mean_uncertainty">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">mean_uncertainty</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">technique</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute SEM via three techniques (0: average, 1: aggregate, 2: weighted).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">avg_ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_average_ensemble</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_uncertainty</span><span class="p">(</span>
+                <span class="n">avg_ds</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span>
+            <span class="p">)</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;average_ensemble&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">avg_ds</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">elif</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span><span class="n">column_name</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_variables</span><span class="p">()</span> <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">column_name</span>
+            <span class="p">)</span>
+            <span class="n">aggregated</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">col</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span>
+                        <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">empty</span>
+                    <span class="p">],</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="n">aggregated</span><span class="p">:</span>
+                <span class="n">agg_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">aggregated</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">ds_agg</span> <span class="o">=</span> <span class="n">DataStream</span><span class="p">(</span><span class="n">agg_df</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_uncertainty</span><span class="p">(</span>
+                    <span class="n">ds_agg</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">agg_df</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span>
+                <span class="p">)</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;aggregated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ds_agg</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;aggregated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">member_unc</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">member_means</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">member_weights</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">):</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">member_means</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+                <span class="n">member_unc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_uncertainty</span><span class="p">(</span>
+                    <span class="n">ds</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span>
+                <span class="p">)</span>
+                <span class="n">member_weights</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">cols</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span>
+                    <span class="k">else</span> <span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">column_name</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                        <span class="n">col_data</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">col_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                            <span class="n">est_win</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">_estimate_window</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">col_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+                            <span class="n">processed</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">_process_column</span><span class="p">(</span><span class="n">col_data</span><span class="p">,</span> <span class="n">est_win</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+                            <span class="n">member_weights</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">processed</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">member_weights</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">agg_cols</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">common_variables</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="p">([</span><span class="n">column_name</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">column_name</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">ensemble_unc</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">agg_cols</span><span class="p">:</span>
+                <span class="n">mu_vals</span><span class="p">,</span> <span class="n">u_vals</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">)):</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">key</span> <span class="ow">in</span> <span class="n">member_means</span>
+                        <span class="ow">and</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">member_means</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                        <span class="ow">and</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">member_unc</span>
+                        <span class="ow">and</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">member_unc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                    <span class="p">):</span>
+                        <span class="n">mu_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">member_means</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">])</span>
+                        <span class="n">u_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">member_unc</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">])</span>
+                        <span class="n">weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">member_weights</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">mu_vals</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+                    <span class="n">mu_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mu_vals</span><span class="p">)</span>
+                    <span class="n">u_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">u_vals</span><span class="p">)</span>
+                    <span class="n">weighted_mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">mu_vals</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+                    <span class="n">weighted_avg_unc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">u_vals</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+                    <span class="n">weighted_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                        <span class="n">weights</span> <span class="o">*</span> <span class="p">(</span><span class="n">u_vals</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">mu_vals</span> <span class="o">-</span> <span class="n">weighted_mu</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+                    <span class="n">ensemble_sem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">weighted_var</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">))</span>
+                    <span class="n">ensemble_unc</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">:</span> <span class="n">ensemble_sem</span><span class="p">,</span>
+                        <span class="s2">&quot;mean_uncertainty_average&quot;</span><span class="p">:</span> <span class="n">weighted_avg_unc</span><span class="p">,</span>
+                    <span class="p">}</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;individual&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Member Ensemble&quot;</span><span class="p">:</span> <span class="n">ensemble_unc</span><span class="p">,</span> <span class="s2">&quot;Individual Members&quot;</span><span class="p">:</span> <span class="n">member_unc</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span></div>
+
+    <span class="c1"># ========== CONFIDENCE INTERVAL ==========</span>
+<div class="viewcode-block" id="Ensemble.confidence_interval"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.confidence_interval">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">confidence_interval</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">technique</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute 95% CI via three techniques.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">avg_ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_average_ensemble</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_confidence_interval</span><span class="p">(</span>
+                <span class="n">avg_ds</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span>
+            <span class="p">)</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;average_ensemble&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">avg_ds</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">elif</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span><span class="n">column_name</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_variables</span><span class="p">()</span> <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">column_name</span>
+            <span class="p">)</span>
+            <span class="n">aggregated</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">col</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span>
+                        <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">empty</span>
+                    <span class="p">],</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="n">aggregated</span><span class="p">:</span>
+                <span class="n">agg_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">aggregated</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">ds_agg</span> <span class="o">=</span> <span class="n">DataStream</span><span class="p">(</span><span class="n">agg_df</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_confidence_interval</span><span class="p">(</span>
+                    <span class="n">ds_agg</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">agg_df</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span>
+                <span class="p">)</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;aggregated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ds_agg</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;aggregated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">member_cis</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">member_means</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">member_unc</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">member_weights</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">):</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">member_means</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+                <span class="n">member_unc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_uncertainty</span><span class="p">(</span>
+                    <span class="n">ds</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span>
+                <span class="p">)</span>
+                <span class="n">member_cis</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_confidence_interval</span><span class="p">(</span>
+                    <span class="n">ds</span><span class="p">,</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span>
+                <span class="p">)</span>
+                <span class="n">member_weights</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">cols</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span>
+                    <span class="k">else</span> <span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">column_name</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                        <span class="n">col_data</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">col_data</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                            <span class="n">est_win</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">_estimate_window</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">col_data</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)</span>
+                            <span class="n">processed</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">_process_column</span><span class="p">(</span><span class="n">col_data</span><span class="p">,</span> <span class="n">est_win</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+                            <span class="n">member_weights</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">processed</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">member_weights</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">agg_cols</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">common_variables</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">column_name</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="p">([</span><span class="n">column_name</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">column_name</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">ensemble_ci</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">agg_cols</span><span class="p">:</span>
+                <span class="n">means</span><span class="p">,</span> <span class="n">uncs</span><span class="p">,</span> <span class="n">lowers</span><span class="p">,</span> <span class="n">uppers</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">)):</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">key</span> <span class="ow">in</span> <span class="n">member_means</span>
+                        <span class="ow">and</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">member_means</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                        <span class="ow">and</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">member_unc</span>
+                        <span class="ow">and</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">member_unc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                        <span class="ow">and</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">member_cis</span>
+                        <span class="ow">and</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">member_cis</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                    <span class="p">):</span>
+                        <span class="n">m_i</span> <span class="o">=</span> <span class="n">member_means</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span>
+                        <span class="n">u_i</span> <span class="o">=</span> <span class="n">member_unc</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">]</span>
+                        <span class="n">ci</span> <span class="o">=</span> <span class="n">member_cis</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                            <span class="s2">&quot;confidence_interval&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="n">w_i</span> <span class="o">=</span> <span class="n">member_weights</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">col</span><span class="p">]</span>
+                        <span class="n">means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_i</span><span class="p">)</span>
+                        <span class="n">uncs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u_i</span><span class="p">)</span>
+                        <span class="n">weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w_i</span><span class="p">)</span>
+                        <span class="n">lowers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ci</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="n">uppers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ci</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">means</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+                    <span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">means</span><span class="p">)</span>
+                    <span class="n">uncs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">uncs</span><span class="p">)</span>
+                    <span class="n">weighted_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">means</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+                    <span class="n">weighted_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                        <span class="n">weights</span> <span class="o">*</span> <span class="p">(</span><span class="n">uncs</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">means</span> <span class="o">-</span> <span class="n">weighted_mean</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+                    <span class="n">ensemble_unc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">weighted_var</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">))</span>
+                    <span class="n">ensemble_ci</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">weighted_mean</span> <span class="o">-</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">ensemble_unc</span><span class="p">,</span>
+                        <span class="n">weighted_mean</span> <span class="o">+</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">ensemble_unc</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;individual&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="s2">&quot;_history&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_streams</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Member Ensemble&quot;</span><span class="p">:</span> <span class="n">ensemble_ci</span><span class="p">,</span> <span class="s2">&quot;Individual Members&quot;</span><span class="p">:</span> <span class="n">member_cis</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span></div>
+
+    <span class="c1"># ========== FULL STATISTICS ==========</span>
+<div class="viewcode-block" id="Ensemble.compute_statistics"><a class="viewcode-back" href="../../../autoapi/quends/index.html#quends.base.ensemble.Ensemble.compute_statistics">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">compute_statistics</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">technique</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Aggregate mean, SEM, CI, and ±1std across the ensemble.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            { &#39;results&#39;: {col: {stats}}, &#39;metadata&#39;: {...} }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mean_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">technique</span><span class="p">)</span>
+        <span class="n">unc_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_uncertainty</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">technique</span>
+        <span class="p">)</span>
+        <span class="n">ci_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="p">,</span> <span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">technique</span>
+        <span class="p">)</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># Key structure depends on technique; adapt below as needed</span>
+        <span class="k">if</span> <span class="n">technique</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">mean_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;Member Ensemble&quot;</span><span class="p">]:</span>
+                <span class="n">stats</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">mean_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;Member Ensemble&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">],</span>
+                    <span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">:</span> <span class="n">unc_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;Member Ensemble&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span>
+                        <span class="s2">&quot;mean_uncertainty&quot;</span>
+                    <span class="p">],</span>
+                    <span class="s2">&quot;mean_uncertainty_average&quot;</span><span class="p">:</span> <span class="n">unc_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span>
+                        <span class="s2">&quot;Member Ensemble&quot;</span>
+                    <span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;mean_uncertainty_average&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;confidence_interval&quot;</span><span class="p">:</span> <span class="n">ci_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;Member Ensemble&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">],</span>
+                    <span class="s2">&quot;pm_std&quot;</span><span class="p">:</span> <span class="p">(</span>
+                        <span class="n">mean_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;Member Ensemble&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                        <span class="o">-</span> <span class="n">unc_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;Member Ensemble&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span>
+                            <span class="s2">&quot;mean_uncertainty&quot;</span>
+                        <span class="p">],</span>
+                        <span class="n">mean_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;Member Ensemble&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                        <span class="o">+</span> <span class="n">unc_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;Member Ensemble&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span>
+                            <span class="s2">&quot;mean_uncertainty&quot;</span>
+                        <span class="p">],</span>
+                    <span class="p">),</span>
+                <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="n">mean_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="n">stats</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="p">(</span>
+                        <span class="n">mean_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="s2">&quot;mean&quot;</span> <span class="ow">in</span> <span class="n">mean_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                        <span class="k">else</span> <span class="n">mean_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                    <span class="p">),</span>
+                    <span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">:</span> <span class="p">(</span>
+                        <span class="n">unc_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="s2">&quot;mean_uncertainty&quot;</span> <span class="ow">in</span> <span class="n">unc_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                        <span class="k">else</span> <span class="n">unc_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                    <span class="p">),</span>
+                    <span class="s2">&quot;confidence_interval&quot;</span><span class="p">:</span> <span class="p">(</span>
+                        <span class="n">ci_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;confidence_interval&quot;</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="s2">&quot;confidence_interval&quot;</span> <span class="ow">in</span> <span class="n">ci_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                        <span class="k">else</span> <span class="n">ci_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                    <span class="p">),</span>
+                    <span class="s2">&quot;pm_std&quot;</span><span class="p">:</span> <span class="p">(</span>
+                        <span class="p">(</span>
+                            <span class="n">mean_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span>
+                            <span class="o">-</span> <span class="n">unc_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">]</span>
+                            <span class="k">if</span> <span class="s2">&quot;mean&quot;</span> <span class="ow">in</span> <span class="n">mean_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                            <span class="ow">and</span> <span class="s2">&quot;mean_uncertainty&quot;</span> <span class="ow">in</span> <span class="n">unc_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                            <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="p">),</span>
+                        <span class="p">(</span>
+                            <span class="n">mean_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span>
+                            <span class="o">+</span> <span class="n">unc_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">]</span>
+                            <span class="k">if</span> <span class="s2">&quot;mean&quot;</span> <span class="ow">in</span> <span class="n">mean_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                            <span class="ow">and</span> <span class="s2">&quot;mean_uncertainty&quot;</span> <span class="ow">in</span> <span class="n">unc_result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+                            <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="p">),</span>
+                    <span class="p">),</span>
+                <span class="p">}</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">mean_result</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">:</span> <span class="n">unc_result</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;confidence_interval&quot;</span><span class="p">:</span> <span class="n">ci_result</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">stats</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span></div></div>
+
+
+<span class="c1"># End of class</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Jul 02, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
