@@ -7,6 +7,7 @@ from statsmodels.tsa.stattools import acf
 
 from quends.base.data_stream import DataStream  # Adjust the import if necessary
 from quends.base.ensemble import Ensemble
+import math
 
 
 class Plotter:
@@ -300,7 +301,7 @@ class Plotter:
         self,
         data,
         variables_to_plot=None,
-        window_size=10,
+        batch_size=10,
         start_time=0.0,
         method="std",
         threshold=None,
@@ -359,7 +360,7 @@ class Plotter:
                 ds = DataStream(df)
                 trimmed_ds = ds.trim(
                     column,
-                    window_size=window_size,
+                    batch_size=batch_size,
                     start_time=start_time,
                     method=method,
                     threshold=threshold,
@@ -657,7 +658,7 @@ class Plotter:
         self,
         ensemble_obj,
         variables_to_plot=None,
-        window_size=10,
+        batch_size=10,
         start_time=0.0,
         method="std",
         threshold=None,
@@ -671,9 +672,9 @@ class Plotter:
         all are overlaid on the same subplot), the method uses DataStream.trim() to estimate the steady
         state start time. If detected, it plots the original signal with:
 
-          - A vertical dashed red line at the estimated steady state start.
-          - A horizontal green line at the overall mean (computed from the data after steady state).
-          - Shaded regions for ±1, ±2, and ±3 standard deviations.
+        - A vertical dashed red line at the estimated steady state start.
+        - A horizontal green line at the overall mean (computed from the data after steady state).
+        - Shaded regions for ±1, ±2, and ±3 standard deviations.
 
         If no steady state is detected, it plots the raw signal and prints a message.
 
@@ -683,7 +684,7 @@ class Plotter:
             ensemble_obj (Ensemble): An Ensemble instance.
             variables_to_plot (list, optional): List of variable names to plot. If None, all columns (except 'time')
                 from the first member are used.
-            window_size (int): Window size for the trim() function.
+            batch_size (int): Window size for the trim() function.
             start_time (float): Start time for steady state detection.
             method (str): Steady state detection method ('std', 'threshold', or 'rolling_variance').
             threshold (float, optional): Threshold if needed by the method.
@@ -693,14 +694,13 @@ class Plotter:
         Returns:
             None
         """
-        # Determine grid dimensions based on number of ensemble members.
+        import math
         n_members = len(ensemble_obj.data_streams)
         ncols = min(3, n_members)
-        nrows = int(np.ceil(n_members / ncols))
+        nrows = int(math.ceil(n_members / ncols))
         fig, axes = plt.subplots(nrows, ncols, figsize=(5 * ncols, 4 * nrows))
         axes = np.array(axes).flatten()
 
-        # For each ensemble member, plot the steady state detection for the chosen variables.
         for i, ds in enumerate(ensemble_obj.data_streams):
             df = ds.df
             # Determine variables to plot.
@@ -718,13 +718,14 @@ class Plotter:
                 ds_temp = DataStream(df)
                 trimmed_ds = ds_temp.trim(
                     var,
-                    window_size=window_size,
+                    batch_size=batch_size,
                     start_time=start_time,
                     method=method,
                     threshold=threshold,
                     robust=robust,
                 )
-                if trimmed_ds is not None:
+                # PATCH: Only plot steady state if we have data!
+                if trimmed_ds is not None and not trimmed_ds.df.empty:
                     steady_state_start = trimmed_ds.df["time"].iloc[0]
                     after_ss = signal[time >= steady_state_start]
                     overall_mean = after_ss.mean()
