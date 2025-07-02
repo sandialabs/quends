@@ -130,7 +130,6 @@ def test_confidence_interval_long(long_data):
 # === Trim ===
 # === Trim ===
 
-# === Trim ===
 def test_trim_std(trim_data):
     ds = DataStream(trim_data)
 <<<<<<< HEAD
