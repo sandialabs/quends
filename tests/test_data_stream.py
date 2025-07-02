@@ -119,7 +119,6 @@ def test_confidence_interval_long(long_data):
 # === Trim ===
 # === Trim ===
 
-# === Trim ===
 def test_trim_std(trim_data):
     ds = DataStream(trim_data)
     result = ds.trim(column_name="A", batch_size=1, method="std", start_time=3.0, threshold=4)
