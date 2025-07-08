@@ -94,7 +94,7 @@ Module Contents
 
 
 
-   .. py:method:: steady_state_automatic_plot(data, variables_to_plot=None, window_size=10, start_time=0.0, method='std', threshold=None, robust=True, save=False)
+   .. py:method:: steady_state_automatic_plot(data, variables_to_plot=None, batch_size=10, start_time=0.0, method='std', threshold=None, robust=True, save=False)
 
       Plot steady state detection for each variable in the data. For each variable, the method uses the
       DataStream.trim() function to estimate the steady state start time. If a steady state is detected,
@@ -180,7 +180,7 @@ Module Contents
 
 
 
-   .. py:method:: ensemble_steady_state_automatic_plot(ensemble_obj, variables_to_plot=None, window_size=10, start_time=0.0, method='std', threshold=None, robust=True, save=False)
+   .. py:method:: ensemble_steady_state_automatic_plot(ensemble_obj, variables_to_plot=None, batch_size=10, start_time=0.0, method='std', threshold=None, robust=True, save=False)
 
       Plot steady state detection automatically for each ensemble member on a grid.
 
@@ -188,9 +188,9 @@ Module Contents
       all are overlaid on the same subplot), the method uses DataStream.trim() to estimate the steady
       state start time. If detected, it plots the original signal with:
 
-        - A vertical dashed red line at the estimated steady state start.
-        - A horizontal green line at the overall mean (computed from the data after steady state).
-        - Shaded regions for ±1, ±2, and ±3 standard deviations.
+      - A vertical dashed red line at the estimated steady state start.
+      - A horizontal green line at the overall mean (computed from the data after steady state).
+      - Shaded regions for ±1, ±2, and ±3 standard deviations.
 
       If no steady state is detected, it plots the raw signal and prints a message.
 
@@ -200,7 +200,7 @@ Module Contents
           ensemble_obj (Ensemble): An Ensemble instance.
           variables_to_plot (list, optional): List of variable names to plot. If None, all columns (except 'time')
               from the first member are used.
-          window_size (int): Window size for the trim() function.
+          batch_size (int): Window size for the trim() function.
           start_time (float): Start time for steady state detection.
           method (str): Steady state detection method ('std', 'threshold', or 'rolling_variance').
           threshold (float, optional): Threshold if needed by the method.

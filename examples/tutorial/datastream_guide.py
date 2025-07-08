@@ -200,20 +200,18 @@ data_stream_cg.is_stationary("Q_D/Q_GBD")
 # %%
 # To Plot for DataStream
 plotter = qnds.Plotter()
-plotter.trace_plot(data_stream_cg, ["Q_D/Q_GBD"])
+plot = plotter.trace_plot(data_stream_cg, ["Q_D/Q_GBD"])
 
 
 # %%
-plotter.trace_plot(trimmed)
+plot = plotter.trace_plot(trimmed)
+# %%
+plot = plotter.steady_state_automatic_plot(
+    data_stream_cg, variables_to_plot=["Q_D/Q_GBD"]
+)
 
-# # %%
-# plotter.steady_state_automatic_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
-
-# # %%
-# plotter.steady_state_automatic_plot(trimmed)
-
-# # %%
-# plotter.steady_state_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
+# %%
+plot = plotter.steady_state_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
 
 # %%
 # To show additional data use:

@@ -93,6 +93,16 @@ Module Contents
    .. py:attribute:: df
 
 
+   .. py:method:: get_metadata()
+
+      Return the deduplicated operation history for this DataStream.
+      Returns
+      -------
+          list of dict
+          The deduplicated operation history, with options for each operation.
+
+
+
    .. py:method:: head(n=5)
 
       Return the first `n` rows of the underlying DataFrame.
@@ -123,11 +133,8 @@ Module Contents
    .. py:method:: trim(column_name, batch_size=10, start_time=0.0, method='std', threshold=None, robust=True)
 
       Trim the DataStream to its steady-state portion based on a chosen detection method.
-
-      Records the trim operation in history and returns a dict containing:
-        - 'results': a new DataStream of trimmed data or None if trimming failed.
-        - 'metadata': deduplicated operation lineage.
-        - optionally 'message' on failure.
+      Always returns a DataStream (possibly empty if trim fails), with operation metadata
+      and any messages stored in the _history attribute.
 
       Parameters
       ----------
@@ -139,9 +146,9 @@ Module Contents
           Earliest time to consider in the analysis.
       method : {'std', 'threshold', 'rolling_variance'}, default='std'
           Detection method:
-            - 'std': sliding std-based criteria (requires stationarity).
-            - 'threshold': rolling-std threshold (requires `threshold`).
-            - 'rolling_variance': comparison to mean variance times `threshold`.
+          - 'std': sliding std-based criteria (requires stationarity).
+          - 'threshold': rolling-std threshold (requires `threshold`).
+          - 'rolling_variance': comparison to mean variance times `threshold`.
       threshold : float or None
           Threshold value for the 'threshold' or 'rolling_variance' methods.
       robust : bool, default=True
@@ -149,12 +156,9 @@ Module Contents
 
       Returns
       -------
-      dict
-          {
-            'results': DataStream or None,
-            'metadata': list of dict,
-            'message': str (if occurred)
-          }
+      DataStream
+          New DataStream containing the trimmed data, or empty if trimming failed.
+          Operation metadata and any messages are in the ._history attribute.
 
 
 

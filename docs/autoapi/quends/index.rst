@@ -68,6 +68,16 @@ Package Contents
    .. py:attribute:: df
 
 
+   .. py:method:: get_metadata()
+
+      Return the deduplicated operation history for this DataStream.
+      Returns
+      -------
+          list of dict
+          The deduplicated operation history, with options for each operation.
+
+
+
    .. py:method:: head(n=5)
 
       Return the first `n` rows of the underlying DataFrame.
@@ -98,11 +108,8 @@ Package Contents
    .. py:method:: trim(column_name, batch_size=10, start_time=0.0, method='std', threshold=None, robust=True)
 
       Trim the DataStream to its steady-state portion based on a chosen detection method.
-
-      Records the trim operation in history and returns a dict containing:
-        - 'results': a new DataStream of trimmed data or None if trimming failed.
-        - 'metadata': deduplicated operation lineage.
-        - optionally 'message' on failure.
+      Always returns a DataStream (possibly empty if trim fails), with operation metadata
+      and any messages stored in the _history attribute.
 
       Parameters
       ----------
@@ -114,9 +121,9 @@ Package Contents
           Earliest time to consider in the analysis.
       method : {'std', 'threshold', 'rolling_variance'}, default='std'
           Detection method:
-            - 'std': sliding std-based criteria (requires stationarity).
-            - 'threshold': rolling-std threshold (requires `threshold`).
-            - 'rolling_variance': comparison to mean variance times `threshold`.
+          - 'std': sliding std-based criteria (requires stationarity).
+          - 'threshold': rolling-std threshold (requires `threshold`).
+          - 'rolling_variance': comparison to mean variance times `threshold`.
       threshold : float or None
           Threshold value for the 'threshold' or 'rolling_variance' methods.
       robust : bool, default=True
@@ -124,12 +131,9 @@ Package Contents
 
       Returns
       -------
-      dict
-          {
-            'results': DataStream or None,
-            'metadata': list of dict,
-            'message': str (if occurred)
-          }
+      DataStream
+          New DataStream containing the trimmed data, or empty if trimming failed.
+          Operation metadata and any messages are in the ._history attribute.
 
 
 
@@ -501,16 +505,7 @@ Package Contents
 
 
 
-   .. py:method:: trim(column_name, window_size = 10, start_time = 0.0, method = 'std', threshold = None, robust = True)
-
-      Apply steady-state trimming to each member on `column_name`.
-
-      Returns
-      -------
-      dict
-          { 'results': Ensemble or None,
-            'metadata': Dict[str, Any] }
-
+   .. py:method:: trim(column_name, batch_size=10, start_time=0.0, method='std', threshold=None, robust=True)
 
 
    .. py:method:: is_stationary(columns)
@@ -820,7 +815,7 @@ Package Contents
 
 
 
-   .. py:method:: steady_state_automatic_plot(data, variables_to_plot=None, window_size=10, start_time=0.0, method='std', threshold=None, robust=True, save=False)
+   .. py:method:: steady_state_automatic_plot(data, variables_to_plot=None, batch_size=10, start_time=0.0, method='std', threshold=None, robust=True, save=False)
 
       Plot steady state detection for each variable in the data. For each variable, the method uses the
       DataStream.trim() function to estimate the steady state start time. If a steady state is detected,
@@ -906,7 +901,7 @@ Package Contents
 
 
 
-   .. py:method:: ensemble_steady_state_automatic_plot(ensemble_obj, variables_to_plot=None, window_size=10, start_time=0.0, method='std', threshold=None, robust=True, save=False)
+   .. py:method:: ensemble_steady_state_automatic_plot(ensemble_obj, variables_to_plot=None, batch_size=10, start_time=0.0, method='std', threshold=None, robust=True, save=False)
 
       Plot steady state detection automatically for each ensemble member on a grid.
 
@@ -914,9 +909,9 @@ Package Contents
       all are overlaid on the same subplot), the method uses DataStream.trim() to estimate the steady
       state start time. If detected, it plots the original signal with:
 
-        - A vertical dashed red line at the estimated steady state start.
-        - A horizontal green line at the overall mean (computed from the data after steady state).
-        - Shaded regions for ±1, ±2, and ±3 standard deviations.
+      - A vertical dashed red line at the estimated steady state start.
+      - A horizontal green line at the overall mean (computed from the data after steady state).
+      - Shaded regions for ±1, ±2, and ±3 standard deviations.
 
       If no steady state is detected, it plots the raw signal and prints a message.
 
@@ -926,7 +921,7 @@ Package Contents
           ensemble_obj (Ensemble): An Ensemble instance.
           variables_to_plot (list, optional): List of variable names to plot. If None, all columns (except 'time')
               from the first member are used.
-          window_size (int): Window size for the trim() function.
+          batch_size (int): Window size for the trim() function.
           start_time (float): Start time for steady state detection.
           method (str): Steady state detection method ('std', 'threshold', or 'rolling_variance').
           threshold (float, optional): Threshold if needed by the method.

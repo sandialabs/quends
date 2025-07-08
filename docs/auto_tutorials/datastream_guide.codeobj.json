@@ -411,6 +411,15 @@
    "name": "int"
   }
  ],
+ "plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "NoneType"
+  }
+ ],
  "plotter": [
   {
    "is_class": false,
@@ -432,6 +441,52 @@
    "module": "quends",
    "module_short": "quends",
    "name": "Plotter"
+  }
+ ],
+ "plotter.steady_state_automatic_plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing.plotter",
+   "module_short": "quends.postprocessing.plotter",
+   "name": "Plotter.steady_state_automatic_plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends.postprocessing",
+   "name": "Plotter.steady_state_automatic_plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Plotter.steady_state_automatic_plot"
+  }
+ ],
+ "plotter.steady_state_plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing.plotter",
+   "module_short": "quends.postprocessing.plotter",
+   "name": "Plotter.steady_state_plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends.postprocessing",
+   "name": "Plotter.steady_state_plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Plotter.steady_state_plot"
   }
  ],
  "plotter.trace_plot": [
@@ -555,24 +610,236 @@
   {
    "is_class": false,
    "is_explicit": false,
-   "module": "builtins",
-   "module_short": "builtins",
-   "name": "dict"
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream"
+  }
+ ],
+ "trimmed.additional_data": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.additional_data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.additional_data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.additional_data"
+  }
+ ],
+ "trimmed.compute_statistics": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.compute_statistics"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.compute_statistics"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.compute_statistics"
+  }
+ ],
+ "trimmed.confidence_interval": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.confidence_interval"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.confidence_interval"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.confidence_interval"
+  }
+ ],
+ "trimmed.cumulative_statistics": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.cumulative_statistics"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.cumulative_statistics"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.cumulative_statistics"
+  }
+ ],
+ "trimmed.effective_sample_size": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.effective_sample_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.effective_sample_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.effective_sample_size"
+  }
+ ],
+ "trimmed.head": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.head"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.head"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.head"
+  }
+ ],
+ "trimmed.mean": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.mean"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.mean"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.mean"
+  }
+ ],
+ "trimmed.mean_uncertainty": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.mean_uncertainty"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.mean_uncertainty"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.mean_uncertainty"
+  }
+ ],
+ "trimmed.optimal_window_size": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.optimal_window_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.optimal_window_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.optimal_window_size"
   }
  ],
  "trimmed_": [
   {
    "is_class": false,
    "is_explicit": false,
-   "module": "builtins",
-   "module_short": "builtins",
-   "name": "dict"
-  }
- ],
- "trimmed_df": [
-  {
-   "is_class": false,
-   "is_explicit": false,
    "module": "quends.base.data_stream",
    "module_short": "quends.base.data_stream",
    "name": "DataStream"
@@ -592,122 +859,7 @@
    "name": "DataStream"
   }
  ],
- "trimmed_df.additional_data": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
-   "name": "DataStream.additional_data"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base",
-   "module_short": "quends.base",
-   "name": "DataStream.additional_data"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "DataStream.additional_data"
-  }
- ],
- "trimmed_df.compute_statistics": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
-   "name": "DataStream.compute_statistics"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base",
-   "module_short": "quends.base",
-   "name": "DataStream.compute_statistics"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "DataStream.compute_statistics"
-  }
- ],
- "trimmed_df.confidence_interval": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
-   "name": "DataStream.confidence_interval"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base",
-   "module_short": "quends.base",
-   "name": "DataStream.confidence_interval"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "DataStream.confidence_interval"
-  }
- ],
- "trimmed_df.cumulative_statistics": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
-   "name": "DataStream.cumulative_statistics"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base",
-   "module_short": "quends.base",
-   "name": "DataStream.cumulative_statistics"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "DataStream.cumulative_statistics"
-  }
- ],
- "trimmed_df.effective_sample_size": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
-   "name": "DataStream.effective_sample_size"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base",
-   "module_short": "quends.base",
-   "name": "DataStream.effective_sample_size"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "DataStream.effective_sample_size"
-  }
- ],
- "trimmed_df.head": [
+ "trimmed_.head": [
   {
    "is_class": false,
    "is_explicit": false,
@@ -728,75 +880,6 @@
    "module": "quends",
    "module_short": "quends",
    "name": "DataStream.head"
-  }
- ],
- "trimmed_df.mean": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
-   "name": "DataStream.mean"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base",
-   "module_short": "quends.base",
-   "name": "DataStream.mean"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "DataStream.mean"
-  }
- ],
- "trimmed_df.mean_uncertainty": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
-   "name": "DataStream.mean_uncertainty"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base",
-   "module_short": "quends.base",
-   "name": "DataStream.mean_uncertainty"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "DataStream.mean_uncertainty"
-  }
- ],
- "trimmed_df.optimal_window_size": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
-   "name": "DataStream.optimal_window_size"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base",
-   "module_short": "quends.base",
-   "name": "DataStream.optimal_window_size"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "DataStream.optimal_window_size"
   }
  ],
  "uq_df": [

@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:01.483** total execution time for 1 file **from auto_tutorials**:
+**00:02.173** total execution time for 1 file **from auto_tutorials**:
 
 .. container::
 
@@ -33,5 +33,5 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_tutorials_datastream_guide.py` (``datastream_guide.py``)
-     - 00:01.483
+     - 00:02.173
      - 0.0

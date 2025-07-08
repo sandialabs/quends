@@ -582,7 +582,7 @@ Trimming data based to obtain steady-state portion
 
 Trim the data based on standard deviation method
 
-.. GENERATED FROM PYTHON SOURCE LINES 61-71
+.. GENERATED FROM PYTHON SOURCE LINES 61-68
 
 .. code-block:: Python
 
@@ -590,11 +590,8 @@ Trim the data based on standard deviation method
     # Returns: Dictionary with keys like "results" and "metadata"
     trimmed = data_stream_gx.trim(column_name="HeatFlux_st", batch_size=50, method="std")
 
-    # Gather results from dictionary
-    trimmed_df = trimmed["results"]
-
     # Print first 5 rows of dataframe
-    trimmed_df.head()
+    trimmed.head()
 
 
 
@@ -659,11 +656,11 @@ Trim the data based on standard deviation method
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 72-73
+.. GENERATED FROM PYTHON SOURCE LINES 69-70
 
 Trim the data based on rolling variance method
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-86
+.. GENERATED FROM PYTHON SOURCE LINES 70-77
 
 .. code-block:: Python
 
@@ -672,32 +669,109 @@ Trim the data based on rolling variance method
     )
 
     # Gather results
-    trimmed_df = trimmed["results"]
-
-    # Return trimmed data
-    if trimmed_df is not None:
-        print(trimmed_df.head())
-    else:
-        print("Trim returned None (no data trimmed or steady state not found).")
+    trimmed.head()
 
 
 
 
 
-.. rst-class:: sphx-glr-script-out
 
- .. code-block:: none
+.. raw:: html
 
-    Trim returned None (no data trimmed or steady state not found).
+    <div class="output_subarea output_html rendered_html output_result">
+    <div>
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
+        }
 
+        .dataframe tbody tr th {
+            vertical-align: top;
+        }
 
+        .dataframe thead th {
+            text-align: right;
+        }
+    </style>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th>time</th>
+          <th>Phi2_t</th>
+          <th>Phi2_kxt</th>
+          <th>Phi2_kyt</th>
+          <th>Phi2_kxkyt</th>
+          <th>Phi2_zt</th>
+          <th>Apar2_t</th>
+          <th>Apar2_kxt</th>
+          <th>Apar2_kyt</th>
+          <th>Apar2_kxkyt</th>
+          <th>Apar2_zt</th>
+          <th>Phi2_zonal_t</th>
+          <th>Phi2_zonal_kxt</th>
+          <th>Phi2_zonal_zt</th>
+          <th>Wg_st</th>
+          <th>Wg_kxst</th>
+          <th>Wg_kyst</th>
+          <th>Wg_kxkyst</th>
+          <th>Wg_zst</th>
+          <th>Wg_lmst</th>
+          <th>Wphi_st</th>
+          <th>Wphi_kxst</th>
+          <th>Wphi_kyst</th>
+          <th>Wphi_kxkyst</th>
+          <th>Wphi_zst</th>
+          <th>Wapar_st</th>
+          <th>Wapar_kxst</th>
+          <th>Wapar_kyst</th>
+          <th>Wapar_kxkyst</th>
+          <th>Wapar_zst</th>
+          <th>HeatFlux_st</th>
+          <th>HeatFlux_kxst</th>
+          <th>HeatFlux_kyst</th>
+          <th>HeatFlux_kxkyst</th>
+          <th>HeatFlux_zst</th>
+          <th>HeatFluxES_st</th>
+          <th>HeatFluxES_kxst</th>
+          <th>HeatFluxES_kyst</th>
+          <th>HeatFluxES_kxkyst</th>
+          <th>HeatFluxES_zst</th>
+          <th>HeatFluxApar_st</th>
+          <th>HeatFluxApar_kxst</th>
+          <th>HeatFluxApar_kyst</th>
+          <th>HeatFluxApar_kxkyst</th>
+          <th>HeatFluxApar_zst</th>
+          <th>HeatFluxBpar_st</th>
+          <th>HeatFluxBpar_kxst</th>
+          <th>HeatFluxBpar_kyst</th>
+          <th>HeatFluxBpar_kxkyst</th>
+          <th>HeatFluxBpar_zst</th>
+          <th>ParticleFlux_st</th>
+          <th>ParticleFlux_kxst</th>
+          <th>ParticleFlux_kyst</th>
+          <th>ParticleFlux_kxkyst</th>
+          <th>ParticleFlux_zst</th>
+          <th>TurbulentHeating_st</th>
+          <th>TurbulentHeating_kxst</th>
+          <th>TurbulentHeating_kyst</th>
+          <th>TurbulentHeating_kxkyst</th>
+          <th>TurbulentHeating_zst</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    </div>
+    </div>
+    <br />
+    <br />
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 87-88
+.. GENERATED FROM PYTHON SOURCE LINES 78-79
 
 Trim the data based on threshold method
 
-.. GENERATED FROM PYTHON SOURCE LINES 88-98
+.. GENERATED FROM PYTHON SOURCE LINES 79-86
 
 .. code-block:: Python
 
@@ -705,11 +779,8 @@ Trim the data based on threshold method
         column_name="HeatFlux_st", batch_size=50, method="threshold", threshold=0.1
     )
 
-    # Gather results
-    trimmed_df = trimmed["results"]
-
     # View trimmed data
-    trimmed_df.head()
+    trimmed.head()
 
 
 
@@ -774,14 +845,14 @@ Trim the data based on threshold method
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 99-103
+.. GENERATED FROM PYTHON SOURCE LINES 87-91
 
 Effective Sample Size
 ~~~~~~~~~~~~~~~~~~~~~
 
 Compute Effective Sample Size for specific columns in GX
 
-.. GENERATED FROM PYTHON SOURCE LINES 103-106
+.. GENERATED FROM PYTHON SOURCE LINES 91-94
 
 .. code-block:: Python
 
@@ -801,15 +872,15 @@ Compute Effective Sample Size for specific columns in GX
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 107-108
+.. GENERATED FROM PYTHON SOURCE LINES 95-96
 
 Compute Effective sample size for trimmed data
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-111
+.. GENERATED FROM PYTHON SOURCE LINES 96-99
 
 .. code-block:: Python
 
-    ess_df = trimmed_df.effective_sample_size()
+    ess_df = trimmed.effective_sample_size()
     print(ess_df)
 
 
@@ -825,19 +896,19 @@ Compute Effective sample size for trimmed data
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 112-116
+.. GENERATED FROM PYTHON SOURCE LINES 100-104
 
 UQ Analysis
 -----------
 
 Compute Statistics on trimmed dataframe
 
-.. GENERATED FROM PYTHON SOURCE LINES 116-122
+.. GENERATED FROM PYTHON SOURCE LINES 104-110
 
 .. code-block:: Python
 
 
-    stats = trimmed_df.compute_statistics(method="sliding")
+    stats = trimmed.compute_statistics(method="sliding")
     print(stats)
 
     stats_df = stats["HeatFlux_st"]
@@ -855,12 +926,12 @@ Compute Statistics on trimmed dataframe
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 123-125
+.. GENERATED FROM PYTHON SOURCE LINES 111-113
 
 Exporter
 Below Displays the information as a DataFrame
 
-.. GENERATED FROM PYTHON SOURCE LINES 125-128
+.. GENERATED FROM PYTHON SOURCE LINES 113-116
 
 .. code-block:: Python
 
@@ -884,11 +955,11 @@ Below Displays the information as a DataFrame
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 129-130
+.. GENERATED FROM PYTHON SOURCE LINES 117-118
 
 Below Displays the information in JSON
 
-.. GENERATED FROM PYTHON SOURCE LINES 130-133
+.. GENERATED FROM PYTHON SOURCE LINES 118-121
 
 .. code-block:: Python
 
@@ -921,20 +992,20 @@ Below Displays the information in JSON
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 134-136
+.. GENERATED FROM PYTHON SOURCE LINES 122-124
 
 Other statistical methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 138-139
+.. GENERATED FROM PYTHON SOURCE LINES 126-127
 
 Calculate the mean with a window size of 10
 
-.. GENERATED FROM PYTHON SOURCE LINES 139-142
+.. GENERATED FROM PYTHON SOURCE LINES 127-130
 
 .. code-block:: Python
 
-    mean_df = trimmed_df.mean(window_size=10)
+    mean_df = trimmed.mean(window_size=10)
     print(mean_df)
 
 
@@ -950,15 +1021,15 @@ Calculate the mean with a window size of 10
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 143-144
+.. GENERATED FROM PYTHON SOURCE LINES 131-132
 
 Calculate the mean with the method of sliding
 
-.. GENERATED FROM PYTHON SOURCE LINES 144-147
+.. GENERATED FROM PYTHON SOURCE LINES 132-135
 
 .. code-block:: Python
 
-    mean_df = trimmed_df.mean(method="sliding")
+    mean_df = trimmed.mean(method="sliding")
     print(mean_df)
 
 
@@ -974,15 +1045,15 @@ Calculate the mean with the method of sliding
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 148-149
+.. GENERATED FROM PYTHON SOURCE LINES 136-137
 
 Calculate the mean uncertainty
 
-.. GENERATED FROM PYTHON SOURCE LINES 149-152
+.. GENERATED FROM PYTHON SOURCE LINES 137-140
 
 .. code-block:: Python
 
-    uq_df = trimmed_df.mean_uncertainty()
+    uq_df = trimmed.mean_uncertainty()
     print(uq_df)
 
 
@@ -998,15 +1069,15 @@ Calculate the mean uncertainty
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 153-154
+.. GENERATED FROM PYTHON SOURCE LINES 141-142
 
 Calculate the mean uncertainty with the method of sliding
 
-.. GENERATED FROM PYTHON SOURCE LINES 154-157
+.. GENERATED FROM PYTHON SOURCE LINES 142-145
 
 .. code-block:: Python
 
-    uq_df = trimmed_df.mean_uncertainty(method="sliding")
+    uq_df = trimmed.mean_uncertainty(method="sliding")
     uq_df
 
 
@@ -1022,15 +1093,15 @@ Calculate the mean uncertainty with the method of sliding
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 158-159
+.. GENERATED FROM PYTHON SOURCE LINES 146-147
 
 Calculate the confidence intervale with the trimmed dataframe
 
-.. GENERATED FROM PYTHON SOURCE LINES 159-162
+.. GENERATED FROM PYTHON SOURCE LINES 147-150
 
 .. code-block:: Python
 
-    ci_df = trimmed_df.confidence_interval()
+    ci_df = trimmed.confidence_interval()
     print(ci_df)
 
 
@@ -1046,21 +1117,21 @@ Calculate the confidence intervale with the trimmed dataframe
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 163-166
+.. GENERATED FROM PYTHON SOURCE LINES 151-154
 
 Optimal Window
 ~~~~~~~~~~~~~~
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 168-169
+.. GENERATED FROM PYTHON SOURCE LINES 156-157
 
 Calulcautes the optimal window size
 
-.. GENERATED FROM PYTHON SOURCE LINES 169-172
+.. GENERATED FROM PYTHON SOURCE LINES 157-160
 
 .. code-block:: Python
 
-    optimal_df = trimmed_df.optimal_window_size()
+    optimal_df = trimmed.optimal_window_size()
     print(optimal_df)
 
 
@@ -1076,15 +1147,15 @@ Calulcautes the optimal window size
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 173-174
+.. GENERATED FROM PYTHON SOURCE LINES 161-162
 
 Cumlative Statistics
 
-.. GENERATED FROM PYTHON SOURCE LINES 174-179
+.. GENERATED FROM PYTHON SOURCE LINES 162-167
 
 .. code-block:: Python
 
-    cumulative = trimmed_df.cumulative_statistics()
+    cumulative = trimmed.cumulative_statistics()
     print(cumulative)
 
     cumulative_df = cumulative["HeatFlux_st"]
@@ -1102,11 +1173,11 @@ Cumlative Statistics
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 180-181
+.. GENERATED FROM PYTHON SOURCE LINES 168-169
 
 Display Cumulative Statistics as a DataFrame
 
-.. GENERATED FROM PYTHON SOURCE LINES 181-183
+.. GENERATED FROM PYTHON SOURCE LINES 169-171
 
 .. code-block:: Python
 
@@ -1130,17 +1201,17 @@ Display Cumulative Statistics as a DataFrame
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 184-187
+.. GENERATED FROM PYTHON SOURCE LINES 172-175
 
 CGYRO Data Analysis
 ~~~~~~~~~~~~~~~~~~~
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 189-190
+.. GENERATED FROM PYTHON SOURCE LINES 177-178
 
 Specify the file paths
 
-.. GENERATED FROM PYTHON SOURCE LINES 190-194
+.. GENERATED FROM PYTHON SOURCE LINES 178-182
 
 .. code-block:: Python
 
@@ -1223,11 +1294,11 @@ Specify the file paths
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 195-196
+.. GENERATED FROM PYTHON SOURCE LINES 183-184
 
 Get the number of rows
 
-.. GENERATED FROM PYTHON SOURCE LINES 196-198
+.. GENERATED FROM PYTHON SOURCE LINES 184-186
 
 .. code-block:: Python
 
@@ -1246,11 +1317,11 @@ Get the number of rows
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 199-200
+.. GENERATED FROM PYTHON SOURCE LINES 187-188
 
 Trim the data based on threshold method
 
-.. GENERATED FROM PYTHON SOURCE LINES 200-205
+.. GENERATED FROM PYTHON SOURCE LINES 188-193
 
 .. code-block:: Python
 
@@ -1267,17 +1338,16 @@ Trim the data based on threshold method
 
  .. code-block:: none
 
-    {'results': <quends.base.data_stream.DataStream object at 0x13b5d2fc0>, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'Q_D/Q_GBD'}}, {'operation': 'trim', 'options': {'column_name': 'Q_D/Q_GBD', 'batch_size': 10, 'start_time': 0.0, 'method': 'std', 'threshold': None, 'robust': True, 'sss_start': 208.0}}]}
+    <quends.base.data_stream.DataStream object at 0x13fbcfc20>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 206-209
+.. GENERATED FROM PYTHON SOURCE LINES 194-196
 
 .. code-block:: Python
 
-    trimmed_df = trimmed_["results"]
-    trimmed_df.head()
+    trimmed_.head()
 
 
 
@@ -1342,11 +1412,11 @@ Trim the data based on threshold method
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 210-211
+.. GENERATED FROM PYTHON SOURCE LINES 197-198
 
 To check if data stream is stationary
 
-.. GENERATED FROM PYTHON SOURCE LINES 211-213
+.. GENERATED FROM PYTHON SOURCE LINES 198-200
 
 .. code-block:: Python
 
@@ -1365,67 +1435,98 @@ To check if data stream is stationary
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 214-215
+.. GENERATED FROM PYTHON SOURCE LINES 201-202
 
 To Plot for DataStream
 
-.. GENERATED FROM PYTHON SOURCE LINES 215-218
+.. GENERATED FROM PYTHON SOURCE LINES 202-206
 
 .. code-block:: Python
 
     plotter = qnds.Plotter()
-    plotter.trace_plot(data_stream_cg, ["Q_D/Q_GBD"])
+    plot = plotter.trace_plot(data_stream_cg, ["Q_D/Q_GBD"])
 
 
 
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-
-    [<Axes: title={'center': 'Q_D/Q_GBD'}, xlabel='Time'>]
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_001.png
+   :alt: Time Series Plots for Datastream, Q_D/Q_GBD
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_001.png
+   :class: sphx-glr-single-img
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 219-230
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 207-208
 
 .. code-block:: Python
 
-    plotter.trace_plot(trimmed_df)
-
-    # # %%
-    # plotter.steady_state_automatic_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
-
-    # # %%
-    # plotter.steady_state_automatic_plot(trimmed_df)
-
-    # # %%
-    # plotter.steady_state_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
+    plot = plotter.trace_plot(trimmed)
 
 
 
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_002.png
+   :alt: Time Series Plots for Datastream, HeatFlux_st
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_002.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 209-211
+
+.. code-block:: Python
+
+    plot = plotter.steady_state_automatic_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
+
+
+
+
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_003.png
+   :alt: Q_D/Q_GBD
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_003.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 212-214
+
+.. code-block:: Python
+
+    plot = plotter.steady_state_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
+
+
+
+
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_004.png
+   :alt: Q_D/Q_GBD
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_004.png
+   :class: sphx-glr-single-img
 
 
 .. rst-class:: sphx-glr-script-out
 
  .. code-block:: none
 
-
-    [<Axes: title={'center': 'Q_D/Q_GBD'}, xlabel='Time'>]
-
+    For Q_D/Q_GBD, no manual steady state start provided. Plotting raw signal.
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 231-232
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 215-216
 
 To show additional data use:
 
-.. GENERATED FROM PYTHON SOURCE LINES 232-235
+.. GENERATED FROM PYTHON SOURCE LINES 216-219
 
 .. code-block:: Python
 
-    addition_info = trimmed_df.additional_data(method="sliding")
+    addition_info = trimmed.additional_data(method="sliding")
     print(addition_info)
 
 
@@ -1436,20 +1537,20 @@ To show additional data use:
 
  .. code-block:: none
 
-    {'Q_D/Q_GBD': {'A_est': 2.376475090920045, 'p_est': 0.08416377237904193, 'n_current': 1287, 'current_sem': 1.3008265896454756, 'target_sem': 1.170743930680928, 'n_target': 4500.39460785471, 'additional_samples': 3214, 'window_size': 47}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'Q_D/Q_GBD'}}, {'operation': 'trim', 'options': {'column_name': 'Q_D/Q_GBD', 'batch_size': 10, 'start_time': 0.0, 'method': 'std', 'threshold': None, 'robust': True, 'sss_start': 208.0}}, {'operation': 'effective_sample_size', 'options': {'column_names': 'Q_D/Q_GBD', 'alpha': 0.05}}, {'operation': 'additional_data', 'options': {'column_name': None, 'ddof': 1, 'method': 'sliding', 'window_size': None, 'reduction_factor': 0.1}}]}
+    {'HeatFlux_st': {'A_est': 0.03170698677588585, 'p_est': 0.5410018913986299, 'n_current': 99, 'current_sem': 0.00263944463499645, 'target_sem': 0.002375500171496805, 'n_target': 120.28580081212739, 'additional_samples': 22, 'window_size': 24}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'HeatFlux_st'}}, {'operation': 'trim', 'options': {'column_name': 'HeatFlux_st', 'batch_size': 50, 'start_time': 0.0, 'method': 'threshold', 'threshold': 0.1, 'robust': True, 'sss_start': 158.59277222661015}}, {'operation': 'effective_sample_size', 'options': {'column_names': 'HeatFlux_st', 'alpha': 0.05}}, {'operation': 'additional_data', 'options': {'column_name': None, 'ddof': 1, 'method': 'sliding', 'window_size': None, 'reduction_factor': 0.1}}]}
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 236-237
+.. GENERATED FROM PYTHON SOURCE LINES 220-221
 
 To add a reduction factor
 
-.. GENERATED FROM PYTHON SOURCE LINES 237-239
+.. GENERATED FROM PYTHON SOURCE LINES 221-223
 
 .. code-block:: Python
 
-    addition_info = trimmed_df.additional_data(reduction_factor=0.2)
+    addition_info = trimmed.additional_data(reduction_factor=0.2)
     print(addition_info)
 
 
@@ -1459,7 +1560,7 @@ To add a reduction factor
 
  .. code-block:: none
 
-    {'Q_D/Q_GBD': {'A_est': 2.376475090920045, 'p_est': 0.08416377237904193, 'n_current': 1287, 'current_sem': 1.3008265896454756, 'target_sem': 1.0406612717163806, 'n_target': 18239.974946813512, 'additional_samples': 16953, 'window_size': 47}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'Q_D/Q_GBD'}}, {'operation': 'trim', 'options': {'column_name': 'Q_D/Q_GBD', 'batch_size': 10, 'start_time': 0.0, 'method': 'std', 'threshold': None, 'robust': True, 'sss_start': 208.0}}, {'operation': 'effective_sample_size', 'options': {'column_names': 'Q_D/Q_GBD', 'alpha': 0.05}}, {'operation': 'additional_data', 'options': {'column_name': None, 'ddof': 1, 'method': 'sliding', 'window_size': None, 'reduction_factor': 0.2}}]}
+    {'HeatFlux_st': {'A_est': 0.03170698677588585, 'p_est': 0.5410018913986299, 'n_current': 99, 'current_sem': 0.00263944463499645, 'target_sem': 0.00211155570799716, 'n_target': 149.54291116020593, 'additional_samples': 51, 'window_size': 24}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'HeatFlux_st'}}, {'operation': 'trim', 'options': {'column_name': 'HeatFlux_st', 'batch_size': 50, 'start_time': 0.0, 'method': 'threshold', 'threshold': 0.1, 'robust': True, 'sss_start': 158.59277222661015}}, {'operation': 'effective_sample_size', 'options': {'column_names': 'HeatFlux_st', 'alpha': 0.05}}, {'operation': 'additional_data', 'options': {'column_name': None, 'ddof': 1, 'method': 'sliding', 'window_size': None, 'reduction_factor': 0.2}}]}
 
 
 
@@ -1467,7 +1568,7 @@ To add a reduction factor
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.483 seconds)
+   **Total running time of the script:** (0 minutes 2.173 seconds)
 
 
 .. _sphx_glr_download_auto_tutorials_datastream_guide.py:

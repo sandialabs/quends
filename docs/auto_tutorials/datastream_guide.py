@@ -62,11 +62,8 @@ data_stream_gx.is_stationary(["HeatFlux_st", "Wg_st", "Phi2_t"])
 # Returns: Dictionary with keys like "results" and "metadata"
 trimmed = data_stream_gx.trim(column_name="HeatFlux_st", batch_size=50, method="std")
 
-# Gather results from dictionary
-trimmed_df = trimmed["results"]
-
 # Print first 5 rows of dataframe
-trimmed_df.head()
+trimmed.head()
 
 # %%
 # Trim the data based on rolling variance method
@@ -75,13 +72,7 @@ trimmed = data_stream_gx.trim(
 )
 
 # Gather results
-trimmed_df = trimmed["results"]
-
-# Return trimmed data
-if trimmed_df is not None:
-    print(trimmed_df.head())
-else:
-    print("Trim returned None (no data trimmed or steady state not found).")
+trimmed.head()
 
 # %%
 # Trim the data based on threshold method
@@ -89,11 +80,8 @@ trimmed = data_stream_gx.trim(
     column_name="HeatFlux_st", batch_size=50, method="threshold", threshold=0.1
 )
 
-# Gather results
-trimmed_df = trimmed["results"]
-
 # View trimmed data
-trimmed_df.head()
+trimmed.head()
 
 # %%
 # Effective Sample Size
@@ -105,7 +93,7 @@ print(ess_dict)
 
 # %%
 # Compute Effective sample size for trimmed data
-ess_df = trimmed_df.effective_sample_size()
+ess_df = trimmed.effective_sample_size()
 print(ess_df)
 
 # %%
@@ -114,7 +102,7 @@ print(ess_df)
 #
 # Compute Statistics on trimmed dataframe
 
-stats = trimmed_df.compute_statistics(method="sliding")
+stats = trimmed.compute_statistics(method="sliding")
 print(stats)
 
 stats_df = stats["HeatFlux_st"]
@@ -136,27 +124,27 @@ exporter.display_json(stats_df)
 
 # %%
 # Calculate the mean with a window size of 10
-mean_df = trimmed_df.mean(window_size=10)
+mean_df = trimmed.mean(window_size=10)
 print(mean_df)
 
 # %%
 # Calculate the mean with the method of sliding
-mean_df = trimmed_df.mean(method="sliding")
+mean_df = trimmed.mean(method="sliding")
 print(mean_df)
 
 # %%
 # Calculate the mean uncertainty
-uq_df = trimmed_df.mean_uncertainty()
+uq_df = trimmed.mean_uncertainty()
 print(uq_df)
 
 # %%
 # Calculate the mean uncertainty with the method of sliding
-uq_df = trimmed_df.mean_uncertainty(method="sliding")
+uq_df = trimmed.mean_uncertainty(method="sliding")
 uq_df
 
 # %%
 # Calculate the confidence intervale with the trimmed dataframe
-ci_df = trimmed_df.confidence_interval()
+ci_df = trimmed.confidence_interval()
 print(ci_df)
 
 # %%
@@ -166,12 +154,12 @@ print(ci_df)
 
 # %%
 # Calulcautes the optimal window size
-optimal_df = trimmed_df.optimal_window_size()
+optimal_df = trimmed.optimal_window_size()
 print(optimal_df)
 
 # %%
 # Cumlative Statistics
-cumulative = trimmed_df.cumulative_statistics()
+cumulative = trimmed.cumulative_statistics()
 print(cumulative)
 
 cumulative_df = cumulative["HeatFlux_st"]
@@ -203,8 +191,7 @@ print(trimmed_)
 
 
 # %%
-trimmed_df = trimmed_["results"]
-trimmed_df.head()
+trimmed_.head()
 
 # %%
 # To check if data stream is stationary
@@ -213,26 +200,25 @@ data_stream_cg.is_stationary("Q_D/Q_GBD")
 # %%
 # To Plot for DataStream
 plotter = qnds.Plotter()
-plotter.trace_plot(data_stream_cg, ["Q_D/Q_GBD"])
+plot = plotter.trace_plot(data_stream_cg, ["Q_D/Q_GBD"])
+
 
 # %%
-plotter.trace_plot(trimmed_df)
+plot = plotter.trace_plot(trimmed)
+# %%
+plot = plotter.steady_state_automatic_plot(
+    data_stream_cg, variables_to_plot=["Q_D/Q_GBD"]
+)
 
-# # %%
-# plotter.steady_state_automatic_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
-
-# # %%
-# plotter.steady_state_automatic_plot(trimmed_df)
-
-# # %%
-# plotter.steady_state_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
+# %%
+plot = plotter.steady_state_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
 
 # %%
 # To show additional data use:
-addition_info = trimmed_df.additional_data(method="sliding")
+addition_info = trimmed.additional_data(method="sliding")
 print(addition_info)
 
 # %%
 # To add a reduction factor
-addition_info = trimmed_df.additional_data(reduction_factor=0.2)
+addition_info = trimmed.additional_data(reduction_factor=0.2)
 print(addition_info)
