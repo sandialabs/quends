@@ -977,3 +977,144 @@ class Plotter:
             plt.show()
         else:
             plt.close(fig)
+
+    def steady_state_automatic_plot_with_stats(
+            self,
+            data,
+            variables_to_plot=None,
+            batch_size=10,
+            start_time=0.0,
+            method="std",
+            threshold=None,
+            robust=True,
+            save=False,
+            ):
+        """
+        Plot steady state detection for each variable in the data, **annotated with statistics**.
+        For each variable, use DataStream.trim() to estimate steady state.
+        If detected, plot the original signal with:
+            - vertical dashed line (steady state start)
+            - horizontal line (mean after SS)
+            - shaded ±1/2/3 std bands
+            - annotated mean, SEM, confidence interval, ±std
+        If not detected, plot full signal and print message.
+
+        Args:
+            data (DataStream or dict): A DataStream or a dict of DataFrames.
+            variables_to_plot (list, optional): Variable names to plot.
+            batch_size (int): Window size for trim().
+            start_time (float): Start time for trimming.
+            method (str): Steady state detection method.
+            threshold (float, optional): Threshold for relevant methods.
+            robust (bool): Use robust stats in 'std' method.
+            save (bool): Save figure to disk.
+        """
+
+
+        data_frames = self._prepare_data_frames(data)
+        # Infer variables if needed
+        if variables_to_plot is None:
+            first_df = next(iter(data_frames.values()))
+            variables_to_plot = [col for col in first_df.columns if col != "time"]
+        else:
+            variables_to_plot = [v for v in variables_to_plot if v != "time"]
+
+        for dataset_name, df in data_frames.items():
+            num_vars = len(variables_to_plot)
+            num_cols = min(5, num_vars)
+            num_rows = (num_vars + num_cols - 1) // num_cols
+            fig_size = self._calc_fig_size(num_cols, num_rows)
+            fig, axes = plt.subplots(num_rows, num_cols, figsize=fig_size)
+            axes = axes.flatten() if num_vars > 1 else [axes]
+
+            for idx, column in enumerate(variables_to_plot):
+                ax = axes[idx]
+                time = df["time"]
+                signal = df[column]
+
+                # Trim (find steady state)
+                ds = DataStream(df)
+                trimmed_ds = ds.trim(
+                    column_name=column,
+                    batch_size=batch_size,
+                    start_time=start_time,
+                    method=method,
+                    threshold=threshold,
+                    robust=robust,
+                )
+
+                # Only plot if steady state found and not empty
+                if trimmed_ds is not None and not trimmed_ds.df.empty:
+                    steady_state_start = trimmed_ds.df["time"].iloc[0]
+                    after_ss = signal[time >= steady_state_start]
+                    overall_mean = after_ss.mean()
+                    overall_std = after_ss.std()
+
+                    ax.plot(time, signal, label=column, alpha=0.7)
+                    ax.axvline(steady_state_start, color="r", linestyle="--", label="Steady State Start")
+                    ax.axhline(overall_mean, color="g", linestyle="-", label="Mean")
+                    ax.fill_between(
+                        time[time >= steady_state_start],
+                        overall_mean - overall_std,
+                        overall_mean + overall_std,
+                        color="blue", alpha=0.3, label="±1 Std Dev",
+                    )
+                    ax.fill_between(
+                        time[time >= steady_state_start],
+                        overall_mean - 2 * overall_std,
+                        overall_mean + 2 * overall_std,
+                        color="yellow", alpha=0.2, label="±2 Std Dev",
+                    )
+                    ax.fill_between(
+                        time[time >= steady_state_start],
+                        overall_mean - 3 * overall_std,
+                        overall_mean + 3 * overall_std,
+                        color="red", alpha=0.1, label="±3 Std Dev",
+                    )
+
+                    # Compute and annotate stats
+                    stats = trimmed_ds.compute_statistics(column_name=column)[column]
+                    ci_low, ci_high = stats["confidence_interval"]
+                    pm_low, pm_high = stats["pm_std"]
+                    txt = (
+                        f"μ = {stats['mean']:.3f}\n"
+                        f"SEM = {stats['mean_uncertainty']:.3f}\n"
+                        f"CI = [{ci_low:.3f}, {ci_high:.3f}]\n"
+                        f"±STD = [{pm_low:.3f}, {pm_high:.3f}]"
+                    )
+                    ax.text(
+                        0.03, 0.97, txt,
+                        transform=ax.transAxes,
+                        verticalalignment="top",
+                        fontsize="small",
+                        bbox=dict(facecolor="white", alpha=0.6, edgecolor="gray"),
+                    )
+
+                    ax.set_title(column)
+                    ax.set_xlabel("Time")
+                    ax.set_ylabel(column)
+                    ax.legend(fontsize="small")
+                    ax.grid(True)
+
+                else:
+                    ax.plot(time, signal, label=column, alpha=0.7)
+                    ax.set_title(column)
+                    ax.set_xlabel("Time")
+                    ax.set_ylabel(column)
+                    ax.legend(fontsize="small")
+                    ax.grid(True)
+                    print(f"{column}: No steady state detected or insufficient data.")
+
+            # Remove unused axes
+            for k in range(num_vars, len(axes)):
+                fig.delaxes(axes[k])
+
+            plt.tight_layout(rect=[0, 0, 1, 0.95])
+            if save:
+                save_path = os.path.join(
+                    self.output_dir,
+                    f"steady_state_with_stats_{self.format_dataset_name(dataset_name)}.png",
+                )
+                plt.savefig(save_path)
+            plt.show()
+            plt.close(fig)

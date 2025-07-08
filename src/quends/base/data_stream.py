@@ -600,10 +600,12 @@ class DataStream:
             est_win = self._estimate_window(col, column_data, window_size)
             proc_data = self._process_column(column_data, est_win, method)
             if method == "sliding":
-                step = max(1, est_win // 4)
-                effective_n = len(proc_data[::step])
+                
+                #step = max(1, est_win // 4)
+                #effective_n = len(proc_data[::step])
+                effective_n = 1#max(1, est_win)
             else:
-                effective_n = len(proc_data)
+                effective_n = 1#max(1, est_win) #len(proc_data)
             uncertainty = float(np.std(proc_data, ddof=ddof) / np.sqrt(effective_n))
             results[col] = {
                 "mean_uncertainty": uncertainty,
