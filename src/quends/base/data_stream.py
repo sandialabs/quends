@@ -39,7 +39,6 @@ def deduplicate_history(history):
             seen.add(op)
     return list(reversed(out))
 
-
 def to_native_types(obj):
     """
     Recursively convert NumPy scalar and array types in nested structures to native Python types.
@@ -208,12 +207,7 @@ class DataStream:
             New DataStream containing the trimmed data, or empty if trimming failed.
             Operation metadata and any messages are in the ._history attribute.
         """
-        # --------- COMPATIBILITY PATCH: window_size or batch_size --------------
-        # if window_size is not None and batch_size != 10:  # 10 is your default batch_size
-        #    print("Warning: Both window_size and batch_size were specified. Using window_size.")
-        # if window_size is not None:
-        #    batch_size = window_size
-        # -----------------------------------------------------------------------
+        # Check for stationarity
         stationary_result = self.is_stationary(column_name)
         is_stat = (
             stationary_result.get(column_name, False)
