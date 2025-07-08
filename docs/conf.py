@@ -72,8 +72,6 @@ extensions = [
 examples_tutorial = [
     "datastream_guide.py",
 ]
-example_dirs = ["../examples/tutorial"]
-gallery_dirs = ["auto_tutorials"]
 
 
 class ExamplesExplicitOrder(_SortKey):
@@ -83,8 +81,8 @@ class ExamplesExplicitOrder(_SortKey):
 
 
 sphinx_gallery_conf = {
-    "examples_dirs": example_dirs,
-    "gallery_dirs": gallery_dirs,
+    "examples_dirs": "../examples/tutorial",
+    "gallery_dirs": "auto_tutorials",
     "subsection_order": ExplicitOrder(
         [
             "../examples/tutorial",
@@ -93,6 +91,7 @@ sphinx_gallery_conf = {
     "within_subsection_order": ExamplesExplicitOrder,
     "filename_pattern": r".*",
     "matplotlib_animations": True,
+    "image_scrapers": ("matplotlib",),
 }
 
 extensions += ["autoapi.extension"]
