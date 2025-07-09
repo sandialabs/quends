@@ -121,7 +121,6 @@ exporter.display_json(stats_df)
 # %%
 # Other statistical methods
 # ~~~~~~~~~~~~~~~~~~~~~~~~~
-# compute statistics <- double check
 
 # %%
 # Calculate the mean with a window size of 10
@@ -147,16 +146,6 @@ uq_df
 # Calculate the confidence intervale with the trimmed dataframe
 ci_df = trimmed.confidence_interval()
 print(ci_df)
-
-# %%
-# Optimal Window
-# ~~~~~~~~~~~~~~
-#
-
-# %% <-
-# Calulcautes the optimal window size
-optimal_df = trimmed.optimal_window_size()
-print(optimal_df)
 
 
 # %%
@@ -204,9 +193,6 @@ data_stream_cg.is_stationary("Q_D/Q_GBD")
 plotter = qnds.Plotter()
 plot = plotter.trace_plot(data_stream_cg, ["Q_D/Q_GBD"])
 
-
-# %% <- Remove
-plot = plotter.trace_plot(trimmed)
 # %%
 plot = plotter.steady_state_automatic_plot(
     data_stream_cg, variables_to_plot=["Q_D/Q_GBD"]

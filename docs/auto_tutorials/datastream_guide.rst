@@ -992,17 +992,16 @@ Below Displays the information in JSON
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 122-125
+.. GENERATED FROM PYTHON SOURCE LINES 122-124
 
 Other statistical methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-compute statistics <- double check
 
-.. GENERATED FROM PYTHON SOURCE LINES 127-128
+.. GENERATED FROM PYTHON SOURCE LINES 126-127
 
 Calculate the mean with a window size of 10
 
-.. GENERATED FROM PYTHON SOURCE LINES 128-131
+.. GENERATED FROM PYTHON SOURCE LINES 127-130
 
 .. code-block:: Python
 
@@ -1022,11 +1021,11 @@ Calculate the mean with a window size of 10
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 132-133
+.. GENERATED FROM PYTHON SOURCE LINES 131-132
 
 Calculate the mean with the method of sliding
 
-.. GENERATED FROM PYTHON SOURCE LINES 133-136
+.. GENERATED FROM PYTHON SOURCE LINES 132-135
 
 .. code-block:: Python
 
@@ -1046,11 +1045,11 @@ Calculate the mean with the method of sliding
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 137-138
+.. GENERATED FROM PYTHON SOURCE LINES 136-137
 
 Calculate the mean uncertainty
 
-.. GENERATED FROM PYTHON SOURCE LINES 138-141
+.. GENERATED FROM PYTHON SOURCE LINES 137-140
 
 .. code-block:: Python
 
@@ -1070,11 +1069,11 @@ Calculate the mean uncertainty
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 142-143
+.. GENERATED FROM PYTHON SOURCE LINES 141-142
 
 Calculate the mean uncertainty with the method of sliding
 
-.. GENERATED FROM PYTHON SOURCE LINES 143-146
+.. GENERATED FROM PYTHON SOURCE LINES 142-145
 
 .. code-block:: Python
 
@@ -1094,16 +1093,17 @@ Calculate the mean uncertainty with the method of sliding
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 147-148
+.. GENERATED FROM PYTHON SOURCE LINES 146-147
 
 Calculate the confidence intervale with the trimmed dataframe
 
-.. GENERATED FROM PYTHON SOURCE LINES 148-151
+.. GENERATED FROM PYTHON SOURCE LINES 147-151
 
 .. code-block:: Python
 
     ci_df = trimmed.confidence_interval()
     print(ci_df)
+
 
 
 
@@ -1118,42 +1118,11 @@ Calculate the confidence intervale with the trimmed dataframe
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 152-155
-
-Optimal Window
-~~~~~~~~~~~~~~
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 157-158
-
-Calulcautes the optimal window size
-
-.. GENERATED FROM PYTHON SOURCE LINES 158-162
-
-.. code-block:: Python
-
-    optimal_df = trimmed.optimal_window_size()
-    print(optimal_df)
-
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    1
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 163-164
+.. GENERATED FROM PYTHON SOURCE LINES 152-153
 
 Cumlative Statistics
 
-.. GENERATED FROM PYTHON SOURCE LINES 164-169
+.. GENERATED FROM PYTHON SOURCE LINES 153-158
 
 .. code-block:: Python
 
@@ -1175,11 +1144,11 @@ Cumlative Statistics
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 170-171
+.. GENERATED FROM PYTHON SOURCE LINES 159-160
 
 Display Cumulative Statistics as a DataFrame
 
-.. GENERATED FROM PYTHON SOURCE LINES 171-173
+.. GENERATED FROM PYTHON SOURCE LINES 160-162
 
 .. code-block:: Python
 
@@ -1203,17 +1172,17 @@ Display Cumulative Statistics as a DataFrame
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 174-177
+.. GENERATED FROM PYTHON SOURCE LINES 163-166
 
 CGYRO Data Analysis
 ~~~~~~~~~~~~~~~~~~~
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 179-180
+.. GENERATED FROM PYTHON SOURCE LINES 168-169
 
 Specify the file paths
 
-.. GENERATED FROM PYTHON SOURCE LINES 180-184
+.. GENERATED FROM PYTHON SOURCE LINES 169-173
 
 .. code-block:: Python
 
@@ -1296,11 +1265,11 @@ Specify the file paths
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 185-186
+.. GENERATED FROM PYTHON SOURCE LINES 174-175
 
 Get the number of rows
 
-.. GENERATED FROM PYTHON SOURCE LINES 186-188
+.. GENERATED FROM PYTHON SOURCE LINES 175-177
 
 .. code-block:: Python
 
@@ -1319,11 +1288,11 @@ Get the number of rows
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 189-190
+.. GENERATED FROM PYTHON SOURCE LINES 178-179
 
 Trim the data based on threshold method
 
-.. GENERATED FROM PYTHON SOURCE LINES 190-195
+.. GENERATED FROM PYTHON SOURCE LINES 179-184
 
 .. code-block:: Python
 
@@ -1340,12 +1309,12 @@ Trim the data based on threshold method
 
  .. code-block:: none
 
-    <quends.base.data_stream.DataStream object at 0x142a23ad0>
+    <quends.base.data_stream.DataStream object at 0x13c7ce510>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 196-198
+.. GENERATED FROM PYTHON SOURCE LINES 185-187
 
 .. code-block:: Python
 
@@ -1414,11 +1383,11 @@ Trim the data based on threshold method
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 199-200
+.. GENERATED FROM PYTHON SOURCE LINES 188-189
 
 To check if data stream is stationary
 
-.. GENERATED FROM PYTHON SOURCE LINES 200-202
+.. GENERATED FROM PYTHON SOURCE LINES 189-191
 
 .. code-block:: Python
 
@@ -1437,11 +1406,11 @@ To check if data stream is stationary
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 203-204
+.. GENERATED FROM PYTHON SOURCE LINES 192-193
 
 To Plot for DataStream
 
-.. GENERATED FROM PYTHON SOURCE LINES 204-208
+.. GENERATED FROM PYTHON SOURCE LINES 193-196
 
 .. code-block:: Python
 
@@ -1451,24 +1420,16 @@ To Plot for DataStream
 
 
 
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_001.png
+   :alt: Time Series Plots for Datastream, Q_D/Q_GBD
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_001.png
+   :class: sphx-glr-single-img
 
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 209-210
-
-.. code-block:: Python
-
-    plot = plotter.trace_plot(trimmed)
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 211-215
+.. GENERATED FROM PYTHON SOURCE LINES 197-201
 
 .. code-block:: Python
 
@@ -1479,11 +1440,16 @@ To Plot for DataStream
 
 
 
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_002.png
+   :alt: Q_D/Q_GBD
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_002.png
+   :class: sphx-glr-single-img
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 216-218
+
+.. GENERATED FROM PYTHON SOURCE LINES 202-204
 
 .. code-block:: Python
 
@@ -1491,6 +1457,11 @@ To Plot for DataStream
 
 
 
+
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_003.png
+   :alt: Q_D/Q_GBD
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_003.png
+   :class: sphx-glr-single-img
 
 
 .. rst-class:: sphx-glr-script-out
@@ -1502,11 +1473,11 @@ To Plot for DataStream
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 219-220
+.. GENERATED FROM PYTHON SOURCE LINES 205-206
 
 To show additional data use:
 
-.. GENERATED FROM PYTHON SOURCE LINES 220-223
+.. GENERATED FROM PYTHON SOURCE LINES 206-209
 
 .. code-block:: Python
 
@@ -1526,11 +1497,11 @@ To show additional data use:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 224-225
+.. GENERATED FROM PYTHON SOURCE LINES 210-211
 
 To add a reduction factor
 
-.. GENERATED FROM PYTHON SOURCE LINES 225-227
+.. GENERATED FROM PYTHON SOURCE LINES 211-213
 
 .. code-block:: Python
 
@@ -1552,7 +1523,7 @@ To add a reduction factor
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.756 seconds)
+   **Total running time of the script:** (0 minutes 4.791 seconds)
 
 
 .. _sphx_glr_download_auto_tutorials_datastream_guide.py:
