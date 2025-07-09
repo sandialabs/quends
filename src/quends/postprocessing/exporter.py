@@ -27,15 +27,7 @@ class Exporter:
     def to_native_types(obj):
         """
         Recursively convert NumPy scalar types in dicts/lists/tuples to native Python types.
-<<<<<<< HEAD
-<<<<<<< HEAD
         Compatible with NumPy 2.x (no `np.float_`, `np.int_`, etc.).
-=======
-        Compatible with NumPy 2.x (no np.float_, np.int_, etc.).
->>>>>>> f08ccff (Update: improvements to data_stream, ensemble, and exporter modules)
-=======
-        Compatible with NumPy 2.x (no `np.float_`, `np.int_`, etc.).
->>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
         """
         if isinstance(obj, dict):
             return {k: Exporter.to_native_types(v) for k, v in obj.items()}
@@ -46,15 +38,7 @@ class Exporter:
         elif isinstance(obj, np.integer):
             return int(obj)
         # Support for legacy float32/float64 directly (NumPy 2.x compatibility)
-<<<<<<< HEAD
-<<<<<<< HEAD
         elif type(obj).__name__ in ["float32", "float64", "int32", "int64"]:
-=======
-        elif type(obj).__name__ in ['float32', 'float64', 'int32', 'int64']:
->>>>>>> f08ccff (Update: improvements to data_stream, ensemble, and exporter modules)
-=======
-        elif type(obj).__name__ in ["float32", "float64", "int32", "int64"]:
->>>>>>> 2d15506 (update documentation with autoapi)
             return obj.item()
         else:
             return obj
@@ -66,6 +50,7 @@ class Exporter:
 
         Args:
             data: DataFrame, dict, NumPy array, or any structure convertible to DataFrame.
+
         Returns:
             pd.DataFrame: The converted DataFrame.
         """
@@ -84,39 +69,7 @@ class Exporter:
     def to_dictionary(self, data):
         """
         Convert input data to a dictionary, and make all types native Python.
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> e2d33a2 (fix autodocumentation for sphinx using autoapi)
-=======
->>>>>>> 92f9e8f (Update: improvements to data_stream, ensemble, and exporter modules)
-=======
->>>>>>> 81bfb7f (fix autodocumentation for sphinx using autoapi)
-<<<<<<< HEAD
 
-=======
->>>>>>> f08ccff (Update: improvements to data_stream, ensemble, and exporter modules)
-<<<<<<< HEAD
->>>>>>> e66b052 (Update: improvements to data_stream, ensemble, and exporter modules)
-=======
-=======
-
->>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
-<<<<<<< HEAD
->>>>>>> e2d33a2 (fix autodocumentation for sphinx using autoapi)
-=======
-=======
-        
->>>>>>> cc8c448 (Update: improvements to data_stream, ensemble, and exporter modules)
-<<<<<<< HEAD
->>>>>>> 92f9e8f (Update: improvements to data_stream, ensemble, and exporter modules)
-=======
-=======
->>>>>>> 350c152 (fix autodocumentation for sphinx using autoapi)
->>>>>>> 81bfb7f (fix autodocumentation for sphinx using autoapi)
         Args:
             data: dict, DataFrame, or NumPy array.
 
@@ -155,14 +108,7 @@ class Exporter:
     def to_json(self, data):
         """
         Convert input data to a JSON string (with native Python types).
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
->>>>>>> f08ccff (Update: improvements to data_stream, ensemble, and exporter modules)
-=======
-
->>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
         Args:
             data: DataFrame, dict, or NumPy array.
 
@@ -198,14 +144,7 @@ class Exporter:
     def display_dictionary(self, data):
         """
         Display data as a dictionary, with all native types.
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
->>>>>>> f08ccff (Update: improvements to data_stream, ensemble, and exporter modules)
-=======
-
->>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
         Args:
             data: Data convertible to dictionary.
         """
@@ -215,6 +154,7 @@ class Exporter:
     def display_numpy(self, data):
         """
         Display data as a NumPy array.
+
         Args:
             data: Data convertible to a NumPy array.
         """
@@ -224,14 +164,7 @@ class Exporter:
     def display_json(self, data):
         """
         Display data as a JSON string, with all native types.
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
->>>>>>> f08ccff (Update: improvements to data_stream, ensemble, and exporter modules)
-=======
-
->>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
         Args:
             data: Data convertible to JSON.
         """
@@ -255,6 +188,7 @@ class Exporter:
     def save_dictionary(self, data, file_name="data_dictionary.json"):
         """
         Save data as a JSON file representing a dictionary.
+
         Args:
             data: Data convertible to a dictionary.
             file_name (str): Name of the file (default: 'data_dictionary.json').
@@ -281,39 +215,7 @@ class Exporter:
     def save_json(self, data, file_name="data.json"):
         """
         Save data as a JSON file (with all native types).
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> e2d33a2 (fix autodocumentation for sphinx using autoapi)
-=======
->>>>>>> 92f9e8f (Update: improvements to data_stream, ensemble, and exporter modules)
-=======
->>>>>>> 81bfb7f (fix autodocumentation for sphinx using autoapi)
-<<<<<<< HEAD
 
-=======
->>>>>>> f08ccff (Update: improvements to data_stream, ensemble, and exporter modules)
-<<<<<<< HEAD
->>>>>>> e66b052 (Update: improvements to data_stream, ensemble, and exporter modules)
-=======
-=======
-
->>>>>>> c9ac771 (fix autodocumentation for sphinx using autoapi)
-<<<<<<< HEAD
->>>>>>> e2d33a2 (fix autodocumentation for sphinx using autoapi)
-=======
-=======
-        
->>>>>>> cc8c448 (Update: improvements to data_stream, ensemble, and exporter modules)
-<<<<<<< HEAD
->>>>>>> 92f9e8f (Update: improvements to data_stream, ensemble, and exporter modules)
-=======
-=======
->>>>>>> 350c152 (fix autodocumentation for sphinx using autoapi)
->>>>>>> 81bfb7f (fix autodocumentation for sphinx using autoapi)
         Args:
             data: Data convertible to JSON.
             file_name (str): Name of the file (default: 'data.json').
