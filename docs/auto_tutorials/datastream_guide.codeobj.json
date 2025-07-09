@@ -1,0 +1,894 @@
+{
+ "addition_info": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "ci_df": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "csv2_file_path": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "str"
+  }
+ ],
+ "csv_file_path": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "str"
+  }
+ ],
+ "cumulative": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "cumulative_df": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "data_stream_cg": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream"
+  }
+ ],
+ "data_stream_cg.head": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.head"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.head"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.head"
+  }
+ ],
+ "data_stream_cg.is_stationary": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.is_stationary"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.is_stationary"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.is_stationary"
+  }
+ ],
+ "data_stream_cg.trim": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.trim"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.trim"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.trim"
+  }
+ ],
+ "data_stream_csv": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream"
+  }
+ ],
+ "data_stream_gx": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream"
+  }
+ ],
+ "data_stream_gx.effective_sample_size": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.effective_sample_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.effective_sample_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.effective_sample_size"
+  }
+ ],
+ "data_stream_gx.head": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.head"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.head"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.head"
+  }
+ ],
+ "data_stream_gx.is_stationary": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.is_stationary"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.is_stationary"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.is_stationary"
+  }
+ ],
+ "data_stream_gx.trim": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.trim"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.trim"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.trim"
+  }
+ ],
+ "data_stream_gx.variables": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.variables"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.variables"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.variables"
+  }
+ ],
+ "ess_df": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "ess_dict": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "exporter": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing.exporter",
+   "module_short": "quends.postprocessing.exporter",
+   "name": "Exporter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends.postprocessing",
+   "name": "Exporter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Exporter"
+  }
+ ],
+ "exporter.display_dataframe": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing.exporter",
+   "module_short": "quends.postprocessing.exporter",
+   "name": "Exporter.display_dataframe"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends.postprocessing",
+   "name": "Exporter.display_dataframe"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Exporter.display_dataframe"
+  }
+ ],
+ "exporter.display_json": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing.exporter",
+   "module_short": "quends.postprocessing.exporter",
+   "name": "Exporter.display_json"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends.postprocessing",
+   "name": "Exporter.display_json"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Exporter.display_json"
+  }
+ ],
+ "mean_df": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "optimal_df": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "NoneType"
+  }
+ ],
+ "plotter": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing.plotter",
+   "module_short": "quends.postprocessing.plotter",
+   "name": "Plotter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends.postprocessing",
+   "name": "Plotter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Plotter"
+  }
+ ],
+ "plotter.steady_state_automatic_plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing.plotter",
+   "module_short": "quends.postprocessing.plotter",
+   "name": "Plotter.steady_state_automatic_plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends.postprocessing",
+   "name": "Plotter.steady_state_automatic_plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Plotter.steady_state_automatic_plot"
+  }
+ ],
+ "plotter.steady_state_plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing.plotter",
+   "module_short": "quends.postprocessing.plotter",
+   "name": "Plotter.steady_state_plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends.postprocessing",
+   "name": "Plotter.steady_state_plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Plotter.steady_state_plot"
+  }
+ ],
+ "plotter.trace_plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing.plotter",
+   "module_short": "quends.postprocessing.plotter",
+   "name": "Plotter.trace_plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends.postprocessing",
+   "name": "Plotter.trace_plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Plotter.trace_plot"
+  }
+ ],
+ "qnds.Exporter": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.postprocessing.exporter",
+   "module_short": "quends.postprocessing.exporter",
+   "name": "Exporter"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends.postprocessing",
+   "name": "Exporter"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Exporter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Exporter"
+  }
+ ],
+ "qnds.Plotter": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.postprocessing.plotter",
+   "module_short": "quends.postprocessing.plotter",
+   "name": "Plotter"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends.postprocessing",
+   "name": "Plotter"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Plotter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Plotter"
+  }
+ ],
+ "qnds.from_csv": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "from_csv"
+  }
+ ],
+ "stats": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "stats_df": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "trimmed": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream"
+  }
+ ],
+ "trimmed.additional_data": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.additional_data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.additional_data"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.additional_data"
+  }
+ ],
+ "trimmed.compute_statistics": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.compute_statistics"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.compute_statistics"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.compute_statistics"
+  }
+ ],
+ "trimmed.confidence_interval": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.confidence_interval"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.confidence_interval"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.confidence_interval"
+  }
+ ],
+ "trimmed.cumulative_statistics": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.cumulative_statistics"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.cumulative_statistics"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.cumulative_statistics"
+  }
+ ],
+ "trimmed.effective_sample_size": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.effective_sample_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.effective_sample_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.effective_sample_size"
+  }
+ ],
+ "trimmed.head": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.head"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.head"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.head"
+  }
+ ],
+ "trimmed.mean": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.mean"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.mean"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.mean"
+  }
+ ],
+ "trimmed.mean_uncertainty": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.mean_uncertainty"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.mean_uncertainty"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.mean_uncertainty"
+  }
+ ],
+ "trimmed.optimal_window_size": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.optimal_window_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.optimal_window_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.optimal_window_size"
+  }
+ ],
+ "trimmed_": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream"
+  }
+ ],
+ "trimmed_.head": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends.base.data_stream",
+   "name": "DataStream.head"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "DataStream.head"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.head"
+  }
+ ],
+ "uq_df": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ]
+}
