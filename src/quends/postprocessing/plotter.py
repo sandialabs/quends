@@ -1,3 +1,4 @@
+import math
 import os
 
 import matplotlib.pyplot as plt
@@ -7,7 +8,6 @@ from statsmodels.tsa.stattools import acf
 
 from quends.base.data_stream import DataStream  # Adjust the import if necessary
 from quends.base.ensemble import Ensemble
-import math
 
 
 class Plotter:
@@ -138,7 +138,6 @@ class Plotter:
                 )
                 plt.savefig(save_path)
             plt.show()
-            plt.close()
 
         return axes
 
@@ -222,7 +221,6 @@ class Plotter:
                 )
                 plt.savefig(save_path)
             plt.show()
-            plt.close()
 
     def ensemble_trace_plot(self, data, variables_to_plot=None, save=False):
         """
@@ -258,7 +256,6 @@ class Plotter:
                 )
                 plt.savefig(save_path)
             plt.show()
-            plt.close()
 
     def ensemble_trace_plot_with_mean(self, data, variables_to_plot=None, save=False):
         """
@@ -295,7 +292,6 @@ class Plotter:
                 )
                 plt.savefig(save_path)
             plt.show()
-            plt.close()
 
     def steady_state_automatic_plot(
         self,
@@ -429,7 +425,6 @@ class Plotter:
                 )
                 plt.savefig(save_path)
             plt.show()
-            plt.close(fig)
 
     def steady_state_plot(
         self, data, variables_to_plot=None, steady_state_start=None, save=False
@@ -546,7 +541,6 @@ class Plotter:
                 )
                 plt.savefig(save_path)
             plt.show()
-            plt.close(fig)
 
     def plot_acf(self, data, alpha=0.05, column=None, ax=None):
         """
@@ -695,6 +689,7 @@ class Plotter:
             None
         """
         import math
+
         n_members = len(ensemble_obj.data_streams)
         ncols = min(3, n_members)
         nrows = int(math.ceil(n_members / ncols))
@@ -784,7 +779,6 @@ class Plotter:
             plt.savefig(save_path)
             print(f"Figure saved to {save_path}")
         plt.show()
-        plt.close(fig)
 
     def ensemble_steady_state_plot(
         self, ensemble_obj, variables_to_plot=None, steady_state_start=None, save=False
@@ -885,7 +879,6 @@ class Plotter:
             plt.savefig(save_path)
             print(f"Figure saved to {save_path}")
         plt.show()
-        plt.close(fig)
 
     def plot_ensemble(
         self, ensemble_obj, variables_to_plot=None, show_plots=False, save=False
@@ -975,5 +968,3 @@ class Plotter:
             fig.savefig(outpath, dpi=150)
         if show_plots:
             plt.show()
-        else:
-            plt.close(fig)
