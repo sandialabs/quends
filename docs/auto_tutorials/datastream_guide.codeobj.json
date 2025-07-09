@@ -402,15 +402,6 @@
    "name": "dict"
   }
  ],
- "optimal_df": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "builtins",
-   "module_short": "builtins",
-   "name": "int"
-  }
- ],
  "plot": [
   {
    "is_class": false,
@@ -811,29 +802,6 @@
    "module": "quends",
    "module_short": "quends",
    "name": "DataStream.mean_uncertainty"
-  }
- ],
- "trimmed.optimal_window_size": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
-   "name": "DataStream.optimal_window_size"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base",
-   "module_short": "quends.base",
-   "name": "DataStream.optimal_window_size"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "DataStream.optimal_window_size"
   }
  ],
  "trimmed_": [
