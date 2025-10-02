@@ -252,7 +252,7 @@ class RobustWorkflow:
                 true_sss_start_index = max(0, int(crit_met_index - 0.8*rolling_window)) # adjust for rolling window
                 sss_start_time = df_smoothed['time'].iloc[true_sss_start_index] # adjust for rolling window
 
-                if verbosity > 0:
+                if self._verbosity > 0:
                     print(f"Index where criterion is met: {crit_met_index}")
                     print(f"Rolling window: {rolling_window}")
                     print(f"time where criterion is met: {criterion_time}")
