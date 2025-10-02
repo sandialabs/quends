@@ -32,7 +32,7 @@ class RobustWorkflow:
 
     """
 
-    def __init__(self, operate_safe=True, verbosity=0, drop_fraction=0.25):
+    def __init__(self, operate_safe=True, verbosity=0, drop_fraction=0.25, n_pts_min=100, n_pts_frac_min=0.2):
         """
         Initialize a workflow and its hyperparameters
 
@@ -49,10 +49,18 @@ class RobustWorkflow:
         drop_fraction: float, optional
             Fraction of data to drop from the start of the DataStream to see if the shortened
             DataStream is stationary. Default is 0.25 (25% of data).
+        n_pts_min: int, optional
+            Minimum number of points to keep in the DataStream when shortening it to check for stationarity.
+            Default is 100 points.
+        n_pts_frac_min: float, optional
+            Minimum fraction of the original number of points to keep in the DataStream when shortening it
+            to check for stationarity. Default is 0.2 (20% of original number of points).
         """
         self._operate_safe = operate_safe
         self._verbosity = verbosity
         self._drop_fraction = drop_fraction
+        self._n_pts_min = n_pts_min
+        self._n_pts_frac_min = n_pts_frac_min
 
 
     def process_irregular_stream(self, data_stream, col, start_time=0.0):
@@ -124,24 +132,24 @@ class RobustWorkflow:
         n_pts_orig = len(ds_wrk.df)
 
         # Check if data stream is stationary
-        # TODO: spin this off into a separate function (part of base DataStream class?)
+        # TODO: spin this whole operation to determine stationarity off into
+        # a separate function (part of base DataStream class?)
         stationary = ds_wrk.is_stationary([col])[col] # is_stationary() returns dictionary. The value for key qoi tells us if it is stationary
 
         n_pts = len(ds_wrk.df)
-        # TODO: input these hardwired values as class attributes
-        while not stationary and not self._operate_safe and n_pts > 100 and n_pts > 0.2*n_pts_orig:
+        while not stationary and not self._operate_safe and n_pts > self._n_pts_min and n_pts > self._n_pts_frac_min*n_pts_orig:
             # See if we get a stationary stream if we drop some initial fraction of the data
-            n_pts = len(ds_wrk.df)
             n_drop = int(n_pts*self._drop_fraction)
             df_shortened = ds_wrk.df.iloc[n_drop:]
             ds_wrk = DataStream(df_shortened)
+            n_pts = len(ds_wrk.df)
+            n_dropped = n_pts_orig - n_pts
             stationary = ds_wrk.is_stationary([col])[col]
             if self._verbosity > 0:
-                # TODO: track total number of points dropped
                 if stationary:
-                    print(f"Data stream was not stationary, but is stationary after dropping first {n_drop} points.")
+                    print(f"Data stream was not stationary, but is stationary after dropping first {n_dropped} points.")
                 else:
-                    print(f"Data stream is not stationary, even after dropping first {n_drop} points.")
+                    print(f"Data stream is not stationary, even after dropping first {n_dropped} points.")
 
         if stationary:
 
