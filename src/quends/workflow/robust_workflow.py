@@ -5,7 +5,7 @@ import scipy.stats as sts
 import statsmodels.tsa.stattools as ststls
 
 # QUENDS libraries
-from quends.base.data_stream import DataStream
+from ..base.data_stream import DataStream
 
 
 class RobustWorkflow:
