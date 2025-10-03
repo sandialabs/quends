@@ -32,7 +32,16 @@ class RobustWorkflow:
 
     """
 
-    def __init__(self, operate_safe=True, verbosity=0, drop_fraction=0.25, n_pts_min=100, n_pts_frac_min=0.2):
+    def __init__(self,
+                 operate_safe=True,
+                 verbosity=0,
+                 drop_fraction=0.25,
+                 n_pts_min=100,
+                 n_pts_frac_min=0.2,
+                 max_lag_frac=0.5,
+                 autocorr_sig_level=0.05,
+                 decor_multiplier=4.0
+                 ):
         """
         Initialize a workflow and its hyperparameters
 
@@ -55,12 +64,23 @@ class RobustWorkflow:
         n_pts_frac_min: float, optional
             Minimum fraction of the original number of points to keep in the DataStream when shortening it
             to check for stationarity. Default is 0.2 (20% of original number of points).
+        max_lag_frac: float, optional
+            Maximum lag (as a fraction of the number of points in the DataStream) to use when computing
+            the autocorrelation function to determine the decorrelation length. Default is 0.5.
+        autocorr_sig_level: float, optional
+            Significance level to use when determining the decorrelation length from the autocorrelation
+            function. Default is 0.05 (5% significance level).
+        decor_multiplier: float, optional
+            Multiplier to apply to the decorrelation length to get the smoothing window size. Default is 4.0
         """
         self._operate_safe = operate_safe
         self._verbosity = verbosity
         self._drop_fraction = drop_fraction
         self._n_pts_min = n_pts_min
         self._n_pts_frac_min = n_pts_frac_min
+        self._max_lag_frac = max_lag_frac
+        self._autocorr_sig_level = autocorr_sig_level
+        self._decor_multiplier = decor_multiplier
 
 
     def process_irregular_stream(self, data_stream, col, start_time=0.0):
@@ -162,8 +182,7 @@ class RobustWorkflow:
             # Get the decorrelation length (in number of points)
             # Note: this approach assumes signal points are spaced equally in time
             n_pts = len(ds_wrk.df)
-            # TODO: input this value of 0.5
-            max_lag = int(0.5*n_pts) # max lag for autocorrelation is half the data length
+            max_lag = int(self._max_lag_frac*n_pts) # max lag for autocorrelation
 
             acf_vals = ststls.acf(ds_wrk.df[col].dropna().values, nlags=max_lag)
 
@@ -179,14 +198,14 @@ class RobustWorkflow:
                 plt.close()
 
             # Use rigorous statistical measure for decorrelation length
-            alpha = 0.05  # 5% significance level
-            z_critical = sts.norm.ppf(1 - alpha / 2)
+            z_critical = sts.norm.ppf(1 - self._autocorr_sig_level / 2)
             conf_interval = z_critical / np.sqrt(n_pts)
             significant_lags = np.where(np.abs(acf_vals[1:]) > conf_interval)[0]
             acf_sum = np.sum(np.abs(acf_vals[1:][significant_lags]))
-
             decor_length = int(np.ceil(1 + 2 * acf_sum))
-            decor_index = min(4*decor_length, max_lag) # Smooth over 4 times the decorrelation length
+
+            # Set smoothing window as multiple of decorrelation length, but not more than max_lag
+            decor_index = min(int(self._decor_multiplier*decor_length), max_lag)
 
             if self._verbosity > 0:
                 print(f"stats decorrelation length {decor_length} gives smoothing window of {decor_index} points.")
@@ -194,14 +213,17 @@ class RobustWorkflow:
             # Smooth signal with rolling mean over window size based on decorrelation length
             rolling_window = max(3,decor_index) # at least 3 points in window
             col_smoothed = ds_wrk.df[col].rolling(window=rolling_window).mean() # get smoothed column as Series
-            col_rol_std = ds_wrk.df[col].rolling(window=rolling_window).std() # get rolling window based std dev as Series
-            df_smoothed = pd.DataFrame({'time': ds_wrk.df['time'], col: col_smoothed, col+'_std': col_rol_std}) # create new DataFrame with time, smoothed flux and rolling std dev
+            # col_rol_std = ds_wrk.df[col].rolling(window=rolling_window).std() # get rolling window based std dev as Series
 
-            # Another experiment, compute std dev of original signal from current location till end of signal
+
+            # Compute std dev of original signal from current location till end of signal
             std_dev_till_end = np.empty((n_pts,),dtype=float)
             for i in range(n_pts):
                 std_dev_till_end[i] = np.std(ds_wrk.df[col].iloc[i:])
-            df_smoothed[col+'_std_till_end'] = std_dev_till_end
+            # df_smoothed[col+'_std_till_end'] = std_dev_till_end
+
+            # create new DataFrame with time, smoothed flux and std dev till end of signal
+            df_smoothed = pd.DataFrame({'time': ds_wrk.df['time'], col: col_smoothed, col+'_std_till_end': std_dev_till_end}) 
 
             # plot smoothed signal
             if self._verbosity > 1:
