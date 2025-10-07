@@ -288,13 +288,12 @@ class RobustWorkflow:
             std_dev_till_end = np.empty((n_pts,),dtype=float)
             for i in range(n_pts):
                 std_dev_till_end[i] = np.std(ds_wrk.df[col].iloc[i:])
-            # turn this into a pandas series
-            std_dev_till_end_series = pd.Series(std_dev_till_end)
+            # turn this into a pandas series with same index as col_smoothed
+            std_dev_till_end_series = pd.Series(std_dev_till_end, index=ds_wrk.df.index)
             # Smooth this std dev to avoid it going to zero at end of signal
             std_dev_smoothed = std_dev_till_end_series.rolling(window=10).mean()
             # Fill initial NaNs with the first valid smoothed std dev value
             std_dev_sm_flld = std_dev_smoothed.bfill()
-
 
             # create new DataFrame with time, smoothed flux and std dev till end of signal
             df_smoothed = pd.DataFrame({'time': ds_wrk.df['time'], col: col_smoothed, col+'_std_till_end': std_dev_sm_flld}) 
