@@ -35,9 +35,9 @@ class RobustWorkflow:
         If False: try to get some results even if the data stream is not stationary or there is no 
         SSS segment found.
     _verbosity: int, level of verbosity for print statements and plots.
-        0: very few print statements or plots
-        1: more print statements
-        2: also show plots of intermediate steps
+        0. : very few print statements or plots
+        > 0: more print statements
+        > 1: also show plots of intermediate steps
     _drop_fraction: float, fraction of data to drop from the start of the DataStream to see if the shortened
         DataStream is stationary.
     _n_pts_min: int, minimum number of points to keep in the DataStream when shortening it to check for stationarity.
@@ -381,8 +381,21 @@ class RobustWorkflow:
                 # Create new data stream from trimmed data frame
                 trimmed_stream = DataStream(trimmed_df)
             else:
-                print(f"No SSS found based on {tol_fac*100}% criterion")
+                print("No SSS found based on behavior of mean of smoothed signal.")
                 trimmed_stream = pd.DataFrame(columns=['time', 'flux']) # Create empty DataFrame with same columns as original
+
+                # Plot deviation and tolerance vs. time
+                if self._verbosity > 1:
+                    plt.figure(figsize=(10, 6))
+                    plt.plot(df_smoothed['time'], deviation, label='Deviation', color='blue')
+                    plt.plot(df_smoothed['time'], tolerance, label='Tolerance', color='orange')
+                    plt.xlabel('Time')
+                    plt.ylabel('Value')
+                    plt.title('Deviation and Tolerance vs. Time')
+                    plt.legend()
+                    plt.grid()
+                    plt.show()
+                    plt.close()
 
 
             # Check that a steady state was found
