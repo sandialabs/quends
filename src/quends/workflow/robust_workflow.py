@@ -202,7 +202,8 @@ class RobustWorkflow:
 
 
         TODO
-        * look at number of effective samples we have. Could be low. Allow user to override this if they want minimum # of samples for analysis. 
+        * look at number of effective samples we have. Could be low. Allow user to
+        override this if they want minimum # of samples for analysis. 
         
         Parameters
         ----------
