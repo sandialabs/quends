@@ -40,7 +40,10 @@ class RobustWorkflow:
                  n_pts_frac_min=0.2,
                  max_lag_frac=0.5,
                  autocorr_sig_level=0.05,
-                 decor_multiplier=4.0
+                 decor_multiplier=4.0,
+                 std_dev_frac=0.1,
+                 fudge_fac=0.1,
+                 smoothing_window_correction=0.8
                  ):
         """
         Initialize a workflow and its hyperparameters
@@ -72,6 +75,20 @@ class RobustWorkflow:
             function. Default is 0.05 (5% significance level).
         decor_multiplier: float, optional
             Multiplier to apply to the decorrelation length to get the smoothing window size. Default is 4.0
+        std_dev_frac: float, optional
+            Fraction of the std dev of the stationary signal to use as tolerance when determining the start
+            of SSS. Default is 0.1 (10% of std dev).
+        fudge_fac: float, optional
+            Fudge factor to multiply the initial mean of the smoothed signal with before adding it to the std dev
+            used to compute the tolerance for determining the start of SSS. This is to guard against
+            the tolerance going to zero when the std dev goes to zero at the end of the signal. 
+            Default is 0.1 (10% of mean value at start of smoothed signal). 
+        smoothing_window_correction: float, optional
+            Correction factor to apply to the smoothing window size when determining the start of SSS.
+            This is to account for the fact that the smoothed signal at a given time point is
+            the result of averaging over the smoothing window. So the SSS can be seen as starting
+            before the point where the tolerance is met. 
+            Default is 0.8 (80% of smoothing window size).
         """
         self._operate_safe = operate_safe
         self._verbosity = verbosity
@@ -81,6 +98,9 @@ class RobustWorkflow:
         self._max_lag_frac = max_lag_frac
         self._autocorr_sig_level = autocorr_sig_level
         self._decor_multiplier = decor_multiplier
+        self._std_dev_frac = std_dev_frac
+        self._fudge_fac = fudge_fac
+        self._smoothing_window_correction = smoothing_window_correction
 
 
     def process_irregular_stream(self, data_stream, col, start_time=0.0):
@@ -250,8 +270,6 @@ class RobustWorkflow:
             # where tol_fac = factor * the rolling std dev of the stationary signal
 
             # At each location, compute the mean of the remaining signal
-            stdv_frac = 0.1
-            # tol_fac = stdv_frac * std_dev_stat_signal
             n_pts_smoothed = len(df_smoothed)
             mean_vals = np.empty((n_pts_smoothed,),dtype=float)
             # stdv_vals = np.empty((n_pts_smoothed,),dtype=float)
@@ -260,8 +278,11 @@ class RobustWorkflow:
                 # stdv_vals[i] = np.std(df_smoothed[col].iloc[i:])
             # Check where the current value of the smoothed signal is within tol_fac of the mean of the remaining signal
             deviation = np.abs(df_smoothed[col] - mean_vals)
-            # tol_fac = stdv_frac * (df_smoothed[col+'_std'] + 1.e-6*abs(mean_vals[0])) # stdv_frac * rolling std dev + a fudge factor in case there is no noise
-            tol_fac = stdv_frac * (df_smoothed[col+'_std_till_end'] + 0.1*abs(mean_vals[0])) # stdv_frac * std dev till end + a fudge factor in case there is no noise (and to guard against factor going to zero when std dev goes to 0 at end of signal)
+            # Compute tolerance on variation in the mean of the smoothed signal as
+            # stdv_frac * std dev till end + a fudge factor * mean value at start of smoothed signal
+            # in case there is no noise (and to guard against the tolerance
+            # factor going to zero when std dev goes to 0 at end of signal)
+            tol_fac = self._std_dev_frac * (df_smoothed[col+'_std_till_end'] + self._fudge_fac*abs(mean_vals[0]))
             tolerance = tol_fac * np.abs(mean_vals)
 
             within_tolerance = deviation <= tolerance
@@ -273,20 +294,20 @@ class RobustWorkflow:
                     if np.all(within_tolerance[idx:]):
                         crit_met_index = idx
                         break
-                
+      
                 # Time where criterion has been met
                 criterion_time = df_smoothed['time'].iloc[crit_met_index]
                 # Take into account that the signal at the point where the criterion has been met is a result
                 # of averaging over the rolling window. So set the start of SSS near the start of the rolling window
                 # but not all the way at the beginning of the rolling window as there is usually still some transient.
-                true_sss_start_index = max(0, int(crit_met_index - 0.8*rolling_window)) # adjust for rolling window
-                sss_start_time = df_smoothed['time'].iloc[true_sss_start_index] # adjust for rolling window
+                true_sss_start_index = max(0, int(crit_met_index - self._smoothing_window_correction*rolling_window))
+                sss_start_time = df_smoothed['time'].iloc[true_sss_start_index]
 
                 if self._verbosity > 0:
                     print(f"Index where criterion is met: {crit_met_index}")
                     print(f"Rolling window: {rolling_window}")
                     print(f"time where criterion is met: {criterion_time}")
-                    print(f"time at start of SSS (criterion met - 0.8*rolling window): {sss_start_time}")
+                    print(f"time at start of SSS (adjusted for rolling window): {sss_start_time}")
                 
 
                 # Plot deviation and tolerance vs. time
