@@ -196,9 +196,6 @@ class RobustWorkflow:
             # Trim the data stream to find statistical steady state
             # TODO: spin this off into a separate function (part of base DataStream class?)
 
-            # first get the std dev of the stationary signal (will be needed later)
-            # std_dev_stat_signal = np.std(ds_wrk.df[col])
-
             # Get the decorrelation length (in number of points)
             # Note: this approach assumes signal points are spaced equally in time
             n_pts = len(ds_wrk.df)
@@ -233,8 +230,6 @@ class RobustWorkflow:
             # Smooth signal with rolling mean over window size based on decorrelation length
             rolling_window = max(3,decor_index) # at least 3 points in window
             col_smoothed = ds_wrk.df[col].rolling(window=rolling_window).mean() # get smoothed column as Series
-            # col_rol_std = ds_wrk.df[col].rolling(window=rolling_window).std() # get rolling window based std dev as Series
-
 
             # Compute std dev of original signal from current location till end of signal
             std_dev_till_end = np.empty((n_pts,),dtype=float)
@@ -259,10 +254,7 @@ class RobustWorkflow:
                 plt.close()
 
             if self._verbosity > 0:
-                # print("Smoothed data frame:")
-                # print(df_smoothed.head()) # always starts with bunch of NaNs at start of averaging window
                 print("Getting start of SSS based on smoothed signal:")
-            
 
 
             # Get start of SSS based on where the value of the flux in the smoothed signal
@@ -294,7 +286,7 @@ class RobustWorkflow:
                     if np.all(within_tolerance[idx:]):
                         crit_met_index = idx
                         break
-      
+
                 # Time where criterion has been met
                 criterion_time = df_smoothed['time'].iloc[crit_met_index]
                 # Take into account that the signal at the point where the criterion has been met is a result
@@ -308,14 +300,13 @@ class RobustWorkflow:
                     print(f"Rolling window: {rolling_window}")
                     print(f"time where criterion is met: {criterion_time}")
                     print(f"time at start of SSS (adjusted for rolling window): {sss_start_time}")
-                
 
                 # Plot deviation and tolerance vs. time
                 if self._verbosity > 1:
                     plt.figure(figsize=(10, 6))
                     plt.plot(df_smoothed['time'], deviation, label='Deviation', color='blue')
                     plt.plot(df_smoothed['time'], tolerance, label='Tolerance', color='orange')
-                    plt.axvline(x=criterion_time, color='g', linestyle='--', label=f"Small Change Criterion Met")
+                    plt.axvline(x=criterion_time, color='g', linestyle='--', label="Small Change Criterion Met")
                     plt.axvline(x=sss_start_time, color='r', linestyle='--', label="Start SSS")
                     plt.xlabel('Time')
                     plt.ylabel('Value')
@@ -362,10 +353,10 @@ class RobustWorkflow:
                 trimmed_stats = self.process_irregular_stream(data_stream_orig, col, start_time=start_time)
 
         else: # Not stationary
-                if self._verbosity > 0:
-                    print("Data stream is not stationary.")
-                # Alternative processing
-                trimmed_stats = self.process_irregular_stream(data_stream_orig, col, start_time=start_time)
+            if self._verbosity > 0:
+                print("Data stream is not stationary.")
+            # Alternative processing
+            trimmed_stats = self.process_irregular_stream(data_stream_orig, col, start_time=start_time)
 
         # Return the statistics dictionary
         return trimmed_stats
@@ -399,7 +390,7 @@ class RobustWorkflow:
             my_cl = stats[col]["confidence_interval"]
             my_sss_start = stats[col]["sss_start"]
             plt.axvline(x=my_sss_start, color='r', linestyle='--', label="Start SSS")
-            
+
             sss_time = [my_sss_start,my_df.iloc[-1]["time"]]
             mean_level = [my_mean, my_mean]
             upper_conf_level = [my_cl[1],my_cl[1]]
