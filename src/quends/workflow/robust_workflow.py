@@ -293,7 +293,7 @@ class RobustWorkflow:
             # Smooth this std dev to avoid it going to zero at end of signal
             std_dev_smoothed = std_dev_till_end_series.rolling(window=10).mean()
             # Fill initial NaNs with the first valid smoothed std dev value
-            std_dev_sm_flld = std_dev_smoothed.fillna(method='bfill')
+            std_dev_sm_flld = std_dev_smoothed.bfill()
 
 
             # create new DataFrame with time, smoothed flux and std dev till end of signal
@@ -317,22 +317,21 @@ class RobustWorkflow:
 
 
             # Get start of SSS based on where the value of the flux in the smoothed signal
-            # is within tol_fac of the mean of the remaining signal, 
-            # where tol_fac = factor * the rolling std dev of the stationary signal
+            # is close to the mean of the remaining signal.
 
             # At each location, compute the mean of the remaining signal
             n_pts_smoothed = len(df_smoothed)
             mean_vals = np.empty((n_pts_smoothed,),dtype=float)
-            # stdv_vals = np.empty((n_pts_smoothed,),dtype=float)
+            
             for i in range(n_pts_smoothed):
                 mean_vals[i] = np.mean(df_smoothed[col].iloc[i:])
-                # stdv_vals[i] = np.std(df_smoothed[col].iloc[i:])
+                
             # Check where the current value of the smoothed signal is within tol_fac of the mean of the remaining signal
             deviation = np.abs(df_smoothed[col] - mean_vals)
             # Compute tolerance on variation in the mean of the smoothed signal as
-            # stdv_frac * std dev till end + a fudge factor * mean value at start of smoothed signal
-            # in case there is no noise (and to guard against the tolerance
-            # factor going to zero when std dev goes to 0 at end of signal)
+            # stdv_frac * (std dev till end + a fudge factor * mean value at start of smoothed signal)
+            # fudge factor is for in case there is no noise (and to guard against the tolerance
+            # factor going to zero when std dev gets very small at end of signal)
             tol_fac = self._std_dev_frac * (df_smoothed[col+'_std_till_end'] + self._fudge_fac*abs(mean_vals[0]))
             tolerance = tol_fac * np.abs(mean_vals)
 
