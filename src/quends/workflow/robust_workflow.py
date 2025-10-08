@@ -359,6 +359,8 @@ class RobustWorkflow:
             # First index where we are within tolerance
             sss_index = np.where(within_tolerance)[0]
 
+            # See if there is a segment where ALL remaining points are within tolerance
+            crit_met_index = None
             if len(sss_index) > 0:
                 # find the segment where ALL remaining points are within tolerance
                 for idx in sss_index:
@@ -366,6 +368,7 @@ class RobustWorkflow:
                         crit_met_index = idx
                         break
 
+            if crit_met_index is not None: # We have a SSS segment
                 # Time where criterion has been met
                 criterion_time = df_smoothed['time'].iloc[crit_met_index]
                 # Take into account that the signal at the point where the criterion has been met is a result
