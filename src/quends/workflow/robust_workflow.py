@@ -53,6 +53,7 @@ class RobustWorkflow:
     _fudge_fac: float, fudge factor to multiply the initial mean of the smoothed signal with before adding it to the std dev
         used to compute the tolerance for determining the start of SSS.
     _smoothing_window_correction: float, correction factor to apply to the smoothing window size when determining the start of SSS.
+    _final_smoothing_window: int, smoothing window used to avoid quantities going to zero at end of signal.
 
     """
 
@@ -67,7 +68,8 @@ class RobustWorkflow:
                  decor_multiplier=4.0,
                  std_dev_frac=0.1,
                  fudge_fac=0.1,
-                 smoothing_window_correction=0.8
+                 smoothing_window_correction=0.8,
+                 final_smoothing_window=10
                  ):
         """
         Initialize a workflow and its hyperparameters
@@ -113,6 +115,8 @@ class RobustWorkflow:
             the result of averaging over the smoothing window. So the SSS can be seen as starting
             before the point where the tolerance is met. 
             Default is 0.8 (80% of smoothing window size).
+        final_smoothing_window: int, optional
+            Smoothing window used to avoid quantities going to zero at end of signal. Default is 10 points.
         """
         self._operate_safe = operate_safe
         self._verbosity = verbosity
@@ -125,6 +129,7 @@ class RobustWorkflow:
         self._std_dev_frac = std_dev_frac
         self._fudge_fac = fudge_fac
         self._smoothing_window_correction = smoothing_window_correction
+        self._final_smoothing_window = final_smoothing_window
 
 
     def process_irregular_stream(self, data_stream, col, start_time=0.0):
@@ -294,7 +299,7 @@ class RobustWorkflow:
             # turn this into a pandas series with same index as col_smoothed
             std_dev_till_end_series = pd.Series(std_dev_till_end, index=ds_wrk.df.index)
             # Smooth this std dev to avoid it going to zero at end of signal
-            std_dev_smoothed = std_dev_till_end_series.rolling(window=10).mean()
+            std_dev_smoothed = std_dev_till_end_series.rolling(window=self._final_smoothing_window).mean()
             # Fill initial NaNs with the first valid smoothed std dev value
             std_dev_sm_flld = std_dev_smoothed.bfill()
 
@@ -340,7 +345,7 @@ class RobustWorkflow:
             # turn this into a pandas series with same index as col_smoothed
             deviation_series = pd.Series(deviation_arr, index=ds_wrk.df.index)
             # Smooth this std dev to avoid it going to zero at end of signal
-            deviation_smoothed = deviation_series.rolling(window=10).mean()
+            deviation_smoothed = deviation_series.rolling(window=self._final_smoothing_window).mean()
             # Fill initial NaNs with the first valid smoothed std dev value
             deviation_sm_flld = deviation_smoothed.bfill()
             # Build a dataframe for the deviation
