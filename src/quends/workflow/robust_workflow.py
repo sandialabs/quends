@@ -331,7 +331,7 @@ class RobustWorkflow:
             # Get start of SSS based on where the value of the flux in the smoothed signal
             # is close to the mean of the remaining signal.
 
-            # At each location, compute the mean of the remaining signal
+            # At each location, compute the mean of the remaining smoothed signal
             n_pts_smoothed = len(df_smoothed)
             mean_vals = np.empty((n_pts_smoothed,),dtype=float)
 
@@ -430,9 +430,9 @@ class RobustWorkflow:
             # Check that a steady state was found
             if len(trimmed_stream) > 1:
                 
-                if self._verbosity > 0:
-                    print("Trimmed data frame:")
-                    print(trimmed_stream.df.head())
+                # if self._verbosity > 0:
+                #     print("Trimmed data frame:")
+                #     print(trimmed_stream.df.head())
 
                 # Start time of statistical steady state
                 sss_start = trimmed_stream.df['time'][0]
