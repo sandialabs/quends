@@ -283,6 +283,9 @@ class RobustWorkflow:
             # Smooth signal with rolling mean over window size based on decorrelation length
             rolling_window = max(3,decor_index) # at least 3 points in window
             col_smoothed = ds_wrk.df[col].rolling(window=rolling_window).mean() # get smoothed column as Series
+            col_sm_flld = col_smoothed.bfill() # fill initial NaNs with first valid value
+             # create new DataFrame with time and smoothed flux
+            df_smoothed = pd.DataFrame({'time': ds_wrk.df['time'], col: col_sm_flld})
 
             # Compute std dev of original signal from current location till end of signal
             std_dev_till_end = np.empty((n_pts,),dtype=float)
@@ -295,14 +298,19 @@ class RobustWorkflow:
             # Fill initial NaNs with the first valid smoothed std dev value
             std_dev_sm_flld = std_dev_smoothed.bfill()
 
-            # create new DataFrame with time, smoothed flux and std dev till end of signal
-            df_smoothed = pd.DataFrame({'time': ds_wrk.df['time'], col: col_smoothed, col+'_std_till_end': std_dev_sm_flld}) 
+            # create new DataFrame with time and std dev till end of signal
+            df_std_dev = pd.DataFrame({'time': ds_wrk.df['time'], col+'_std_till_end': std_dev_sm_flld})
 
-            # plot smoothed signal
+            # start time of smoothed signal
+            smoothed_start_time = df_smoothed['time'].iloc[rolling_window-1]
+
+            # plot smoothed signal and related quantities
             if self._verbosity > 1:
                 plt.figure(figsize=(10, 6))
                 plt.plot(ds_wrk.df['time'], ds_wrk.df[col], label='Original Signal', alpha=0.5)
                 plt.plot(df_smoothed['time'], df_smoothed[col], label='Smoothed Signal', color='orange')
+                plt.plot(df_std_dev['time'], df_std_dev[col+'_std_till_end'], label='Smoothed Std Dev Till End', color='green')
+                plt.axvline(x=smoothed_start_time, color='g', linestyle='--', label="First smoothed point")
                 plt.xlabel('Time')
                 plt.ylabel(col)
                 plt.title('Original and Smoothed Signal')
@@ -321,20 +329,34 @@ class RobustWorkflow:
             # At each location, compute the mean of the remaining signal
             n_pts_smoothed = len(df_smoothed)
             mean_vals = np.empty((n_pts_smoothed,),dtype=float)
-            
+
             for i in range(n_pts_smoothed):
                 mean_vals[i] = np.mean(df_smoothed[col].iloc[i:])
-                
+
             # Check where the current value of the smoothed signal is within tol_fac of the mean of the remaining signal
-            deviation = np.abs(df_smoothed[col] - mean_vals)
+            deviation_arr = np.abs(df_smoothed[col] - mean_vals)
+
+            # smooth this so the deviation does not go to zero at end of signal by construction
+            # turn this into a pandas series with same index as col_smoothed
+            deviation_series = pd.Series(deviation_arr, index=ds_wrk.df.index)
+            # Smooth this std dev to avoid it going to zero at end of signal
+            deviation_smoothed = deviation_series.rolling(window=10).mean()
+            # Fill initial NaNs with the first valid smoothed std dev value
+            deviation_sm_flld = deviation_smoothed.bfill()
+            # Build a dataframe for the deviation
+            deviation = pd.DataFrame({'time': ds_wrk.df['time'], col+'_deviation': deviation_sm_flld})
+
             # Compute tolerance on variation in the mean of the smoothed signal as
             # stdv_frac * (std dev till end + a fudge factor * mean value at start of smoothed signal)
             # fudge factor is for in case there is no noise (and to guard against the tolerance
             # factor going to zero when std dev gets very small at end of signal)
-            tol_fac = self._std_dev_frac * (df_smoothed[col+'_std_till_end'] + self._fudge_fac*abs(mean_vals[0]))
+            tol_fac = self._std_dev_frac * (df_std_dev[col+'_std_till_end'] + self._fudge_fac*abs(mean_vals[0]))
             tolerance = tol_fac * np.abs(mean_vals)
 
-            within_tolerance = deviation <= tolerance
+            within_tolerance_all = deviation[col+'_deviation'] <= tolerance
+            # Only consider points after the smoothed signal has started
+            within_tolerance = within_tolerance_all & (df_smoothed['time'] >= smoothed_start_time)
+            # First index where we are within tolerance
             sss_index = np.where(within_tolerance)[0]
 
             if len(sss_index) > 0:
@@ -361,7 +383,7 @@ class RobustWorkflow:
                 # Plot deviation and tolerance vs. time
                 if self._verbosity > 1:
                     plt.figure(figsize=(10, 6))
-                    plt.plot(df_smoothed['time'], deviation, label='Deviation', color='blue')
+                    plt.plot(df_smoothed['time'], deviation[col+'_deviation'], label='Deviation', color='blue')
                     plt.plot(df_smoothed['time'], tolerance, label='Tolerance', color='orange')
                     plt.axvline(x=criterion_time, color='g', linestyle='--', label="Small Change Criterion Met")
                     plt.axvline(x=sss_start_time, color='r', linestyle='--', label="Start SSS")
@@ -386,7 +408,7 @@ class RobustWorkflow:
                 # Plot deviation and tolerance vs. time
                 if self._verbosity > 1:
                     plt.figure(figsize=(10, 6))
-                    plt.plot(df_smoothed['time'], deviation, label='Deviation', color='blue')
+                    plt.plot(df_smoothed['time'], deviation[col+'_deviation'], label='Deviation', color='blue')
                     plt.plot(df_smoothed['time'], tolerance, label='Tolerance', color='orange')
                     plt.xlabel('Time')
                     plt.ylabel('Value')
