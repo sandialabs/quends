@@ -163,6 +163,8 @@ class RobustWorkflow:
             results_dict[col]["metadata"] = {}
             results_dict[col]["metadata"]["status"] = "NoStatSteadyState"
             results_dict[col]["metadata"]["mitigation"] = "Drop"
+            # Add the start time info used
+            results_dict[col]["start_time"] = start_time
 
             return results_dict
         
@@ -197,6 +199,8 @@ class RobustWorkflow:
             results_dict[col]["metadata"] = {}
             results_dict[col]["metadata"]["status"] = "NoStatSteadyState"
             results_dict[col]["metadata"]["mitigation"] = "AdHoc"
+            # Add the start time info used
+            results_dict[col]["start_time"] = start_time
 
             return results_dict
 
@@ -225,7 +229,7 @@ class RobustWorkflow:
             Dictionary with results for the quantity of interest.
         """
 
-        print(f"Original size of data stream: {len(data_stream_orig.df)} points.")
+        
         # Work on a copy of the data stream
         ds_wrk = DataStream(data_stream_orig.df.copy())
 
@@ -233,7 +237,10 @@ class RobustWorkflow:
         ds_wrk.df = ds_wrk.df[ds_wrk.df['time'] >= start_time]
         # Get number of points that we are working with
         n_pts_orig = len(ds_wrk.df)
-        print(f"After enforcing start time there are {n_pts_orig} points left.")
+
+        if self._verbosity > 0:
+            print(f"Original size of data stream: {len(data_stream_orig.df)} points.")
+            print(f"After enforcing start time there are {n_pts_orig} points left.")
 
         # Check if data stream is stationary
         # TODO: spin this whole operation to determine stationarity off into
@@ -416,7 +423,8 @@ class RobustWorkflow:
                 # Create new data stream from trimmed data frame
                 trimmed_stream = DataStream(trimmed_df)
             else:
-                print("No SSS found based on behavior of mean of smoothed signal.")
+                if self._verbosity > 0:
+                    print("No SSS found based on behavior of mean of smoothed signal.")
                 trimmed_stream = pd.DataFrame(columns=['time', 'flux']) # Create empty DataFrame with same columns as original
 
                 # Plot deviation and tolerance vs. time
@@ -451,6 +459,8 @@ class RobustWorkflow:
                 trimmed_stats[col]["metadata"] = {}
                 trimmed_stats[col]["metadata"]["status"] = "Regular"
                 trimmed_stats[col]["metadata"]["mitigation"] = "None"
+                # Add the start time info used
+                trimmed_stats[col]["start_time"] = start_time
 
             else: # No statistical steady state
                 if self._verbosity > 0:
@@ -492,7 +502,8 @@ class RobustWorkflow:
 
         fig, ax = plt.subplots(figsize=(10, 6))
 
-        ax.plot(my_df["time"],my_df[col], label="Signal")
+        signal_line, = ax.plot(my_df["time"],my_df[col], label="Signal")
+        signal_color = signal_line.get_color()
 
         ax.set_xlabel("time", size=12)
         ax.set_ylabel(col, size=12)
@@ -503,6 +514,11 @@ class RobustWorkflow:
 
         # add the start of steady state and the mean (if provided)
         if stats:
+            # If start_time > 0, show it on graph
+            if stats[col]["start_time"] > 0:
+                ax.axvline(x=stats[col]["start_time"], color=signal_color, linestyle='--', label="Start Time")
+
+            # Add other statistics
             my_mean = stats[col]["mean"]
             my_cl = stats[col]["confidence_interval"]
             my_sss_start = stats[col]["sss_start"]
@@ -515,6 +531,7 @@ class RobustWorkflow:
             ax.plot(sss_time,mean_level, color='green', linestyle='-', label="Mean")
             ax.plot(sss_time,upper_conf_level, color='green', linestyle='--', label="95% Conf. Int.")
             ax.plot(sss_time,lower_conf_level, color='green', linestyle='--')
+
         ax.legend(fontsize=12)
 
         # show and close the figure
