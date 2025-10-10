@@ -225,9 +225,15 @@ class RobustWorkflow:
             Dictionary with results for the quantity of interest.
         """
 
+        print(f"Original size of data stream: {len(data_stream_orig.df)} points.")
         # Work on a copy of the data stream
         ds_wrk = DataStream(data_stream_orig.df.copy())
+
+        # Get all data that is later than start_time
+        ds_wrk.df = ds_wrk.df[ds_wrk.df['time'] >= start_time]
+        # Get number of points that we are working with
         n_pts_orig = len(ds_wrk.df)
+        print(f"After enforcing start time there are {n_pts_orig} points left.")
 
         # Check if data stream is stationary
         # TODO: spin this whole operation to determine stationarity off into
