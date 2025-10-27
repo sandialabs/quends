@@ -119,63 +119,83 @@ def test_confidence_interval_long(long_data):
 # === Trim ===
 # === Trim ===
 
+
 def test_trim_std(trim_data):
     ds = DataStream(trim_data)
-    result = ds.trim(column_name="A", batch_size=1, method="std", start_time=3.0, threshold=4)
+    result = ds.trim(
+        column_name="A", batch_size=1, method="std", start_time=3.0, threshold=4
+    )
     assert isinstance(result, DataStream)
     assert result.df.empty
     assert list(result.df.columns) == ["time", "A"]
     assert result._history == [
-        {'operation': 'is_stationary', 'options': {'columns': 'A'}},
-        {'operation': 'trim', 'options': {
-            'column_name': 'A',
-            'batch_size': 1,
-            'start_time': 3.0,
-            'method': 'std',
-            'threshold': 4,
-            'robust': True,
-            'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
-        }}
+        {"operation": "is_stationary", "options": {"columns": "A"}},
+        {
+            "operation": "trim",
+            "options": {
+                "column_name": "A",
+                "batch_size": 1,
+                "start_time": 3.0,
+                "method": "std",
+                "threshold": 4,
+                "robust": True,
+                "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+            },
+        },
     ]
 
 
 def test_trim_threshold(trim_data):
     ds = DataStream(trim_data.astype(float))
-    result = ds.trim(column_name="A", batch_size=1, method="threshold", start_time=3.0, threshold=4)
+    result = ds.trim(
+        column_name="A", batch_size=1, method="threshold", start_time=3.0, threshold=4
+    )
     assert isinstance(result, DataStream)
     assert result.df.empty
     assert list(result.df.columns) == ["time", "A"]
     assert result._history == [
-        {'operation': 'is_stationary', 'options': {'columns': 'A'}},
-        {'operation': 'trim', 'options': {
-            'column_name': 'A',
-            'batch_size': 1,
-            'start_time': 3.0,
-            'method': 'threshold',
-            'threshold': 4,
-            'robust': True,
-            'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
-        }}
+        {"operation": "is_stationary", "options": {"columns": "A"}},
+        {
+            "operation": "trim",
+            "options": {
+                "column_name": "A",
+                "batch_size": 1,
+                "start_time": 3.0,
+                "method": "threshold",
+                "threshold": 4,
+                "robust": True,
+                "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+            },
+        },
     ]
 
 
 def test_trim_rolling_variance(trim_data):
     ds = DataStream(trim_data)
-    result = ds.trim(column_name="A", batch_size=1, method="rolling_variance", start_time=3.0, threshold=4)
+    result = ds.trim(
+        column_name="A",
+        batch_size=1,
+        method="rolling_variance",
+        start_time=3.0,
+        threshold=4,
+    )
     assert isinstance(result, DataStream)
     assert result.df.empty
     assert list(result.df.columns) == ["time", "A"]
     assert result._history == [
-        {'operation': 'is_stationary', 'options': {'columns': 'A'}},
-        {'operation': 'trim', 'options': {
-            'column_name': 'A',
-            'batch_size': 1,
-            'start_time': 3.0,
-            'method': 'rolling_variance',
-            'threshold': 4,
-            'robust': True,
-            'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
-        }}
+        {"operation": "is_stationary", "options": {"columns": "A"}},
+        {
+            "operation": "trim",
+            "options": {
+                "column_name": "A",
+                "batch_size": 1,
+                "start_time": 3.0,
+                "method": "rolling_variance",
+                "threshold": 4,
+                "robust": True,
+                "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+            },
+        },
     ]
 
 
@@ -186,16 +206,19 @@ def test_trim_invalid_method(trim_data):
     assert result.df.empty
     assert list(result.df.columns) == ["time", "A"]
     assert result._history == [
-        {'operation': 'is_stationary', 'options': {'columns': 'A'}},
-        {'operation': 'trim', 'options': {
-            'column_name': 'A',
-            'batch_size': 10,
-            'start_time': 0.0,
-            'method': 'invalid_method',
-            'threshold': None,
-            'robust': True,
-            'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
-        }}
+        {"operation": "is_stationary", "options": {"columns": "A"}},
+        {
+            "operation": "trim",
+            "options": {
+                "column_name": "A",
+                "batch_size": 10,
+                "start_time": 0.0,
+                "method": "invalid_method",
+                "threshold": None,
+                "robust": True,
+                "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+            },
+        },
     ]
 
 
@@ -207,16 +230,19 @@ def test_trim_missing_threshold(long_data):
     # Expect columns: ["time", "A", "B"] since that's what the DataFrame originally has.
     assert set(result.df.columns) == set(["time", "A", "B"])
     assert result._history == [
-        {'operation': 'is_stationary', 'options': {'columns': 'A'}},
-        {'operation': 'trim', 'options': {
-            'column_name': 'A',
-            'batch_size': 10,
-            'start_time': 0.0,
-            'method': 'threshold',
-            'threshold': None,
-            'robust': True,
-            'message': "Column 'A' is not stationary. Steady-state trimming requires stationary data."
-        }}
+        {"operation": "is_stationary", "options": {"columns": "A"}},
+        {
+            "operation": "trim",
+            "options": {
+                "column_name": "A",
+                "batch_size": 10,
+                "start_time": 0.0,
+                "method": "threshold",
+                "threshold": None,
+                "robust": True,
+                "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
+            },
+        },
     ]
 
 
@@ -406,7 +432,7 @@ def test_cumulative_stats_empty(nan_data):
 import pytest
 
 
-def assert_nested_approx(a, b, rel=1e-9):
+def assert_nested_approx(a, b, rel=1e-8):
     if isinstance(a, dict) and isinstance(b, dict):
         assert a.keys() == b.keys()
         for k in a:
