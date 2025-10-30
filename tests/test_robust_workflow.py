@@ -7,6 +7,8 @@ import pandas as pd
 import pandas.testing as pdt
 import papermill as pm
 
+os.chdir("examples/notebooks")
+
 
 def test_slope_to_sine_regression():
     """
@@ -19,12 +21,7 @@ def test_slope_to_sine_regression():
     )
 
     # Define notebook paths
-    input_nb = Path("examples/notebooks/robust_workflow.ipynb")
-    test_data_path = Path("examples/notebooks/cgyro/output_nu0_02.csv").resolve()
-
-    # Verify the test data exists before running
-    if not test_data_path.exists():
-        raise ValueError(f"Test data not found at {test_data_path}")
+    input_nb = Path("robust_workflow.ipynb")
 
     # Create a temporary directory for the executed notebook
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -34,14 +31,14 @@ def test_slope_to_sine_regression():
         pm.execute_notebook(str(input_nb), str(output_nb), kernel_name="python3")
 
         # Load the newly generated stats CSV from the notebook
-        current_csv_path = Path("tests/output/slope_to_sine_stats.csv")
+        current_csv_path = Path("../../tests/output/slope_to_sine_stats.csv")
         if not current_csv_path.exists():
             raise ValueError(f"Output CSV not found at {current_csv_path}")
 
         current = pd.read_csv(current_csv_path)
 
         # Load the expected baseline CSV
-        expected_csv_path = Path("tests/expected/slope_to_sine_stats.csv")
+        expected_csv_path = Path("../../tests/expected/slope_to_sine_stats.csv")
         if not expected_csv_path.exists():
             raise ValueError(f"Expected CSV not found at {expected_csv_path}")
 
