@@ -30,6 +30,22 @@ def test_slope_to_sine_regression():
         # Execute the notebook with Papermill
         pm.execute_notebook(str(input_nb), str(output_nb), kernel_name="python3")
 
+        # Verify the notebook file itself exists
+        assert output_nb.exists(), f"Executed notebook was not created at {output_nb}"
+
+        # Load and verify Papermill metadata
+        import nbformat
+
+        executed_nb = nbformat.read(output_nb, as_version=4)
+        assert (
+            "papermill" in executed_nb.metadata
+        ), "Notebook metadata missing Papermill info."
+        assert any(
+            cell.get("execution_count") for cell in executed_nb.cells
+        ), "No cells executed."
+
+        print("Papermill execution verified successfully.")
+
         # Load the newly generated stats CSV from the notebook
         current_csv_path = Path("../../tests/output/slope_to_sine_stats.csv")
         if not current_csv_path.exists():
