@@ -27,7 +27,8 @@ dev = [
     "black>=24.4.2",
     "ruff>=0.11.0",
     "isort>=5.12.0",
-    "papermill"
+    "papermill",
+    "ipykernel"
 ]
 
 [project.scripts]
