@@ -3,11 +3,61 @@ import tempfile
 import warnings
 from pathlib import Path
 
+import nbformat
 import pandas as pd
 import pandas.testing as pdt
 import papermill as pm
 
 os.chdir("examples/notebooks")
+
+
+def test_linear_transient_to_plateau():
+    # Suppress warnings from Papermill
+    warnings.filterwarnings(
+        "ignore", category=UserWarning, module="papermill.translators"
+    )
+
+    # Define notebook paths
+    input_nb = Path("robust_workflow.ipynb")
+
+    # Create a temporary directory for the executed notebook
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        output_nb = Path(tmpdirname) / "executed_notebook.ipynb"
+
+        # Execute the notebook with Papermill
+        pm.execute_notebook(str(input_nb), str(output_nb), kernel_name="python3")
+
+        # Verify the notebook file itself exists
+        assert output_nb.exists(), f"Executed notebook was not created at {output_nb}"
+
+        executed_nb = nbformat.read(output_nb, as_version=4)
+        assert (
+            "papermill" in executed_nb.metadata
+        ), "Notebook metadata missing Papermill info."
+        assert any(
+            cell.get("execution_count") for cell in executed_nb.cells
+        ), "No cells executed."
+
+        print("Papermill execution verified successfully.")
+
+        # Load the newly generated stats CSV from the notebook
+        current_csv_path = Path("../../tests/output/linear_transient_to_plateau.csv")
+        if not current_csv_path.exists():
+            raise ValueError(f"Output CSV not found at {current_csv_path}")
+
+        current = pd.read_csv(current_csv_path)
+
+        # Load the expected baseline CSV
+        expected_csv_path = Path("../../tests/expected/linear_transient_to_plateau.csv")
+        if not expected_csv_path.exists():
+            raise ValueError(f"Expected CSV not found at {expected_csv_path}")
+
+        expected = pd.read_csv(expected_csv_path)
+
+        # Compare the two DataFrames
+        pdt.assert_frame_equal(current, expected, atol=1e-8, check_dtype=False)
+
+        print("Regression test passed: current results match expected baseline.")
 
 
 def test_slope_to_sine_regression():
@@ -32,9 +82,6 @@ def test_slope_to_sine_regression():
 
         # Verify the notebook file itself exists
         assert output_nb.exists(), f"Executed notebook was not created at {output_nb}"
-
-        # Load and verify Papermill metadata
-        import nbformat
 
         executed_nb = nbformat.read(output_nb, as_version=4)
         assert (
