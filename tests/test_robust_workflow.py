@@ -71,3 +71,7 @@ def test_linear_transient_to_plateau():
 
 def test_slope_to_sine_regression():
     compare_results("slope_to_sine_stats.csv", atol=1e-6)
+
+
+def test_regular_signals_cygro():
+    compare_results("regular_signals_cgyro.csv", atol=1e-6)
