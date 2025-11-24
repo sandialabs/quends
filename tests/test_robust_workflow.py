@@ -75,3 +75,7 @@ def test_slope_to_sine_regression():
 
 def test_regular_signals_cygro():
     compare_results("regular_signals_cgyro.csv", atol=1e-6)
+
+
+def test_regular_signals_gx():
+    compare_results("regular_signals_gx.csv", atol=1e-6)
