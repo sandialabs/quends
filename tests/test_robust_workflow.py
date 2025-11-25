@@ -70,20 +70,24 @@ def test_linear_transient_to_plateau():
 
 
 def test_slope_to_sine_regression():
-    compare_results("slope_to_sine_stats.csv", atol=1e-6)
+    compare_results("slope_to_sine_stats.csv", atol=1e-8)
 
 
 def test_regular_signals_cygro():
-    compare_results("regular_signals_cgyro.csv", atol=1e-6)
+    compare_results("regular_signals_cgyro.csv", atol=1e-8)
 
 
 def test_regular_signals_gx():
-    compare_results("regular_signals_gx.csv", atol=1e-6)
+    compare_results("regular_signals_gx.csv", atol=1e-8)
 
 
 def test_non_stat():
-    compare_results("non-stat.csv", atol=1e-6)
+    compare_results("non-stat.csv", atol=1e-8)
 
 
 def test_non_stat_drop():
-    compare_results("non-stat-drop.csv", atol=1e-6)
+    compare_results("non-stat-drop.csv", atol=1e-8)
+
+
+def test_no_sss():
+    compare_results("no_sss.csv", atol=1e-8)
