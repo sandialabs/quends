@@ -79,3 +79,7 @@ def test_regular_signals_cygro():
 
 def test_regular_signals_gx():
     compare_results("regular_signals_gx.csv", atol=1e-6)
+
+
+def test_non_stat():
+    compare_results("non-stat.csv", atol=1e-6)
