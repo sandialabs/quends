@@ -91,3 +91,22 @@ def test_non_stat_drop():
 
 def test_no_sss():
     compare_results("no_sss.csv", atol=1e-8)
+
+
+def test_batch():
+    batch_files = [
+        "output_nu0_02_batch.csv",
+        "output_nu0_05_batch.csv",
+        "output_nu0_10_batch.csv",
+        "output_nu0_50_batch.csv",
+        "output_nu1_0_batch.csv",
+    ]
+
+    # Execute the notebook once
+    execute_notebook()
+
+    # Compare each batch result CSV
+    for fname in batch_files:
+        current, expected = load_csv_pair(fname)
+        pdt.assert_frame_equal(current, expected, atol=1e-8, check_dtype=False)
+        print(f"Regression test passed for {fname}")
