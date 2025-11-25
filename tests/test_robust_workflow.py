@@ -83,3 +83,7 @@ def test_regular_signals_gx():
 
 def test_non_stat():
     compare_results("non-stat.csv", atol=1e-6)
+
+
+def test_non_stat_drop():
+    compare_results("non-stat-drop.csv", atol=1e-6)
