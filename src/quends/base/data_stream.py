@@ -1216,7 +1216,6 @@ class DataStream:
             n_pts = len(ds.df)
             n_dropped = n_pts_orig - n_pts
             stationary = ds.is_stationary([col])[col]
-
             if workflow._verbosity > 0:
                 if stationary:
                     print(
