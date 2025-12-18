@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from quends import DataStream
+from quends import DataStream, RobustWorkflow
 
 
 # === Fixtures ===
@@ -428,10 +428,6 @@ def test_cumulative_stats_empty(nan_data):
     assert ds.cumulative_statistics(window_size=1) == expected
 
 
-# === Additional Data ===
-import pytest
-
-
 def assert_nested_approx(a, b, rel=1e-8):
     if isinstance(a, dict) and isinstance(b, dict):
         assert a.keys() == b.keys()
@@ -656,7 +652,7 @@ def test_find_steady_state_trim_data(trim_data):
 
 
 def test_find_steady_state_with_start_time(long_data):
-    ds = DataStream(long_data)
+    DataStream(long_data)
     pass  #
 
 
@@ -793,3 +789,103 @@ def test_effective_sample_size_missing_col(long_data):
         ],
     }
     assert result == expected
+
+
+def test_make_stationary_with_stationary_data(stationary_data, workflow):
+    ds = DataStream(stationary_data)
+    col = "A"
+    n_pts_orig = len(stationary_data)
+
+    # Call the method
+    result_ds, stationary = ds.make_stationary(col, n_pts_orig, workflow)
+    print(stationary)
+    # Check if the returned DataStream is indeed stationary
+    assert (
+        stationary == "Error: Invalid input, x is constant"
+    ), "Expected an error message for constant input."
+    assert len(result_ds.df) == n_pts_orig
+
+
+@pytest.fixture
+def workflow():
+    """
+    Deterministic workflow configuration for stationarity tests.
+    """
+    wf = RobustWorkflow(
+        operate_safe=False,
+        verbosity=0,
+        smoothing_window_correction=0.3,
+    )
+    wf._drop_fraction = 0.2
+    wf._n_pts_min = 50
+    wf._n_pts_frac_min = 0.2
+    return wf
+
+
+@pytest.fixture
+def stationary_noise_df():
+    """
+    Already stationary signal.
+    """
+    np.random.seed(0)
+    return pd.DataFrame(
+        {
+            "time": np.arange(300),
+            "A": np.random.normal(0, 1, 300),
+        }
+    )
+
+
+@pytest.fixture
+def slope_to_stationary_df():
+    """
+    Non-stationary trend followed by stationary noise.
+    This is the primary success case.
+    """
+    np.random.seed(42)
+
+    trend = 2 * np.arange(100)
+    stationary = np.random.normal(0, 5, 400)
+
+    signal = np.concatenate([trend, stationary])
+
+    return pd.DataFrame(
+        {
+            "time": np.arange(len(signal)),
+            "A": signal,
+        }
+    )
+
+
+@pytest.fixture
+def pure_trend_df():
+    """
+    Pure non-stationary trend that cannot be fixed by dropping.
+    """
+    x = np.arange(300)
+    return pd.DataFrame(
+        {
+            "time": x,
+            "A": 3 * x + 10,
+        }
+    )
+
+
+def test_make_stationary_already_stationary(stationary_noise_df, workflow):
+    ds = DataStream(stationary_noise_df)
+    n_pts_orig = len(ds.df)
+
+    result_ds, stationary = ds.make_stationary("A", n_pts_orig, workflow)
+
+    assert stationary.any() == np.True_
+    assert len(result_ds.df) == n_pts_orig
+
+
+def test_make_stationary_drops_trend(slope_to_stationary_df, workflow):
+    ds = DataStream(slope_to_stationary_df)
+    n_pts_orig = len(ds.df)
+
+    result_ds, stationary = ds.make_stationary("A", n_pts_orig, workflow)
+
+    assert stationary == np.True_
+    assert len(result_ds.df) < n_pts_orig
