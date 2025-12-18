@@ -791,21 +791,6 @@ def test_effective_sample_size_missing_col(long_data):
     assert result == expected
 
 
-def test_make_stationary_with_stationary_data(stationary_data, workflow):
-    ds = DataStream(stationary_data)
-    col = "A"
-    n_pts_orig = len(stationary_data)
-
-    # Call the method
-    result_ds, stationary = ds.make_stationary(col, n_pts_orig, workflow)
-    print(stationary)
-    # Check if the returned DataStream is indeed stationary
-    assert (
-        stationary == "Error: Invalid input, x is constant"
-    ), "Expected an error message for constant input."
-    assert len(result_ds.df) == n_pts_orig
-
-
 @pytest.fixture
 def workflow():
     """
@@ -813,9 +798,9 @@ def workflow():
     """
     wf = RobustWorkflow(
         operate_safe=False,
-        verbosity=0,
         smoothing_window_correction=0.3,
     )
+    wf._verbosity = 1
     wf._drop_fraction = 0.2
     wf._n_pts_min = 50
     wf._n_pts_frac_min = 0.2
@@ -857,18 +842,19 @@ def slope_to_stationary_df():
     )
 
 
-@pytest.fixture
-def pure_trend_df():
-    """
-    Pure non-stationary trend that cannot be fixed by dropping.
-    """
-    x = np.arange(300)
-    return pd.DataFrame(
-        {
-            "time": x,
-            "A": 3 * x + 10,
-        }
-    )
+def test_make_stationary_with_stationary_data(stationary_data, workflow):
+    ds = DataStream(stationary_data)
+    col = "A"
+    n_pts_orig = len(stationary_data)
+
+    # Call the method
+    result_ds, stationary = ds.make_stationary(col, n_pts_orig, workflow)
+
+    # Check if the returned DataStream is indeed stationary
+    assert (
+        stationary == "Error: Invalid input, x is constant"
+    ), "Expected an error message for constant input."
+    assert len(result_ds.df) == n_pts_orig
 
 
 def test_make_stationary_already_stationary(stationary_noise_df, workflow):
@@ -889,3 +875,52 @@ def test_make_stationary_drops_trend(slope_to_stationary_df, workflow):
 
     assert stationary == np.True_
     assert len(result_ds.df) < n_pts_orig
+
+
+def test_make_stationary_verbose_output(slope_to_stationary_df, workflow, capsys):
+    """
+    Test that verbose output is printed when data becomes stationary after dropping.
+    """
+    ds = DataStream(slope_to_stationary_df)
+    n_pts_orig = len(ds.df)
+
+    result_ds, stationary = ds.make_stationary("A", n_pts_orig, workflow)
+
+    captured = capsys.readouterr()
+    assert "stationary after dropping first" in captured.out
+
+
+@pytest.fixture
+def persistent_trend_df():
+    """
+    Strong non-stationary trend that persists even after dropping 20% of data.
+    Designed to fail stationarity tests even after point removal.
+    """
+    np.random.seed(123)
+    x = np.arange(500)  # More points to ensure enough remain after dropping
+    # Strong trend with some noise
+    signal = 5 * x + np.random.normal(0, 10, 500)
+
+    return pd.DataFrame(
+        {
+            "time": x,
+            "A": signal,
+        }
+    )
+
+
+def test_make_stationary_verbose_output_fails(persistent_trend_df, workflow, capsys):
+    """
+    Test that verbose output is printed when data fails to become stationary.
+    """
+    ds = DataStream(persistent_trend_df)
+    n_pts_orig = len(ds.df)
+
+    result_ds, stationary = ds.make_stationary("A", n_pts_orig, workflow)
+
+    captured = capsys.readouterr()
+    print(f"Captured output: '{captured.out}'")
+    print(f"Stationary result: {stationary}")
+    print(f"Points remaining: {len(result_ds.df)}/{n_pts_orig}")
+
+    assert "not stationary" in captured.out
