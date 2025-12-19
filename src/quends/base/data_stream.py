@@ -1,7 +1,10 @@
 import math
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import scipy.stats as sts
+import statsmodels.tsa.stattools as ststls
 from scipy.optimize import curve_fit
 from scipy.stats import norm, rankdata
 from sklearn.preprocessing import MinMaxScaler
@@ -278,6 +281,279 @@ class DataStream:
             )
             new_history.append({"operation": "trim", "options": options})
             return DataStream(self.df.iloc[0:0].copy(), _history=new_history)
+
+    def trim_sss_start(self, col, workflow):
+        """
+        Identify and trim the signal to the start of the Statistical Steady State (SSS)
+
+        Parameters
+        ----------
+        col : str
+            The name of the column in `self.df` to analyze for steady state.
+        workflow : object
+            A configuration/workflow object containing parameters:
+            - `_max_lag_frac`: Fraction of data used for autocorrelation lag.
+            - `_verbosity`: Integer controlling plot and print output levels.
+            - `_autocorr_sig_level`: Significance level for the Z-test on lags.
+            - `_decor_multiplier`: Multiplier for the calculated decorrelation length.
+            - `_std_dev_frac`: Fraction of standard deviation used for tolerance.
+            - `_fudge_fac`: Constant to prevent zero-tolerance in noiseless signals.
+            - `_smoothing_window_correction`: Factor to adjust for rolling mean lag.
+            - `_final_smoothing_window`: Window size for smoothing the metric curves.
+
+        Returns
+        -------
+        DataStream
+            A new DataStream object containing the DataFrame trimmed to the SSS start.
+            Returns an empty DataFrame if no SSS is identified.
+        """
+        # Get the decorrelation length (in number of points)
+        # Note: this approach assumes signal points are spaced equally in time
+        n_pts = len(self.df)
+        max_lag = int(workflow._max_lag_frac * n_pts)  # max lag for autocorrelation
+
+        acf_vals = ststls.acf(self.df[col].dropna().values, nlags=max_lag)
+
+        # plot the autocorrelation function
+        if workflow._verbosity > 1:
+            plt.figure(figsize=(10, 6))
+            plt.stem(range(len(acf_vals)), acf_vals)
+            plt.xlabel("Lag")
+            plt.ylabel("Autocorrelation")
+            plt.title("Autocorrelation Function")
+            plt.grid()
+            plt.show()
+            plt.close()
+
+        # Use rigorous statistical measure for decorrelation length
+        z_critical = sts.norm.ppf(1 - workflow._autocorr_sig_level / 2)
+        conf_interval = z_critical / np.sqrt(n_pts)
+        significant_lags = np.where(np.abs(acf_vals[1:]) > conf_interval)[0]
+        acf_sum = np.sum(np.abs(acf_vals[1:][significant_lags]))
+        decor_length = int(np.ceil(1 + 2 * acf_sum))
+
+        # Set smoothing window as multiple of decorrelation length, but not more than max_lag
+        decor_index = min(int(workflow._decor_multiplier * decor_length), max_lag)
+
+        if workflow._verbosity > 0:
+            print(
+                f"stats decorrelation length {decor_length} gives smoothing window of {decor_index} points."
+            )
+
+        # Smooth signal with rolling mean over window size based on decorrelation length
+        rolling_window = max(3, decor_index)  # at least 3 points in window
+        col_smoothed = (
+            self.df[col].rolling(window=rolling_window).mean()
+        )  # get smoothed column as Series
+        col_sm_flld = col_smoothed.bfill()  # fill initial NaNs with first valid value
+        # create new DataFrame with time and smoothed flux
+        df_smoothed = pd.DataFrame({"time": self.df["time"], col: col_sm_flld})
+
+        # Compute std dev of original signal from current location till end of signal
+        std_dev_till_end = np.empty((n_pts,), dtype=float)
+        for i in range(n_pts):
+            std_dev_till_end[i] = np.std(self.df[col].iloc[i:])
+        # turn this into a pandas series with same index as col_smoothed
+        std_dev_till_end_series = pd.Series(std_dev_till_end, index=self.df.index)
+        # Smooth this std dev to avoid it going to zero at end of signal
+        std_dev_smoothed = std_dev_till_end_series.rolling(
+            window=workflow._final_smoothing_window
+        ).mean()
+        # Fill initial NaNs with the first valid smoothed std dev value
+        std_dev_sm_flld = std_dev_smoothed.bfill()
+
+        # create new DataFrame with time and std dev till end of signal
+        df_std_dev = pd.DataFrame(
+            {"time": self.df["time"], col + "_std_till_end": std_dev_sm_flld}
+        )
+
+        # start time of smoothed signal
+        smoothed_start_time = df_smoothed["time"].iloc[rolling_window - 1]
+
+        # plot smoothed signal and related quantities
+        if workflow._verbosity > 1:
+            plt.figure(figsize=(10, 6))
+            plt.plot(
+                self.df["time"],
+                self.df[col],
+                label="Original Signal",
+                alpha=0.5,
+            )
+            plt.plot(
+                df_smoothed["time"],
+                df_smoothed[col],
+                label="Smoothed Signal",
+                color="orange",
+            )
+            plt.plot(
+                df_std_dev["time"],
+                df_std_dev[col + "_std_till_end"],
+                label="Smoothed Std Dev Till End",
+                color="green",
+            )
+            plt.axvline(
+                x=smoothed_start_time,
+                color="g",
+                linestyle="--",
+                label="First smoothed point",
+            )
+            plt.xlabel("Time")
+            plt.ylabel(col)
+            plt.title("Original and Smoothed Signal")
+            plt.legend()
+            plt.grid()
+            plt.show()
+            plt.close()
+
+        if workflow._verbosity > 0:
+            print("Getting start of SSS based on smoothed signal:")
+
+        # Get start of SSS based on where the value of the flux in the smoothed signal
+        # is close to the mean of the remaining signal.
+
+        # At each location, compute the mean of the remaining smoothed signal
+        n_pts_smoothed = len(df_smoothed)
+        mean_vals = np.empty((n_pts_smoothed,), dtype=float)
+
+        for i in range(n_pts_smoothed):
+            mean_vals[i] = np.mean(df_smoothed[col].iloc[i:])
+
+        # Check where the current value of the smoothed signal is within tol_fac of the mean of the remaining signal
+        deviation_arr = np.abs(df_smoothed[col] - mean_vals)
+
+        # smooth this so the deviation does not go to zero at end of signal by construction
+        # turn this into a pandas series with same index as col_smoothed
+        deviation_series = pd.Series(deviation_arr, index=self.df.index)
+        # Smooth this std dev to avoid it going to zero at end of signal
+        deviation_smoothed = deviation_series.rolling(
+            window=workflow._final_smoothing_window
+        ).mean()
+        # Fill initial NaNs with the first valid smoothed std dev value
+        deviation_sm_flld = deviation_smoothed.bfill()
+        # Build a dataframe for the deviation
+        deviation = pd.DataFrame(
+            {"time": self.df["time"], col + "_deviation": deviation_sm_flld}
+        )
+
+        # Compute tolerance on variation in the mean of the smoothed signal as
+        # stdv_frac * (std dev till end + a fudge factor * mean value at start of smoothed signal)
+        # fudge factor is for in case there is no noise (and to guard against the tolerance
+        # factor going to zero when std dev gets very small at end of signal)
+        tol_fac = workflow._std_dev_frac * (
+            df_std_dev[col + "_std_till_end"] + workflow._fudge_fac * abs(mean_vals[0])
+        )
+        tolerance = tol_fac * np.abs(mean_vals)
+
+        within_tolerance_all = deviation[col + "_deviation"] <= tolerance
+        # Only consider points after the smoothed signal has started
+        within_tolerance = within_tolerance_all & (
+            df_smoothed["time"] >= smoothed_start_time
+        )
+        # First index where we are within tolerance
+        sss_index = np.where(within_tolerance)[0]
+
+        # See if there is a segment where ALL remaining points are within tolerance
+        crit_met_index = None
+        if len(sss_index) > 0:
+            # find the segment where ALL remaining points are within tolerance
+            for idx in sss_index:
+                if np.all(within_tolerance[idx:]):
+                    crit_met_index = idx
+                    break
+
+        if crit_met_index is not None:  # We have a SSS segment
+            # Time where criterion has been met
+            criterion_time = df_smoothed["time"].iloc[crit_met_index]
+            # Take into account that the signal at the point where the criterion has been met is a result
+            # of averaging over the rolling window. So set the start of SSS near the start of the rolling window
+            # but not all the way at the beginning of the rolling window as there is usually still some transient.
+            true_sss_start_index = max(
+                0,
+                int(
+                    crit_met_index
+                    - workflow._smoothing_window_correction * rolling_window
+                ),
+            )
+            sss_start_time = df_smoothed["time"].iloc[true_sss_start_index]
+
+            if workflow._verbosity > 0:
+                print(f"Index where criterion is met: {crit_met_index}")
+                print(f"Rolling window: {rolling_window}")
+                print(f"time where criterion is met: {criterion_time}")
+                print(
+                    f"time at start of SSS (adjusted for rolling window): {sss_start_time}"
+                )
+
+            # Plot deviation and tolerance vs. time
+            if workflow._verbosity > 1:
+                plt.figure(figsize=(10, 6))
+                plt.plot(
+                    df_smoothed["time"],
+                    deviation[col + "_deviation"],
+                    label="Deviation",
+                    color="blue",
+                )
+                plt.plot(
+                    df_smoothed["time"],
+                    tolerance,
+                    label="Tolerance",
+                    color="orange",
+                )
+                plt.axvline(
+                    x=criterion_time,
+                    color="g",
+                    linestyle="--",
+                    label="Small Change Criterion Met",
+                )
+                plt.axvline(
+                    x=sss_start_time, color="r", linestyle="--", label="Start SSS"
+                )
+                plt.xlabel("Time")
+                plt.ylabel("Value")
+                plt.title("Deviation and Tolerance vs. Time")
+                plt.legend()
+                plt.grid()
+                plt.show()
+                plt.close()
+
+            # Trim the original data frame to start at this location minus the smoothing window
+            trimmed_df = self.df[self.df["time"] >= sss_start_time]
+            # Reset the index so it starts at 0
+            trimmed_df = trimmed_df.reset_index(drop=True)
+            # Create new data stream from trimmed data frame
+            trimmed_stream = DataStream(trimmed_df)
+
+        else:
+            if workflow._verbosity > 0:
+                print("No SSS found based on behavior of mean of smoothed signal.")
+            trimmed_stream = pd.DataFrame(
+                columns=["time", "flux"]
+            )  # Create empty DataFrame with same columns as original
+
+            # Plot deviation and tolerance vs. time
+            if workflow._verbosity > 1:
+                plt.figure(figsize=(10, 6))
+                plt.plot(
+                    df_smoothed["time"],
+                    deviation[col + "_deviation"],
+                    label="Deviation",
+                    color="blue",
+                )
+                plt.plot(
+                    df_smoothed["time"],
+                    tolerance,
+                    label="Tolerance",
+                    color="orange",
+                )
+                plt.xlabel("Time")
+                plt.ylabel("Value")
+                plt.title("Deviation and Tolerance vs. Time")
+                plt.legend()
+                plt.grid()
+                plt.show()
+                plt.close()
+
+        return trimmed_stream
 
     @staticmethod
     def find_steady_state_std(data, column_name, window_size=10, robust=True):
