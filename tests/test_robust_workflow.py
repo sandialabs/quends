@@ -8,6 +8,7 @@ import nbformat
 import pandas as pd
 import pandas.testing as pdt
 import papermill as pm
+import pytest
 
 os.chdir("examples/notebooks")
 
@@ -57,12 +58,18 @@ def load_csv_pair(filename: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
 
 def compare_results(filename: str, atol: float = 1e-8):
     """Execute notebook and compare results against expected baseline."""
-    execute_notebook()
     current, expected = load_csv_pair(filename)
     pdt.assert_frame_equal(current, expected, atol=atol, check_dtype=False)
     print(
         f"Regression test passed for {filename}: current results match expected baseline."
     )
+
+
+# Execute notebook once before all tests
+@pytest.fixture(scope="module", autouse=True)
+def setup_module():
+    """Execute notebook once before running all tests."""
+    execute_notebook()
 
 
 def test_linear_transient_to_plateau():
