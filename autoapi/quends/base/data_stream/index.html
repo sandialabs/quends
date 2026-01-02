@@ -1,0 +1,1020 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>quends.base.data_stream &#8212; QUENDS 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=34bb78ad" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/quends/base/data_stream/index';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="quends.base.ensemble" href="../ensemble/index.html" />
+    <link rel="prev" title="quends.base" href="../index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jan 02, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">QUENDS 0.1.0 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../readme.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../../index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../../index.html">quends</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="../index.html">quends.base</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">quends.base.data_stream</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ensemble/index.html">quends.base.ensemble</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/index.html">quends.cli</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../postprocessing/index.html">quends.postprocessing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../postprocessing/exporter/index.html">quends.postprocessing.exporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../postprocessing/plotter/index.html">quends.postprocessing.plotter</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../preprocessing/index.html">quends.preprocessing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../preprocessing/csv/index.html">quends.preprocessing.csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../preprocessing/dictionary/index.html">quends.preprocessing.dictionary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../preprocessing/gx/index.html">quends.preprocessing.gx</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../preprocessing/json/index.html">quends.preprocessing.json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../preprocessing/netcdf/index.html">quends.preprocessing.netcdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../preprocessing/numpy/index.html">quends.preprocessing.numpy</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../workflow/index.html">quends.workflow</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../workflow/robust_workflow/index.html">quends.workflow.robust_workflow</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../auto_tutorials/index.html">Software Tutorial</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../auto_tutorials/datastream_guide.html">DataStream Class</a></li>
+
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../../_sources/autoapi/quends/base/data_stream/index.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>quends.base.data_stream</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.deduplicate_history"><code class="docutils literal notranslate"><span class="pre">deduplicate_history()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.to_native_types"><code class="docutils literal notranslate"><span class="pre">to_native_types()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream"><code class="docutils literal notranslate"><span class="pre">DataStream</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.df"><code class="docutils literal notranslate"><span class="pre">DataStream.df</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.get_metadata"><code class="docutils literal notranslate"><span class="pre">DataStream.get_metadata()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.head"><code class="docutils literal notranslate"><span class="pre">DataStream.head()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.variables"><code class="docutils literal notranslate"><span class="pre">DataStream.variables()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.trim"><code class="docutils literal notranslate"><span class="pre">DataStream.trim()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.trim_sss_start"><code class="docutils literal notranslate"><span class="pre">DataStream.trim_sss_start()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.find_steady_state_std"><code class="docutils literal notranslate"><span class="pre">DataStream.find_steady_state_std()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.find_steady_state_rolling_variance"><code class="docutils literal notranslate"><span class="pre">DataStream.find_steady_state_rolling_variance()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.normalize_data"><code class="docutils literal notranslate"><span class="pre">DataStream.normalize_data()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.find_steady_state_threshold"><code class="docutils literal notranslate"><span class="pre">DataStream.find_steady_state_threshold()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.effective_sample_size"><code class="docutils literal notranslate"><span class="pre">DataStream.effective_sample_size()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.robust_effective_sample_size"><code class="docutils literal notranslate"><span class="pre">DataStream.robust_effective_sample_size()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.ess_robust"><code class="docutils literal notranslate"><span class="pre">DataStream.ess_robust()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.compute_statistics"><code class="docutils literal notranslate"><span class="pre">DataStream.compute_statistics()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.cumulative_statistics"><code class="docutils literal notranslate"><span class="pre">DataStream.cumulative_statistics()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.additional_data"><code class="docutils literal notranslate"><span class="pre">DataStream.additional_data()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.is_stationary"><code class="docutils literal notranslate"><span class="pre">DataStream.is_stationary()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.make_stationary"><code class="docutils literal notranslate"><span class="pre">DataStream.make_stationary()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.mean"><code class="docutils literal notranslate"><span class="pre">DataStream.mean()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.mean_uncertainty"><code class="docutils literal notranslate"><span class="pre">DataStream.mean_uncertainty()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.confidence_interval"><code class="docutils literal notranslate"><span class="pre">DataStream.confidence_interval()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.optimal_window_size"><code class="docutils literal notranslate"><span class="pre">DataStream.optimal_window_size()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.effective_sample_size_below"><code class="docutils literal notranslate"><span class="pre">DataStream.effective_sample_size_below()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-quends.base.data_stream">
+<span id="quends-base-data-stream"></span><h1>quends.base.data_stream<a class="headerlink" href="#module-quends.base.data_stream" title="Link to this heading">#</a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quends.base.data_stream.DataStream" title="quends.base.data_stream.DataStream"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataStream</span></code></a></p></td>
+<td><p>A pipeline for time-series and simulation trace analysis with provenance tracking.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quends.base.data_stream.deduplicate_history" title="quends.base.data_stream.deduplicate_history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deduplicate_history</span></code></a>(history)</p></td>
+<td><p>Remove duplicate operations from a history list, keeping only the most recent occurrence of each operation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#quends.base.data_stream.to_native_types" title="quends.base.data_stream.to_native_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_native_types</span></code></a>(obj)</p></td>
+<td><p>Recursively convert NumPy scalar and array types in nested structures to native Python types.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="quends.base.data_stream.deduplicate_history">
+<span class="sig-prename descclassname"><span class="pre">quends.base.data_stream.</span></span><span class="sig-name descname"><span class="pre">deduplicate_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">history</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.deduplicate_history" title="Link to this definition">#</a></dt>
+<dd><p>Remove duplicate operations from a history list, keeping only the most recent occurrence of each operation.</p>
+<p>Scans the history of operations (each represented as a dict with at least an ‘operation’ key)
+from end to start, retaining only the last entry for each unique operation name while preserving
+the overall order of those final occurrences.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>history<span class="classifier">list of dict</span></dt><dd><dl class="simple">
+<dt>Each dict must contain:</dt><dd><ul class="simple">
+<li><p>‘operation’: str, the name of the operation.</p></li>
+<li><p>additional keys for operation-specific metadata (e.g., ‘options’).</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>list of dict</dt><dd><p>A filtered list with only the final entry of each operation, ordered as in the original list.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="quends.base.data_stream.to_native_types">
+<span class="sig-prename descclassname"><span class="pre">quends.base.data_stream.</span></span><span class="sig-name descname"><span class="pre">to_native_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.to_native_types" title="Link to this definition">#</a></dt>
+<dd><p>Recursively convert NumPy scalar and array types in nested structures to native Python types.</p>
+<p>This function walks through dictionaries, lists, tuples, NumPy scalars, and arrays,
+converting them into Python built-ins:</p>
+<ul class="simple">
+<li><p>NumPy scalar → Python int or float</p></li>
+<li><p>NumPy array  → Python list (recursively)</p></li>
+</ul>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>obj<span class="classifier">any</span></dt><dd><p>The object to convert. Supported container types are dict, list, tuple,
+NumPy ndarray/scalar. Other types are returned unchanged.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>any</dt><dd><p>A new object mirroring the input structure but with all NumPy data types replaced
+by their native Python equivalents.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quends.base.data_stream.</span></span><span class="sig-name descname"><span class="pre">DataStream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream" title="Link to this definition">#</a></dt>
+<dd><p>A pipeline for time-series and simulation trace analysis with provenance tracking.</p>
+<p>DataStream encapsulates a pandas DataFrame with a required ‘time’ column and any number of
+signal columns.  All analysis methods record their operation name and options in an internal
+history, and returned results include deduplicated metadata lineage.</p>
+<p>Core features include:
+- Stationarity testing and steady-state trimming via multiple methods.
+- Statistical summaries: means, uncertainties, confidence intervals, and effective sample size (ESS).
+- Robust ESS estimation using rank-based and pairwise correlation techniques.
+- Incremental and cumulative statistics, plus sample-size planning via power-law fits.</p>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>df<span class="classifier">pandas.DataFrame</span></dt><dd><p>The underlying time-series data, with ‘time’ as one column.</p>
+</dd>
+<dt>_history<span class="classifier">list of dict</span></dt><dd><p>Records of all operations performed, including their options.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.df">
+<span class="sig-name descname"><span class="pre">df</span></span><a class="headerlink" href="#quends.base.data_stream.DataStream.df" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.get_metadata">
+<span class="sig-name descname"><span class="pre">get_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.get_metadata" title="Link to this definition">#</a></dt>
+<dd><p>Return the deduplicated operation history for this DataStream.
+Returns
+——-</p>
+<blockquote>
+<div><p>list of dict
+The deduplicated operation history, with options for each operation.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.head">
+<span class="sig-name descname"><span class="pre">head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.head" title="Link to this definition">#</a></dt>
+<dd><p>Return the first <cite>n</cite> rows of the underlying DataFrame.</p>
+<section id="id3">
+<h4>Parameters<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>n<span class="classifier">int, optional</span></dt><dd><p>Number of rows to return. Defaults to 5.</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h4>Returns<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>pandas.DataFrame</dt><dd><p>The first <cite>n</cite> rows of the DataFrame.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.variables">
+<span class="sig-name descname"><span class="pre">variables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.variables" title="Link to this definition">#</a></dt>
+<dd><p>List the signal variable (column) names, excluding the ‘time’ column.</p>
+<section id="id5">
+<h4>Returns<a class="headerlink" href="#id5" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>Index</dt><dd><p>ColumnIndex of variable names in <cite>self.df</cite>.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.trim">
+<span class="sig-name descname"><span class="pre">trim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'std'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.trim" title="Link to this definition">#</a></dt>
+<dd><p>Trim the DataStream to its steady-state portion based on a chosen detection method.
+Always returns a DataStream (possibly empty if trim fails), with operation metadata
+and any messages stored in the _history attribute.</p>
+<section id="id6">
+<h4>Parameters<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>column_name<span class="classifier">str</span></dt><dd><p>Name of the signal column to analyze for steady-state.</p>
+</dd>
+<dt>batch_size<span class="classifier">int, default=10</span></dt><dd><p>Window size for steady-state detection.</p>
+</dd>
+<dt>start_time<span class="classifier">float, default=0.0</span></dt><dd><p>Earliest time to consider in the analysis.</p>
+</dd>
+<dt>method<span class="classifier">{‘std’, ‘threshold’, ‘rolling_variance’}, default=’std’</span></dt><dd><p>Detection method:
+- ‘std’: sliding std-based criteria (requires stationarity).
+- ‘threshold’: rolling-std threshold (requires <cite>threshold</cite>).
+- ‘rolling_variance’: comparison to mean variance times <cite>threshold</cite>.</p>
+</dd>
+<dt>threshold<span class="classifier">float or None</span></dt><dd><p>Threshold value for the ‘threshold’ or ‘rolling_variance’ methods.</p>
+</dd>
+<dt>robust<span class="classifier">bool, default=True</span></dt><dd><p>Use median/MAD instead of mean/std for the ‘std’ method.</p>
+</dd>
+</dl>
+</section>
+<section id="id7">
+<h4>Returns<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>DataStream</dt><dd><p>New DataStream containing the trimmed data, or empty if trimming failed.
+Operation metadata and any messages are in the ._history attribute.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.trim_sss_start">
+<span class="sig-name descname"><span class="pre">trim_sss_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workflow</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.trim_sss_start" title="Link to this definition">#</a></dt>
+<dd><p>Identify and trim the signal to the start of the Statistical Steady State (SSS)</p>
+<section id="id8">
+<h4>Parameters<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>col<span class="classifier">str</span></dt><dd><p>The name of the column in <cite>self.df</cite> to analyze for steady state.</p>
+</dd>
+<dt>workflow<span class="classifier">object</span></dt><dd><p>A configuration/workflow object containing parameters:
+- <cite>_max_lag_frac</cite>: Fraction of data used for autocorrelation lag.
+- <cite>_verbosity</cite>: Integer controlling plot and print output levels.
+- <cite>_autocorr_sig_level</cite>: Significance level for the Z-test on lags.
+- <cite>_decor_multiplier</cite>: Multiplier for the calculated decorrelation length.
+- <cite>_std_dev_frac</cite>: Fraction of standard deviation used for tolerance.
+- <cite>_fudge_fac</cite>: Constant to prevent zero-tolerance in noiseless signals.
+- <cite>_smoothing_window_correction</cite>: Factor to adjust for rolling mean lag.
+- <cite>_final_smoothing_window</cite>: Window size for smoothing the metric curves.</p>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h4>Returns<a class="headerlink" href="#id9" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>DataStream</dt><dd><p>A new DataStream object containing the DataFrame trimmed to the SSS start.
+Returns an empty DataFrame if no SSS is identified.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.find_steady_state_std">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_steady_state_std</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.find_steady_state_std" title="Link to this definition">#</a></dt>
+<dd><p>Identify the earliest time point when the signal remains within ±1/2/3σ proportions.</p>
+<section id="id10">
+<h4>Parameters<a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>data<span class="classifier">DataFrame</span></dt><dd><p>Subset of the original df (must include ‘time’ and signal column).</p>
+</dd>
+</dl>
+<p>column_name : str
+window_size : int</p>
+<blockquote>
+<div><p>Number of samples to evaluate the steady-state criteria.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>robust<span class="classifier">bool</span></dt><dd><p>If True, use median and MAD; else mean and std.</p>
+</dd>
+</dl>
+</section>
+<section id="id11">
+<h4>Returns<a class="headerlink" href="#id11" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>float or None</dt><dd><p>Detected start time of steady-state, or None if not found.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.find_steady_state_rolling_variance">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_steady_state_rolling_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.find_steady_state_rolling_variance" title="Link to this definition">#</a></dt>
+<dd><p>Detect steady-state when rolling variance falls below a fraction of its mean.</p>
+<section id="id12">
+<h4>Parameters<a class="headerlink" href="#id12" title="Link to this heading">#</a></h4>
+<p>data : DataFrame
+column_name : str
+window_size : int
+threshold : float</p>
+<blockquote>
+<div><p>Fraction of mean rolling std below which to consider steady-state.</p>
+</div></blockquote>
+</section>
+<section id="id13">
+<h4>Returns<a class="headerlink" href="#id13" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>float or None</dt><dd><p>Time of first below-threshold variance, or None.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.normalize_data">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalize_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.normalize_data" title="Link to this definition">#</a></dt>
+<dd><p>Min-Max normalize all signal columns (excluding ‘time’) to [0,1].</p>
+<section id="id14">
+<h4>Parameters<a class="headerlink" href="#id14" title="Link to this heading">#</a></h4>
+<p>df : pandas.DataFrame</p>
+</section>
+<section id="id15">
+<h4>Returns<a class="headerlink" href="#id15" title="Link to this heading">#</a></h4>
+<p>pandas.DataFrame</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.find_steady_state_threshold">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_steady_state_threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.find_steady_state_threshold" title="Link to this definition">#</a></dt>
+<dd><p>Use rolling standard deviation on normalized data to detect steady-state.</p>
+<section id="id16">
+<h4>Parameters<a class="headerlink" href="#id16" title="Link to this heading">#</a></h4>
+<p>data : DataFrame
+column_name : str
+window_size : int
+threshold : float</p>
+<blockquote>
+<div><p>Std threshold under which to mark steady-state.</p>
+</div></blockquote>
+</section>
+<section id="id17">
+<h4>Returns<a class="headerlink" href="#id17" title="Link to this heading">#</a></h4>
+<p>float or None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.effective_sample_size">
+<span class="sig-name descname"><span class="pre">effective_sample_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.effective_sample_size" title="Link to this definition">#</a></dt>
+<dd><p>Compute classic ESS based on significant autocorrelation lags.</p>
+<p>Records the operation in history.</p>
+<section id="id18">
+<h4>Parameters<a class="headerlink" href="#id18" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>column_names<span class="classifier">str or list of str or None</span></dt><dd><p>Columns to compute ESS for; defaults to all except ‘time’.</p>
+</dd>
+<dt>alpha<span class="classifier">float</span></dt><dd><p>Significance level for autocorrelation cutoff.</p>
+</dd>
+</dl>
+</section>
+<section id="id19">
+<h4>Returns<a class="headerlink" href="#id19" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>dict</dt><dd><p>{‘results’: {col: ESS_int or message}, ‘metadata’: history}</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.robust_effective_sample_size">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">robust_effective_sample_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank_normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_relative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.robust_effective_sample_size" title="Link to this definition">#</a></dt>
+<dd><p>Compute a robust ESS via pairwise autocorrelations and optional rank-normalization.</p>
+<section id="id20">
+<h4>Parameters<a class="headerlink" href="#id20" title="Link to this heading">#</a></h4>
+<p>x : array-like
+rank_normalize : bool
+min_samples : int
+return_relative : bool</p>
+</section>
+<section id="id21">
+<h4>Returns<a class="headerlink" href="#id21" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>float or tuple</dt><dd><p>ESS (and ESS/n ratio if return_relative).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.ess_robust">
+<span class="sig-name descname"><span class="pre">ess_robust</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank_normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_relative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.ess_robust" title="Link to this definition">#</a></dt>
+<dd><p>Wrapper for <cite>robust_effective_sample_size</cite> over multiple columns.</p>
+<p>Records the operation in history.</p>
+<section id="id22">
+<h4>Parameters<a class="headerlink" href="#id22" title="Link to this heading">#</a></h4>
+<p>column_names : str or list or None
+rank_normalize : bool
+min_samples : int
+return_relative : bool</p>
+</section>
+<section id="id23">
+<h4>Returns<a class="headerlink" href="#id23" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>dict</dt><dd><p>{‘results’: {col: ESS or tuple}, ‘metadata’: history}</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.compute_statistics">
+<span class="sig-name descname"><span class="pre">compute_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.compute_statistics" title="Link to this definition">#</a></dt>
+<dd><p>Aggregate statistics: mean, uncertainty, CI, pm_std bounds, ESS, and window size.</p>
+<p>Appends the operation to history and embeds deduplicated metadata in the results.</p>
+<section id="id24">
+<h4>Parameters<a class="headerlink" href="#id24" title="Link to this heading">#</a></h4>
+<p>column_name : str or list or None
+ddof : int
+method : {‘sliding’, ‘non-overlapping’}
+window_size : int or None</p>
+</section>
+<section id="id25">
+<h4>Returns<a class="headerlink" href="#id25" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>dict</dt><dd><p>{col: {statistics…}, ‘metadata’: history}</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.cumulative_statistics">
+<span class="sig-name descname"><span class="pre">cumulative_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.cumulative_statistics" title="Link to this definition">#</a></dt>
+<dd><p>Generate cumulative mean and uncertainty time series for each column.</p>
+<p>Records operation and returns per-column cumulative arrays plus window_size.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.additional_data">
+<span class="sig-name descname"><span class="pre">additional_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sliding'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.additional_data" title="Link to this definition">#</a></dt>
+<dd><p>Estimate additional sample size needed to reduce SEM by <cite>reduction_factor</cite> via power-law fit.</p>
+<p>Records operation and returns model parameters and sample projections.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.is_stationary">
+<span class="sig-name descname"><span class="pre">is_stationary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.is_stationary" title="Link to this definition">#</a></dt>
+<dd><p>Perform Augmented Dickey-Fuller test for each specified column.</p>
+<p>Records operation in history and returns a dict of bool or error.</p>
+<section id="id26">
+<h4>Parameters<a class="headerlink" href="#id26" title="Link to this heading">#</a></h4>
+<p>columns : str or list of str</p>
+</section>
+<section id="id27">
+<h4>Returns<a class="headerlink" href="#id27" title="Link to this heading">#</a></h4>
+<dl class="simple">
+<dt>dict</dt><dd><p>{column: True if stationary (p&lt;0.05), else False or error message}</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.make_stationary">
+<span class="sig-name descname"><span class="pre">make_stationary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pts_orig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workflow</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.make_stationary" title="Link to this definition">#</a></dt>
+<dd><p>Attempt to make the data stream into being stationary by removing an initial
+fraction of data.</p>
+<section id="id28">
+<h4>Parameters<a class="headerlink" href="#id28" title="Link to this heading">#</a></h4>
+<p>col : str
+n_pts_orig : int
+workflow : RobustWorkflow</p>
+</section>
+<section id="id29">
+<h4>Returns<a class="headerlink" href="#id29" title="Link to this heading">#</a></h4>
+<p>self : DataStream
+stationary : bool</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.mean">
+<span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.mean" title="Link to this definition">#</a></dt>
+<dd><p>Legacy wrapper for test compatibility. Returns only mean (not dict).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.mean_uncertainty">
+<span class="sig-name descname"><span class="pre">mean_uncertainty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.mean_uncertainty" title="Link to this definition">#</a></dt>
+<dd><p>Legacy wrapper for test compatibility. Returns only mean_uncertainty (not dict).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.confidence_interval">
+<span class="sig-name descname"><span class="pre">confidence_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-overlapping'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.confidence_interval" title="Link to this definition">#</a></dt>
+<dd><p>Legacy wrapper for test compatibility. Returns only CI tuple.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.optimal_window_size">
+<span class="sig-name descname"><span class="pre">optimal_window_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sliding'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.optimal_window_size" title="Link to this definition">#</a></dt>
+<dd><p>Stub for compatibility. Return a default or best-guess window size.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.base.data_stream.DataStream.effective_sample_size_below">
+<span class="sig-name descname"><span class="pre">effective_sample_size_below</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.base.data_stream.DataStream.effective_sample_size_below" title="Link to this definition">#</a></dt>
+<dd><p>Stub for compatibility with legacy test. Returns dummy value.</p>
+</dd></dl>
+
+</section>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pandas.DataFrame</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">quends.base</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ensemble/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">quends.base.ensemble</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.deduplicate_history"><code class="docutils literal notranslate"><span class="pre">deduplicate_history()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.to_native_types"><code class="docutils literal notranslate"><span class="pre">to_native_types()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream"><code class="docutils literal notranslate"><span class="pre">DataStream</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.df"><code class="docutils literal notranslate"><span class="pre">DataStream.df</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.get_metadata"><code class="docutils literal notranslate"><span class="pre">DataStream.get_metadata()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.head"><code class="docutils literal notranslate"><span class="pre">DataStream.head()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.variables"><code class="docutils literal notranslate"><span class="pre">DataStream.variables()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.trim"><code class="docutils literal notranslate"><span class="pre">DataStream.trim()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.trim_sss_start"><code class="docutils literal notranslate"><span class="pre">DataStream.trim_sss_start()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.find_steady_state_std"><code class="docutils literal notranslate"><span class="pre">DataStream.find_steady_state_std()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.find_steady_state_rolling_variance"><code class="docutils literal notranslate"><span class="pre">DataStream.find_steady_state_rolling_variance()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.normalize_data"><code class="docutils literal notranslate"><span class="pre">DataStream.normalize_data()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.find_steady_state_threshold"><code class="docutils literal notranslate"><span class="pre">DataStream.find_steady_state_threshold()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.effective_sample_size"><code class="docutils literal notranslate"><span class="pre">DataStream.effective_sample_size()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.robust_effective_sample_size"><code class="docutils literal notranslate"><span class="pre">DataStream.robust_effective_sample_size()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.ess_robust"><code class="docutils literal notranslate"><span class="pre">DataStream.ess_robust()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.compute_statistics"><code class="docutils literal notranslate"><span class="pre">DataStream.compute_statistics()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.cumulative_statistics"><code class="docutils literal notranslate"><span class="pre">DataStream.cumulative_statistics()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.additional_data"><code class="docutils literal notranslate"><span class="pre">DataStream.additional_data()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.is_stationary"><code class="docutils literal notranslate"><span class="pre">DataStream.is_stationary()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.make_stationary"><code class="docutils literal notranslate"><span class="pre">DataStream.make_stationary()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.mean"><code class="docutils literal notranslate"><span class="pre">DataStream.mean()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.mean_uncertainty"><code class="docutils literal notranslate"><span class="pre">DataStream.mean_uncertainty()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.confidence_interval"><code class="docutils literal notranslate"><span class="pre">DataStream.confidence_interval()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.optimal_window_size"><code class="docutils literal notranslate"><span class="pre">DataStream.optimal_window_size()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.base.data_stream.DataStream.effective_sample_size_below"><code class="docutils literal notranslate"><span class="pre">DataStream.effective_sample_size_below()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Jan 02, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

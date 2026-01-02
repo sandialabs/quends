@@ -1,0 +1,787 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>quends.postprocessing.plotter &#8212; QUENDS 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=34bb78ad" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/quends/postprocessing/plotter/index';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="quends.preprocessing" href="../../preprocessing/index.html" />
+    <link rel="prev" title="quends.postprocessing.exporter" href="../exporter/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jan 02, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">QUENDS 0.1.0 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../readme.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../usage.html">Usage</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../../index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../../index.html">quends</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../base/index.html">quends.base</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../base/data_stream/index.html">quends.base.data_stream</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../base/ensemble/index.html">quends.base.ensemble</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/index.html">quends.cli</a></li>
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="../index.html">quends.postprocessing</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../exporter/index.html">quends.postprocessing.exporter</a></li>
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">quends.postprocessing.plotter</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../preprocessing/index.html">quends.preprocessing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../preprocessing/csv/index.html">quends.preprocessing.csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../preprocessing/dictionary/index.html">quends.preprocessing.dictionary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../preprocessing/gx/index.html">quends.preprocessing.gx</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../preprocessing/json/index.html">quends.preprocessing.json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../preprocessing/netcdf/index.html">quends.preprocessing.netcdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../preprocessing/numpy/index.html">quends.preprocessing.numpy</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../workflow/index.html">quends.workflow</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../workflow/robust_workflow/index.html">quends.workflow.robust_workflow</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../auto_tutorials/index.html">Software Tutorial</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../auto_tutorials/datastream_guide.html">DataStream Class</a></li>
+
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../../_sources/autoapi/quends/postprocessing/plotter/index.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>quends.postprocessing.plotter</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter"><code class="docutils literal notranslate"><span class="pre">Plotter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.output_dir"><code class="docutils literal notranslate"><span class="pre">Plotter.output_dir</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.format_dataset_name"><code class="docutils literal notranslate"><span class="pre">Plotter.format_dataset_name()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.trace_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.trace_plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.trace_plot_with_mean"><code class="docutils literal notranslate"><span class="pre">Plotter.trace_plot_with_mean()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.ensemble_trace_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_trace_plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.ensemble_trace_plot_with_mean"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_trace_plot_with_mean()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.steady_state_automatic_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.steady_state_automatic_plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.steady_state_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.steady_state_plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.plot_acf"><code class="docutils literal notranslate"><span class="pre">Plotter.plot_acf()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.plot_acf_ensemble"><code class="docutils literal notranslate"><span class="pre">Plotter.plot_acf_ensemble()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.ensemble_steady_state_automatic_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_steady_state_automatic_plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.ensemble_steady_state_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_steady_state_plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.plot_ensemble"><code class="docutils literal notranslate"><span class="pre">Plotter.plot_ensemble()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-quends.postprocessing.plotter">
+<span id="quends-postprocessing-plotter"></span><h1>quends.postprocessing.plotter<a class="headerlink" href="#module-quends.postprocessing.plotter" title="Link to this heading">#</a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quends.postprocessing.plotter.Plotter" title="quends.postprocessing.plotter.Plotter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Plotter</span></code></a></p></td>
+<td><p>A class that encapsulates plotting functionality for time series data.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quends.postprocessing.plotter.</span></span><span class="sig-name descname"><span class="pre">Plotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'results_figures'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.postprocessing.plotter.Plotter" title="Link to this definition">#</a></dt>
+<dd><p>A class that encapsulates plotting functionality for time series data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter.output_dir">
+<span class="sig-name descname"><span class="pre">output_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'results_figures'</span></em><a class="headerlink" href="#quends.postprocessing.plotter.Plotter.output_dir" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter.format_dataset_name">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">format_dataset_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.postprocessing.plotter.Plotter.format_dataset_name" title="Link to this definition">#</a></dt>
+<dd><p>Format the dataset name for display and file naming.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>dataset_name (str): The original dataset name.</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: A formatted dataset name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter.trace_plot">
+<span class="sig-name descname"><span class="pre">trace_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.postprocessing.plotter.Plotter.trace_plot" title="Link to this definition">#</a></dt>
+<dd><p>Plot individual (trace) time series data from a DataStream or a dictionary of DataFrames.
+The resulting plots are displayed and optionally saved if ‘save’ is True.</p>
+<dl>
+<dt>Args:</dt><dd><p>data (DataStream or dict): A DataStream instance or dictionary of DataFrames.
+variables_to_plot (list, optional): List of variables to plot. If None,</p>
+<blockquote>
+<div><p>all columns (except ‘time’) from the first DataFrame are used.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>save (bool, optional): If True, save the generated plots to the output directory.</dt><dd><p>Defaults to False.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter.trace_plot_with_mean">
+<span class="sig-name descname"><span class="pre">trace_plot_with_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.postprocessing.plotter.Plotter.trace_plot_with_mean" title="Link to this definition">#</a></dt>
+<dd><p>Plot individual (trace) time series data from a DataStream or a dictionary of DataFrames.
+The resulting plots are displayed and optionally saved if ‘save’ is True.</p>
+<dl>
+<dt>Args:</dt><dd><p>data (DataStream or dict): A DataStream instance or dictionary of DataFrames.
+variables_to_plot (list, optional): List of variables to plot. If None,</p>
+<blockquote>
+<div><p>all columns (except ‘time’) from the first DataFrame are used.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>save (bool, optional): If True, save the generated plots to the output directory.</dt><dd><p>Defaults to False.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter.ensemble_trace_plot">
+<span class="sig-name descname"><span class="pre">ensemble_trace_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.postprocessing.plotter.Plotter.ensemble_trace_plot" title="Link to this definition">#</a></dt>
+<dd><p>Plot ensemble time series data, with traces from each ensemble member plotted on the same axes.
+The resulting plots are displayed and optionally saved if ‘save’ is True.</p>
+<dl>
+<dt>Args:</dt><dd><p>data (DataStream or dict): A DataStream instance or dictionary of DataFrames representing ensemble members.
+variables_to_plot (list, optional): List of variables to plot. If None,</p>
+<blockquote>
+<div><p>all columns (except ‘time’) from the first DataFrame are used.</p>
+</div></blockquote>
+<p>save (bool, optional): If True, save the generated plots to the output directory. Defaults to False.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter.ensemble_trace_plot_with_mean">
+<span class="sig-name descname"><span class="pre">ensemble_trace_plot_with_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.postprocessing.plotter.Plotter.ensemble_trace_plot_with_mean" title="Link to this definition">#</a></dt>
+<dd><p>Plot ensemble time series data, with traces from each ensemble member plotted on the same axes.
+The resulting plots are displayed and optionally saved if ‘save’ is True.</p>
+<dl>
+<dt>Args:</dt><dd><p>data (DataStream or dict): A DataStream instance or dictionary of DataFrames representing ensemble members.
+variables_to_plot (list, optional): List of variables to plot. If None,</p>
+<blockquote>
+<div><p>all columns (except ‘time’) from the first DataFrame are used.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>save (bool, optional): If True, save the generated plots to the output directory.</dt><dd><p>Defaults to False.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter.steady_state_automatic_plot">
+<span class="sig-name descname"><span class="pre">steady_state_automatic_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'std'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.postprocessing.plotter.Plotter.steady_state_automatic_plot" title="Link to this definition">#</a></dt>
+<dd><p>Plot steady state detection for each variable in the data. For each variable, the method uses the
+DataStream.trim() function to estimate the steady state start time. If a steady state is detected,
+the function plots the original time series along with:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A vertical dashed red line indicating the steady state start time.</p></li>
+<li><p>A horizontal green line at the overall mean (computed from data after the steady state start).</p></li>
+<li><p>Shaded regions representing ±1, ±2, and ±3 standard deviations.</p></li>
+</ul>
+</div></blockquote>
+<p>If no steady state is detected for a variable, the full signal is plotted and a message is printed.</p>
+<dl>
+<dt>Args:</dt><dd><p>data (DataStream or dict): A DataStream instance or a dictionary of DataFrames.
+variables_to_plot (list, optional): List of variables to plot. If None,</p>
+<blockquote>
+<div><p>all columns (except ‘time’) from the first DataFrame are used.</p>
+</div></blockquote>
+<p>window_size (int, optional): Window size to use in the trim() function.
+start_time (float, optional): Start time for steady state detection.
+method (str, optional): Method to use for steady state detection (‘std’, ‘threshold’, or ‘rolling_variance’).
+threshold (float, optional): Threshold value required for ‘threshold’ or ‘rolling_variance’ methods.
+robust (bool, optional): Whether to use robust statistics (median/MAD) in the ‘std’ method.
+save (bool, optional): If True, save the plot to disk. Defaults to False.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter.steady_state_plot">
+<span class="sig-name descname"><span class="pre">steady_state_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.postprocessing.plotter.Plotter.steady_state_plot" title="Link to this definition">#</a></dt>
+<dd><p>Plot steady state detection for each variable in the data using a user-supplied steady state start.
+The user can provide a single float (applied to all variables) or a dictionary mapping variable names to floats.
+For each variable, if a steady state start is provided, the plot displays:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The full signal.</p></li>
+<li><p>A vertical dashed red line at the given steady state start.</p></li>
+<li><p>A horizontal green line for the mean (after steady state).</p></li>
+<li><p>Shaded regions for ±1, ±2, and ±3 standard deviations (after steady state).</p></li>
+</ul>
+</div></blockquote>
+<p>If no steady state start is provided for a variable, only the raw signal is plotted and a message is printed.</p>
+<dl>
+<dt>Args:</dt><dd><p>data (DataStream or dict): A DataStream instance or dictionary of DataFrames.
+variables_to_plot (list, optional): List of variables to plot. If None,</p>
+<blockquote>
+<div><p>all columns (except ‘time’) from the first DataFrame are used.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>steady_state_start (float or dict, optional): Either a single steady state start (float)</dt><dd><p>applied to all variables or a dictionary mapping variable names to steady state start values.</p>
+</dd>
+</dl>
+<p>save (bool): If True, the generated plots are saved to the output directory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter.plot_acf">
+<span class="sig-name descname"><span class="pre">plot_acf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.postprocessing.plotter.Plotter.plot_acf" title="Link to this definition">#</a></dt>
+<dd><p>Plot the Autocorrelation Function (ACF) for a given data stream or array-like object.</p>
+<p>If ‘data’ is a DataStream, the function extracts the specified column (or the first column
+that is not “time” if not specified). Otherwise, data is assumed to be 1D array-like.</p>
+<dl class="simple">
+<dt>The function computes:</dt><dd><ul class="simple">
+<li><p>nlags = int(n / 3), where n is the number of observations.</p></li>
+<li><p>ACF values using statsmodels.tsa.stattools.acf.</p></li>
+<li><p>A 95% confidence interval as: conf_interval = z_critical / sqrt(n),
+where z_critical is computed from the two-tailed test.</p></li>
+</ul>
+</dd>
+</dl>
+<p>If an axis (ax) is provided, the plot is drawn on that axis; otherwise, a new figure is created.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data (DataStream or array-like): The data to plot.
+alpha (float): Significance level for the confidence interval (default: 0.05).
+column (str, optional): Column name to use if data is a DataStream. Defaults to the first non-‘time’ column.
+ax (matplotlib.axes.Axes, optional): Axis on which to plot. If None, a new figure is created.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter.plot_acf_ensemble">
+<span class="sig-name descname"><span class="pre">plot_acf_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.postprocessing.plotter.Plotter.plot_acf_ensemble" title="Link to this definition">#</a></dt>
+<dd><p>Plot the ACF for each ensemble member individually on a grid of subplots.</p>
+<p>The number of rows and columns in the grid is determined based on the number of ensemble members.
+This function loops through each ensemble member (DataStream) in the Ensemble object and calls
+the plot_acf function to generate the individual ACF plots on separate subplots.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>ensemble_obj (Ensemble): An Ensemble instance containing DataStream members.
+alpha (float): Significance level for the confidence interval (default: 0.05).
+column (str, optional): Column name to use for ACF computation. If None, the first non-‘time’ column is used.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter.ensemble_steady_state_automatic_plot">
+<span class="sig-name descname"><span class="pre">ensemble_steady_state_automatic_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'std'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.postprocessing.plotter.Plotter.ensemble_steady_state_automatic_plot" title="Link to this definition">#</a></dt>
+<dd><p>Plot steady state detection automatically for each ensemble member on a grid.</p>
+<p>For each ensemble member in the Ensemble object, for each variable (if multiple are provided,
+all are overlaid on the same subplot), the method uses DataStream.trim() to estimate the steady
+state start time. If detected, it plots the original signal with:</p>
+<ul class="simple">
+<li><p>A vertical dashed red line at the estimated steady state start.</p></li>
+<li><p>A horizontal green line at the overall mean (computed from the data after steady state).</p></li>
+<li><p>Shaded regions for ±1, ±2, and ±3 standard deviations.</p></li>
+</ul>
+<p>If no steady state is detected, it plots the raw signal and prints a message.</p>
+<p>The plots are arranged in a grid with one subplot per ensemble member.</p>
+<dl>
+<dt>Args:</dt><dd><p>ensemble_obj (Ensemble): An Ensemble instance.
+variables_to_plot (list, optional): List of variable names to plot. If None, all columns (except ‘time’)</p>
+<blockquote>
+<div><p>from the first member are used.</p>
+</div></blockquote>
+<p>batch_size (int): Window size for the trim() function.
+start_time (float): Start time for steady state detection.
+method (str): Steady state detection method (‘std’, ‘threshold’, or ‘rolling_variance’).
+threshold (float, optional): Threshold if needed by the method.
+robust (bool): If True, use robust statistics (median/MAD) in the ‘std’ method.
+save (bool): If True, save the resulting figure to disk.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter.ensemble_steady_state_plot">
+<span class="sig-name descname"><span class="pre">ensemble_steady_state_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.postprocessing.plotter.Plotter.ensemble_steady_state_plot" title="Link to this definition">#</a></dt>
+<dd><p>Plot steady state detection for each ensemble member using a user-supplied steady state start.</p>
+<p>For each ensemble member in the Ensemble object, the function plots the signal for the specified
+variables (or all non-‘time’ variables if not provided) and draws:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A vertical dashed red line at the user-supplied steady state start.</p></li>
+<li><p>A horizontal green line representing the mean of the data after the steady state.</p></li>
+<li><p>Shaded regions for ±1, ±2, and ±3 standard deviations (computed after the steady state).</p></li>
+</ul>
+</div></blockquote>
+<p>If no steady state start is provided for a variable, the raw signal is plotted and a message is printed.</p>
+<p>The plots are arranged in a grid.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>ensemble_obj (Ensemble): An Ensemble instance.
+variables_to_plot (list, optional): List of variables to plot. If None, all non-‘time’ columns are used.
+steady_state_start (float or dict, optional): A single float or a dict mapping variable names to steady state start values.
+save (bool): If True, save the resulting figure.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="quends.postprocessing.plotter.Plotter.plot_ensemble">
+<span class="sig-name descname"><span class="pre">plot_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#quends.postprocessing.plotter.Plotter.plot_ensemble" title="Link to this definition">#</a></dt>
+<dd><p>Plot each ensemble member together with the ensemble average,
+arranged in 2 columns and as many rows as needed.
+Legend is centered below the grid, with just enough room reserved.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../exporter/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">quends.postprocessing.exporter</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../preprocessing/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">quends.preprocessing</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter"><code class="docutils literal notranslate"><span class="pre">Plotter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.output_dir"><code class="docutils literal notranslate"><span class="pre">Plotter.output_dir</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.format_dataset_name"><code class="docutils literal notranslate"><span class="pre">Plotter.format_dataset_name()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.trace_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.trace_plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.trace_plot_with_mean"><code class="docutils literal notranslate"><span class="pre">Plotter.trace_plot_with_mean()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.ensemble_trace_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_trace_plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.ensemble_trace_plot_with_mean"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_trace_plot_with_mean()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.steady_state_automatic_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.steady_state_automatic_plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.steady_state_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.steady_state_plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.plot_acf"><code class="docutils literal notranslate"><span class="pre">Plotter.plot_acf()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.plot_acf_ensemble"><code class="docutils literal notranslate"><span class="pre">Plotter.plot_acf_ensemble()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.ensemble_steady_state_automatic_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_steady_state_automatic_plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.ensemble_steady_state_plot"><code class="docutils literal notranslate"><span class="pre">Plotter.ensemble_steady_state_plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#quends.postprocessing.plotter.Plotter.plot_ensemble"><code class="docutils literal notranslate"><span class="pre">Plotter.plot_ensemble()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Jan 02, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

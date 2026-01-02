@@ -1,0 +1,1535 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>DataStream Class &#8212; QUENDS 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=34bb78ad" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_tutorials/datastream_guide';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing" href="../contributing.html" />
+    <link rel="prev" title="Software Tutorial" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Jan 02, 2026"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">QUENDS 0.1.0 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../autoapi/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/quends/index.html">quends</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/quends/base/index.html">quends.base</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/quends/base/data_stream/index.html">quends.base.data_stream</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/quends/base/ensemble/index.html">quends.base.ensemble</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/quends/cli/index.html">quends.cli</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/quends/postprocessing/index.html">quends.postprocessing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/quends/postprocessing/exporter/index.html">quends.postprocessing.exporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/quends/postprocessing/plotter/index.html">quends.postprocessing.plotter</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/quends/preprocessing/index.html">quends.preprocessing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/quends/preprocessing/csv/index.html">quends.preprocessing.csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/quends/preprocessing/dictionary/index.html">quends.preprocessing.dictionary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/quends/preprocessing/gx/index.html">quends.preprocessing.gx</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/quends/preprocessing/json/index.html">quends.preprocessing.json</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/quends/preprocessing/netcdf/index.html">quends.preprocessing.netcdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/quends/preprocessing/numpy/index.html">quends.preprocessing.numpy</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/quends/workflow/index.html">quends.workflow</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/quends/workflow/robust_workflow/index.html">quends.workflow.robust_workflow</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Software Tutorial</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">DataStream Class</a></li>
+
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/auto_tutorials/datastream_guide.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>DataStream Class</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">DataStream Class</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gx-data-analysis">GX Data Analysis</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stationary-check">Stationary Check</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trimming-data-based-to-obtain-steady-state-portion">Trimming data based to obtain steady-state portion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#effective-sample-size">Effective Sample Size</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uq-analysis">UQ Analysis</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#other-statistical-methods">Other statistical methods</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cgyro-data-analysis">CGYRO Data Analysis</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-tutorials-datastream-guide-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="datastream-class">
+<span id="sphx-glr-auto-tutorials-datastream-guide-py"></span><h1>DataStream Class<a class="headerlink" href="#datastream-class" title="Link to this heading">#</a></h1>
+<p>This tutorial demonstrates the usage of the DataStream class,
+which provides methods for analyzing time-series data.</p>
+<dl class="simple">
+<dt>The following features are:</dt><dd><ul class="simple">
+<li><p><strong>Trimming</strong>: Identifies steady-state regions in data.</p></li>
+<li><p><strong>Statistical Analysis</strong>: Computes mean, standard deviation, confidence intervals, and cumulative statistics.</p></li>
+<li><p><strong>Stationarity Testing</strong>: Uses the Augmented Dickey-Fuller test.</p></li>
+<li><p><strong>Effective Sample Size (ESS)</strong>: Estimates the independent sample size.</p></li>
+<li><p><strong>Optimal Window Size</strong>: Determines the best window for data smoothing.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Import DataStream</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">quends</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">qnds</span>
+</pre></div>
+</div>
+</section>
+<section id="gx-data-analysis">
+<h1>GX Data Analysis<a class="headerlink" href="#gx-data-analysis" title="Link to this heading">#</a></h1>
+<p>Analysis on GX Data</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Specify the file paths</span>
+<span class="n">csv_file_path</span> <span class="o">=</span> <span class="s2">&quot;gx/tprim_2_0.out.csv&quot;</span>
+<span class="n">csv2_file_path</span> <span class="o">=</span> <span class="s2">&quot;gx/ensemble/tprim_2_5_a.out.csv&quot;</span>
+
+<span class="c1"># Load the data from CSV files</span>
+<span class="n">data_stream_csv</span> <span class="o">=</span> <span class="n">qnds</span><span class="o">.</span><span class="n">from_csv</span><span class="p">(</span><span class="n">csv_file_path</span><span class="p">)</span>
+<span class="n">data_stream_gx</span> <span class="o">=</span> <span class="n">qnds</span><span class="o">.</span><span class="n">from_csv</span><span class="p">(</span><span class="n">csv2_file_path</span><span class="p">)</span>
+
+<span class="c1"># Display the first few rows of the GX data</span>
+<span class="n">data_stream_gx</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>Phi2_t</th>
+      <th>Phi2_kxt</th>
+      <th>Phi2_kyt</th>
+      <th>Phi2_kxkyt</th>
+      <th>Phi2_zt</th>
+      <th>Apar2_t</th>
+      <th>Apar2_kxt</th>
+      <th>Apar2_kyt</th>
+      <th>Apar2_kxkyt</th>
+      <th>Apar2_zt</th>
+      <th>Phi2_zonal_t</th>
+      <th>Phi2_zonal_kxt</th>
+      <th>Phi2_zonal_zt</th>
+      <th>Wg_st</th>
+      <th>Wg_kxst</th>
+      <th>Wg_kyst</th>
+      <th>Wg_kxkyst</th>
+      <th>Wg_zst</th>
+      <th>Wg_lmst</th>
+      <th>Wphi_st</th>
+      <th>Wphi_kxst</th>
+      <th>Wphi_kyst</th>
+      <th>Wphi_kxkyst</th>
+      <th>Wphi_zst</th>
+      <th>Wapar_st</th>
+      <th>Wapar_kxst</th>
+      <th>Wapar_kyst</th>
+      <th>Wapar_kxkyst</th>
+      <th>Wapar_zst</th>
+      <th>HeatFlux_st</th>
+      <th>HeatFlux_kxst</th>
+      <th>HeatFlux_kyst</th>
+      <th>HeatFlux_kxkyst</th>
+      <th>HeatFlux_zst</th>
+      <th>HeatFluxES_st</th>
+      <th>HeatFluxES_kxst</th>
+      <th>HeatFluxES_kyst</th>
+      <th>HeatFluxES_kxkyst</th>
+      <th>HeatFluxES_zst</th>
+      <th>HeatFluxApar_st</th>
+      <th>HeatFluxApar_kxst</th>
+      <th>HeatFluxApar_kyst</th>
+      <th>HeatFluxApar_kxkyst</th>
+      <th>HeatFluxApar_zst</th>
+      <th>HeatFluxBpar_st</th>
+      <th>HeatFluxBpar_kxst</th>
+      <th>HeatFluxBpar_kyst</th>
+      <th>HeatFluxBpar_kxkyst</th>
+      <th>HeatFluxBpar_zst</th>
+      <th>ParticleFlux_st</th>
+      <th>ParticleFlux_kxst</th>
+      <th>ParticleFlux_kyst</th>
+      <th>ParticleFlux_kxkyst</th>
+      <th>ParticleFlux_zst</th>
+      <th>TurbulentHeating_st</th>
+      <th>TurbulentHeating_kxst</th>
+      <th>TurbulentHeating_kyst</th>
+      <th>TurbulentHeating_kxkyst</th>
+      <th>TurbulentHeating_zst</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.020072</td>
+      <td>0.000322</td>
+      <td>1.014122e-06</td>
+      <td>5.556982e-15</td>
+      <td>1.283244e-17</td>
+      <td>0.000004</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>5.556983e-15</td>
+      <td>1.283244e-17</td>
+      <td>8.195788e-17</td>
+      <td>0.001261</td>
+      <td>0.000010</td>
+      <td>2.157422e-14</td>
+      <td>7.842924e-17</td>
+      <td>0.000018</td>
+      <td>1.260900e-03</td>
+      <td>0.000090</td>
+      <td>4.728780e-07</td>
+      <td>2.252245e-15</td>
+      <td>7.758021e-18</td>
+      <td>8.470064e-07</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000003</td>
+      <td>2.114464e-08</td>
+      <td>0.000000e+00</td>
+      <td>0.0</td>
+      <td>3.988991e-08</td>
+      <td>0.000003</td>
+      <td>2.114464e-08</td>
+      <td>0.000000e+00</td>
+      <td>0.0</td>
+      <td>3.988991e-08</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-4.513479e-11</td>
+      <td>-1.238711e-14</td>
+      <td>0.000000e+00</td>
+      <td>0.0</td>
+      <td>-1.328687e-12</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2.027322</td>
+      <td>0.000236</td>
+      <td>9.462429e-07</td>
+      <td>1.035192e-05</td>
+      <td>3.763393e-17</td>
+      <td>0.000004</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.477131e-10</td>
+      <td>3.763393e-17</td>
+      <td>9.182713e-17</td>
+      <td>0.001496</td>
+      <td>0.000009</td>
+      <td>2.018144e-05</td>
+      <td>4.068222e-16</td>
+      <td>0.000019</td>
+      <td>5.423472e-08</td>
+      <td>0.000064</td>
+      <td>4.470815e-07</td>
+      <td>1.587569e-06</td>
+      <td>1.941193e-17</td>
+      <td>9.091424e-07</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000154</td>
+      <td>1.935043e-08</td>
+      <td>3.436235e-10</td>
+      <td>0.0</td>
+      <td>4.392872e-08</td>
+      <td>0.000154</td>
+      <td>1.935043e-08</td>
+      <td>3.436235e-10</td>
+      <td>0.0</td>
+      <td>4.392872e-08</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>6.326710e-12</td>
+      <td>-1.907196e-13</td>
+      <td>-2.302137e-12</td>
+      <td>0.0</td>
+      <td>-1.325463e-12</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.034571</td>
+      <td>0.000198</td>
+      <td>1.138735e-06</td>
+      <td>9.805337e-06</td>
+      <td>1.168341e-16</td>
+      <td>0.000005</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.704297e-10</td>
+      <td>1.168341e-16</td>
+      <td>1.050660e-16</td>
+      <td>0.002205</td>
+      <td>0.000011</td>
+      <td>1.770925e-05</td>
+      <td>7.266167e-16</td>
+      <td>0.000019</td>
+      <td>1.252036e-08</td>
+      <td>0.000053</td>
+      <td>5.322058e-07</td>
+      <td>1.374501e-06</td>
+      <td>6.295199e-17</td>
+      <td>9.924838e-07</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000196</td>
+      <td>2.208835e-08</td>
+      <td>1.294924e-09</td>
+      <td>0.0</td>
+      <td>4.903913e-08</td>
+      <td>0.000196</td>
+      <td>2.208835e-08</td>
+      <td>1.294924e-09</td>
+      <td>0.0</td>
+      <td>4.903913e-08</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-4.022337e-12</td>
+      <td>-2.190608e-13</td>
+      <td>-1.575239e-12</td>
+      <td>0.0</td>
+      <td>-4.890709e-13</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6.041821</td>
+      <td>0.000206</td>
+      <td>1.060234e-06</td>
+      <td>9.191237e-06</td>
+      <td>2.735980e-16</td>
+      <td>0.000005</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4.042708e-10</td>
+      <td>2.735980e-16</td>
+      <td>1.229009e-16</td>
+      <td>0.002964</td>
+      <td>0.000010</td>
+      <td>1.881524e-05</td>
+      <td>1.689178e-15</td>
+      <td>0.000020</td>
+      <td>2.801751e-09</td>
+      <td>0.000053</td>
+      <td>4.835276e-07</td>
+      <td>1.562852e-06</td>
+      <td>1.470741e-16</td>
+      <td>1.104677e-06</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000236</td>
+      <td>2.078288e-08</td>
+      <td>2.700831e-09</td>
+      <td>0.0</td>
+      <td>5.548262e-08</td>
+      <td>0.000236</td>
+      <td>2.078288e-08</td>
+      <td>2.700831e-09</td>
+      <td>0.0</td>
+      <td>5.548262e-08</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-1.022327e-11</td>
+      <td>-3.670521e-13</td>
+      <td>-1.553083e-13</td>
+      <td>0.0</td>
+      <td>-8.325619e-13</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>8.049070</td>
+      <td>0.000245</td>
+      <td>1.066248e-06</td>
+      <td>1.006626e-05</td>
+      <td>1.340230e-16</td>
+      <td>0.000005</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>7.481377e-10</td>
+      <td>1.340230e-16</td>
+      <td>1.443730e-16</td>
+      <td>0.003818</td>
+      <td>0.000009</td>
+      <td>1.914822e-05</td>
+      <td>7.813427e-16</td>
+      <td>0.000021</td>
+      <td>4.485645e-10</td>
+      <td>0.000061</td>
+      <td>4.882390e-07</td>
+      <td>1.435011e-06</td>
+      <td>7.265576e-17</td>
+      <td>1.238737e-06</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000298</td>
+      <td>2.149553e-08</td>
+      <td>5.369387e-09</td>
+      <td>0.0</td>
+      <td>6.278837e-08</td>
+      <td>0.000298</td>
+      <td>2.149553e-08</td>
+      <td>5.369387e-09</td>
+      <td>0.0</td>
+      <td>6.278837e-08</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-1.445467e-11</td>
+      <td>-5.255198e-14</td>
+      <td>2.001172e-12</td>
+      <td>0.0</td>
+      <td>-6.776345e-13</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /><p>Get available variables</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">data_stream_gx</span><span class="o">.</span><span class="n">variables</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Index([&#39;time&#39;, &#39;Phi2_t&#39;, &#39;Phi2_kxt&#39;, &#39;Phi2_kyt&#39;, &#39;Phi2_kxkyt&#39;, &#39;Phi2_zt&#39;,
+       &#39;Apar2_t&#39;, &#39;Apar2_kxt&#39;, &#39;Apar2_kyt&#39;, &#39;Apar2_kxkyt&#39;, &#39;Apar2_zt&#39;,
+       &#39;Phi2_zonal_t&#39;, &#39;Phi2_zonal_kxt&#39;, &#39;Phi2_zonal_zt&#39;, &#39;Wg_st&#39;, &#39;Wg_kxst&#39;,
+       &#39;Wg_kyst&#39;, &#39;Wg_kxkyst&#39;, &#39;Wg_zst&#39;, &#39;Wg_lmst&#39;, &#39;Wphi_st&#39;, &#39;Wphi_kxst&#39;,
+       &#39;Wphi_kyst&#39;, &#39;Wphi_kxkyst&#39;, &#39;Wphi_zst&#39;, &#39;Wapar_st&#39;, &#39;Wapar_kxst&#39;,
+       &#39;Wapar_kyst&#39;, &#39;Wapar_kxkyst&#39;, &#39;Wapar_zst&#39;, &#39;HeatFlux_st&#39;,
+       &#39;HeatFlux_kxst&#39;, &#39;HeatFlux_kyst&#39;, &#39;HeatFlux_kxkyst&#39;, &#39;HeatFlux_zst&#39;,
+       &#39;HeatFluxES_st&#39;, &#39;HeatFluxES_kxst&#39;, &#39;HeatFluxES_kyst&#39;,
+       &#39;HeatFluxES_kxkyst&#39;, &#39;HeatFluxES_zst&#39;, &#39;HeatFluxApar_st&#39;,
+       &#39;HeatFluxApar_kxst&#39;, &#39;HeatFluxApar_kyst&#39;, &#39;HeatFluxApar_kxkyst&#39;,
+       &#39;HeatFluxApar_zst&#39;, &#39;HeatFluxBpar_st&#39;, &#39;HeatFluxBpar_kxst&#39;,
+       &#39;HeatFluxBpar_kyst&#39;, &#39;HeatFluxBpar_kxkyst&#39;, &#39;HeatFluxBpar_zst&#39;,
+       &#39;ParticleFlux_st&#39;, &#39;ParticleFlux_kxst&#39;, &#39;ParticleFlux_kyst&#39;,
+       &#39;ParticleFlux_kxkyst&#39;, &#39;ParticleFlux_zst&#39;, &#39;TurbulentHeating_st&#39;,
+       &#39;TurbulentHeating_kxst&#39;, &#39;TurbulentHeating_kyst&#39;,
+       &#39;TurbulentHeating_kxkyst&#39;, &#39;TurbulentHeating_zst&#39;],
+      dtype=&#39;object&#39;)
+</pre></div>
+</div>
+<p>Get number of rows from the following data in GX</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">data_stream_gx</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>201
+</pre></div>
+</div>
+<section id="stationary-check">
+<h2>Stationary Check<a class="headerlink" href="#stationary-check" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check if a single column is stationary</span>
+<span class="n">data_stream_gx</span><span class="o">.</span><span class="n">is_stationary</span><span class="p">(</span><span class="s2">&quot;HeatFlux_st&quot;</span><span class="p">)</span>
+
+<span class="c1"># Check if multiple columns are stationary</span>
+<span class="n">data_stream_gx</span><span class="o">.</span><span class="n">is_stationary</span><span class="p">([</span><span class="s2">&quot;HeatFlux_st&quot;</span><span class="p">,</span> <span class="s2">&quot;Wg_st&quot;</span><span class="p">,</span> <span class="s2">&quot;Phi2_t&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;HeatFlux_st&#39;: True, &#39;Wg_st&#39;: True, &#39;Phi2_t&#39;: False}
+</pre></div>
+</div>
+</section>
+<section id="trimming-data-based-to-obtain-steady-state-portion">
+<h2>Trimming data based to obtain steady-state portion<a class="headerlink" href="#trimming-data-based-to-obtain-steady-state-portion" title="Link to this heading">#</a></h2>
+<p>Trim the data based on standard deviation method</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Returns: Dictionary with keys like &quot;results&quot; and &quot;metadata&quot;</span>
+<span class="n">trimmed</span> <span class="o">=</span> <span class="n">data_stream_gx</span><span class="o">.</span><span class="n">trim</span><span class="p">(</span><span class="n">column_name</span><span class="o">=</span><span class="s2">&quot;HeatFlux_st&quot;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">)</span>
+
+<span class="c1"># Print first 5 rows of dataframe</span>
+<span class="n">trimmed</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>HeatFlux_st</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>158.592772</td>
+      <td>8.508736</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>160.600022</td>
+      <td>8.699987</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>162.607271</td>
+      <td>8.852156</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>164.614520</td>
+      <td>8.883341</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>166.621770</td>
+      <td>8.713289</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /><p>Trim the data based on rolling variance method</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">trimmed</span> <span class="o">=</span> <span class="n">data_stream_gx</span><span class="o">.</span><span class="n">trim</span><span class="p">(</span>
+    <span class="n">column_name</span><span class="o">=</span><span class="s2">&quot;HeatFlux_st&quot;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;rolling_variance&quot;</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.10</span>
+<span class="p">)</span>
+
+<span class="c1"># Gather results</span>
+<span class="n">trimmed</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>Phi2_t</th>
+      <th>Phi2_kxt</th>
+      <th>Phi2_kyt</th>
+      <th>Phi2_kxkyt</th>
+      <th>Phi2_zt</th>
+      <th>Apar2_t</th>
+      <th>Apar2_kxt</th>
+      <th>Apar2_kyt</th>
+      <th>Apar2_kxkyt</th>
+      <th>Apar2_zt</th>
+      <th>Phi2_zonal_t</th>
+      <th>Phi2_zonal_kxt</th>
+      <th>Phi2_zonal_zt</th>
+      <th>Wg_st</th>
+      <th>Wg_kxst</th>
+      <th>Wg_kyst</th>
+      <th>Wg_kxkyst</th>
+      <th>Wg_zst</th>
+      <th>Wg_lmst</th>
+      <th>Wphi_st</th>
+      <th>Wphi_kxst</th>
+      <th>Wphi_kyst</th>
+      <th>Wphi_kxkyst</th>
+      <th>Wphi_zst</th>
+      <th>Wapar_st</th>
+      <th>Wapar_kxst</th>
+      <th>Wapar_kyst</th>
+      <th>Wapar_kxkyst</th>
+      <th>Wapar_zst</th>
+      <th>HeatFlux_st</th>
+      <th>HeatFlux_kxst</th>
+      <th>HeatFlux_kyst</th>
+      <th>HeatFlux_kxkyst</th>
+      <th>HeatFlux_zst</th>
+      <th>HeatFluxES_st</th>
+      <th>HeatFluxES_kxst</th>
+      <th>HeatFluxES_kyst</th>
+      <th>HeatFluxES_kxkyst</th>
+      <th>HeatFluxES_zst</th>
+      <th>HeatFluxApar_st</th>
+      <th>HeatFluxApar_kxst</th>
+      <th>HeatFluxApar_kyst</th>
+      <th>HeatFluxApar_kxkyst</th>
+      <th>HeatFluxApar_zst</th>
+      <th>HeatFluxBpar_st</th>
+      <th>HeatFluxBpar_kxst</th>
+      <th>HeatFluxBpar_kyst</th>
+      <th>HeatFluxBpar_kxkyst</th>
+      <th>HeatFluxBpar_zst</th>
+      <th>ParticleFlux_st</th>
+      <th>ParticleFlux_kxst</th>
+      <th>ParticleFlux_kyst</th>
+      <th>ParticleFlux_kxkyst</th>
+      <th>ParticleFlux_zst</th>
+      <th>TurbulentHeating_st</th>
+      <th>TurbulentHeating_kxst</th>
+      <th>TurbulentHeating_kyst</th>
+      <th>TurbulentHeating_kxkyst</th>
+      <th>TurbulentHeating_zst</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /><p>Trim the data based on threshold method</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">trimmed</span> <span class="o">=</span> <span class="n">data_stream_gx</span><span class="o">.</span><span class="n">trim</span><span class="p">(</span>
+    <span class="n">column_name</span><span class="o">=</span><span class="s2">&quot;HeatFlux_st&quot;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.1</span>
+<span class="p">)</span>
+
+<span class="c1"># View trimmed data</span>
+<span class="n">trimmed</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>HeatFlux_st</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>158.592772</td>
+      <td>8.508736</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>160.600022</td>
+      <td>8.699987</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>162.607271</td>
+      <td>8.852156</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>164.614520</td>
+      <td>8.883341</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>166.621770</td>
+      <td>8.713289</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /></section>
+<section id="effective-sample-size">
+<h2>Effective Sample Size<a class="headerlink" href="#effective-sample-size" title="Link to this heading">#</a></h2>
+<p>Compute Effective Sample Size for specific columns in GX</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">ess_dict</span> <span class="o">=</span> <span class="n">data_stream_gx</span><span class="o">.</span><span class="n">effective_sample_size</span><span class="p">(</span><span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;HeatFlux_st&quot;</span><span class="p">,</span> <span class="s2">&quot;Wg_st&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ess_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;results&#39;: {&#39;HeatFlux_st&#39;: 24, &#39;Wg_st&#39;: 10}, &#39;metadata&#39;: [{&#39;operation&#39;: &#39;is_stationary&#39;, &#39;options&#39;: {&#39;columns&#39;: &#39;HeatFlux_st&#39;}}, {&#39;operation&#39;: &#39;effective_sample_size&#39;, &#39;options&#39;: {&#39;column_names&#39;: [&#39;HeatFlux_st&#39;, &#39;Wg_st&#39;], &#39;alpha&#39;: 0.05}}]}
+</pre></div>
+</div>
+<p>Compute Effective sample size for trimmed data</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">ess_df</span> <span class="o">=</span> <span class="n">trimmed</span><span class="o">.</span><span class="n">effective_sample_size</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ess_df</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;results&#39;: {&#39;HeatFlux_st&#39;: 5}, &#39;metadata&#39;: [{&#39;operation&#39;: &#39;is_stationary&#39;, &#39;options&#39;: {&#39;columns&#39;: &#39;HeatFlux_st&#39;}}, {&#39;operation&#39;: &#39;trim&#39;, &#39;options&#39;: {&#39;column_name&#39;: &#39;HeatFlux_st&#39;, &#39;batch_size&#39;: 50, &#39;start_time&#39;: 0.0, &#39;method&#39;: &#39;threshold&#39;, &#39;threshold&#39;: 0.1, &#39;robust&#39;: True, &#39;sss_start&#39;: 158.59277222661015}}, {&#39;operation&#39;: &#39;effective_sample_size&#39;, &#39;options&#39;: {&#39;column_names&#39;: None, &#39;alpha&#39;: 0.05}}]}
+</pre></div>
+</div>
+</section>
+</section>
+<section id="uq-analysis">
+<h1>UQ Analysis<a class="headerlink" href="#uq-analysis" title="Link to this heading">#</a></h1>
+<p>Compute Statistics on trimmed dataframe</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">stats</span> <span class="o">=</span> <span class="n">trimmed</span><span class="o">.</span><span class="n">compute_statistics</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;sliding&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+
+<span class="n">stats_df</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;HeatFlux_st&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;HeatFlux_st&#39;: {&#39;mean&#39;: 7.9406914994528615, &#39;mean_uncertainty&#39;: 0.08981775761011032, &#39;confidence_interval&#39;: (7.764648694537045, 8.116734304368677), &#39;pm_std&#39;: (7.850873741842751, 8.030509257062972), &#39;effective_sample_size&#39;: 5, &#39;window_size&#39;: 24}, &#39;metadata&#39;: [{&#39;operation&#39;: &#39;is_stationary&#39;, &#39;options&#39;: {&#39;columns&#39;: &#39;HeatFlux_st&#39;}}, {&#39;operation&#39;: &#39;trim&#39;, &#39;options&#39;: {&#39;column_name&#39;: &#39;HeatFlux_st&#39;, &#39;batch_size&#39;: 50, &#39;start_time&#39;: 0.0, &#39;method&#39;: &#39;threshold&#39;, &#39;threshold&#39;: 0.1, &#39;robust&#39;: True, &#39;sss_start&#39;: 158.59277222661015}}, {&#39;operation&#39;: &#39;effective_sample_size&#39;, &#39;options&#39;: {&#39;column_names&#39;: None, &#39;alpha&#39;: 0.05}}, {&#39;operation&#39;: &#39;compute_statistics&#39;, &#39;options&#39;: {&#39;column_name&#39;: None, &#39;ddof&#39;: 1, &#39;method&#39;: &#39;sliding&#39;, &#39;window_size&#39;: None}}]}
+</pre></div>
+</div>
+<p>Exporter
+Below Displays the information as a DataFrame</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">exporter</span> <span class="o">=</span> <span class="n">qnds</span><span class="o">.</span><span class="n">Exporter</span><span class="p">()</span>
+<span class="n">exporter</span><span class="o">.</span><span class="n">display_dataframe</span><span class="p">(</span><span class="n">stats_df</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>       mean  mean_uncertainty  ...  effective_sample_size  window_size
+0  7.940691          0.089818  ...                      5           24
+1  7.940691          0.089818  ...                      5           24
+
+[2 rows x 6 columns]
+</pre></div>
+</div>
+<p>Below Displays the information in JSON</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">exporter</span><span class="o">.</span><span class="n">display_json</span><span class="p">(</span><span class="n">stats_df</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{
+  &quot;mean&quot;: 7.9406914994528615,
+  &quot;mean_uncertainty&quot;: 0.08981775761011032,
+  &quot;confidence_interval&quot;: [
+    7.764648694537045,
+    8.116734304368677
+  ],
+  &quot;pm_std&quot;: [
+    7.850873741842751,
+    8.030509257062972
+  ],
+  &quot;effective_sample_size&quot;: 5,
+  &quot;window_size&quot;: 24
+}
+</pre></div>
+</div>
+<section id="other-statistical-methods">
+<h2>Other statistical methods<a class="headerlink" href="#other-statistical-methods" title="Link to this heading">#</a></h2>
+<p>Calculate the mean with a window size of 10</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mean_df</span> <span class="o">=</span> <span class="n">trimmed</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">window_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mean_df</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;HeatFlux_st&#39;: 7.989677796666666}
+</pre></div>
+</div>
+<p>Calculate the mean with the method of sliding</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mean_df</span> <span class="o">=</span> <span class="n">trimmed</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;sliding&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mean_df</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;HeatFlux_st&#39;: 7.9406914994528615}
+</pre></div>
+</div>
+<p>Calculate the mean uncertainty</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">uq_df</span> <span class="o">=</span> <span class="n">trimmed</span><span class="o">.</span><span class="n">mean_uncertainty</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">uq_df</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;HeatFlux_st&#39;: 0.23525686516667507}
+</pre></div>
+</div>
+<p>Calculate the mean uncertainty with the method of sliding</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">uq_df</span> <span class="o">=</span> <span class="n">trimmed</span><span class="o">.</span><span class="n">mean_uncertainty</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;sliding&quot;</span><span class="p">)</span>
+<span class="n">uq_df</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;HeatFlux_st&#39;: 0.08981775761011032}
+</pre></div>
+</div>
+<p>Calculate the confidence intervale with the trimmed dataframe</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">ci_df</span> <span class="o">=</span> <span class="n">trimmed</span><span class="o">.</span><span class="n">confidence_interval</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ci_df</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;HeatFlux_st&#39;: (7.528574340939983, 8.45078125239335)}
+</pre></div>
+</div>
+<p>Cumlative Statistics</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">cumulative</span> <span class="o">=</span> <span class="n">trimmed</span><span class="o">.</span><span class="n">cumulative_statistics</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cumulative</span><span class="p">)</span>
+
+<span class="n">cumulative_df</span> <span class="o">=</span> <span class="n">cumulative</span><span class="p">[</span><span class="s2">&quot;HeatFlux_st&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;HeatFlux_st&#39;: {&#39;cumulative_mean&#39;: [8.777007562500001, 8.427817691666668, 8.308147695833334, 8.086430926041666, 7.989677796666667], &#39;cumulative_uncertainty&#39;: [nan, 0.4938290511758112, 0.40607424148898075, 0.553682367211838, 0.5260503426861878], &#39;standard_error&#39;: [nan, 0.3491898708333347, 0.23444707263463616, 0.276841183605919, 0.23525686516667502], &#39;window_size&#39;: 24}, &#39;metadata&#39;: [{&#39;operation&#39;: &#39;is_stationary&#39;, &#39;options&#39;: {&#39;columns&#39;: &#39;HeatFlux_st&#39;}}, {&#39;operation&#39;: &#39;trim&#39;, &#39;options&#39;: {&#39;column_name&#39;: &#39;HeatFlux_st&#39;, &#39;batch_size&#39;: 50, &#39;start_time&#39;: 0.0, &#39;method&#39;: &#39;threshold&#39;, &#39;threshold&#39;: 0.1, &#39;robust&#39;: True, &#39;sss_start&#39;: 158.59277222661015}}, {&#39;operation&#39;: &#39;effective_sample_size&#39;, &#39;options&#39;: {&#39;column_names&#39;: &#39;HeatFlux_st&#39;, &#39;alpha&#39;: 0.05}}, {&#39;operation&#39;: &#39;cumulative_statistics&#39;, &#39;options&#39;: {&#39;column_name&#39;: None, &#39;method&#39;: &#39;non-overlapping&#39;, &#39;window_size&#39;: None}}]}
+</pre></div>
+</div>
+<p>Display Cumulative Statistics as a DataFrame</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">exporter</span><span class="o">.</span><span class="n">display_dataframe</span><span class="p">(</span><span class="n">cumulative_df</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>   cumulative_mean  cumulative_uncertainty  standard_error  window_size
+0         8.777008                     NaN             NaN           24
+1         8.427818                0.493829        0.349190           24
+2         8.308148                0.406074        0.234447           24
+3         8.086431                0.553682        0.276841           24
+4         7.989678                0.526050        0.235257           24
+</pre></div>
+</div>
+</section>
+<section id="cgyro-data-analysis">
+<h2>CGYRO Data Analysis<a class="headerlink" href="#cgyro-data-analysis" title="Link to this heading">#</a></h2>
+<p>Specify the file paths</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">csv_file_path</span> <span class="o">=</span> <span class="s2">&quot;cgyro/output_nu0_50.csv&quot;</span>
+<span class="n">data_stream_cg</span> <span class="o">=</span> <span class="n">qnds</span><span class="o">.</span><span class="n">from_csv</span><span class="p">(</span><span class="n">csv_file_path</span><span class="p">)</span>
+<span class="n">data_stream_cg</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>time</th>
+      <th>Q_D/Q_GBD</th>
+      <th>Q_e/Q_GBD</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0.5</td>
+      <td>0.003355</td>
+      <td>0.001669</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1.0</td>
+      <td>0.003314</td>
+      <td>0.003338</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>1.5</td>
+      <td>0.003160</td>
+      <td>0.003941</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>2.0</td>
+      <td>0.002480</td>
+      <td>0.002337</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>2.5</td>
+      <td>0.002004</td>
+      <td>0.001941</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /><p>Get the number of rows</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">data_stream_cg</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>1748
+</pre></div>
+</div>
+<p>Trim the data based on threshold method</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">trimmed_</span> <span class="o">=</span> <span class="n">data_stream_cg</span><span class="o">.</span><span class="n">trim</span><span class="p">(</span><span class="n">column_name</span><span class="o">=</span><span class="s2">&quot;Q_D/Q_GBD&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># View trimmed data</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">trimmed_</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;quends.base.data_stream.DataStream object at 0x13c7ce510&gt;
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">trimmed_</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>Q_D/Q_GBD</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>208.0</td>
+      <td>12.974854</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>208.5</td>
+      <td>13.264263</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>209.0</td>
+      <td>13.563313</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>209.5</td>
+      <td>13.815548</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>210.0</td>
+      <td>14.046638</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /><p>To check if data stream is stationary</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">data_stream_cg</span><span class="o">.</span><span class="n">is_stationary</span><span class="p">(</span><span class="s2">&quot;Q_D/Q_GBD&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;Q_D/Q_GBD&#39;: True}
+</pre></div>
+</div>
+<p>To Plot for DataStream</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">plotter</span> <span class="o">=</span> <span class="n">qnds</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+<span class="n">plot</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">trace_plot</span><span class="p">(</span><span class="n">data_stream_cg</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Q_D/Q_GBD&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_datastream_guide_001.png" srcset="../_images/sphx_glr_datastream_guide_001.png" alt="Time Series Plots for Datastream, Q_D/Q_GBD" class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">plot</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">steady_state_automatic_plot</span><span class="p">(</span>
+    <span class="n">data_stream_cg</span><span class="p">,</span> <span class="n">variables_to_plot</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Q_D/Q_GBD&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_datastream_guide_002.png" srcset="../_images/sphx_glr_datastream_guide_002.png" alt="Q_D/Q_GBD" class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">plot</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">steady_state_plot</span><span class="p">(</span><span class="n">data_stream_cg</span><span class="p">,</span> <span class="n">variables_to_plot</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Q_D/Q_GBD&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_datastream_guide_003.png" srcset="../_images/sphx_glr_datastream_guide_003.png" alt="Q_D/Q_GBD" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>For Q_D/Q_GBD, no manual steady state start provided. Plotting raw signal.
+</pre></div>
+</div>
+<p>To show additional data use:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">addition_info</span> <span class="o">=</span> <span class="n">trimmed</span><span class="o">.</span><span class="n">additional_data</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;sliding&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">addition_info</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;HeatFlux_st&#39;: {&#39;A_est&#39;: 0.03170698677588585, &#39;p_est&#39;: 0.5410018913986299, &#39;n_current&#39;: 99, &#39;current_sem&#39;: 0.00263944463499645, &#39;target_sem&#39;: 0.002375500171496805, &#39;n_target&#39;: 120.28580081212739, &#39;additional_samples&#39;: 22, &#39;window_size&#39;: 24}, &#39;metadata&#39;: [{&#39;operation&#39;: &#39;is_stationary&#39;, &#39;options&#39;: {&#39;columns&#39;: &#39;HeatFlux_st&#39;}}, {&#39;operation&#39;: &#39;trim&#39;, &#39;options&#39;: {&#39;column_name&#39;: &#39;HeatFlux_st&#39;, &#39;batch_size&#39;: 50, &#39;start_time&#39;: 0.0, &#39;method&#39;: &#39;threshold&#39;, &#39;threshold&#39;: 0.1, &#39;robust&#39;: True, &#39;sss_start&#39;: 158.59277222661015}}, {&#39;operation&#39;: &#39;effective_sample_size&#39;, &#39;options&#39;: {&#39;column_names&#39;: &#39;HeatFlux_st&#39;, &#39;alpha&#39;: 0.05}}, {&#39;operation&#39;: &#39;additional_data&#39;, &#39;options&#39;: {&#39;column_name&#39;: None, &#39;ddof&#39;: 1, &#39;method&#39;: &#39;sliding&#39;, &#39;window_size&#39;: None, &#39;reduction_factor&#39;: 0.1}}]}
+</pre></div>
+</div>
+<p>To add a reduction factor</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">addition_info</span> <span class="o">=</span> <span class="n">trimmed</span><span class="o">.</span><span class="n">additional_data</span><span class="p">(</span><span class="n">reduction_factor</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">addition_info</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;HeatFlux_st&#39;: {&#39;A_est&#39;: 0.03170698677588585, &#39;p_est&#39;: 0.5410018913986299, &#39;n_current&#39;: 99, &#39;current_sem&#39;: 0.00263944463499645, &#39;target_sem&#39;: 0.00211155570799716, &#39;n_target&#39;: 149.54291116020593, &#39;additional_samples&#39;: 51, &#39;window_size&#39;: 24}, &#39;metadata&#39;: [{&#39;operation&#39;: &#39;is_stationary&#39;, &#39;options&#39;: {&#39;columns&#39;: &#39;HeatFlux_st&#39;}}, {&#39;operation&#39;: &#39;trim&#39;, &#39;options&#39;: {&#39;column_name&#39;: &#39;HeatFlux_st&#39;, &#39;batch_size&#39;: 50, &#39;start_time&#39;: 0.0, &#39;method&#39;: &#39;threshold&#39;, &#39;threshold&#39;: 0.1, &#39;robust&#39;: True, &#39;sss_start&#39;: 158.59277222661015}}, {&#39;operation&#39;: &#39;effective_sample_size&#39;, &#39;options&#39;: {&#39;column_names&#39;: &#39;HeatFlux_st&#39;, &#39;alpha&#39;: 0.05}}, {&#39;operation&#39;: &#39;additional_data&#39;, &#39;options&#39;: {&#39;column_name&#39;: None, &#39;ddof&#39;: 1, &#39;method&#39;: &#39;sliding&#39;, &#39;window_size&#39;: None, &#39;reduction_factor&#39;: 0.2}}]}
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 4.791 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-tutorials-datastream-guide-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/346f7ddd49db24bd09f6da0a988ff39b/datastream_guide.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">datastream_guide.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/59c3c4661d589ce072427a535b004e2f/datastream_guide.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">datastream_guide.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/e4c4a86b70068ad4f0faf2b03b4b7794/datastream_guide.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">datastream_guide.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Software Tutorial</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../contributing.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Contributing</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">DataStream Class</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gx-data-analysis">GX Data Analysis</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stationary-check">Stationary Check</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trimming-data-based-to-obtain-steady-state-portion">Trimming data based to obtain steady-state portion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#effective-sample-size">Effective Sample Size</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uq-analysis">UQ Analysis</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#other-statistical-methods">Other statistical methods</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cgyro-data-analysis">CGYRO Data Analysis</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Jan 02, 2026.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
