@@ -64,6 +64,12 @@ class RollingVarianceTrimStrategy(TrimStrategy):
         raise NotImplementedError("Implement rolling variance trimming here")
 
 
+class SSSStartTrimStrategy(TrimStrategy):
+
+    def apply(self, data_stream: DataStream, **kwargs: Any) -> DataStream:
+        raise NotImplementedError("Implement trim_sss_start() methodology")
+
+
 class TrimDataStreamOperation(DataStreamOperation):
     """
     Operation that applies a TrimStrategy to a DataStream.
