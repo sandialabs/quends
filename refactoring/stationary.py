@@ -2,7 +2,7 @@ from .data_stream import DataStream
 from .operations import DataStreamOperation
 
 
-class StationarityOperation(DataStreamOperation):
+class MakeStationaryOperation(DataStreamOperation):
     """from make_stationarity"""
 
     def __init__(self, column, n_pts_orig, workflow):

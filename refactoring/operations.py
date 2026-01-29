@@ -4,8 +4,8 @@
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 
+from ..src.quends.base.history import DataStreamHistoryEntry
 from .data_stream import DataStream
-from .history import DataStreamHistoryEntry
 
 
 class DataStreamOperation(ABC):
