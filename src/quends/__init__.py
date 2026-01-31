@@ -3,6 +3,15 @@
 # Importing classes and functions from base module
 from .base.data_stream import DataStream
 from .base.ensemble import Ensemble
+from .base.operations import DataStreamOperation
+from .base.trim import (
+    RollingVarianceTrimStrategy,
+    SSSStartTrimStrategy,
+    StandardDeviationTrimStrategy,
+    ThresholdTrimStrategy,
+    TrimDataStreamOperation,
+    TrimStrategy,
+)
 
 # Importing classes and functions from postprocessing module
 from .postprocessing.exporter import Exporter
@@ -19,7 +28,7 @@ from .preprocessing.numpy import from_numpy
 # Importing functions from workflow module
 from .workflow.robust_workflow import RobustWorkflow
 
-# Optionally, you can define the __all__ variable to specify what is exported 
+# Optionally, you can define the __all__ variable to specify what is exported
 # when using 'from quends import *'
 __all__ = [
     "DataStream",
@@ -33,4 +42,11 @@ __all__ = [
     "from_netcdf",
     "from_numpy",
     "RobustWorkflow",
+    "StandardDeviationTrimStrategy",
+    "ThresholdTrimStrategy",
+    "RollingVarianceTrimStrategy",
+    "SSSStartTrimStrategy",
+    "TrimStrategy",
+    "DataStreamOperation",
+    "TrimDataStreamOperation",
 ]
