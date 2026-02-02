@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 from scipy.stats import norm, rankdata
+from sklearn.preprocessing import MinMaxScaler
 
 # from statsmodels.robust.scale import mad
 from statsmodels.tsa.stattools import acf, adfuller
@@ -14,9 +15,6 @@ from .history import DataStreamHistory, DataStreamHistoryEntry, to_native_types
 
 # import scipy.stats as sts
 # import statsmodels.tsa.stattools as ststls
-
-
-# from sklearn.preprocessing import MinMaxScaler
 
 
 # def deduplicate_history(history):
@@ -1312,7 +1310,7 @@ Usage signature for the new trimming workflow::
     strategy = SomeTrimStrategy(kwargs...)
     trim_operation = TrimDataStreamOperation(strategy=strategy)
     data_stream = DataStream(data)
-    trimmed_data_stream = trim_operation(data_stream)
+    trimmed_data_stream = trim_operation(data_stream, column_name)
 """
 
 
@@ -1981,3 +1979,20 @@ class DataStream:
         ]
 
         return {"results": to_native_types(results), "metadata": deduped_entries}
+
+    @staticmethod
+    def normalize_data(df):
+        """
+        Min-Max normalize all signal columns (excluding 'time') to [0,1].
+
+        Parameters
+        ----------
+        df : pandas.DataFrame
+
+        Returns
+        -------
+        pandas.DataFrame
+        """
+        scaler = MinMaxScaler()
+        df.iloc[:, 1:] = scaler.fit_transform(df.iloc[:, 1:])
+        return df

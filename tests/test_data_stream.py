@@ -9,6 +9,7 @@ from quends import (
     DataStream,
     RobustWorkflow,
     StandardDeviationTrimStrategy,
+    ThresholdTrimStrategy,
     TrimDataStreamOperation,
 )
 
@@ -123,12 +124,9 @@ def test_confidence_interval_long(long_data: pd.DataFrame):
 
 
 # === Trim ===
-# === Trim ===
-
-
 def test_trim_std(trim_data: pd.DataFrame):
     ds = DataStream(trim_data)
-    strategy = StandardDeviationTrimStrategy(batch_size=1, start_time=3.0, robust=True)
+    strategy = StandardDeviationTrimStrategy(window_size=1, start_time=3.0, robust=True)
     trim_op = TrimDataStreamOperation(strategy=strategy)
     # Apply the operation
     result = trim_op(ds, column_name="A")
@@ -144,7 +142,6 @@ def test_trim_std(trim_data: pd.DataFrame):
                 "batch_size": 1,
                 "start_time": 3.0,
                 "method": "std",
-                "threshold": 4,
                 "robust": True,
                 "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
             },
@@ -154,12 +151,12 @@ def test_trim_std(trim_data: pd.DataFrame):
 
 def test_trim_threshold(trim_data: pd.DataFrame):
     ds = DataStream(trim_data.astype(float))
-    result = ds.trim(
-        column_name="A", batch_size=1, method="threshold", start_time=3.0, threshold=4
-    )
+    strategy = ThresholdTrimStrategy(window_size=1, start_time=3.0, threshold=4)
+    trim_op = TrimDataStreamOperation(strategy=strategy)
+    result = trim_op(ds, column_name="A")
     assert isinstance(result, DataStream)
-    assert result.df.empty
-    assert list(result.df.columns) == ["time", "A"]
+    assert result.data.empty
+    assert list(result.data.columns) == ["time", "A"]
     assert result._history == [
         {"operation": "is_stationary", "options": {"columns": "A"}},
         {
@@ -231,11 +228,13 @@ def test_trim_invalid_method(trim_data: pd.DataFrame):
 
 def test_trim_missing_threshold(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    result = ds.trim(column_name="A", method="threshold")
+    strategy = ThresholdTrimStrategy()
+    trim_op = TrimDataStreamOperation(strategy=strategy)
+    result = trim_op(ds, column_name="A")
     assert isinstance(result, DataStream)
-    assert result.df.empty
+    assert result.data.empty
     # Expect columns: ["time", "A", "B"] since that's what the DataFrame originally has.
-    assert set(result.df.columns) == set(["time", "A", "B"])
+    assert set(result.data.columns) == set(["time", "A", "B"])
     assert result._history == [
         {"operation": "is_stationary", "options": {"columns": "A"}},
         {
@@ -611,59 +610,45 @@ def test_process_column_missing_method(simple_data: pd.DataFrame):
 
 # === Find Steady State Std ===
 def test_find_steady_state_std(trim_data: pd.DataFrame):
-    strategy = StandardDeviationTrimStrategy
-    result = strategy._find_steady_state_std(
-        data=trim_data, column_name="A", window_size=1
-    )
+    strategy = StandardDeviationTrimStrategy(window_size=1)
+    result = strategy._detection_method(data=trim_data, column_name="A")
 
     assert result == 0
 
 
 def test_find_steady_state_std_non_robust(trim_data: pd.DataFrame):
-    strategy = StandardDeviationTrimStrategy()
+    strategy = StandardDeviationTrimStrategy(window_size=2, robust=False)
 
-    result = strategy._find_steady_state_std(
+    result = strategy._detection_method(
         data=trim_data,
         column_name="A",
-        window_size=2,
-        robust=False,
     )
 
     assert result == 3
 
 
 def test_find_steady_state_not_valid(no_valid_data: pd.DataFrame):
-    strategy = StandardDeviationTrimStrategy()
-    result = strategy._find_steady_state_std(
-        data=no_valid_data,
-        column_name=["time", "A"],
-        window_size=1,
-    )
+    strategy = StandardDeviationTrimStrategy(window_size=1)
+    result = strategy._detection_method(data=no_valid_data, column_name=["time", "A"])
     assert result is None
 
 
 # === Find Steady State Threshold ===
 def test_find_steady_state_stationary(stationary_data: pd.DataFrame):
-    ds = DataStream(stationary_data)
-    result = ds.find_steady_state_threshold(
-        data=ds.df, column_name="A", window_size=2, threshold=0.1
-    )
+    strategy = ThresholdTrimStrategy(window_size=2, threshold=0.1)
+    result = strategy._detection_method(data=stationary_data, column_name="A")
     assert result == 1
 
 
 def test_find_steady_state_long_data(long_data: pd.DataFrame):
-    ds = DataStream(long_data)
-    result = ds.find_steady_state_threshold(
-        data=ds.df, column_name="A", window_size=2, threshold=0.1
-    )
+    strategy = ThresholdTrimStrategy(window_size=2, threshold=0.1)
+    result = strategy._detection_method(data=long_data, column_name="A")
     assert result is None
 
 
 def test_find_steady_state_trim_data(trim_data: pd.DataFrame):
-    ds = DataStream(trim_data)
-    result = ds.find_steady_state_threshold(
-        data=ds.df, column_name="A", window_size=3, threshold=0.5
-    )
+    strategy = ThresholdTrimStrategy(window_size=3, threshold=0.5)
+    result = strategy._detection_method(data=trim_data, column_name="A")
     assert result == 2
 
 
