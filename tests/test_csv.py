@@ -41,19 +41,19 @@ def test_from_csv_without_variables(create_csv_file):
     # Check if the result is a DataStream
     assert isinstance(data_stream, DataStream), "Expected a DataStream object."
 
-    # Check if DataStream has a df attribute
-    assert hasattr(data_stream, "df"), "DataStream does not have a 'df' attribute."
+    # Check if DataStream has a data attribute
+    assert hasattr(data_stream, "data"), "DataStream does not have a 'data' attribute."
 
     # Now you can proceed to check the contents of the DataFrame
-    df = data_stream.df
+    data = data_stream.data
 
     # Check if the DataFrame contains all expected columns
     expected_columns = ["time", "HeatFlux_st", "Wg_st", "Wphi_st"]
     for column in expected_columns:
-        assert column in df.columns, f"DataFrame should contain '{column}' column."
+        assert column in data.columns, f"DataFrame should contain '{column}' column."
 
     # Validate the contents of the DataFrame
-    assert len(df) == 10, "DataFrame should have 10 entries."
+    assert len(data) == 10, "DataFrame should have 10 entries."
 
 
 # Test 'from_csv' with variables assigned
@@ -68,22 +68,26 @@ def test_from_csv_with_variables(create_csv_file):
     # Check if the result is a DataStream
     assert isinstance(data_stream, DataStream), "Expected a DataStream object."
 
-    # Check if DataStream has a df attribute
-    assert hasattr(data_stream, "df"), "DataStream does not have a 'df' attribute."
+    # Check if DataStream has a data attribute
+    assert hasattr(data_stream, "data"), "DataStream does not have a 'data' attribute."
 
     # Now you can proceed to check the contents of the DataFrame
-    df = data_stream.df
+    data = data_stream.data
 
     # Check if the DataFrame contains the expected columns
-    assert "time" in df.columns, "DataFrame should contain 'time' column."
-    assert "HeatFlux_st" in df.columns, "DataFrame should contain 'HeatFlux_st' column."
+    assert "time" in data.columns, "DataFrame should contain 'time' column."
+    assert (
+        "HeatFlux_st" in data.columns
+    ), "DataFrame should contain 'HeatFlux_st' column."
 
     # Ensure that unwanted variables are not present
-    assert "Wg_st" not in df.columns, "DataFrame should not contain 'Wg_st' column."
-    assert "Wphi_st" not in df.columns, "DataFrame should not contain 'Wphi_st' column."
+    assert "Wg_st" not in data.columns, "DataFrame should not contain 'Wg_st' column."
+    assert (
+        "Wphi_st" not in data.columns
+    ), "DataFrame should not contain 'Wphi_st' column."
 
     # Validate the contents of the DataFrame
-    assert len(df) == 10, "DataFrame should have 10 entries."
+    assert len(data) == 10, "DataFrame should have 10 entries."
 
     # Verify that the data values match what was written
     expected_data = {
@@ -91,10 +95,10 @@ def test_from_csv_with_variables(create_csv_file):
         "HeatFlux_st": [20.5, 21.0, 19.5, 22.0, 23.5, 24.0, 25.0, 26.5, 27.0, 28.0],
     }
     np.testing.assert_array_equal(
-        df["time"].values, expected_data["time"], "Time values do not match."
+        data["time"].values, expected_data["time"], "Time values do not match."
     )
     np.testing.assert_array_equal(
-        df["HeatFlux_st"].values,
+        data["HeatFlux_st"].values,
         expected_data["HeatFlux_st"],
         "HeatFlux_st values do not match.",
     )

@@ -15,11 +15,11 @@ def test_from_numpy_1d():
 
     # Check if DataStream has a df attribute
     assert hasattr(
-        data_stream, "df"
+        data_stream, "data"
     ), "DataStream does not have a 'data_frame' attribute."
 
     # Check the contents of the DataFrame
-    df = data_stream.df
+    df = data_stream.data
     expected_df = pd.DataFrame(np_array, columns=["data"])
     pd.testing.assert_frame_equal(df, expected_df)
 
@@ -34,11 +34,11 @@ def test_from_numpy_2d():
 
     # Check if DataStream has a df attribute
     assert hasattr(
-        data_stream, "df"
+        data_stream, "data"
     ), "DataStream does not have a 'data_frame' attribute."
 
     # Check the contents of the DataFrame
-    df = data_stream.df
+    df = data_stream.data
     expected_df = pd.DataFrame(np_array, columns=["col_0", "col_1", "col_2"])
     pd.testing.assert_frame_equal(df, expected_df)
 
@@ -54,11 +54,11 @@ def test_from_numpy_2d_with_variables():
 
     # Check if DataStream has a df attribute
     assert hasattr(
-        data_stream, "df"
+        data_stream, "data"
     ), "DataStream does not have a 'data_frame' attribute."
 
     # Check the contents of the DataFrame
-    df = data_stream.df
+    df = data_stream.data
     expected_df = pd.DataFrame(np_array, columns=variables)
     pd.testing.assert_frame_equal(df, expected_df)
 

@@ -4,6 +4,7 @@
 from .base.data_stream import DataStream
 from .base.ensemble import Ensemble
 from .base.operations import DataStreamOperation
+from .base.stationary import MakeStationaryOperation
 from .base.trim import (
     RollingVarianceTrimStrategy,
     SSSStartTrimStrategy,
@@ -49,4 +50,5 @@ __all__ = [
     "TrimStrategy",
     "DataStreamOperation",
     "TrimDataStreamOperation",
+    "MakeStationaryOperation",
 ]

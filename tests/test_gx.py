@@ -109,10 +109,10 @@ def test_without_variables(create_netcdf_file):
     print(f"Returning object type: {type(data_stream)}")
 
     # Check if DataStream has DataFrame
-    assert hasattr(data_stream, "df"), "DataStream does not have a 'df'"
+    assert hasattr(data_stream, "data"), "DataStream does not have a 'data'"
 
     # Check if the DataFrame contains the expected data
-    df = data_stream.df
+    df = data_stream.data
 
     # Check if the DataFrame contains all expected columns
     expected_columns = ["time", "HeatFlux_st", "Wg_st", "Wphi_st"]
@@ -155,10 +155,10 @@ def test_with_variables(create_netcdf_file):
     print(f"Returning object type: {type(data_stream)}")
 
     # Check if DataStream has DataFrame
-    assert hasattr(data_stream, "df"), "DataStream does not have a 'df'"
+    assert hasattr(data_stream, "data"), "DataStream does not have a 'data'"
 
     # Check if the DataFrame contains the expected data
-    df = data_stream.df
+    df = data_stream.data
     assert "time" in df.columns, "DataFrame should contain 'time' column."
     assert "HeatFlux_st" in df.columns, "DataFrame should contain 'HeatFlux_st' column."
 
@@ -205,7 +205,7 @@ def test_csv_without_variables(create_csv_file):
     test_file = create_csv_file
     data_stream = from_gx(test_file)
     assert isinstance(data_stream, DataStream)
-    df = data_stream.df
+    df = data_stream.data
     expected_columns = ["time", "HeatFlux_st", "Wg_st", "Wphi_st"]
     for column in expected_columns:
         assert column in df.columns
@@ -218,7 +218,7 @@ def test_csv_with_specific_variables(create_csv_file):
     test_file = create_csv_file
     data_stream = from_gx(test_file, variables=["time", "HeatFlux_st"])
     assert isinstance(data_stream, DataStream)
-    df = data_stream.df
+    df = data_stream.data
     assert "time" in df.columns
     assert "HeatFlux_st" in df.columns
     assert "Wg_st" not in df.columns

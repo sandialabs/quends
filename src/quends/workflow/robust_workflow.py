@@ -3,6 +3,8 @@ import numpy as np
 
 # QUENDS libraries
 from ..base.data_stream import DataStream
+from ..base.stationary import MakeStationaryOperation
+from ..base.trim import SSSStartTrimStrategy, TrimDataStreamOperation
 
 
 class RobustWorkflow:
@@ -174,7 +176,7 @@ class RobustWorkflow:
             results_dict[col] = {}
 
             # Get all data that is later than start_time
-            df_past_start = data_stream.df[data_stream.df["time"] >= start_time]
+            df_past_start = data_stream.data[data_stream.data["time"] >= start_time]
 
             # Get the data
             column_data = df_past_start[col].dropna()
@@ -228,27 +230,30 @@ class RobustWorkflow:
             Dictionary with results for the quantity of interest.
         """
 
-        # Work on a copy of the data stream
-        ds_wrk = DataStream(data_stream_orig.df.copy())
+        df_wrk = data_stream_orig.data.copy()
+        df_wrk = df_wrk[df_wrk["time"] >= start_time]
+        ds_wrk = DataStream(df_wrk)
 
-        # Get all data that is later than start_time
-        ds_wrk.df = ds_wrk.df[ds_wrk.df["time"] >= start_time]
         # Get number of points that we are working with
-        n_pts_orig = len(ds_wrk.df)
+        n_pts_orig = len(ds_wrk.data)
 
         if self._verbosity > 0:
-            print(f"Original size of data stream: {len(data_stream_orig.df)} points.")
+            print(f"Original size of data stream: {len(data_stream_orig.data)} points.")
             print(f"After enforcing start time there are {n_pts_orig} points left.")
 
         # Check if data stream is stationary
 
         # Check if it isn't stationary, if not drop fraction of data points
-        ds_wrk, stationary = ds_wrk.make_stationary(col, n_pts_orig, self)
+        op = MakeStationaryOperation(column=col, n_pts_orig=n_pts_orig, workflow=self)
+        ds_wrk, stationary = op(ds_wrk)
 
         if stationary:
 
             # detect and trim data stream to the start of statistcal steady state
-            trimmed_stream = ds_wrk.trim_sss_start(col, self)
+            strategy = SSSStartTrimStrategy(workflow=self)
+            trim_op = TrimDataStreamOperation(strategy=strategy)
+            trimmed_stream = trim_op(ds_wrk, column_name=col)
+            # trimmed_stream = ds_wrk.trim_sss_start(col, self)
 
             # Check that a steady state was found
             if len(trimmed_stream) > 1:
@@ -258,7 +263,7 @@ class RobustWorkflow:
                 #     print(trimmed_stream.df.head())
 
                 # Start time of statistical steady state
-                sss_start = trimmed_stream.df["time"][0]
+                sss_start = trimmed_stream.data["time"][0]
 
                 # Get statistics (with window selected by decorrelation length)
                 trimmed_stats = trimmed_stream.compute_statistics(column_name=col)
@@ -311,7 +316,7 @@ class RobustWorkflow:
         shows a plot of the signal with mean, confidence interval and start of SSS (if stats provided)
         """
 
-        my_df = data_stream.df
+        my_df = data_stream.data
 
         fig, ax = plt.subplots(figsize=(10, 6))
 

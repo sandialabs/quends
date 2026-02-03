@@ -35,11 +35,11 @@ def test_from_json_valid(create_json_file):
 
     # Check if DataStream has a df attribute
     assert hasattr(
-        data_stream, "df"
+        data_stream, "data"
     ), "DataStream does not have a 'data_frame' attribute."
 
     # Now you can proceed to check the contents of the DataFrame
-    df = data_stream.df
+    df = data_stream.data
 
     # Check if the DataFrame contains all expected columns
     expected_columns = ["time", "HeatFlux_st", "Wg_st", "Wphi_st"]
@@ -83,11 +83,11 @@ def test_from_json_with_specific_variables(create_json_file):
 
     # Check if DataStream has a df attribute
     assert hasattr(
-        data_stream, "df"
+        data_stream, "data"
     ), "DataStream does not have a 'data_frame' attribute."
 
     # Now you can proceed to check the contents of the DataFrame
-    df = data_stream.df
+    df = data_stream.data
 
     # Check if the DataFrame contains only the expected columns
     expected_columns = ["HeatFlux_st", "Wg_st"]
