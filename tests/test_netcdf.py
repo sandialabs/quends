@@ -68,11 +68,11 @@ def test_from_netcdf_without_variables(create_netcdf_file):
 
     # Check if DataStream has a df attribute
     assert hasattr(
-        data_stream, "df"
+        data_stream, "data"
     ), "DataStream does not have a 'data_frame' attribute."
 
     # Now you can proceed to check the contents of the DataFrame
-    df = data_stream.df
+    df = data_stream.data
 
     # Check if the DataFrame contains all expected columns
     expected_columns = ["time", "HeatFlux_st", "Wg_st", "Wphi_st"]
@@ -127,11 +127,11 @@ def test_from_netcdf_with_specific_variables(create_netcdf_file):
 
     # Check if DataStream has a df attribute
     assert hasattr(
-        data_stream, "df"
+        data_stream, "data"
     ), "DataStream does not have a 'data_frame' attribute."
 
     # Now you can proceed to check the contents of the DataFrame
-    df = data_stream.df
+    df = data_stream.data
 
     # Check if the DataFrame contains only the expected columns
     expected_columns = ["HeatFlux_st", "Wg_st"]
@@ -220,11 +220,11 @@ def test_from_netcdf_with_second_netcdf(create_another_netcdf_file):
 
     # Check if DataStream has a df attribute
     assert hasattr(
-        data_stream, "df"
+        data_stream, "data"
     ), "DataStream does not have a 'data_frame' attribute."
 
     # Now you can proceed to check the contents of the DataFrame
-    df = data_stream.df
+    df = data_stream.data
 
     # Verify that the data values match what was written
     np.testing.assert_array_equal(
@@ -324,11 +324,11 @@ def test_extract_2d_variable(create_netcdf_file_with_2d_variable):
 
     # Check if DataStream has a df attribute
     assert hasattr(
-        data_stream, "df"
+        data_stream, "data"
     ), "DataStream does not have a 'data_frame' attribute."
 
     # Now you can proceed to check the contents of the DataFrame
-    df = data_stream.df
+    df = data_stream.data
     print(df)
 
     # Verify that the data values match what was written

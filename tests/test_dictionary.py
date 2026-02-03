@@ -25,7 +25,7 @@ def test_from_dict_empty_dict():
     data_dict = {}
     data_stream = qds.from_dict(data_dict)
     assert isinstance(data_stream, qds.DataStream), "Expected a DataStream object"
-    df = data_stream.df
+    df = data_stream.data
     assert df.empty, "DataFrame should be empty for an empty dictionary."
 
 
@@ -37,7 +37,7 @@ def test_from_dict_none_input():
 def test_from_dict_with_none_variables(simple_dict):
     data_dict = simple_dict.to_dict(orient="list")
     data_stream = qds.from_dict(data_dict, variables=None)  # Should include all columns
-    df = data_stream.df
+    df = data_stream.data
     expected_columns = ["A", "B"]
     for column in expected_columns:
         assert column in df.columns, f"DataFrame should contain '{column}' column."

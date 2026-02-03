@@ -1719,7 +1719,7 @@ class DataStream:
         results = {}
         for column in columns:
             try:
-                p_value = adfuller(self.df[column].dropna(), autolag="AIC")[1]
+                p_value = adfuller(self.data[column].dropna(), autolag="AIC")[1]
                 results[column] = p_value < 0.05
             except Exception as e:
                 results[column] = f"Error: {e}"
