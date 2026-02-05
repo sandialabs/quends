@@ -1,3 +1,4 @@
+import math
 import os
 
 import matplotlib.pyplot as plt
@@ -7,7 +8,6 @@ from statsmodels.tsa.stattools import acf
 
 from quends.base.data_stream import DataStream  # Adjust the import if necessary
 from quends.base.ensemble import Ensemble
-import math
 
 
 class Plotter:
@@ -52,7 +52,8 @@ class Plotter:
             return {"DataStream": data.df}
         elif isinstance(data, Ensemble):
             return {
-                f"DataStream {k}": data.data_streams[k].df for k in range(len(data))
+                f"DataStream {k}": data.data_streams[k].df
+                for k in range(len(data))
             }
         elif isinstance(data, dict):
             return data
@@ -93,16 +94,22 @@ class Plotter:
         # If no variables provided, infer from the first DataFrame (excluding 'time')
         if variables_to_plot is None:
             first_df = next(iter(data_frames.values()))
-            variables_to_plot = [col for col in first_df.columns if col != "time"]
+            variables_to_plot = [
+                col for col in first_df.columns if col != "time"
+            ]
         else:
-            variables_to_plot = [var for var in variables_to_plot if var != "time"]
+            variables_to_plot = [
+                var for var in variables_to_plot if var != "time"
+            ]
 
         # Create a trace plot for each dataset in the dictionary
         for dataset_name, df in data_frames.items():
             time_series = df["time"]
             num_traces = len(variables_to_plot)
             num_cols = min(5, num_traces)
-            num_rows = (num_traces + num_cols - 1) // num_cols  # Ceiling division
+            num_rows = (
+                num_traces + num_cols - 1
+            ) // num_cols  # Ceiling division
             fig_size = self._calc_fig_size(num_cols, num_rows)
             fig, axes = plt.subplots(num_rows, num_cols, figsize=fig_size)
             # fig_width = num_cols * 4
@@ -138,7 +145,6 @@ class Plotter:
                 )
                 plt.savefig(save_path)
             plt.show()
-            plt.close()
 
         return axes
 
@@ -159,16 +165,22 @@ class Plotter:
         # If no variables provided, infer from the first DataFrame (excluding 'time')
         if variables_to_plot is None:
             first_df = next(iter(data_frames.values()))
-            variables_to_plot = [col for col in first_df.columns if col != "time"]
+            variables_to_plot = [
+                col for col in first_df.columns if col != "time"
+            ]
         else:
-            variables_to_plot = [var for var in variables_to_plot if var != "time"]
+            variables_to_plot = [
+                var for var in variables_to_plot if var != "time"
+            ]
 
         # Create a trace plot for each dataset in the dictionary
         for dataset_name, df in data_frames.items():
             time_series = df["time"]
             num_traces = len(variables_to_plot)
             num_cols = min(5, num_traces)
-            num_rows = (num_traces + num_cols - 1) // num_cols  # Ceiling division
+            num_rows = (
+                num_traces + num_cols - 1
+            ) // num_cols  # Ceiling division
             fig_size = self._calc_fig_size(num_cols, num_rows)
             fig, axes = plt.subplots(num_rows, num_cols, figsize=fig_size)
             # fig_width = num_cols * 4
@@ -185,7 +197,9 @@ class Plotter:
                 ds = DataStream(df)
                 tds = ds.trim(column)
                 m = tds.mean()[column]["mean"]
-                lower, upper = tds.confidence_interval()[column]["confidence interval"]
+                lower, upper = tds.confidence_interval()[column][
+                    "confidence interval"
+                ]
                 axes[j].plot(time_series, df[column], label=column)
                 axes[j].plot(
                     tds.df["time"],
@@ -222,7 +236,6 @@ class Plotter:
                 )
                 plt.savefig(save_path)
             plt.show()
-            plt.close()
 
     def ensemble_trace_plot(self, data, variables_to_plot=None, save=False):
         """
@@ -240,9 +253,13 @@ class Plotter:
         # If no variables provided, infer from the first DataFrame (excluding 'time')
         if variables_to_plot is None:
             first_df = next(iter(data_frames.values()))
-            variables_to_plot = [col for col in first_df.columns if col != "time"]
+            variables_to_plot = [
+                col for col in first_df.columns if col != "time"
+            ]
         else:
-            variables_to_plot = [var for var in variables_to_plot if var != "time"]
+            variables_to_plot = [
+                var for var in variables_to_plot if var != "time"
+            ]
 
         for var in variables_to_plot:
             plt.figure(figsize=(8, 6))
@@ -258,9 +275,10 @@ class Plotter:
                 )
                 plt.savefig(save_path)
             plt.show()
-            plt.close()
 
-    def ensemble_trace_plot_with_mean(self, data, variables_to_plot=None, save=False):
+    def ensemble_trace_plot_with_mean(
+        self, data, variables_to_plot=None, save=False
+    ):
         """
         Plot ensemble time series data, with traces from each ensemble member plotted on the same axes.
         The resulting plots are displayed and optionally saved if 'save' is True.
@@ -277,9 +295,13 @@ class Plotter:
         # If no variables provided, infer from the first DataFrame (excluding 'time')
         if variables_to_plot is None:
             first_df = next(iter(data_frames.values()))
-            variables_to_plot = [col for col in first_df.columns if col != "time"]
+            variables_to_plot = [
+                col for col in first_df.columns if col != "time"
+            ]
         else:
-            variables_to_plot = [var for var in variables_to_plot if var != "time"]
+            variables_to_plot = [
+                var for var in variables_to_plot if var != "time"
+            ]
 
         for var in variables_to_plot:
             plt.figure(figsize=(8, 6))
@@ -295,7 +317,6 @@ class Plotter:
                 )
                 plt.savefig(save_path)
             plt.show()
-            plt.close()
 
     def steady_state_automatic_plot(
         self,
@@ -335,9 +356,13 @@ class Plotter:
         # If no variables provided, infer from the first DataFrame (excluding 'time')
         if variables_to_plot is None:
             first_df = next(iter(data_frames.values()))
-            variables_to_plot = [col for col in first_df.columns if col != "time"]
+            variables_to_plot = [
+                col for col in first_df.columns if col != "time"
+            ]
         else:
-            variables_to_plot = [var for var in variables_to_plot if var != "time"]
+            variables_to_plot = [
+                var for var in variables_to_plot if var != "time"
+            ]
 
         for dataset_name, df in data_frames.items():
             # Create one subplot per variable (stacked vertically)
@@ -379,7 +404,9 @@ class Plotter:
                         linestyle="--",
                         label="Steady State Start",
                     )
-                    ax.axhline(y=overall_mean, color="g", linestyle="-", label="Mean")
+                    ax.axhline(
+                        y=overall_mean, color="g", linestyle="-", label="Mean"
+                    )
                     ax.fill_between(
                         time[time >= steady_state_start],
                         overall_mean - overall_std,
@@ -429,7 +456,6 @@ class Plotter:
                 )
                 plt.savefig(save_path)
             plt.show()
-            plt.close(fig)
 
     def steady_state_plot(
         self, data, variables_to_plot=None, steady_state_start=None, save=False
@@ -458,9 +484,13 @@ class Plotter:
 
         if variables_to_plot is None:
             first_df = next(iter(data_frames.values()))
-            variables_to_plot = [col for col in first_df.columns if col != "time"]
+            variables_to_plot = [
+                col for col in first_df.columns if col != "time"
+            ]
         else:
-            variables_to_plot = [var for var in variables_to_plot if var != "time"]
+            variables_to_plot = [
+                var for var in variables_to_plot if var != "time"
+            ]
 
         for dataset_name, df in data_frames.items():
             if "time" not in df.columns:
@@ -501,7 +531,9 @@ class Plotter:
                         linestyle="--",
                         label="Steady State Start",
                     )
-                    ax.axhline(y=overall_mean, color="g", linestyle="-", label="Mean")
+                    ax.axhline(
+                        y=overall_mean, color="g", linestyle="-", label="Mean"
+                    )
                     ax.fill_between(
                         time[time >= manual_ss],
                         overall_mean - overall_std,
@@ -546,7 +578,6 @@ class Plotter:
                 )
                 plt.savefig(save_path)
             plt.show()
-            plt.close(fig)
 
     def plot_acf(self, data, alpha=0.05, column=None, ax=None):
         """
@@ -695,6 +726,7 @@ class Plotter:
             None
         """
         import math
+
         n_members = len(ensemble_obj.data_streams)
         ncols = min(3, n_members)
         nrows = int(math.ceil(n_members / ncols))
@@ -738,7 +770,9 @@ class Plotter:
                         linestyle="--",
                         label="SS Start",
                     )
-                    ax.axhline(y=overall_mean, color="g", linestyle="-", label="Mean")
+                    ax.axhline(
+                        y=overall_mean, color="g", linestyle="-", label="Mean"
+                    )
                     ax.fill_between(
                         time[time >= steady_state_start],
                         overall_mean - overall_std,
@@ -780,14 +814,19 @@ class Plotter:
 
         plt.tight_layout(rect=[0, 0, 1, 0.95])
         if save:
-            save_path = os.path.join(self.output_dir, "ensemble_steady_state_auto.png")
+            save_path = os.path.join(
+                self.output_dir, "ensemble_steady_state_auto.png"
+            )
             plt.savefig(save_path)
             print(f"Figure saved to {save_path}")
         plt.show()
-        plt.close(fig)
 
     def ensemble_steady_state_plot(
-        self, ensemble_obj, variables_to_plot=None, steady_state_start=None, save=False
+        self,
+        ensemble_obj,
+        variables_to_plot=None,
+        steady_state_start=None,
+        save=False,
     ):
         """
         Plot steady state detection for each ensemble member using a user-supplied steady state start.
@@ -836,8 +875,12 @@ class Plotter:
                     overall_std = after_ss.std()
 
                     ax.plot(time, signal, label=f"{var}", alpha=0.7)
-                    ax.axvline(x=manual_ss, color="r", linestyle="--", label="SS Start")
-                    ax.axhline(y=overall_mean, color="g", linestyle="-", label="Mean")
+                    ax.axvline(
+                        x=manual_ss, color="r", linestyle="--", label="SS Start"
+                    )
+                    ax.axhline(
+                        y=overall_mean, color="g", linestyle="-", label="Mean"
+                    )
                     ax.fill_between(
                         time[time >= manual_ss],
                         overall_mean - overall_std,
@@ -885,7 +928,6 @@ class Plotter:
             plt.savefig(save_path)
             print(f"Figure saved to {save_path}")
         plt.show()
-        plt.close(fig)
 
     def plot_ensemble(
         self, ensemble_obj, variables_to_plot=None, show_plots=False, save=False
@@ -897,7 +939,8 @@ class Plotter:
         """
         # 1) collect each member’s DataFrame
         member_dfs = {
-            f"Member {i}": ds.df for i, ds in enumerate(ensemble_obj.data_streams)
+            f"Member {i}": ds.df
+            for i, ds in enumerate(ensemble_obj.data_streams)
         }
 
         # 2) compute the ensemble average DataStream and add it
@@ -939,7 +982,13 @@ class Plotter:
                         zorder=5,
                     )
                 else:
-                    ax.plot(df["time"], df[var], label=name, alpha=0.3, linewidth=1.0)
+                    ax.plot(
+                        df["time"],
+                        df[var],
+                        label=name,
+                        alpha=0.3,
+                        linewidth=1.0,
+                    )
             ax.set_title(var, fontsize=14)
             ax.set_xlabel("Time", fontsize=12)
             ax.set_ylabel(var, fontsize=12)
@@ -971,7 +1020,9 @@ class Plotter:
 
         # 10) save/show
         if save:
-            outpath = os.path.join(self.output_dir, "ensemble_members_and_average.png")
+            outpath = os.path.join(
+                self.output_dir, "ensemble_members_and_average.png"
+            )
             fig.savefig(outpath, dpi=150)
         if show_plots:
             plt.show()
@@ -979,16 +1030,16 @@ class Plotter:
             plt.close(fig)
 
     def steady_state_automatic_plot_with_stats(
-            self,
-            data,
-            variables_to_plot=None,
-            batch_size=10,
-            start_time=0.0,
-            method="std",
-            threshold=None,
-            robust=True,
-            save=False,
-            ):
+        self,
+        data,
+        variables_to_plot=None,
+        batch_size=10,
+        start_time=0.0,
+        method="std",
+        threshold=None,
+        robust=True,
+        save=False,
+    ):
         """
         Plot steady state detection for each variable in the data, **annotated with statistics**.
         For each variable, use DataStream.trim() to estimate steady state.
@@ -1010,12 +1061,13 @@ class Plotter:
             save (bool): Save figure to disk.
         """
 
-
         data_frames = self._prepare_data_frames(data)
         # Infer variables if needed
         if variables_to_plot is None:
             first_df = next(iter(data_frames.values()))
-            variables_to_plot = [col for col in first_df.columns if col != "time"]
+            variables_to_plot = [
+                col for col in first_df.columns if col != "time"
+            ]
         else:
             variables_to_plot = [v for v in variables_to_plot if v != "time"]
 
@@ -1051,29 +1103,44 @@ class Plotter:
                     overall_std = after_ss.std()
 
                     ax.plot(time, signal, label=column, alpha=0.7)
-                    ax.axvline(steady_state_start, color="r", linestyle="--", label="Steady State Start")
-                    ax.axhline(overall_mean, color="g", linestyle="-", label="Mean")
+                    ax.axvline(
+                        steady_state_start,
+                        color="r",
+                        linestyle="--",
+                        label="Steady State Start",
+                    )
+                    ax.axhline(
+                        overall_mean, color="g", linestyle="-", label="Mean"
+                    )
                     ax.fill_between(
                         time[time >= steady_state_start],
                         overall_mean - overall_std,
                         overall_mean + overall_std,
-                        color="blue", alpha=0.3, label="±1 Std Dev",
+                        color="blue",
+                        alpha=0.3,
+                        label="±1 Std Dev",
                     )
                     ax.fill_between(
                         time[time >= steady_state_start],
                         overall_mean - 2 * overall_std,
                         overall_mean + 2 * overall_std,
-                        color="yellow", alpha=0.2, label="±2 Std Dev",
+                        color="yellow",
+                        alpha=0.2,
+                        label="±2 Std Dev",
                     )
                     ax.fill_between(
                         time[time >= steady_state_start],
                         overall_mean - 3 * overall_std,
                         overall_mean + 3 * overall_std,
-                        color="red", alpha=0.1, label="±3 Std Dev",
+                        color="red",
+                        alpha=0.1,
+                        label="±3 Std Dev",
                     )
 
                     # Compute and annotate stats
-                    stats = trimmed_ds.compute_statistics(column_name=column)[column]
+                    stats = trimmed_ds.compute_statistics(column_name=column)[
+                        column
+                    ]
                     ci_low, ci_high = stats["confidence_interval"]
                     pm_low, pm_high = stats["pm_std"]
                     txt = (
@@ -1083,11 +1150,15 @@ class Plotter:
                         f"±STD = [{pm_low:.3f}, {pm_high:.3f}]"
                     )
                     ax.text(
-                        0.03, 0.97, txt,
+                        0.03,
+                        0.97,
+                        txt,
                         transform=ax.transAxes,
                         verticalalignment="top",
                         fontsize="small",
-                        bbox=dict(facecolor="white", alpha=0.6, edgecolor="gray"),
+                        bbox=dict(
+                            facecolor="white", alpha=0.6, edgecolor="gray"
+                        ),
                     )
 
                     ax.set_title(column)
@@ -1103,7 +1174,9 @@ class Plotter:
                     ax.set_ylabel(column)
                     ax.legend(fontsize="small")
                     ax.grid(True)
-                    print(f"{column}: No steady state detected or insufficient data.")
+                    print(
+                        f"{column}: No steady state detected or insufficient data."
+                    )
 
             # Remove unused axes
             for k in range(num_vars, len(axes)):

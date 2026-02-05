@@ -16,7 +16,11 @@ from .preprocessing.json import from_json
 from .preprocessing.netcdf import from_netcdf
 from .preprocessing.numpy import from_numpy
 
-# Optionally, you can define the __all__ variable to specify what is exported when using 'from quends import *'
+# Importing functions from workflow module
+from .workflow.robust_workflow import RobustWorkflow
+
+# Optionally, you can define the __all__ variable to specify what is exported 
+# when using 'from quends import *'
 __all__ = [
     "DataStream",
     "Ensemble",
@@ -28,4 +32,5 @@ __all__ = [
     "from_json",
     "from_netcdf",
     "from_numpy",
+    "RobustWorkflow",
 ]
