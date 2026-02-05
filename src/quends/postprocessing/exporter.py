@@ -225,3 +225,14 @@ class Exporter:
         with open(file_path, "w") as f:
             f.write(j)
         print(f"JSON saved to {file_path}")
+
+    # --- Convenience aliases for compatibility ---
+    def export_dataframe(self, data, filename="dataframe.csv"):
+        """Alias for save_dataframe for compatibility with notebooks."""
+        self.save_dataframe(data, file_name=filename)
+
+    def export_figure(self, fig, filename="figure.png", dpi=300):
+        """Save a Matplotlib figure to file."""
+        file_path = os.path.join(self.output_dir, filename)
+        fig.savefig(file_path, dpi=dpi, bbox_inches="tight")
+        print(f"Figure exported to {file_path}")
