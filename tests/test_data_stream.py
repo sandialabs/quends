@@ -250,62 +250,38 @@ def test_trim_missing_threshold(long_data):
 # === Compute Statistics ===
 def test_compute_stats_simple(simple_data):
     ds = DataStream(simple_data)
-    expected = {
-        "A": {
-            "mean": 2.0,
-            "mean_uncertainty": 0.5773502691896258,
-            "confidence_interval": (0.8683934723883333, 3.131606527611667),
-            "pm_std": (1.4226497308103743, 2.5773502691896257),
-            "effective_sample_size": 3,
-            "window_size": 1,
-        },
-        "metadata": [
-            {
-                "operation": "effective_sample_size",
-                "options": {"column_names": "A", "alpha": 0.05},
-            },
-            {
-                "operation": "compute_statistics",
-                "options": {
-                    "column_name": "A",
-                    "ddof": 1,
-                    "method": "non-overlapping",
-                    "window_size": 1,
-                },
-            },
-        ],
-    }
-    assert ds.compute_statistics(column_name="A", window_size=1) == expected
+    result = ds.compute_statistics(column_name="A", window_size=1)
+    stats = result["results"]["A"]
+    assert stats["mean"] == 2.0
+    assert stats["mean_uncertainty"] == 0.5773502691896258
+    assert stats["confidence_interval"] == (
+        0.8683934723883333,
+        3.131606527611667,
+    )
+    assert stats["pm_std"] == (1.4226497308103743, 2.5773502691896257)
+    assert stats["effective_sample_size"] == 3
+    assert stats["window_size"] == 1
+    ops = [m.get("operation") for m in result["metadata"]]
+    assert "effective_sample_size" in ops
+    assert "compute_statistics" in ops
 
 
 def test_compute_stats_long(long_data):
     ds = DataStream(long_data)
-    expected = {
-        "A": {
-            "mean": 3.0,
-            "mean_uncertainty": 0.7071067811865476,
-            "confidence_interval": (1.6140707088743669, 4.385929291125633),
-            "pm_std": (2.2928932188134525, 3.7071067811865475),
-            "effective_sample_size": 5,
-            "window_size": 1,
-        },
-        "metadata": [
-            {
-                "operation": "effective_sample_size",
-                "options": {"column_names": "A", "alpha": 0.05},
-            },
-            {
-                "operation": "compute_statistics",
-                "options": {
-                    "column_name": "A",
-                    "ddof": 1,
-                    "method": "non-overlapping",
-                    "window_size": 1,
-                },
-            },
-        ],
-    }
-    assert ds.compute_statistics(column_name="A", window_size=1) == expected
+    result = ds.compute_statistics(column_name="A", window_size=1)
+    stats = result["results"]["A"]
+    assert stats["mean"] == 3.0
+    assert stats["mean_uncertainty"] == 0.7071067811865476
+    assert stats["confidence_interval"] == (
+        1.6140707088743669,
+        4.385929291125633,
+    )
+    assert stats["pm_std"] == (2.2928932188134525, 3.7071067811865475)
+    assert stats["effective_sample_size"] == 5
+    assert stats["window_size"] == 1
+    ops = [m.get("operation") for m in result["metadata"]]
+    assert "effective_sample_size" in ops
+    assert "compute_statistics" in ops
 
 
 def test_compute_stats_ci_not_computed(long_data):
@@ -314,7 +290,7 @@ def test_compute_stats_ci_not_computed(long_data):
     ds.confidence_interval = lambda *a, **k: {"A": None}
     result = ds.compute_statistics(column_name="A", window_size=1)
     ds.confidence_interval = original_ci_method
-    assert "A" in result
+    assert "A" in result["results"]
 
 
 # === Optimal Window Size ===
@@ -575,12 +551,14 @@ def test_effective_sample_size_below_empty_column():
 # === Stationary ===
 def test_is_stationary(stationary_data):
     ds = DataStream(stationary_data)
-    assert ds.is_stationary(columns="A") == {"A": "Error: Invalid input, x is constant"}
+    result = ds.is_stationary(columns="A")
+    assert result["results"] == {"A": False}
+    assert "A" in result["metadata"].get("errors", {})
 
 
 def test_is_not_stationary(long_data):
     ds = DataStream(long_data)
-    out = ds.is_stationary(columns="A")
+    out = ds.is_stationary(columns="A")["results"]
     if hasattr(np, "False_"):
         assert out == {"A": np.False_}
     else:
@@ -690,7 +668,11 @@ def test_effective_sample_size_empty(empty_data):
         "metadata": [
             {
                 "operation": "effective_sample_size",
-                "options": {"alpha": 0.05, "column_names": None},
+                "options": {
+                    "alpha": 0.05,
+                    "column_names": None,
+                    "method": "geyer",
+                },
             }
         ],
     }
@@ -704,13 +686,17 @@ def test_effective_sample_size_nan(nan_data):
         "results": {
             "A": {
                 "effective_sample_size": None,
-                "message": "No data available for computation.",
+                "message": "No data.",
             }
         },
         "metadata": [
             {
                 "operation": "effective_sample_size",
-                "options": {"column_names": ["A"], "alpha": 0.05},
+                "options": {
+                    "column_names": ["A"],
+                    "alpha": 0.05,
+                    "method": "geyer",
+                },
             }
         ],
     }
@@ -721,11 +707,15 @@ def test_effective_sample_size_simple(simple_data):
     ds = DataStream(simple_data)
     result = ds.effective_sample_size(column_names=["A"])
     expected = {
-        "results": {"A": 3},
+        "results": {"A": {"effective_sample_size": 3, "message": None}},
         "metadata": [
             {
                 "operation": "effective_sample_size",
-                "options": {"column_names": ["A"], "alpha": 0.05},
+                "options": {
+                    "column_names": ["A"],
+                    "alpha": 0.05,
+                    "method": "geyer",
+                },
             }
         ],
     }
@@ -736,11 +726,18 @@ def test_effective_sample_size_long_data(long_data):
     ds = DataStream(long_data)
     result = ds.effective_sample_size(column_names=["A", "B"])
     expected = {
-        "results": {"A": 5, "B": 5},
+        "results": {
+            "A": {"effective_sample_size": 5, "message": None},
+            "B": {"effective_sample_size": 5, "message": None},
+        },
         "metadata": [
             {
                 "operation": "effective_sample_size",
-                "options": {"column_names": ["A", "B"], "alpha": 0.05},
+                "options": {
+                    "column_names": ["A", "B"],
+                    "alpha": 0.05,
+                    "method": "geyer",
+                },
             }
         ],
     }
@@ -751,11 +748,15 @@ def test_effective_sample_size_stationary(stationary_data):
     ds = DataStream(stationary_data)
     result = ds.effective_sample_size(column_names=["A"])
     expected = {
-        "results": {"A": 5},
+        "results": {"A": {"effective_sample_size": 5, "message": None}},
         "metadata": [
             {
                 "operation": "effective_sample_size",
-                "options": {"column_names": ["A"], "alpha": 0.05},
+                "options": {
+                    "column_names": ["A"],
+                    "alpha": 0.05,
+                    "method": "geyer",
+                },
             }
         ],
     }
@@ -766,11 +767,15 @@ def test_effective_sample_size_trim_data(trim_data):
     ds = DataStream(trim_data)
     result = ds.effective_sample_size(column_names=["A"])
     expected = {
-        "results": {"A": 5},
+        "results": {"A": {"effective_sample_size": 5, "message": None}},
         "metadata": [
             {
                 "operation": "effective_sample_size",
-                "options": {"column_names": ["A"], "alpha": 0.05},
+                "options": {
+                    "column_names": ["A"],
+                    "alpha": 0.05,
+                    "method": "geyer",
+                },
             }
         ],
     }
@@ -781,11 +786,20 @@ def test_effective_sample_size_missing_col(long_data):
     ds = DataStream(long_data)
     result = ds.effective_sample_size(column_names=["C"])
     expected = {
-        "results": {"C": {"message": "Column 'C' not found in the DataStream."}},
+        "results": {
+            "C": {
+                "effective_sample_size": None,
+                "message": "Column 'C' not found.",
+            }
+        },
         "metadata": [
             {
                 "operation": "effective_sample_size",
-                "options": {"column_names": ["C"], "alpha": 0.05},
+                "options": {
+                    "column_names": ["C"],
+                    "alpha": 0.05,
+                    "method": "geyer",
+                },
             }
         ],
     }

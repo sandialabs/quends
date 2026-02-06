@@ -261,21 +261,35 @@ class RobustWorkflow:
                 sss_start = trimmed_stream.df["time"][0]
 
                 # Get statistics (with window selected by decorrelation length)
-                trimmed_stats = trimmed_stream.compute_statistics(column_name=col)
+                trimmed_stats = trimmed_stream.compute_statistics(
+                    column_name=col
+                )
+                results = trimmed_stats.get("results", {})
+                base_stats = results.get(col, {})
+                # Keep legacy output fields for workflow outputs
+                keep_keys = [
+                    "mean",
+                    "mean_uncertainty",
+                    "confidence_interval",
+                    "pm_std",
+                    "effective_sample_size",
+                    "window_size",
+                ]
+                results[col] = {k: base_stats.get(k, np.nan) for k in keep_keys}
 
                 # Add flag for the results for this qoi that all is normal
-                trimmed_stats[col]["sss_start"] = sss_start
-                trimmed_stats[col]["metadata"] = {}
-                trimmed_stats[col]["metadata"]["status"] = "Regular"
-                trimmed_stats[col]["metadata"]["mitigation"] = "None"
+                results[col]["sss_start"] = sss_start
+                results[col]["metadata"] = {}
+                results[col]["metadata"]["status"] = "Regular"
+                results[col]["metadata"]["mitigation"] = "None"
                 # Add the start time info used
-                trimmed_stats[col]["start_time"] = start_time
+                results[col]["start_time"] = start_time
 
             else:  # No statistical steady state
                 if self._verbosity > 0:
                     print("No statistical steady state found after trimming.")
                 # Alternative processing
-                trimmed_stats = self.process_irregular_stream(
+                results = self.process_irregular_stream(
                     data_stream_orig, col, start_time=start_time
                 )
 
@@ -283,12 +297,12 @@ class RobustWorkflow:
             if self._verbosity > 0:
                 print("Data stream is not stationary.")
             # Alternative processing
-            trimmed_stats = self.process_irregular_stream(
+            results = self.process_irregular_stream(
                 data_stream_orig, col, start_time=start_time
             )
 
         # Return the statistics dictionary
-        return trimmed_stats
+        return results
 
     # New function to plot signal with basic stats
     def plot_signal_basic_stats(self, data_stream, col, stats=None, label=None):

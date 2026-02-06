@@ -182,7 +182,13 @@ class Ensemble:
 
             if w >= n:
                 break
-            bm = ds._process_column(series, estimated_window=w, method=method)
+            time_values = ds._time_values_for_series(series)
+            bm = ds._process_column(
+                series,
+                estimated_window=w,
+                method=method,
+                time_values=time_values,
+            )
             if bm is None or len(bm) == 0:
                 # try growing window anyway
                 w = _next_w(w)  # w + grow_factor #int(np.ceil(w * grow_factor))
@@ -371,6 +377,12 @@ class Ensemble:
         sem_reported = sem_n
         se_method = "sem_n"
         warning = None
+        se_policy = {
+            "default": "sem_n unless pooled_LB_bad triggers sem_ess",
+            "pooled_lb_alpha_bad": float(pooled_lb_alpha_bad),
+            "member_all_independent": all_independent,
+            "member_some_best_p": some_best_p,
+        }
 
         if some_best_p:
             warning = (
@@ -390,6 +402,11 @@ class Ensemble:
                 "switching reported SEM to ESS-based (ultra conservative)."
             )
             warning = extra if warning is None else (warning + " " + extra)
+        if warning is not None:
+            warning = (
+                warning
+                + f" sem_n={sem_n:.6g}, sem_ess={sem_ess:.6g}."
+            )
 
         ci = (float(mu - 1.96 * sem_reported), float(mu + 1.96 * sem_reported))
         pm_std = (float(mu - sem_reported), float(mu + sem_reported))
@@ -405,6 +422,7 @@ class Ensemble:
                 mean_uncertainty_sem_n=sem_n,  # sd(blocks)/sqrt(n_blocks
                 mean_uncertainty_sem_ess=sem_ess,  # sd(blocks)/sqrt(ESS_blocks)
                 se_method=se_method,
+                se_policy=se_policy,
                 warning=warning,
                 confidence_interval=ci,
                 pm_std=pm_std,
@@ -532,10 +550,10 @@ class Ensemble:
             mean_uncertainty = avg(member SEs)
             CI = avg(lower bounds), avg(upper bounds)
 
-        Aggregation rule (means across members):
-            - mean                = mean(member means)
-            - mean_uncertainty    = mean(member mean_uncertainty)
-            - confidence_interval = (mean(CI_low_i), mean(CI_high_i))
+        Aggregation rule (inverse-variance weighted across members):
+            - mean                = weighted_mean(member means, weights=1/SE^2)
+            - mean_uncertainty    = sqrt(1/sum(weights))
+            - confidence_interval = mean ± 1.96*mean_uncertainty
             - ess_blocks          = mean(member ess_blocks)           (new)
             - n_short_averages    = mean(member n_short_averages)     (new)
             - variance            = mean(member variances)
@@ -559,8 +577,8 @@ class Ensemble:
 
         means: List[float] = []
         ses: List[float] = []
-        ci_lows: List[float] = []
-        ci_highs: List[float] = []
+        w_means: List[float] = []
+        weights: List[float] = []
 
         var_list: List[float] = []
         ess_list: List[float] = []
@@ -579,8 +597,8 @@ class Ensemble:
                 window_size=window_size,
                 diagnostics="none",
             )
-            # DataStream.compute_statistics returns {col: {...}}
-            stat = s.get(col, {})
+            # DataStream.compute_statistics returns {"results": {col: {...}}, "metadata": ...}
+            stat = s.get("results", {}).get(col, {})
             if not isinstance(stat, dict):
                 continue
 
@@ -611,6 +629,9 @@ class Ensemble:
                 means.append(float(mu))
             if np.isfinite(se):
                 ses.append(float(se))
+            if np.isfinite(mu) and np.isfinite(se) and se > 0:
+                w_means.append(float(mu))
+                weights.append(1.0 / float(se) ** 2)
             if np.isfinite(var_i):
                 var_list.append(float(var_i))
             if np.isfinite(ess_i):
@@ -618,23 +639,23 @@ class Ensemble:
             if np.isfinite(nsa_i):
                 nsa_list.append(float(nsa_i))
 
-            if isinstance(ci, (tuple, list)) and len(ci) == 2:
-                lo, hi = ci
-                if np.isfinite(lo):
-                    ci_lows.append(float(lo))
-                if np.isfinite(hi):
-                    ci_highs.append(float(hi))
-
             if diagnostics == "full":
                 histories[key] = getattr(ds, "_history", None)
 
-        # simple aggregation (old behavior)
-        mu_ens = float(np.nanmean(means)) if means else np.nan
-        se_ens = float(np.nanmean(ses)) if ses else np.nan
+        # inverse-variance weighted aggregation for mean/SE
+        if weights and w_means:
+            w = np.asarray(weights, dtype=float)
+            m = np.asarray(w_means, dtype=float)
+            w_sum = float(np.sum(w))
+            mu_ens = float(np.sum(w * m) / w_sum) if w_sum > 0 else np.nan
+            se_ens = float(np.sqrt(1.0 / w_sum)) if w_sum > 0 else np.nan
+        else:
+            mu_ens = float(np.nanmean(means)) if means else np.nan
+            se_ens = float(np.nanmean(ses)) if ses else np.nan
         var_ens = float(np.nanmean(var_list)) if var_list else np.nan
         ci_ens = (
-            float(np.nanmean(ci_lows)) if ci_lows else np.nan,
-            float(np.nanmean(ci_highs)) if ci_highs else np.nan,
+            float(mu_ens - 1.96 * se_ens) if np.isfinite(se_ens) else np.nan,
+            float(mu_ens + 1.96 * se_ens) if np.isfinite(se_ens) else np.nan,
         )
 
         # NEW: mean ESS + mean n_short_averages across members
@@ -661,7 +682,7 @@ class Ensemble:
             "variance": var_ens,
             "ess_blocks": ess_ens,
             "n_short_averages": nsa_ens,
-            "se_method": "tech2_simple_member_average",
+            "se_method": "tech2_inverse_variance_weighted",
             "warning": None,
             "individual": (indiv if diagnostics == "full" else None),
         }
@@ -753,10 +774,12 @@ class Ensemble:
                 sub_df = ds.df[["time", col]].dropna().copy()
                 sub_df["time"] = np.round(sub_df["time"], 6)
                 series = pd.Series(index=all_times, dtype=float)
-                for t, v in zip(sub_df["time"].values, sub_df[col].values):
-                    idxs = np.where(np.isclose(all_times, t, atol=1e-5))[0]
-                    if len(idxs) > 0:
-                        series.iloc[idxs[0]] = v
+                t_vals = sub_df["time"].to_numpy(dtype=float)
+                v_vals = sub_df[col].to_numpy(dtype=float)
+                idxs = np.searchsorted(all_times, t_vals)
+                valid = (idxs >= 0) & (idxs < len(all_times))
+                if np.any(valid):
+                    series.iloc[idxs[valid]] = v_vals[valid]
                 member_cols.append(series)
 
             if len(member_cols) == 0:
@@ -824,8 +847,8 @@ class Ensemble:
         results, meta = {}, {}
         for i, ds in enumerate(self.data_streams):
             r = ds.is_stationary(columns)
-            results[f"Member {i}"] = r
-            meta[f"Member {i}"] = getattr(ds, "_history", None)
+            results[f"Member {i}"] = r.get("results", r)
+            meta[f"Member {i}"] = r.get("metadata", {})
         return {"results": results, "metadata": meta}
 
     # ---------- MEAN / SEM / CI ----------

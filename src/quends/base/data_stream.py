@@ -1,10 +1,10 @@
 import math
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scipy.stats as sts
-import statsmodels.tsa.stattools as ststls
+from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
 from scipy.stats import norm
 from sklearn.preprocessing import MinMaxScaler
@@ -110,23 +110,10 @@ class DataStream:
         }
         self._history.append({"operation": operation, "options": options})
 
-        Private helper; not intended for external use.
-        """
-        options = {
-            k: v for k, v in options.items() if k not in ("self", "cls", "__class__")
-        }
-        self._history.append({"operation": operation, "options": options})
+    def get_metadata(self, diagnostics="compact"):
+        return _diagnostics_view(self._history, diagnostics=diagnostics)
 
-    def get_metadata(self):
-        """
-        Return the deduplicated operation history for this DataStream.
-        Returns
-        -------
-            list of dict
-            The deduplicated operation history, with options for each operation.
-        """
-        return deduplicate_history(self._history)
-
+    # ---- basic helpers ----
     def head(self, n=5):
         return self.df.head(n)
 
@@ -142,6 +129,16 @@ class DataStream:
         return (
             [column_name] if isinstance(column_name, str) else list(column_name)
         )
+
+    def _time_values_for_series(
+        self, series: pd.Series
+    ) -> Optional[np.ndarray]:
+        if "time" not in self.df.columns:
+            return None
+        try:
+            return self.df.loc[series.index, "time"].to_numpy(dtype=float)
+        except Exception:
+            return None
 
     # ===================== Trimming & Steady-State =====================
 
@@ -161,10 +158,10 @@ class DataStream:
         """
         # Stationarity check
         stationary_result = self.is_stationary(column_name)
-        is_stat = (
-            stationary_result.get(column_name, False)
+        is_stat = bool(
+            stationary_result.get("results", {}).get(column_name, False)
             if isinstance(stationary_result, dict)
-            else bool(stationary_result)
+            else stationary_result
         )
 
         new_history = self._history.copy()
@@ -179,7 +176,7 @@ class DataStream:
 
         if not is_stat:
             options["message"] = (
-                f"Column '{column_name}' is not stationary. Trimming requires stationarity."
+                f"Column '{column_name}' is not stationary. Steady-state trimming requires stationary data."
             )
             new_history.append({"operation": "trim", "options": options})
             return DataStream(self.df.iloc[0:0].copy(), _history=new_history)
@@ -226,7 +223,8 @@ class DataStream:
 
         else:
             options["message"] = (
-                "Invalid method. Choose 'std', 'threshold', 'rolling_variance', or 'self_consistent'."
+                "Invalid method. Choose 'std', 'threshold', 'rolling_variance', "
+                "'self_consistent', or 'iqr'."
             )
             new_history.append({"operation": "trim", "options": options})
             return DataStream(self.df.iloc[0:0].copy(), _history=new_history)
@@ -237,39 +235,37 @@ class DataStream:
         if sss is None:
             return DataStream(self.df.iloc[0:0].copy(), _history=new_history)
 
+        trimmed_df = self.df.loc[
+            self.df["time"] >= sss, ["time", column_name]
+        ].reset_index(drop=True)
+        return DataStream(trimmed_df, _history=new_history)
+
     def trim_sss_start(self, col, workflow):
         """
-        Identify and trim the signal to the start of the Statistical Steady State (SSS)
-
-        Parameters
-        ----------
-        col : str
-            The name of the column in `self.df` to analyze for steady state.
-        workflow : object
-            A configuration/workflow object containing parameters:
-            - `_max_lag_frac`: Fraction of data used for autocorrelation lag.
-            - `_verbosity`: Integer controlling plot and print output levels.
-            - `_autocorr_sig_level`: Significance level for the Z-test on lags.
-            - `_decor_multiplier`: Multiplier for the calculated decorrelation length.
-            - `_std_dev_frac`: Fraction of standard deviation used for tolerance.
-            - `_fudge_fac`: Constant to prevent zero-tolerance in noiseless signals.
-            - `_smoothing_window_correction`: Factor to adjust for rolling mean lag.
-            - `_final_smoothing_window`: Window size for smoothing the metric curves.
+        Identify and trim the signal to the start of the Statistical Steady State (SSS).
 
         Returns
         -------
         DataStream
-            A new DataStream object containing the DataFrame trimmed to the SSS start.
-            Returns an empty DataFrame if no SSS is identified.
+            A new DataStream trimmed to SSS start, or an empty DataStream if none found.
         """
-        # Get the decorrelation length (in number of points)
-        # Note: this approach assumes signal points are spaced equally in time
+        # ---- basic safety ----
+        if "time" not in self.df.columns or col not in self.df.columns:
+            empty_df = self.df.iloc[0:0].copy()
+            return DataStream(empty_df, _history=self._history.copy())
+
         n_pts = len(self.df)
-        max_lag = int(workflow._max_lag_frac * n_pts)  # max lag for autocorrelation
+        if n_pts < 3:
+            empty_df = self.df.iloc[0:0].copy()
+            return DataStream(empty_df, _history=self._history.copy())
 
-        acf_vals = ststls.acf(self.df[col].dropna().values, nlags=max_lag)
+        # ---- decorrelation length / smoothing window ----
+        max_lag = int(workflow._max_lag_frac * n_pts)
+        max_lag = max(1, min(max_lag, n_pts - 1))
 
-        # plot the autocorrelation function
+        # Use imported `acf` directly (you already imported: from statsmodels.tsa.stattools import acf)
+        acf_vals = acf(self.df[col].dropna().values, nlags=max_lag, fft=False)
+
         if workflow._verbosity > 1:
             plt.figure(figsize=(10, 6))
             plt.stem(range(len(acf_vals)), acf_vals)
@@ -280,52 +276,59 @@ class DataStream:
             plt.show()
             plt.close()
 
-        # Use rigorous statistical measure for decorrelation length
-        z_critical = sts.norm.ppf(1 - workflow._autocorr_sig_level / 2)
+        # Use imported `norm` directly (you already imported: from scipy.stats import norm)
+        z_critical = norm.ppf(1 - workflow._autocorr_sig_level / 2)
         conf_interval = z_critical / np.sqrt(n_pts)
+
         significant_lags = np.where(np.abs(acf_vals[1:]) > conf_interval)[0]
-        acf_sum = np.sum(np.abs(acf_vals[1:][significant_lags]))
+        acf_sum = (
+            np.sum(np.abs(acf_vals[1:][significant_lags]))
+            if significant_lags.size
+            else 0.0
+        )
         decor_length = int(np.ceil(1 + 2 * acf_sum))
 
-        # Set smoothing window as multiple of decorrelation length, but not more than max_lag
-        decor_index = min(int(workflow._decor_multiplier * decor_length), max_lag)
+        decor_index = min(
+            int(workflow._decor_multiplier * decor_length), max_lag
+        )
+        rolling_window = max(3, decor_index)
 
         if workflow._verbosity > 0:
             print(
                 f"stats decorrelation length {decor_length} gives smoothing window of {decor_index} points."
             )
 
-        # Smooth signal with rolling mean over window size based on decorrelation length
-        rolling_window = max(3, decor_index)  # at least 3 points in window
-        col_smoothed = (
-            self.df[col].rolling(window=rolling_window).mean()
-        )  # get smoothed column as Series
-        col_sm_flld = col_smoothed.bfill()  # fill initial NaNs with first valid value
-        # create new DataFrame with time and smoothed flux
-        df_smoothed = pd.DataFrame({"time": self.df["time"], col: col_sm_flld})
+        # ---- smooth signal ----
+        col_smoothed = self.df[col].rolling(window=rolling_window).mean()
+        col_sm_flld = col_smoothed.bfill()
 
-        # Compute std dev of original signal from current location till end of signal
-        std_dev_till_end = np.empty((n_pts,), dtype=float)
-        for i in range(n_pts):
-            std_dev_till_end[i] = np.std(self.df[col].iloc[i:])
-        # turn this into a pandas series with same index as col_smoothed
-        std_dev_till_end_series = pd.Series(std_dev_till_end, index=self.df.index)
-        # Smooth this std dev to avoid it going to zero at end of signal
+        df_smoothed = pd.DataFrame({"time": self.df["time"], col: col_sm_flld})
+        smoothed_start_time = df_smoothed["time"].iloc[rolling_window - 1]
+
+        # ---- std-dev till end (smoothed) ----
+        raw = self.df[col].to_numpy(dtype=float)
+        rev = raw[::-1]
+        csum = np.cumsum(rev)[::-1]
+        csum2 = np.cumsum(rev**2)[::-1]
+        counts = np.arange(n_pts, 0, -1, dtype=float)
+        mean_tail = csum / counts
+        var_tail = (csum2 / counts) - (mean_tail**2)
+        var_tail = np.maximum(var_tail, 0.0)
+        std_dev_till_end = np.sqrt(var_tail)
+
+        std_dev_till_end_series = pd.Series(
+            std_dev_till_end, index=self.df.index
+        )
+
         std_dev_smoothed = std_dev_till_end_series.rolling(
             window=workflow._final_smoothing_window
         ).mean()
-        # Fill initial NaNs with the first valid smoothed std dev value
         std_dev_sm_flld = std_dev_smoothed.bfill()
 
-        # create new DataFrame with time and std dev till end of signal
         df_std_dev = pd.DataFrame(
-            {"time": self.df["time"], col + "_std_till_end": std_dev_sm_flld}
+            {"time": self.df["time"], f"{col}_std_till_end": std_dev_sm_flld}
         )
 
-        # start time of smoothed signal
-        smoothed_start_time = df_smoothed["time"].iloc[rolling_window - 1]
-
-        # plot smoothed signal and related quantities
         if workflow._verbosity > 1:
             plt.figure(figsize=(10, 6))
             plt.plot(
@@ -335,20 +338,15 @@ class DataStream:
                 alpha=0.5,
             )
             plt.plot(
-                df_smoothed["time"],
-                df_smoothed[col],
-                label="Smoothed Signal",
-                color="orange",
+                df_smoothed["time"], df_smoothed[col], label="Smoothed Signal"
             )
             plt.plot(
                 df_std_dev["time"],
-                df_std_dev[col + "_std_till_end"],
+                df_std_dev[f"{col}_std_till_end"],
                 label="Smoothed Std Dev Till End",
-                color="green",
             )
             plt.axvline(
                 x=smoothed_start_time,
-                color="g",
                 linestyle="--",
                 label="First smoothed point",
             )
@@ -363,65 +361,55 @@ class DataStream:
         if workflow._verbosity > 0:
             print("Getting start of SSS based on smoothed signal:")
 
-        # Get start of SSS based on where the value of the flux in the smoothed signal
-        # is close to the mean of the remaining signal.
+        # ---- mean of remaining smoothed signal ----
+        x_sm = df_smoothed[col].to_numpy(dtype=float)
+        t_sm = df_smoothed["time"].to_numpy(dtype=float)
 
-        # At each location, compute the mean of the remaining smoothed signal
         n_pts_smoothed = len(df_smoothed)
-        mean_vals = np.empty((n_pts_smoothed,), dtype=float)
+        rev_sm = x_sm[::-1]
+        csum_sm = np.cumsum(rev_sm)[::-1]
+        counts_sm = np.arange(n_pts_smoothed, 0, -1, dtype=float)
+        mean_vals = csum_sm / counts_sm
 
-        for i in range(n_pts_smoothed):
-            mean_vals[i] = np.mean(df_smoothed[col].iloc[i:])
+        deviation_arr = np.abs(x_sm - mean_vals)
 
-        # Check where the current value of the smoothed signal is within tol_fac of the mean of the remaining signal
-        deviation_arr = np.abs(df_smoothed[col] - mean_vals)
+        # IMPORTANT: index must match df_smoothed, not self.df
+        deviation_series = pd.Series(deviation_arr, index=df_smoothed.index)
 
-        # smooth this so the deviation does not go to zero at end of signal by construction
-        # turn this into a pandas series with same index as col_smoothed
-        deviation_series = pd.Series(deviation_arr, index=self.df.index)
-        # Smooth this std dev to avoid it going to zero at end of signal
         deviation_smoothed = deviation_series.rolling(
             window=workflow._final_smoothing_window
         ).mean()
-        # Fill initial NaNs with the first valid smoothed std dev value
         deviation_sm_flld = deviation_smoothed.bfill()
-        # Build a dataframe for the deviation
+
         deviation = pd.DataFrame(
-            {"time": self.df["time"], col + "_deviation": deviation_sm_flld}
+            {"time": df_smoothed["time"], f"{col}_deviation": deviation_sm_flld}
         )
 
-        # Compute tolerance on variation in the mean of the smoothed signal as
-        # stdv_frac * (std dev till end + a fudge factor * mean value at start of smoothed signal)
-        # fudge factor is for in case there is no noise (and to guard against the tolerance
-        # factor going to zero when std dev gets very small at end of signal)
+        # ---- tolerance rule ----
+        # tol_fac is already an absolute tolerance scale; DO NOT multiply by |mean_vals| again.
         tol_fac = workflow._std_dev_frac * (
-            df_std_dev[col + "_std_till_end"] + workflow._fudge_fac * abs(mean_vals[0])
+            df_std_dev[f"{col}_std_till_end"].to_numpy(dtype=float)
+            + workflow._fudge_fac * abs(mean_vals[0])
         )
-        tolerance = tol_fac * np.abs(mean_vals)
+        tolerance = tol_fac  # same length as time
 
-        within_tolerance_all = deviation[col + "_deviation"] <= tolerance
-        # Only consider points after the smoothed signal has started
-        within_tolerance = within_tolerance_all & (
-            df_smoothed["time"] >= smoothed_start_time
+        within_tolerance_all = (
+            deviation[f"{col}_deviation"].to_numpy(dtype=float) <= tolerance
         )
-        # First index where we are within tolerance
+        within_tolerance = within_tolerance_all & (t_sm >= smoothed_start_time)
+
         sss_index = np.where(within_tolerance)[0]
 
-        # See if there is a segment where ALL remaining points are within tolerance
         crit_met_index = None
         if len(sss_index) > 0:
-            # find the segment where ALL remaining points are within tolerance
             for idx in sss_index:
                 if np.all(within_tolerance[idx:]):
-                    crit_met_index = idx
+                    crit_met_index = int(idx)
                     break
+        # ---- if SSS found ----
+        if crit_met_index is not None:
+            criterion_time = float(t_sm[crit_met_index])
 
-        if crit_met_index is not None:  # We have a SSS segment
-            # Time where criterion has been met
-            criterion_time = df_smoothed["time"].iloc[crit_met_index]
-            # Take into account that the signal at the point where the criterion has been met is a result
-            # of averaging over the rolling window. So set the start of SSS near the start of the rolling window
-            # but not all the way at the beginning of the rolling window as there is usually still some transient.
             true_sss_start_index = max(
                 0,
                 int(
@@ -429,7 +417,7 @@ class DataStream:
                     - workflow._smoothing_window_correction * rolling_window
                 ),
             )
-            sss_start_time = df_smoothed["time"].iloc[true_sss_start_index]
+            sss_start_time = float(t_sm[true_sss_start_index])
 
             if workflow._verbosity > 0:
                 print(f"Index where criterion is met: {crit_met_index}")
@@ -439,30 +427,14 @@ class DataStream:
                     f"time at start of SSS (adjusted for rolling window): {sss_start_time}"
                 )
 
-            # Plot deviation and tolerance vs. time
             if workflow._verbosity > 1:
                 plt.figure(figsize=(10, 6))
-                plt.plot(
-                    df_smoothed["time"],
-                    deviation[col + "_deviation"],
-                    label="Deviation",
-                    color="blue",
-                )
-                plt.plot(
-                    df_smoothed["time"],
-                    tolerance,
-                    label="Tolerance",
-                    color="orange",
-                )
+                plt.plot(t_sm, deviation[f"{col}_deviation"], label="Deviation")
+                plt.plot(t_sm, tolerance, label="Tolerance")
                 plt.axvline(
-                    x=criterion_time,
-                    color="g",
-                    linestyle="--",
-                    label="Small Change Criterion Met",
+                    x=criterion_time, linestyle="--", label="Criterion Met"
                 )
-                plt.axvline(
-                    x=sss_start_time, color="r", linestyle="--", label="Start SSS"
-                )
+                plt.axvline(x=sss_start_time, linestyle="--", label="Start SSS")
                 plt.xlabel("Time")
                 plt.ylabel("Value")
                 plt.title("Deviation and Tolerance vs. Time")
@@ -471,69 +443,109 @@ class DataStream:
                 plt.show()
                 plt.close()
 
-            # Trim the original data frame to start at this location minus the smoothing window
-            trimmed_df = self.df[self.df["time"] >= sss_start_time]
-            # Reset the index so it starts at 0
-            trimmed_df = trimmed_df.reset_index(drop=True)
-            # Create new data stream from trimmed data frame
-            trimmed_stream = DataStream(trimmed_df)
+            trimmed_df = self.df[self.df["time"] >= sss_start_time].reset_index(
+                drop=True
+            )
 
-        else:
+            # preserve history + log
+            new_history = self._history.copy()
+            new_history.append(
+                {
+                    "operation": "trim_sss_start",
+                    "options": {
+                        "col": col,
+                        "sss_start_time": sss_start_time,
+                        "rolling_window": int(rolling_window),
+                        "decor_length": int(decor_length),
+                        "decor_index": int(decor_index),
+                    },
+                }
+            )
+            return DataStream(trimmed_df, _history=new_history)
+
+        # ---- if no SSS found: return EMPTY DataStream (not DataFrame) ----
+        if workflow._verbosity > 0:
+            print("No SSS found based on behavior of mean of smoothed signal.")
+
+        if workflow._verbosity > 1:
+            plt.figure(figsize=(10, 6))
+            plt.plot(t_sm, deviation[f"{col}_deviation"], label="Deviation")
+            plt.plot(t_sm, tolerance, label="Tolerance")
+            plt.xlabel("Time")
+            plt.ylabel("Value")
+            plt.title("Deviation and Tolerance vs. Time")
+            plt.legend()
+            plt.grid()
+            plt.show()
+            plt.close()
+
+        empty_df = self.df.iloc[0:0].copy()
+        new_history = self._history.copy()
+        new_history.append(
+            {
+                "operation": "trim_sss_start",
+                "options": {"col": col, "sss_start_time": None},
+            }
+        )
+        return DataStream(empty_df, _history=new_history)
+
+    def make_stationary(self, col, n_pts_orig, workflow):
+        """
+        Attempt to make the data stream stationary by repeatedly dropping an initial fraction.
+
+        Returns
+        -------
+        (DataStream, bool)
+            (new_stream, stationary_flag)
+        """
+        stationary = self.is_stationary([col]).get("results", {}).get(col, False)
+        n_pts = len(self.df)
+
+        ds = DataStream(self.df.copy(), _history=self._history.copy())
+        n_dropped = 0
+
+        while (
+            (not stationary)
+            and (not workflow._operate_safe)  # keep your original semantics
+            and (n_pts > workflow._n_pts_min)
+            and (n_pts > workflow._n_pts_frac_min * n_pts_orig)
+        ):
+            n_drop = int(n_pts * workflow._drop_fraction)
+            n_drop = max(1, n_drop)  # ensure progress
+
+            df_shortened = ds.df.iloc[n_drop:].reset_index(drop=True)
+
+            ds = DataStream(df_shortened, _history=ds._history.copy())
+            n_pts = len(ds.df)
+            n_dropped = n_pts_orig - n_pts
+            stationary = (
+                ds.is_stationary([col]).get("results", {}).get(col, False)
+            )
+
+            ds._history.append(
+                {
+                    "operation": "make_stationary_drop",
+                    "options": {
+                        "col": col,
+                        "n_drop": int(n_drop),
+                        "n_dropped_total": int(n_dropped),
+                        "n_pts_now": int(n_pts),
+                        "stationary": bool(stationary),
+                    },
+                }
+            )
+
             if workflow._verbosity > 0:
-                print("No SSS found based on behavior of mean of smoothed signal.")
-            trimmed_stream = pd.DataFrame(
-                columns=["time", "flux"]
-            )  # Create empty DataFrame with same columns as original
+                if stationary:
+                    print(
+                        f"Data stream was not stationary, but is stationary after dropping first {n_dropped} points."
+                    )
+                else:
+                    print(
+                        f"Data stream is not stationary, even after dropping first {n_dropped} points."
+                    )
 
-            # Plot deviation and tolerance vs. time
-            if workflow._verbosity > 1:
-                plt.figure(figsize=(10, 6))
-                plt.plot(
-                    df_smoothed["time"],
-                    deviation[col + "_deviation"],
-                    label="Deviation",
-                    color="blue",
-                )
-                plt.plot(
-                    df_smoothed["time"],
-                    tolerance,
-                    label="Tolerance",
-                    color="orange",
-                )
-                plt.xlabel("Time")
-                plt.ylabel("Value")
-                plt.title("Deviation and Tolerance vs. Time")
-                plt.legend()
-                plt.grid()
-                plt.show()
-                plt.close()
-
-        return trimmed_stream
-
-    @staticmethod
-    def find_steady_state_std_old(
-        data, column_name, window_size=10, robust=True
-    ):
-        time_vals = data["time"].values
-        x = data[column_name].values
-        for i in range(len(x) - window_size + 1):
-            rem = x[i:]
-            if robust:
-                center = np.median(rem)
-                scale = mad(rem)
-                if scale == 0:
-                    scale = np.std(rem)  # fallback
-                if scale == 0:
-                    continue  # completely constant or degenerate segment
-            else:
-                center = np.mean(rem)
-                scale = np.std(rem)
-            within_1 = np.mean(np.abs(rem - center) <= 1 * scale)
-            within_2 = np.mean(np.abs(rem - center) <= 2 * scale)
-            within_3 = np.mean(np.abs(rem - center) <= 3 * scale)
-            if within_1 >= 0.68 and within_2 >= 0.95 and within_3 >= 0.99:
-                return time_vals[i]
-        return None
+        return ds, stationary
 
     @staticmethod
     def find_steady_state_rolling_variance(
@@ -813,7 +825,10 @@ class DataStream:
         out = {}
         for col in cols:
             if col not in self.df.columns:
-                out[col] = {"message": f"Column '{col}' not found."}
+                out[col] = {
+                    "effective_sample_size": None,
+                    "message": f"Column '{col}' not found.",
+                }
                 continue
             x = self.df[col].dropna().values
             if x.size == 0:
@@ -847,7 +862,10 @@ class DataStream:
                 ess = n / (1 + 2 * acf_sum)
 
             ess = float(max(1.0, min(ess, n)))
-            out[col] = {"effective_sample_size": int(math.ceil(ess))}
+            out[col] = {
+                "effective_sample_size": int(math.ceil(ess)),
+                "message": None,
+            }
             # out[col] = int(math.ceil(ess))
 
         metadata = _diagnostics_view(self._history, diagnostics=diagnostics)
@@ -880,7 +898,10 @@ class DataStream:
             }
 
         est_win = self._estimate_window(column_name, series, window_size)
-        proc = self._process_column(series, est_win, method)
+        time_values = self._time_values_for_series(series)
+        proc = self._process_column(
+            series, est_win, method, time_values=time_values
+        )
         bm = proc.values
         n_blocks = len(bm)
 
@@ -1012,7 +1033,7 @@ class DataStream:
         Choose block window size using:
           1) tau_int estimate (Geyer on raw ACF)
           2) w0 = ceil(c0 * tau_int)
-          3) Ljung–Box test on block means; if fail -> increase w via max(1.5*w, w + tau_int)
+          3) Ljung–Box test on block means; if fail -> increase w via +1 (conservative)
           4) enforce minimum block count B_min when possible
           5) fallback to best p-value if never passes
 
@@ -1021,6 +1042,7 @@ class DataStream:
         (chosen_w:int, info:dict)
         """
         x = series.dropna()
+        time_values = self._time_values_for_series(x)
         n = int(x.size)
         if n < 2:
             return w_min, {
@@ -1033,13 +1055,16 @@ class DataStream:
             }
 
         tau = self._estimate_tau_int(x)
-        w = int(max(w_min, math.ceil(c0 * tau)))
+        w0 = int(max(w_min, math.ceil(c0 * tau)))
+        w = int(w0)
 
         # Ensure we *try* to keep at least B_min blocks if possible:
         # i.e., w <= n//B_min. If n//B_min < w_min, we can't enforce.
         w_cap_for_blocks = (n // B_min) if (B_min and n // B_min >= 1) else n
-        if w_cap_for_blocks >= w_min:
+        cap_applied = False
+        if w_cap_for_blocks >= w_min and w > w_cap_for_blocks:
             w = min(w, w_cap_for_blocks)
+            cap_applied = True
 
         best = {
             "w": w,
@@ -1051,7 +1076,10 @@ class DataStream:
 
         for it in range(int(max_iter)):
             proc = self._process_column(
-                x, estimated_window=w, method="non-overlapping"
+                x,
+                estimated_window=w,
+                method="non-overlapping",
+                time_values=time_values,
             )
             bm = np.asarray(proc.values, dtype=float)
             n_blocks = int(bm.size)
@@ -1075,6 +1103,11 @@ class DataStream:
                 }
 
             if passed:
+                note = None
+                if cap_applied:
+                    note = (
+                        "Initial window capped to preserve >=B_min blocks; cap lifted after first failure."
+                    )
                 return int(w), {
                     "status": "independent",
                     "tau_int": float(tau),
@@ -1082,7 +1115,7 @@ class DataStream:
                     "passed": True,
                     "iter": int(it),
                     "lb": det,
-                    "note": None,
+                    "note": note,
                 }
 
             # If we already hit a cap that preserves blocks, and still fail, we may need to
@@ -1102,6 +1135,13 @@ class DataStream:
 
         # If we never passed but have a best window with >=2 blocks, use it
         if best["p_min"] > -np.inf:
+            note = (
+                "Did not reach Ljung–Box pass; using best observed p-value window."
+            )
+            if cap_applied:
+                note += (
+                    " Initial window capped to preserve >=B_min blocks; cap lifted after first failure."
+                )
             return int(best["w"]), {
                 "status": "best_p",
                 "tau_int": float(tau),
@@ -1109,16 +1149,21 @@ class DataStream:
                 "passed": False,
                 "iter": int(max_iter),
                 "lb": best["lb"],
-                "note": "Did not reach Ljung–Box pass; using best observed p-value window.",
+                "note": note,
             }
         # Otherwise: too few blocks to test
+        note = "Window growth left <2 blocks; cannot test independence."
+        if cap_applied:
+            note += (
+                " Initial window capped to preserve >=B_min blocks; cap lifted after first failure."
+            )
         return int(w), {
             "status": "too_few_blocks",
             "tau_int": float(tau),
             "chosen_w": int(w),
             "passed": False,
             "lb": {"lags": [], "pvalues": []},
-            "note": "Window growth left <2 blocks; cannot test independence.",
+            "note": note,
         }
         #    # fallback: best observed window (even if it didn't pass)
         #    note = "Did not pass Ljung–Box within max_iter; using best observed p-value."
@@ -1174,30 +1219,25 @@ class DataStream:
         )
         return int(w)
 
-    def _estimate_window_old(self, col, column_data, window_size):
-        """
-        If window_size is None, derive a coarse block length from ESS (geyer).
-        Ensure a minimum window of 5.
-        """
-        if window_size is None:
-            ess_info = self.effective_sample_size(
-                column_names=col, method="geyer", diagnostics="none"
-            )
-            ess_val = 10
-            try:
-                ess_val = int(max(1, ess_info["results"].get(col, 10)))
-            except Exception:
-                pass
-            return max(5, len(column_data) // ess_val)
-        return int(window_size)
+    def _process_column(
+        self,
+        column_data,
+        estimated_window,
+        method,
+        time_values: Optional[np.ndarray] = None,
+    ):
+        # If time_values are provided, block indices are time-based (block center time).
+        if time_values is not None:
+            time_values = np.asarray(time_values, dtype=float)
+            if time_values.size != len(column_data):
+                time_values = None
 
-    def _process_column(self, column_data, estimated_window, method):
         if method == "sliding":
-            return (
-                column_data.rolling(window=int(estimated_window))
-                .mean()
-                .dropna()
-            )
+            if time_values is not None:
+                series = pd.Series(column_data.values, index=time_values)
+            else:
+                series = column_data
+            return series.rolling(window=int(estimated_window)).mean().dropna()
 
         elif method == "non-overlapping":
             w = int(max(1, estimated_window))
@@ -1211,30 +1251,13 @@ class DataStream:
             x2 = x[: n_blocks * w].reshape(n_blocks, w)
             block_means = x2.mean(axis=1)
 
-            # center index per block (optional)
-            idx = (np.arange(n_blocks) * w) + (w // 2)
+            if time_values is not None:
+                t = time_values[: n_blocks * w].reshape(n_blocks, w)
+                idx = t.mean(axis=1)
+            else:
+                idx = (np.arange(n_blocks) * w) + (w // 2)
             return pd.Series(block_means, index=idx)
 
-        else:
-            raise ValueError(
-                "Invalid method. Choose 'sliding' or 'non-overlapping'."
-            )
-
-    def _process_column_old(self, column_data, estimated_window, method):
-        if method == "sliding":
-            return column_data.rolling(window=estimated_window).mean().dropna()
-        elif method == "non-overlapping":
-            step = max(1, estimated_window)
-            window_means = [
-                np.mean(column_data[i : i + estimated_window])
-                for i in range(0, len(column_data) - estimated_window + 1, step)
-            ]
-            idx = np.arange(
-                estimated_window // 2,
-                len(window_means) * step + estimated_window // 2,
-                step,
-            )
-            return pd.Series(window_means, index=idx)
         else:
             raise ValueError(
                 "Invalid method. Choose 'sliding' or 'non-overlapping'."
@@ -1254,7 +1277,10 @@ class DataStream:
                 }
                 continue
             est_win = self._estimate_window(col, data, window_size)
-            proc = self._process_column(data, est_win, method)
+            time_values = self._time_values_for_series(data)
+            proc = self._process_column(
+                data, est_win, method, time_values=time_values
+            )
             results[col] = {
                 "mean": float(np.mean(proc)),
                 "window_size": int(est_win),
@@ -1293,7 +1319,10 @@ class DataStream:
             )
 
             #    Recompute block means (cheap) to get their std with ddof
-            proc = self._process_column(series, est_win, method)
+            time_values = self._time_values_for_series(series)
+            proc = self._process_column(
+                series, est_win, method, time_values=time_values
+            )
             block_means = proc.values
 
             unc = float(np.std(block_means, ddof=ddof) / np.sqrt(eff_n))
@@ -1340,7 +1369,10 @@ class DataStream:
             eff_n_blocks = info["effective_n"]
 
             # Recompute block means (cheap) to get their variance
-            proc = self._process_column(series, est_win, method)
+            time_values = self._time_values_for_series(series)
+            proc = self._process_column(
+                series, est_win, method, time_values=time_values
+            )
             block_means = proc.values
 
             if block_means.size < 2:
@@ -1397,61 +1429,16 @@ class DataStream:
                 }
                 continue
 
-            proc = self._process_column(series, est_win, method)
+            time_values = self._time_values_for_series(series)
+            proc = self._process_column(
+                series, est_win, method, time_values=time_values
+            )
             n_blocks = int(len(proc))
 
             results[col] = {
                 "n_short_averages": n_blocks,
                 "window_size": int(est_win),
                 "n_blocks": n_blocks,
-            }
-        return results
-
-    def _mean_uncertainty_old(
-        self,
-        column_name=None,
-        ddof=1,
-        method="non-overlapping",
-        window_size=None,
-    ):
-        """
-        SEM of block/sliding means. Uses Geyer ESS on the *block means* (conservative).
-        """
-        results = {}
-        for col in self._get_columns(column_name):
-            data = self.df[col].dropna()
-            if data.empty:
-                results[col] = {
-                    "mean_uncertainty": np.nan,
-                    "window_size": np.nan,
-                    "error": f"No data for '{col}'",
-                }
-                continue
-
-            est_win = self._estimate_window(col, data, window_size)
-            proc = self._process_column(data, est_win, method)
-            block_means = proc.values
-
-            if len(block_means) >= 3:
-                r = acf(
-                    block_means, nlags=max(1, len(block_means) // 4), fft=False
-                )
-                s, t = 0.0, 1
-                while t + 1 < len(r):
-                    pair_sum = r[t] + r[t + 1]
-                    if pair_sum < 0:
-                        break
-                    s += pair_sum
-                    t += 2
-                ess_blocks = max(1.0, len(block_means) / (1 + 2 * s))
-            else:
-                ess_blocks = 1.0
-
-            effective_n = ess_blocks
-            unc = float(np.std(block_means, ddof=ddof) / np.sqrt(effective_n))
-            results[col] = {
-                "mean_uncertainty": unc,
-                "window_size": int(est_win),
             }
         return results
 
@@ -1490,119 +1477,6 @@ class DataStream:
         return results
 
     # ===================== Public Stats API =====================
-
-    def compute_statistics_old(
-        self,
-        column_name=None,
-        ddof=1,
-        method="non-overlapping",
-        window_size=None,
-        diagnostics="compact",
-    ):
-        """
-        For each column: mean, SEM (Geyer on blocks), 95% CI, ±1*SEM band, ESS (raw series),
-        window size, and an independence warning (Ljung-Box).
-
-        For each column:
-          - mean (block-based)
-          - SEM (mean_uncertainty; Geyer on blocks)
-          - variance of block means
-          - 95% CI
-          - ±1*SEM band
-          - ESS on raw series
-          - block-level ESS (from get_block_effective_n)
-          - number of short-term averages (block means)
-          - window size
-          - independence warning (Ljung-Box on block means).
-        """
-        stats = {}
-        cols = self._get_columns(column_name)
-
-        mean_res = self._mean(
-            column_name, method=method, window_size=window_size
-        )
-        mu_res = self._mean_uncertainty(
-            column_name, ddof=ddof, method=method, window_size=window_size
-        )
-        ci_res = self._confidence_interval(
-            column_name, ddof=ddof, method=method, window_size=window_size
-        )
-        ess_res = self.effective_sample_size(
-            column_names=column_name, method="geyer", diagnostics="none"
-        )
-        # NEW: variance + block-level ESS
-        var_res = self._variance(
-            column_name, ddof=ddof, method=method, window_size=window_size
-        )
-        # NEW: number of short-term averages (block means)
-        short_res = self._short_term_counts(
-            column_name, method=method, window_size=window_size
-        )
-
-        for col in cols:
-            # Independence test per column
-            try:
-                ind = self.test_block_independence(
-                    col,
-                    method=method,
-                    window_size=window_size,
-                    verbose=False,
-                    diagnostics="none",
-                )
-                independent = ind.get("independent", None)
-            except Exception:
-                independent = None
-
-            warn = None
-            if independent is False:
-                warn = "Short-term averages failed independence (autocorrelation detected). Use stats with caution."
-            elif independent is None:
-                warn = "Block independence undetermined (insufficient data). Use stats with caution."
-
-            data = self.df[col].dropna()
-            if data.empty:
-                stats[col] = {"error": f"No data for '{col}'"}
-                continue
-
-            mu = mean_res[col]["mean"]
-            se = mu_res[col]["mean_uncertainty"]
-            ci = ci_res[col]["confidence_interval"]
-            est_win = mean_res[col]["window_size"]
-            ess_val = ess_res["results"].get(col, 10)
-
-            # NEW: variance of block means and block-level effective_n
-            var_val = var_res.get(col, {}).get("variance", np.nan)
-            block_ess = var_res.get(col, {}).get("effective_n_blocks", np.nan)
-
-            # NEW: number of short-term averages (block means)
-            n_short = short_res.get(col, {}).get("n_short_averages", np.nan)
-
-            stats[col] = {
-                "mean": mu,
-                "mean_uncertainty": se,
-                "variance": var_val,  # NEW
-                "confidence_interval": ci,
-                "pm_std": (mu - se, mu + se),
-                "effective_sample_size": ess_val,  # raw-series ESS (existing)
-                "block_effective_n": block_ess,  # NEW: ESS on block means
-                "n_short_averages": n_short,  # NEW: count of block means
-                "window_size": est_win,
-            }
-            if warn:
-                stats[col]["warning"] = warn
-
-        # Append operation and return metadata view
-        op_options = dict(
-            column_name=column_name,
-            ddof=ddof,
-            method=method,
-            window_size=window_size,
-        )
-        self._add_history("compute_statistics", op_options)
-        stats["metadata"] = _diagnostics_view(
-            self._history, diagnostics=diagnostics
-        )
-        return to_native_types(stats)
 
     def compute_statistics(
         self,
@@ -1643,28 +1517,18 @@ class DataStream:
                 )
                 status = info.get("status", "best_p")
                 lb = info.get("lb", {"lags": [], "pvalues": []})
-
-                self._add_history(
-                    "estimate_window_tau_lb",
-                    {
-                        "column_name": col,
-                        "chosen_w": int(w),
-                        "tau_int": float(info.get("tau_int", np.nan)),
-                        "status": status,
-                        "passed": bool(info.get("passed", False)),
-                        "lb_lags": lb.get("lags", []),
-                        "lb_pvalues": lb.get("pvalues", []),
-                        "note": info.get("note", None),
-                    },
-                )
             else:
                 w = int(window_size)
                 status = "user_window"
                 lb = {"lags": [], "pvalues": []}
 
             # 2) Block/sliding means ONCE
+            time_values = self._time_values_for_series(series)
             proc = self._process_column(
-                series, estimated_window=w, method=method
+                series,
+                estimated_window=w,
+                method=method,
+                time_values=time_values,
             )
             block_means = np.asarray(proc.values, dtype=float)
             n_blocks = int(block_means.size)
@@ -1744,11 +1608,12 @@ class DataStream:
             )
 
             # 5) Raw-series ESS value (existing)
-            ess_val_raw = ess_res.get("results", {}).get(col, 10)
-            if isinstance(ess_val_raw, dict):
-                ess_val = ess_val_raw.get("effective_sample_size", None)
-            else:
-                ess_val = ess_val_raw
+            ess_entry = ess_res.get("results", {}).get(col, {})
+            ess_val = (
+                ess_entry.get("effective_sample_size", None)
+                if isinstance(ess_entry, dict)
+                else ess_entry
+            )
 
             stats[col] = {
                 "mean": mu,
@@ -1757,6 +1622,9 @@ class DataStream:
                 "confidence_interval": ci,
                 "pm_std": (
                     (mu - se, mu + se) if np.isfinite(se) else (np.nan, np.nan)
+                ),
+                "effective_sample_size": (
+                    int(ess_val) if ess_val is not None else None
                 ),
                 # bookkeeping
                 "window_size": int(w),
@@ -1782,10 +1650,11 @@ class DataStream:
             window_size=window_size,
         )
         self._add_history("compute_statistics", op_options)
-        stats["metadata"] = _diagnostics_view(
-            self._history, diagnostics=diagnostics
-        )
-        return to_native_types(stats)
+        metadata = _diagnostics_view(self._history, diagnostics=diagnostics)
+        return {
+            "results": to_native_types(stats),
+            "metadata": metadata,
+        }
 
     def cumulative_statistics(
         self,
@@ -1801,7 +1670,10 @@ class DataStream:
                 results[col] = {"error": f"No data for '{col}'"}
                 continue
             est_win = self._estimate_window(col, series, window_size)
-            proc = self._process_column(series, est_win, method)
+            time_values = self._time_values_for_series(series)
+            proc = self._process_column(
+                series, est_win, method, time_values=time_values
+            )
             cm = proc.expanding().mean()
             cs = proc.expanding().std()
             cnt = proc.expanding().count()
@@ -1899,75 +1771,29 @@ class DataStream:
     def is_stationary(self, columns, diagnostics="compact"):
         self._add_history("is_stationary", {"columns": columns})
         cols = [columns] if isinstance(columns, str) else list(columns)
-        out = {}
+        results = {}
+        errors = {}
         for c in cols:
             try:
                 p = adfuller(self.df[c].dropna(), autolag="AIC")[1]
-                out[c] = p < 0.05
+                results[c] = bool(p < 0.05)
             except Exception as e:
-                out[c] = f"Error: {e}"
-        # Display view only if requested (callers often want just the dict)
-        return out
+                results[c] = False
+                errors[c] = str(e)
+        metadata = {"errors": errors} if errors else {}
+        return {
+            "results": results,
+            "metadata": metadata if diagnostics != "none" else {},
+        }
 
-    def make_stationary(self, col, n_pts_orig, workflow):
-        """
-        Attempt to make the data stream into being stationary by removing an initial
-        fraction of data.
-
-        Parameters
-        ----------
-        col : str
-        n_pts_orig : int
-        workflow : RobustWorkflow
-
-        Returns
-        -------
-        self : DataStream
-        stationary : bool
-        """
-        stationary = self.is_stationary([col])[
-            col
-        ]  # is_stationary() returns dictionary. The value for key qoi tells us if it is stationary
-        n_pts = len(self.df)
-
-        ds = self
-
-        n_dropped = 0
-        while (
-            not stationary
-            and not workflow._operate_safe
-            and n_pts > workflow._n_pts_min
-            and n_pts > workflow._n_pts_frac_min * n_pts_orig
-        ):
-            # See if we get a stationary stream if we drop some initial fraction of the data
-            n_drop = int(n_pts * workflow._drop_fraction)
-            df_shortened = ds.df.iloc[n_drop:]
-            ds = DataStream(df_shortened)
-            n_pts = len(ds.df)
-            n_dropped = n_pts_orig - n_pts
-            stationary = ds.is_stationary([col])[col]
-
-            if workflow._verbosity > 0:
-                if stationary:
-                    print(
-                        f"Data stream was not stationary, but is stationary after dropping first {n_dropped} points."
-                    )
-                else:
-                    print(
-                        f"Data stream is not stationary, even after dropping first {n_dropped} points."
-                    )
-
-        return ds, stationary
-
-    # === Compatibility wrappers for legacy tests ===
-
-    def mean(self, column_name=None, method="non-overlapping", window_size=None):
-        """
-        Legacy wrapper for test compatibility. Returns only mean (not dict).
-        """
-        results = self._mean(
-            column_name=column_name, method=method, window_size=window_size
-        )
+    def check_time_steps_uniformity(
+        self,
+        column_name=None,
+        tol=1e-8,
+        print_details=True,
+        interp_kind="cubic",
+        diagnostics="compact",
+    ):
         if column_name is None:
             if "time" in self.df.columns:
                 column_name = "time"
@@ -2082,10 +1908,9 @@ class DataStream:
                 )
             return ds_new
 
-        # NotUniform -> return empty DataStream (but with full internal history)
-        empty = self.df.iloc[0:0].copy()
-        ds_empty = self.__class__(empty, _history=self._history.copy())
-        ds_empty._uniformity_result = {
+        # NotUniform -> return a copy and let caller decide how to proceed
+        ds_copy = self.__class__(self.df.copy(), _history=self._history.copy())
+        ds_copy._uniformity_result = {
             "status": status,
             "unique_steps": uniq.tolist(),
             "num_unique": int(len(uniq)),
@@ -2094,9 +1919,9 @@ class DataStream:
         }
         if print_details:
             print(
-                f"[{column_name}] NotUniform: irregular steps; returning empty stream."
+                f"[{column_name}] NotUniform: irregular steps; returning original stream."
             )
-        return ds_empty
+        return ds_copy
 
     def test_block_independence(
         self,
@@ -2164,7 +1989,10 @@ class DataStream:
             if window_size is None
             else window_size
         )
-        proc = self._process_column(data, est_win, method)
+        time_values = self._time_values_for_series(data)
+        proc = self._process_column(
+            data, est_win, method, time_values=time_values
+        )
         block_means = proc.values
         block_idx = proc.index.values
         n_blocks = len(block_means)
