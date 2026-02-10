@@ -232,7 +232,7 @@ class RobustWorkflow:
 
         df_wrk = data_stream_orig.data.copy()
         df_wrk = df_wrk[df_wrk["time"] >= start_time]
-        ds_wrk = DataStream(df_wrk)
+        ds_wrk = DataStream(df_wrk, history=data_stream_orig.history)
 
         # Get number of points that we are working with
         n_pts_orig = len(ds_wrk.data)
