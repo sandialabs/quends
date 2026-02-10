@@ -1321,6 +1321,51 @@ class DataStream:
         self._data = data
         self._history = history or DataStreamHistory()
 
+    def _append_history_entry(self, entry: DataStreamHistoryEntry) -> None:
+        """Append history entry while supporting both legacy and new history formats."""
+        if isinstance(self._history, DataStreamHistory):
+            self._history.append(entry)
+            return
+        if isinstance(self._history, list):
+            self._history.append(
+                {"operation": entry.operation_name, "options": entry.parameters}
+            )
+            return
+        self._history = DataStreamHistory([entry])
+
+    def _history_metadata(self):
+        """Return deduplicated metadata in legacy dict format."""
+        if isinstance(self._history, DataStreamHistory):
+            return [
+                {"operation": e.operation_name, "options": e.parameters}
+                for e in self._history.deduplicate().entries()
+            ]
+        if isinstance(self._history, list):
+            seen = set()
+            out = []
+            for entry in reversed(self._history):
+                operation = entry.get("operation")
+                if operation not in seen:
+                    out.append(entry)
+                    seen.add(operation)
+            return list(reversed(out))
+        return []
+
+    def _last_history_metadata_entry(self):
+        """Return the most recent history item in legacy dict format."""
+        if isinstance(self._history, DataStreamHistory):
+            entries = self._history.entries()
+            if not entries:
+                return None
+            last_entry = entries[-1]
+            return {
+                "operation": last_entry.operation_name,
+                "options": last_entry.parameters,
+            }
+        if isinstance(self._history, list):
+            return self._history[-1] if self._history else None
+        return None
+
     @property
     def data(self) -> Any:
         return self._data
@@ -1534,15 +1579,12 @@ class DataStream:
         )
 
         # append to DataStream's History
-        self._history.append(entry)
+        self._append_history_entry(entry)
 
-        # convert deduplicated history to dict format
-        deduped_entries = [
-            {"operation": e.operation_name, "options": e.parameters}
-            for e in self._history.deduplicate().entries()
+        # Keep compute_statistics metadata focused on stats operations only
+        statistics["metadata"] = list(ess_dict.get("metadata", [])) + [
+            {"operation": entry.operation_name, "options": entry.parameters}
         ]
-
-        statistics["metadata"] = deduped_entries
 
         return to_native_types(statistics)
 
@@ -1584,13 +1626,10 @@ class DataStream:
         )
 
         # append to DataStream's History
-        self._history.append(entry)
+        self._append_history_entry(entry)
 
         # convert deduplicated entries to dict format
-        deduped_entries = [
-            {"operation": e.operation_name, "options": e.parameters}
-            for e in self._history.deduplicate().entries()
-        ]
+        deduped_entries = self._history_metadata()
 
         results["metadata"] = deduped_entries
         return to_native_types(results)
@@ -1663,13 +1702,11 @@ class DataStream:
             },
         )
 
-        self._history.append(entry)
+        self._append_history_entry(entry)
 
         # show only additional data as the history
-        last_entry = self._history.entries()[-1]
-        metadata = [
-            {"operation": last_entry.operation_name, "options": last_entry.parameters}
-        ]
+        last_entry = self._last_history_metadata_entry()
+        metadata = [last_entry] if last_entry is not None else []
 
         results["metadata"] = metadata
 
@@ -1688,7 +1725,7 @@ class DataStream:
         """
         # We could implement a real one if needed; for now, return 0 for all columns.
         if column_names is None:
-            column_names = [col for col in self.df.columns if col != "time"]
+            column_names = [col for col in self.data.columns if col != "time"]
         elif isinstance(column_names, str):
             column_names = [column_names]
         return {col: 0 for col in column_names}
@@ -1713,7 +1750,7 @@ class DataStream:
         entry = DataStreamHistoryEntry(
             operation_name="is_stationary", parameters={"columns": columns}
         )
-        self._history.append(entry)
+        self._append_history_entry(entry)
         if isinstance(columns, str):
             columns = [columns]
         results = {}
@@ -1821,7 +1858,7 @@ class DataStream:
         )
 
         # append to DataStream's History
-        self._history.append(entry)
+        self._append_history_entry(entry)
 
         if column_names is None:
             column_names = [col for col in self.data.columns if col != "time"]
@@ -1851,13 +1888,10 @@ class DataStream:
             ESS = n / (1 + 2 * acf_sum)
             results[col] = int(np.ceil(ESS))
 
-        # convert deduplicated entries to dict format
-        deduped_entries = [
-            {"operation": e.operation_name, "options": e.parameters}
-            for e in self._history.deduplicate().entries()
-        ]
+        # Keep ESS metadata focused on this operation only
+        metadata = [{"operation": entry.operation_name, "options": entry.parameters}]
 
-        return {"results": to_native_types(results), "metadata": deduped_entries}
+        return {"results": to_native_types(results), "metadata": metadata}
 
     @staticmethod
     def robust_effective_sample_size(
@@ -1952,7 +1986,7 @@ class DataStream:
         )
 
         # append to the DataStream's History
-        self._history.append(entry)
+        self._append_history_entry(entry)
 
         if column_names is None:
             column_names = [col for col in self.data.columns if col != "time"]
@@ -1972,13 +2006,10 @@ class DataStream:
             )
             results[col] = ess
 
-        # convert deduplicated entries to dict format
-        deduped_entries = [
-            {"operation": e.operation_name, "options": e.parameters}
-            for e in self._history.deduplicate().entries()
-        ]
+        # Keep robust ESS metadata focused on this operation only
+        metadata = [{"operation": entry.operation_name, "options": entry.parameters}]
 
-        return {"results": to_native_types(results), "metadata": deduped_entries}
+        return {"results": to_native_types(results), "metadata": metadata}
 
     @staticmethod
     def normalize_data(df):
