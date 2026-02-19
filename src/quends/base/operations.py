@@ -1,5 +1,4 @@
 # Now let's describe an abstract class for an "operation" to be performed on a data stream
-# This could go into operations.py for example
 
 from abc import ABC, abstractmethod
 from typing import Any, Optional

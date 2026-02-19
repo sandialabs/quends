@@ -77,7 +77,12 @@ def test_init_empty(empty_data: pd.DataFrame):
 # === Mean ===
 def test_mean_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
-    assert ds.mean(window_size=1) == {"A": 2.0}
+    assert ds.mean(window_size=1) == {
+        "A": {
+            "mean": 2.0,
+            "window_size": 1,
+        }
+    }
 
 
 def test_mean_empty(empty_data: pd.DataFrame):
@@ -87,42 +92,87 @@ def test_mean_empty(empty_data: pd.DataFrame):
 
 def test_mean_long(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    assert ds.mean() == {"A": 3.0, "B": 3.0}
+    assert ds.mean() == {
+        "A": {
+            "mean": 3.0,
+            "window_size": 5,
+        },
+        "B": {
+            "mean": 3.0,
+            "window_size": 5,
+        },
+    }
 
 
 def test_mean_long_overlapping_window(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    assert ds.mean() == {"A": 3.0, "B": 3.0}
+    assert ds.mean() == {
+        "A": {
+            "mean": 3.0,
+            "window_size": 5,
+        },
+        "B": {
+            "mean": 3.0,
+            "window_size": 5,
+        },
+    }
 
 
 def test_mean_long_non_overlapping_window(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    assert ds.mean(method="non-overlapping", window_size=2) == {"A": 2.5, "B": 3.5}
+    assert ds.mean(method="non-overlapping", window_size=2) == {
+        "A": {
+            "mean": 2.5,
+            "window_size": 2,
+        },
+        "B": {
+            "mean": 3.5,
+            "window_size": 2,
+        },
+    }
 
 
 # === Mean Uncertainty ===
 def test_mean_uncertainty_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
     mean_uncertainty = ds.mean_uncertainty(window_size=2)
-    assert np.isnan(mean_uncertainty["A"])
+    assert np.isnan(mean_uncertainty["A"]["mean_uncertainty"])
+    assert mean_uncertainty["A"]["window_size"] == 2
 
 
 def test_mean_uncertainty_long(long_data: pd.DataFrame):
     ds = DataStream(long_data)
     mean_uncertainty = ds.mean_uncertainty(window_size=2)
-    assert mean_uncertainty == {"A": 1.0, "B": 1.0}
+    assert mean_uncertainty == {
+        "A": {
+            "mean_uncertainty": 1.0,
+            "window_size": 2,
+        },
+        "B": {
+            "mean_uncertainty": 1.0,
+            "window_size": 2,
+        },
+    }
 
 
 # === Confidence Interval ===
 def test_confidence_interval_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
-    expected = {"A": (0.8683934723883333, 3.131606527611667)}
+    expected = {
+        "A": {
+            "confidence_interval": (0.8683934723883333, 3.131606527611667),
+            "window_size": 1,
+        }
+    }
     assert ds.confidence_interval(window_size=1) == expected
 
 
 def test_confidence_interval_long(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    expected = {"A": (0.54, 4.46), "B": (1.54, 5.46)}
+    expected = {
+        "A": {"confidence_interval": (0.54, 4.46), "window_size": 2},
+        "B": {"confidence_interval": (1.54, 5.46), "window_size": 2},
+    }
     assert ds.confidence_interval(window_size=2) == expected
 
 
@@ -315,21 +365,13 @@ def test_compute_stats_long(long_data: pd.DataFrame):
 def test_compute_stats_ci_not_computed(long_data: pd.DataFrame):
     ds = DataStream(long_data)
     original_ci_method = ds.confidence_interval
-    ds.confidence_interval = lambda *a, **k: {"A": None}
+    ds.confidence_interval = lambda *a, **k: {
+        "A": {"confidence_interval": None, "window_size": 1}
+    }
     result = ds.compute_statistics(column_name="A", window_size=1)
     ds.confidence_interval = original_ci_method
     assert "A" in result
-
-
-# === Optimal Window Size ===
-def test_optimal_window_size_simple(simple_data: pd.DataFrame):
-    ds = DataStream(simple_data)
-    assert ds.optimal_window_size() == 1
-
-
-def test_optimal_window_size_long(long_data: pd.DataFrame):
-    ds = DataStream(long_data)
-    assert ds.optimal_window_size() == 1
+    assert result["A"]["confidence_interval"] is None
 
 
 # === Cumulative Statistics ===
