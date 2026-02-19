@@ -5,8 +5,6 @@ from .operations import DataStreamOperation
 
 
 class MakeStationaryOperation(DataStreamOperation):
-    """from make_stationarity"""
-
     def __init__(self, column, n_pts_orig, workflow):
         super().__init__(operation_name="make_stationary")
         self.column = column
