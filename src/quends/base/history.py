@@ -40,29 +40,3 @@ class DataStreamHistory:
         """
 
         return tuple(self._entries)
-
-    def deduplicate(self) -> "DataStreamHistory":
-        """
-        Create a new DataStreamHistory keeping only the most recent occurance
-        of each operation.
-
-        Scans the history of operations (each represented as a dict with at least an 'operation' key)
-        from end to start, retaining only the last entry for each unique operation name while preserving
-        the overall order of those final occurrences.
-
-        Returns
-        -------
-        DataStreamHistory
-            a new history object with deduplicated entries
-        """
-
-        seen = set()
-        out = []
-        # Reverse to keep last call
-        for entry in reversed(self._entries):
-            if entry.operation_name not in seen:
-                out.append(entry)
-                seen.add(entry.operation_name)
-
-        # Reverse again to restore original order
-        return DataStreamHistory(reversed(out))
