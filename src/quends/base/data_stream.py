@@ -4,14 +4,14 @@ from typing import Any, Optional
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
-from scipy.stats import norm, rankdata
+from scipy.stats import rankdata
 from sklearn.preprocessing import MinMaxScaler
-from statsmodels.tsa.stattools import acf, adfuller
+from statsmodels.tsa.stattools import adfuller
 
 from quends.base.utils import power_law_model
 
 from .history import DataStreamHistory, DataStreamHistoryEntry
-from .utils import to_native_types
+from .utils import _compute_ess, _resolve_columns, to_native_types
 
 """
 Usage signature for the new trimming workflow::
@@ -48,6 +48,12 @@ class DataStream:
             return None
         last = entries[-1]
         return {"operation": last.operation_name, "options": last.parameters}
+
+    def _record_operation(self, name, params):
+        """Create, append, and return a history entry."""
+        entry = DataStreamHistoryEntry(operation_name=name, parameters=params)
+        self._append_history_entry(entry)
+        return entry
 
     @property
     def data(self) -> Any:
@@ -473,47 +479,19 @@ class DataStream:
         dict
             {'results': {col: ESS_int or message}, 'metadata': history}
         """
-        # Create a history entry with operation details of ess
-        entry = DataStreamHistoryEntry(
-            operation_name="effective_sample_size",
-            parameters={"column_names": column_names, "alpha": alpha},
+        entry = self._record_operation(
+            "effective_sample_size", {"column_names": column_names, "alpha": alpha}
         )
 
-        # append to DataStream's History
-        self._append_history_entry(entry)
+        columns = _resolve_columns(self.data, column_names)
+        results = {col: _compute_ess(self.data, col, alpha) for col in columns}
 
-        if column_names is None:
-            column_names = [col for col in self.data.columns if col != "time"]
-        elif isinstance(column_names, str):
-            column_names = [column_names]
-        results = {}
-        for col in column_names:
-            if col not in self.data.columns:
-                results[col] = {
-                    "message": f"Column '{col}' not found in the DataStream."
-                }
-                continue
-            filtered = self.data[col].dropna()
-            if filtered.empty:
-                results[col] = {
-                    "effective_sample_size": None,
-                    "message": "No data available for computation.",
-                }
-                continue
-            n = len(filtered)
-            nlags = int(n / 4)
-            acf_values = acf(filtered, nlags=nlags)
-            z_critical = norm.ppf(1 - alpha / 2)
-            conf_interval = z_critical / np.sqrt(n)
-            significant_lags = np.where(np.abs(acf_values[1:]) > conf_interval)[0]
-            acf_sum = np.sum(np.abs(acf_values[1:][significant_lags]))
-            ESS = n / (1 + 2 * acf_sum)
-            results[col] = int(np.ceil(ESS))
-
-        # Keep ESS metadata focused on this operation only
-        metadata = [{"operation": entry.operation_name, "options": entry.parameters}]
-
-        return {"results": to_native_types(results), "metadata": metadata}
+        return {
+            "results": to_native_types(results),
+            "metadata": [
+                {"operation": entry.operation_name, "options": entry.parameters}
+            ],
+        }
 
     @staticmethod
     def robust_effective_sample_size(

@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.stats import norm
+from statsmodels.tsa.stattools import acf
 
 
 def power_law_model(n, A, p):
@@ -36,3 +38,29 @@ def to_native_types(obj):
         return obj.item()
     else:
         return obj
+
+
+def _resolve_columns(data, column_names):
+    if column_names is None:
+        return [col for col in data.columns if col != "time"]
+    return [column_names] if isinstance(column_names, str) else column_names
+
+
+def _compute_ess(data, col, alpha):
+    if col not in data.columns:
+        return {"message": f"Column '{col}' not found in the DataStream."}
+
+    series = data[col].dropna()
+    if series.empty:
+        return {
+            "effective_sample_size": None,
+            "message": "No data available for computation.",
+        }
+
+    n = len(series)
+    acf_values = acf(series, nlags=n // 4)
+    threshold = norm.ppf(1 - alpha / 2) / np.sqrt(n)
+    significant_acf = acf_values[1:][np.abs(acf_values[1:]) > threshold]
+    ess = n / (1 + 2 * np.sum(np.abs(significant_acf)))
+
+    return int(np.ceil(ess))
