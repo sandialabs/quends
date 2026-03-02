@@ -1,2 +1,2 @@
-signal,metadata
-"{'mean': 200.3481564025074, 'mean_uncertainty': 0.7441767504730115, 'confidence_interval': (198.8895699715803, 201.80674283343453), 'pm_std': (199.6039796520344, 201.09233315298042), 'effective_sample_size': 7, 'window_size': 14, 'sss_start': np.float64(109.0909090909091), 'metadata': {'status': 'Regular', 'mitigation': 'None'}, 'start_time': 0.0}","[{'operation': 'effective_sample_size', 'options': {'column_names': 'signal', 'alpha': 0.05}}, {'operation': 'compute_statistics', 'options': {'column_name': 'signal', 'ddof': 1, 'method': 'non-overlapping', 'window_size': None}}]"
+signal
+"{'mean': 200.3481564025074, 'mean_uncertainty': 0.7441767504730115, 'confidence_interval': (198.8895699715803, 201.80674283343453), 'pm_std': (199.6039796520344, 201.09233315298042), 'effective_sample_size': 7, 'window_size': 14, 'sss_start': np.float64(109.0909090909091), 'metadata': {'status': 'Regular', 'mitigation': 'None'}, 'start_time': 0.0}"
