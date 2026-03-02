@@ -313,21 +313,6 @@ def test_compute_stats_simple(simple_data: pd.DataFrame):
             "effective_sample_size": 3,
             "window_size": 1,
         },
-        "metadata": [
-            {
-                "operation": "effective_sample_size",
-                "options": {"column_names": "A", "alpha": 0.05},
-            },
-            {
-                "operation": "compute_statistics",
-                "options": {
-                    "column_name": "A",
-                    "ddof": 1,
-                    "method": "non-overlapping",
-                    "window_size": 1,
-                },
-            },
-        ],
     }
     assert ds.compute_statistics(column_name="A", window_size=1) == expected
 
@@ -343,21 +328,6 @@ def test_compute_stats_long(long_data: pd.DataFrame):
             "effective_sample_size": 5,
             "window_size": 1,
         },
-        "metadata": [
-            {
-                "operation": "effective_sample_size",
-                "options": {"column_names": "A", "alpha": 0.05},
-            },
-            {
-                "operation": "compute_statistics",
-                "options": {
-                    "column_name": "A",
-                    "ddof": 1,
-                    "method": "non-overlapping",
-                    "window_size": 1,
-                },
-            },
-        ],
     }
     assert ds.compute_statistics(column_name="A", window_size=1) == expected
 
@@ -385,16 +355,6 @@ def test_cumulative_stats_simple(simple_data: pd.DataFrame):
             "standard_error": [np.nan, 0.5, 0.5773502691896258],
             "window_size": 1,
         },
-        "metadata": [
-            {
-                "operation": "cumulative_statistics",
-                "options": {
-                    "column_name": None,
-                    "method": "non-overlapping",
-                    "window_size": 1,
-                },
-            }
-        ],
     }
     for key in expected["A"]:
         if isinstance(expected["A"][key], list):
@@ -441,16 +401,6 @@ def test_cumulative_stats_long(long_data: pd.DataFrame):
             ],
             "window_size": 1,
         },
-        "metadata": [
-            {
-                "operation": "cumulative_statistics",
-                "options": {
-                    "column_name": None,
-                    "method": "non-overlapping",
-                    "window_size": 1,
-                },
-            }
-        ],
     }
     for col in ["A", "B"]:
         for key in expected[col]:
@@ -461,16 +411,6 @@ def test_cumulative_stats_empty(nan_data: pd.DataFrame):
     ds = DataStream(nan_data)
     expected = {
         "A": {"error": "No data available for column 'A'"},
-        "metadata": [
-            {
-                "operation": "cumulative_statistics",
-                "options": {
-                    "column_name": None,
-                    "method": "non-overlapping",
-                    "window_size": 1,
-                },
-            }
-        ],
     }
     assert ds.cumulative_statistics(window_size=1) == expected
 
@@ -506,18 +446,6 @@ def test_additional_data_simple(simple_data: pd.DataFrame):
             "additional_samples": 1,
             "window_size": 1,
         },
-        "metadata": [
-            {
-                "operation": "additional_data",
-                "options": {
-                    "column_name": None,
-                    "ddof": 1,
-                    "method": "sliding",
-                    "window_size": 1,
-                    "reduction_factor": 0.1,
-                },
-            }
-        ],
     }
     assert_nested_approx(result, expected)
 
@@ -548,18 +476,6 @@ def test_additional_data_long(long_data: pd.DataFrame):
             "additional_samples": 1,
             "window_size": 1,
         },
-        "metadata": [
-            {
-                "operation": "additional_data",
-                "options": {
-                    "column_name": None,
-                    "ddof": 1,
-                    "method": "sliding",
-                    "window_size": 1,
-                    "reduction_factor": 0.1,
-                },
-            }
-        ],
     }
     assert_nested_approx(result, expected)
 
@@ -574,18 +490,6 @@ def test_additional_data_missing_cumulative(long_data: pd.DataFrame):
     additional_data = ds.additional_data(column_name="B", reduction_factor=0.1)
     expected = {
         "B": {"error": "No cumulative SEM data for column 'B'"},
-        "metadata": [
-            {
-                "operation": "additional_data",
-                "options": {
-                    "column_name": "B",
-                    "ddof": 1,
-                    "method": "sliding",
-                    "reduction_factor": 0.1,
-                    "window_size": None,
-                },
-            }
-        ],
     }
     assert additional_data == expected
 

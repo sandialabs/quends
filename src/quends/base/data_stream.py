@@ -205,25 +205,6 @@ class DataStream:
                 "window_size": est_win,
             }
 
-        # make a history entry with operation details for compute statistics
-        entry = DataStreamHistoryEntry(
-            operation_name="compute_statistics",
-            parameters={
-                "column_name": column_name,
-                "ddof": ddof,
-                "method": method,
-                "window_size": window_size,
-            },
-        )
-
-        # append to DataStream's History
-        self._append_history_entry(entry)
-
-        # Keep compute_statistics metadata focused on stats operations only
-        statistics["metadata"] = list(ess_dict.get("metadata", [])) + [
-            {"operation": entry.operation_name, "options": entry.parameters}
-        ]
-
         return to_native_types(statistics)
 
     def cumulative_statistics(
@@ -253,23 +234,6 @@ class DataStream:
                 "window_size": int(est_win),
             }
 
-        # make a history entry with details for cumulative statistics
-        entry = DataStreamHistoryEntry(
-            operation_name="cumulative_statistics",
-            parameters={
-                "column_name": column_name,
-                "method": method,
-                "window_size": window_size,
-            },
-        )
-
-        # append to DataStream's History
-        self._append_history_entry(entry)
-
-        # convert deduplicated entries to dict format
-        deduped_entries = self._history_metadata()
-
-        results["metadata"] = deduped_entries
         return to_native_types(results)
 
     def additional_data(
@@ -326,25 +290,6 @@ class DataStream:
                 "window_size": int(est_win),
             }
 
-        entry = DataStreamHistoryEntry(
-            operation_name="additional_data",
-            parameters={
-                "column_name": column_name,
-                "ddof": ddof,
-                "method": method,
-                "window_size": window_size,
-                "reduction_factor": reduction_factor,
-            },
-        )
-
-        self._append_history_entry(entry)
-
-        # show only additional data as the history
-        last_entry = self._last_history_metadata_entry()
-        metadata = [last_entry] if last_entry is not None else []
-
-        results["metadata"] = metadata
-
         return to_native_types(results)
 
     def effective_sample_size_below(self, column_names=None, alpha=0.05):
@@ -374,11 +319,7 @@ class DataStream:
         dict
             {column: True if stationary (p<0.05), else False or error message}
         """
-        # Add to history
-        entry = DataStreamHistoryEntry(
-            operation_name="is_stationary", parameters={"columns": columns}
-        )
-        self._append_history_entry(entry)
+
         if isinstance(columns, str):
             columns = [columns]
         results = {}
