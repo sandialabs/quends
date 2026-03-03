@@ -626,12 +626,6 @@ def test_effective_sample_size_empty(empty_data: pd.DataFrame):
     ds = DataStream(empty_data)
     expected = {
         "results": {},
-        "metadata": [
-            {
-                "operation": "effective_sample_size",
-                "options": {"alpha": 0.05, "column_names": None},
-            }
-        ],
     }
     assert ds.effective_sample_size() == expected
 
@@ -646,12 +640,6 @@ def test_effective_sample_size_nan(nan_data: pd.DataFrame):
                 "message": "No data available for computation.",
             }
         },
-        "metadata": [
-            {
-                "operation": "effective_sample_size",
-                "options": {"column_names": ["A"], "alpha": 0.05},
-            }
-        ],
     }
     assert result == expected
 
@@ -661,12 +649,6 @@ def test_effective_sample_size_simple(simple_data: pd.DataFrame):
     result = ds.effective_sample_size(column_names=["A"])
     expected = {
         "results": {"A": 3},
-        "metadata": [
-            {
-                "operation": "effective_sample_size",
-                "options": {"column_names": ["A"], "alpha": 0.05},
-            }
-        ],
     }
     assert result == expected
 
@@ -676,12 +658,6 @@ def test_effective_sample_size_long_data(long_data: pd.DataFrame):
     result = ds.effective_sample_size(column_names=["A", "B"])
     expected = {
         "results": {"A": 5, "B": 5},
-        "metadata": [
-            {
-                "operation": "effective_sample_size",
-                "options": {"column_names": ["A", "B"], "alpha": 0.05},
-            }
-        ],
     }
     assert result == expected
 
@@ -691,12 +667,6 @@ def test_effective_sample_size_stationary(stationary_data: pd.DataFrame):
     result = ds.effective_sample_size(column_names=["A"])
     expected = {
         "results": {"A": 5},
-        "metadata": [
-            {
-                "operation": "effective_sample_size",
-                "options": {"column_names": ["A"], "alpha": 0.05},
-            }
-        ],
     }
     assert result == expected
 
@@ -706,12 +676,6 @@ def test_effective_sample_size_trim_data(trim_data: pd.DataFrame):
     result = ds.effective_sample_size(column_names=["A"])
     expected = {
         "results": {"A": 5},
-        "metadata": [
-            {
-                "operation": "effective_sample_size",
-                "options": {"column_names": ["A"], "alpha": 0.05},
-            }
-        ],
     }
     assert result == expected
 
@@ -721,12 +685,6 @@ def test_effective_sample_size_missing_col(long_data: pd.DataFrame):
     result = ds.effective_sample_size(column_names=["C"])
     expected = {
         "results": {"C": {"message": "Column 'C' not found in the DataStream."}},
-        "metadata": [
-            {
-                "operation": "effective_sample_size",
-                "options": {"column_names": ["C"], "alpha": 0.05},
-            }
-        ],
     }
     assert result == expected
 
