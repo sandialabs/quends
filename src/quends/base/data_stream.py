@@ -406,8 +406,6 @@ class DataStream:
         """
         Compute classic ESS based on significant autocorrelation lags.
 
-        Records the operation in history.
-
         Parameters
         ----------
         column_names : str or list of str or None
@@ -507,21 +505,8 @@ class DataStream:
         Returns
         -------
         dict
-            {'results': {col: ESS or tuple}, 'metadata': history}
+            {'results': {col: ESS or tuple}}
         """
-        # Create a history entry with the operation details
-        entry = DataStreamHistoryEntry(
-            operation_name="ess_robust",
-            parameters={
-                "column_names": column_names,
-                "rank_normalize": rank_normalize,
-                "min_samples": min_samples,
-                "return_relative": return_relative,
-            },
-        )
-
-        # append to the DataStream's History
-        self._append_history_entry(entry)
 
         if column_names is None:
             column_names = [col for col in self.data.columns if col != "time"]
@@ -541,10 +526,7 @@ class DataStream:
             )
             results[col] = ess
 
-        # Keep robust ESS metadata focused on this operation only
-        metadata = [{"operation": entry.operation_name, "options": entry.parameters}]
-
-        return {"results": to_native_types(results), "metadata": metadata}
+        return {"results": to_native_types(results)}
 
     @staticmethod
     def normalize_data(df):
