@@ -418,20 +418,14 @@ class DataStream:
         Returns
         -------
         dict
-            {'results': {col: ESS_int or message}, 'metadata': history}
+            {'results': {col: ESS_int or message}}
         """
-        entry = self._record_operation(
-            "effective_sample_size", {"column_names": column_names, "alpha": alpha}
-        )
 
         columns = _resolve_columns(self.data, column_names)
         results = {col: _compute_ess(self.data, col, alpha) for col in columns}
 
         return {
             "results": to_native_types(results),
-            "metadata": [
-                {"operation": entry.operation_name, "options": entry.parameters}
-            ],
         }
 
     @staticmethod
