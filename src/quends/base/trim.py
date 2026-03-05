@@ -679,7 +679,7 @@ class TrimDataStreamOperation(DataStreamOperation):
         # Build base parameters that all strategies share
         options = {
             "column_name": column_name,
-            "batch_size": self._strategy.window_size,
+            "window_size": self._strategy.window_size,
             "start_time": self._strategy.start_time,
             "method": self._strategy.method_name,
         }

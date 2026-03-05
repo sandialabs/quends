@@ -192,7 +192,7 @@ def test_trim_std(trim_data: pd.DataFrame):
             "operation": "trim",
             "options": {
                 "column_name": "A",
-                "batch_size": 1,
+                "window_size": 1,
                 "start_time": 3.0,
                 "method": "std",
                 "robust": True,
@@ -216,7 +216,7 @@ def test_trim_threshold(trim_data: pd.DataFrame):
             "operation": "trim",
             "options": {
                 "column_name": "A",
-                "batch_size": 1,
+                "window_size": 1,
                 "start_time": 3.0,
                 "method": "threshold",
                 "threshold": 4,
@@ -241,7 +241,7 @@ def test_trim_rolling_variance(trim_data: pd.DataFrame):
             "operation": "trim",
             "options": {
                 "column_name": "A",
-                "batch_size": 1,
+                "window_size": 1,
                 "start_time": 3.0,
                 "method": "rolling_variance",
                 "threshold": 4,
@@ -290,7 +290,7 @@ def test_trim_missing_threshold(long_data: pd.DataFrame):
             "operation": "trim",
             "options": {
                 "column_name": "A",
-                "batch_size": 10,
+                "window_size": 10,
                 "start_time": 0.0,
                 "method": "threshold",
                 "threshold": None,
