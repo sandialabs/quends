@@ -19,6 +19,11 @@ class MakeStationaryOperation(DataStreamOperation):
         """
         result_ds, is_stationary = self._apply(data_stream, **kwargs)
 
+        if not is_stationary:
+            empty_df = data_stream.data.iloc[0:0].copy()
+            result_ds = DataStream(empty_df, history=data_stream.history)
+            result_ds.message = f"Column '{self.column}' is not stationary"
+
         # Add history entry
         history_entry = DataStreamHistoryEntry(
             operation_name=self.name,

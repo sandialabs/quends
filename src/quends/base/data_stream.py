@@ -10,7 +10,7 @@ from statsmodels.tsa.stattools import adfuller
 
 from quends.base.utils import power_law_model
 
-from .history import DataStreamHistory, DataStreamHistoryEntry
+from .history import DataStreamHistory
 from .utils import _compute_ess, _resolve_columns, to_native_types
 
 """
@@ -29,31 +29,6 @@ class DataStream:
     def __init__(self, data: Any, history: Optional[DataStreamHistory] = None) -> None:
         self._data = data
         self._history = history or DataStreamHistory()
-
-    def _append_history_entry(self, entry: DataStreamHistoryEntry) -> None:
-        """Append a history entry to the DataStream's history."""
-        self._history.append(entry)
-
-    def _history_metadata(self):
-        """Return history as a list of dicts"""
-        return [
-            {"operation": e.operation_name, "options": e.parameters}
-            for e in self._history.entries()
-        ]
-
-    def _last_history_metadata_entry(self):
-        """Return the most recent history item"""
-        entries = self._history.entries()
-        if not entries:
-            return None
-        last = entries[-1]
-        return {"operation": last.operation_name, "options": last.parameters}
-
-    def _record_operation(self, name, params):
-        """Create, append, and return a history entry."""
-        entry = DataStreamHistoryEntry(operation_name=name, parameters=params)
-        self._append_history_entry(entry)
-        return entry
 
     @property
     def data(self) -> Any:
