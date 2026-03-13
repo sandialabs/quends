@@ -8,13 +8,13 @@ import pytest
 import quends as qnd
 from quends import (
     DataStream,
-    RobustWorkflow,
     RollingVarianceTrimStrategy,
     SSSStartTrimStrategy,
     StandardDeviationTrimStrategy,
     ThresholdTrimStrategy,
     TrimDataStreamOperation,
 )
+from quends.base.stationary import MakeStationaryOperation
 
 
 # === Fixtures ===
@@ -250,6 +250,42 @@ def test_trim_rolling_variance(trim_data: pd.DataFrame):
             },
         },
     ]
+
+
+def test_sss_start_strategy_accepts_explicit_args(long_data: pd.DataFrame):
+    ds = DataStream(long_data)
+    strategy = SSSStartTrimStrategy(
+        max_lag_frac=0.5,
+        verbosity=0,
+        autocorr_sig_level=0.05,
+        decor_multiplier=4.0,
+        std_dev_frac=0.1,
+        fudge_fac=0.1,
+        smoothing_window_correction=0.8,
+        final_smoothing_window=10,
+    )
+    assert strategy.max_lag_frac == 0.5
+    assert strategy.decor_multiplier == 4.0
+    assert strategy.final_smoothing_window == 10
+    trim_op = TrimDataStreamOperation(strategy=strategy)
+    result = trim_op(ds, column_name="A")
+    assert isinstance(result, (DataStream, pd.DataFrame))
+
+
+def test_make_stationary_operation_accepts_explicit_args(long_data: pd.DataFrame):
+    ds = DataStream(long_data)
+    op = MakeStationaryOperation(
+        column="A",
+        n_pts_orig=len(ds.data),
+        operate_safe=True,
+        n_pts_min=100,
+        n_pts_frac_min=0.2,
+        drop_fraction=0.25,
+        verbosity=0,
+    )
+    result, stationary = op(ds)
+    assert not stationary
+    assert isinstance(result, DataStream)
 
 
 # def test_trim_invalid_method(trim_data: pd.DataFrame):
@@ -689,20 +725,38 @@ def test_effective_sample_size_missing_col(long_data: pd.DataFrame):
     assert result == expected
 
 
-@pytest.fixture
-def workflow():
-    """
-    Deterministic workflow configuration for stationarity tests.
-    """
-    wf = RobustWorkflow(
-        operate_safe=False,
-        smoothing_window_correction=0.3,
+def make_stationary_op(
+    column: str,
+    n_pts_orig: int,
+    *,
+    operate_safe: bool = False,
+    verbosity: int = 1,
+    drop_fraction: float = 0.2,
+    n_pts_min: int = 50,
+    n_pts_frac_min: float = 0.2,
+):
+    return qnd.MakeStationaryOperation(
+        column=column,
+        n_pts_orig=n_pts_orig,
+        operate_safe=operate_safe,
+        verbosity=verbosity,
+        drop_fraction=drop_fraction,
+        n_pts_min=n_pts_min,
+        n_pts_frac_min=n_pts_frac_min,
     )
-    wf._verbosity = 1
-    wf._drop_fraction = 0.2
-    wf._n_pts_min = 50
-    wf._n_pts_frac_min = 0.2
-    return wf
+
+
+def make_sss_strategy(*, verbosity: int = 1):
+    return SSSStartTrimStrategy(
+        max_lag_frac=0.5,
+        verbosity=verbosity,
+        autocorr_sig_level=0.05,
+        decor_multiplier=4.0,
+        std_dev_frac=0.1,
+        fudge_fac=0.1,
+        smoothing_window_correction=0.3,
+        final_smoothing_window=10,
+    )
 
 
 @pytest.fixture
@@ -740,17 +794,13 @@ def slope_to_stationary_df():
     )
 
 
-def test_make_stationary_with_stationary_data(
-    stationary_data: pd.DataFrame, workflow: RobustWorkflow
-):
+def test_make_stationary_with_stationary_data(stationary_data: pd.DataFrame):
     ds = DataStream(stationary_data)
     col = "A"
     n_pts_orig = len(stationary_data)
 
     # Call the method
-    op = qnd.MakeStationaryOperation(
-        column=col, n_pts_orig=n_pts_orig, workflow=workflow
-    )
+    op = make_stationary_op(column=col, n_pts_orig=n_pts_orig)
 
     result_ds, stationary = op(ds)
 
@@ -761,15 +811,11 @@ def test_make_stationary_with_stationary_data(
     assert len(result_ds.data) == n_pts_orig
 
 
-def test_make_stationary_already_stationary(
-    stationary_noise_df: pd.DataFrame, workflow: RobustWorkflow
-):
+def test_make_stationary_already_stationary(stationary_noise_df: pd.DataFrame):
     ds = DataStream(stationary_noise_df)
     n_pts_orig = len(ds.data)
 
-    op = qnd.MakeStationaryOperation(
-        column="A", n_pts_orig=n_pts_orig, workflow=workflow
-    )
+    op = make_stationary_op(column="A", n_pts_orig=n_pts_orig)
 
     result_ds, stationary = op(ds)
 
@@ -777,15 +823,11 @@ def test_make_stationary_already_stationary(
     assert len(result_ds.data) == n_pts_orig
 
 
-def test_make_stationary_drops_trend(
-    slope_to_stationary_df: pd.DataFrame, workflow: RobustWorkflow
-):
+def test_make_stationary_drops_trend(slope_to_stationary_df: pd.DataFrame):
     ds = DataStream(slope_to_stationary_df)
     n_pts_orig = len(ds.data)
 
-    op = qnd.MakeStationaryOperation(
-        column="A", n_pts_orig=n_pts_orig, workflow=workflow
-    )
+    op = make_stationary_op(column="A", n_pts_orig=n_pts_orig)
 
     result_ds, stationary = op(ds)
 
@@ -795,7 +837,6 @@ def test_make_stationary_drops_trend(
 
 def test_make_stationary_verbose_output(
     slope_to_stationary_df: pd.DataFrame,
-    workflow: RobustWorkflow,
     capsys: pytest.CaptureFixture[str],
 ):
     """
@@ -804,9 +845,7 @@ def test_make_stationary_verbose_output(
     ds = DataStream(slope_to_stationary_df)
     n_pts_orig = len(ds.data)
 
-    op = qnd.MakeStationaryOperation(
-        column="A", n_pts_orig=n_pts_orig, workflow=workflow
-    )
+    op = make_stationary_op(column="A", n_pts_orig=n_pts_orig)
 
     result_ds, stationary = op(ds)
 
@@ -835,7 +874,6 @@ def persistent_trend_df():
 
 def test_make_stationary_verbose_output_fails(
     persistent_trend_df: pd.DataFrame,
-    workflow: RobustWorkflow,
     capsys: pytest.CaptureFixture[str],
 ):
     """
@@ -844,9 +882,7 @@ def test_make_stationary_verbose_output_fails(
     ds = DataStream(persistent_trend_df)
     n_pts_orig = len(ds.data)
 
-    op = qnd.MakeStationaryOperation(
-        column="A", n_pts_orig=n_pts_orig, workflow=workflow
-    )
+    op = make_stationary_op(column="A", n_pts_orig=n_pts_orig)
 
     result_ds, stationary = op(ds)
 
@@ -859,9 +895,7 @@ def test_make_stationary_verbose_output_fails(
 
 
 # tests for trim_sss_start
-def test_trim_sss_start_detects_sss(
-    slope_to_stationary_df: pd.DataFrame, workflow: RobustWorkflow
-):
+def test_trim_sss_start_detects_sss(slope_to_stationary_df: pd.DataFrame):
     """
     Primary success case:
     non-stationary trend followed by steady state should be trimmed.
@@ -869,7 +903,7 @@ def test_trim_sss_start_detects_sss(
     ds = DataStream(slope_to_stationary_df)
 
     # Create strategy and operation
-    strategy = SSSStartTrimStrategy(workflow=workflow)
+    strategy = make_sss_strategy()
     trim_op = TrimDataStreamOperation(strategy=strategy)
 
     # Apply the trim
@@ -885,14 +919,12 @@ def test_trim_sss_start_detects_sss(
     assert trimmed.data["time"].iloc[0] > 20
 
 
-def test_trim_sss_start_already_stationary(
-    stationary_noise_df: pd.DataFrame, workflow: RobustWorkflow
-):
+def test_trim_sss_start_already_stationary(stationary_noise_df: pd.DataFrame):
     """
     Already-stationary data returns empty result (no transient to trim).
     """
     ds = DataStream(stationary_noise_df)
-    strategy = SSSStartTrimStrategy(workflow=workflow)
+    strategy = make_sss_strategy()
     trim_op = TrimDataStreamOperation(strategy=strategy)
     # Apply the trim
     trimmed = trim_op(ds, column_name="A")
@@ -902,14 +934,12 @@ def test_trim_sss_start_already_stationary(
     assert trimmed.empty
 
 
-def test_trim_sss_start_no_sss_found(
-    persistent_trend_df: pd.DataFrame, workflow: RobustWorkflow
-):
+def test_trim_sss_start_no_sss_found(persistent_trend_df: pd.DataFrame):
     """
     Persistent trend incorrectly detects SSS and trims data.
     """
     ds = DataStream(persistent_trend_df)
-    strategy = SSSStartTrimStrategy(workflow=workflow)
+    strategy = make_sss_strategy()
     trim_op = TrimDataStreamOperation(strategy=strategy)
     # Apply the trim
     trimmed = trim_op(ds, column_name="A")
@@ -920,15 +950,13 @@ def test_trim_sss_start_no_sss_found(
 
 def test_trim_sss_start_verbose_output(
     slope_to_stationary_df: pd.DataFrame,
-    workflow: RobustWorkflow,
     capsys: pytest.CaptureFixture[str],
 ):
     """
     Verbose output should indicate SSS detection.
     """
-    workflow._verbosity = 2
     ds = DataStream(slope_to_stationary_df)
-    strategy = SSSStartTrimStrategy(workflow=workflow)
+    strategy = make_sss_strategy(verbosity=2)
     trim_op = TrimDataStreamOperation(strategy=strategy)
     # Apply the trim
     trimmed = trim_op(ds, column_name="A")
@@ -942,16 +970,14 @@ def test_trim_sss_start_verbose_output(
     )
 
 
-def test_trim_sss_start_handles_nan_values(
-    stationary_noise_df: pd.DataFrame, workflow: RobustWorkflow
-):
+def test_trim_sss_start_handles_nan_values(stationary_noise_df: pd.DataFrame):
     """
     NaNs should not cause a crash.
     """
     df = stationary_noise_df.copy()
     df.loc[50:80, "A"] = np.nan
     ds = DataStream(df)
-    strategy = SSSStartTrimStrategy(workflow=workflow)
+    strategy = make_sss_strategy()
     trim_op = TrimDataStreamOperation(strategy=strategy)
     # Apply the trim
     trimmed = trim_op(ds, column_name="A")
@@ -1055,9 +1081,7 @@ def multiple_transitions_df():
     )
 
 
-def test_trim_sss_start_intermittent_spikes(
-    intermittent_stationary_df: pd.DataFrame, workflow: RobustWorkflow
-):
+def test_trim_sss_start_intermittent_spikes(intermittent_stationary_df: pd.DataFrame):
     """
     Test signal with random large spikes that prevent consistent SSS.
 
@@ -1065,7 +1089,7 @@ def test_trim_sss_start_intermittent_spikes(
     but no point where ALL remaining points stay within tolerance.
     """
     ds = DataStream(intermittent_stationary_df)
-    strategy = SSSStartTrimStrategy(workflow=workflow)
+    strategy = make_sss_strategy()
     trim_op = TrimDataStreamOperation(strategy=strategy)
     # Apply the trim
     trimmed = trim_op(ds, column_name="A")
@@ -1075,16 +1099,14 @@ def test_trim_sss_start_intermittent_spikes(
     assert trimmed is not None
 
 
-def test_trim_sss_start_high_frequency_noise(
-    high_frequency_noise_df: pd.DataFrame, workflow: RobustWorkflow
-):
+def test_trim_sss_start_high_frequency_noise(high_frequency_noise_df: pd.DataFrame):
     """
     Test signal with persistent high-frequency oscillations.
 
     Should struggle to find consistent SSS due to continuous oscillation.
     """
     ds = DataStream(high_frequency_noise_df)
-    strategy = SSSStartTrimStrategy(workflow=workflow)
+    strategy = make_sss_strategy()
     trim_op = TrimDataStreamOperation(strategy=strategy)
     # Apply the trim
     trimmed = trim_op(ds, column_name="A")
@@ -1093,16 +1115,14 @@ def test_trim_sss_start_high_frequency_noise(
     assert trimmed is not None
 
 
-def test_trim_sss_start_decaying_oscillation(
-    oscillating_to_stable_df: pd.DataFrame, workflow: RobustWorkflow
-):
+def test_trim_sss_start_decaying_oscillation(oscillating_to_stable_df: pd.DataFrame):
     """
     Test signal with decaying oscillations that eventually stabilize.
 
     Should find SSS after oscillations decay sufficiently.
     """
     ds = DataStream(oscillating_to_stable_df)
-    strategy = SSSStartTrimStrategy(workflow=workflow)
+    strategy = make_sss_strategy()
     trim_op = TrimDataStreamOperation(strategy=strategy)
     # Apply the trim
     trimmed = trim_op(ds, column_name="A")
@@ -1116,16 +1136,14 @@ def test_trim_sss_start_decaying_oscillation(
     assert trimmed.data["time"].iloc[0] > 100
 
 
-def test_trim_sss_start_multiple_transitions(
-    multiple_transitions_df: pd.DataFrame, workflow: RobustWorkflow
-):
+def test_trim_sss_start_multiple_transitions(multiple_transitions_df: pd.DataFrame):
     """
     Test signal with multiple apparent transitions to steady state.
 
     Should identify a point where steady state is maintained.
     """
     ds = DataStream(multiple_transitions_df)
-    strategy = SSSStartTrimStrategy(workflow=workflow)
+    strategy = make_sss_strategy()
     trim_op = TrimDataStreamOperation(strategy=strategy)
     # Apply the trim
     trimmed = trim_op(ds, column_name="A")
@@ -1139,14 +1157,14 @@ def test_trim_sss_start_multiple_transitions(
 
 
 def test_trim_sss_start_oscillation_trims_correctly(
-    oscillating_to_stable_df: pd.DataFrame, workflow: RobustWorkflow
+    oscillating_to_stable_df: pd.DataFrame,
 ):
     """
     Verify decaying oscillation is trimmed to stable region.
     """
     ds = DataStream(oscillating_to_stable_df)
     original_length = len(ds.data)
-    strategy = SSSStartTrimStrategy(workflow=workflow)
+    strategy = make_sss_strategy()
     trim_op = TrimDataStreamOperation(strategy=strategy)
     # Apply the trim
     trimmed = trim_op(ds, column_name="A")
@@ -1160,7 +1178,7 @@ def test_trim_sss_start_oscillation_trims_correctly(
 
 
 def test_trim_sss_start_intermittent_has_spikes(
-    intermittent_stationary_df: pd.DataFrame, workflow: RobustWorkflow
+    intermittent_stationary_df: pd.DataFrame,
 ):
     """
     Verify that intermittent signal fixture actually has large spikes.
@@ -1174,9 +1192,7 @@ def test_trim_sss_start_intermittent_has_spikes(
     assert large_values.sum() >= 15  # At least 15 of the 20 spikes
 
 
-def test_trim_sss_start_high_freq_oscillates(
-    high_frequency_noise_df: pd.DataFrame, workflow: RobustWorkflow
-):
+def test_trim_sss_start_high_freq_oscillates(high_frequency_noise_df: pd.DataFrame):
     """
     Verify that high frequency fixture actually oscillates.
     """
@@ -1191,13 +1207,13 @@ def test_trim_sss_start_high_freq_oscillates(
 
 
 def test_trim_sss_start_returns_datastream_or_dataframe(
-    oscillating_to_stable_df: pd.DataFrame, workflow: RobustWorkflow
+    oscillating_to_stable_df: pd.DataFrame,
 ):
     """
     Verify return type is either DataStream (success) or DataFrame (failure).
     """
     ds = DataStream(oscillating_to_stable_df)
-    strategy = SSSStartTrimStrategy(workflow=workflow)
+    strategy = make_sss_strategy()
     trim_op = TrimDataStreamOperation(strategy=strategy)
     # Apply the trim
     trimmed = trim_op(ds, column_name="A")
@@ -1207,18 +1223,17 @@ def test_trim_sss_start_returns_datastream_or_dataframe(
 
 
 def test_trim_sss_start_verbose_plotting_no_sss(
-    intermittent_stationary_df: pd.DataFrame, workflow: RobustWorkflow
+    intermittent_stationary_df: pd.DataFrame,
 ):
     """
     Test verbose plotting when no SSS is found.
 
     This tests the plotting code in the else branch (crit_met_index is None).
     """
-    workflow._verbosity = 2
     ds = DataStream(intermittent_stationary_df)
 
     # This should trigger the else branch with plotting
-    strategy = SSSStartTrimStrategy(workflow=workflow)
+    strategy = make_sss_strategy(verbosity=2)
     trim_op = TrimDataStreamOperation(strategy=strategy)
     # Apply the trim
     trimmed = trim_op(ds, column_name="A")
@@ -1227,25 +1242,12 @@ def test_trim_sss_start_verbose_plotting_no_sss(
     assert trimmed is not None
 
 
-@pytest.fixture
-def verbose_workflow():
-    workflow = RobustWorkflow(
-        operate_safe=False,
-        smoothing_window_correction=0.3,
-    )
-    workflow._verbosity = 2
-    workflow._drop_fraction = 0.2
-    workflow._n_pts_min = 50
-    workflow._n_pts_frac_min = 0.2
-    return workflow
-
-
 def test_trim_sss_start_verbose_plotting_runs_without_error(
-    oscillating_to_stable_df: pd.DataFrame, verbose_workflow: RobustWorkflow
+    oscillating_to_stable_df: pd.DataFrame,
 ):
     with patch("matplotlib.pyplot.show"), patch("matplotlib.pyplot.figure"):
         ds = DataStream(oscillating_to_stable_df)
-        strategy = SSSStartTrimStrategy(workflow=verbose_workflow)
+        strategy = make_sss_strategy(verbosity=2)
         trim_op = TrimDataStreamOperation(strategy=strategy)
         # Apply the trim
         trimmed = trim_op(ds, column_name="A")
