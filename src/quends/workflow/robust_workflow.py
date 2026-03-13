@@ -244,13 +244,30 @@ class RobustWorkflow:
         # Check if data stream is stationary
 
         # Check if it isn't stationary, if not drop fraction of data points
-        op = MakeStationaryOperation(column=col, n_pts_orig=n_pts_orig, workflow=self)
+        op = MakeStationaryOperation(
+            column=col,
+            n_pts_orig=n_pts_orig,
+            operate_safe=self._operate_safe,
+            n_pts_min=self._n_pts_min,
+            n_pts_frac_min=self._n_pts_frac_min,
+            drop_fraction=self._drop_fraction,
+            verbosity=self._verbosity,
+        )
         ds_wrk, stationary = op(ds_wrk)
 
         if stationary:
 
             # detect and trim data stream to the start of statistcal steady state
-            strategy = SSSStartTrimStrategy(workflow=self)
+            strategy = SSSStartTrimStrategy(
+                max_lag_frac=self._max_lag_frac,
+                verbosity=self._verbosity,
+                autocorr_sig_level=self._autocorr_sig_level,
+                decor_multiplier=self._decor_multiplier,
+                std_dev_frac=self._std_dev_frac,
+                fudge_fac=self._fudge_fac,
+                smoothing_window_correction=self._smoothing_window_correction,
+                final_smoothing_window=self._final_smoothing_window,
+            )
             trim_op = TrimDataStreamOperation(strategy=strategy)
             trimmed_stream = trim_op(ds_wrk, column_name=col)
             # trimmed_stream = ds_wrk.trim_sss_start(col, self)

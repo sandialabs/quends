@@ -346,8 +346,27 @@ class RollingVarianceTrimStrategy(TrimStrategy):
 class SSSStartTrimStrategy(TrimStrategy):
     """Trim using Statistical Steady State detection."""
 
-    def __init__(self, workflow):
-        super().__init__(window_size=0, start_time=0.0, workflow=workflow)
+    def __init__(
+        self,
+        *,
+        max_lag_frac=None,
+        verbosity=None,
+        autocorr_sig_level=None,
+        decor_multiplier=None,
+        std_dev_frac=None,
+        fudge_fac=None,
+        smoothing_window_correction=None,
+        final_smoothing_window=None,
+    ):
+        super().__init__(window_size=0, start_time=0.0)
+        self.max_lag_frac = max_lag_frac
+        self.verbosity = verbosity
+        self.autocorr_sig_level = autocorr_sig_level
+        self.decor_multiplier = decor_multiplier
+        self.std_dev_frac = std_dev_frac
+        self.fudge_fac = fudge_fac
+        self.smoothing_window_correction = smoothing_window_correction
+        self.final_smoothing_window = final_smoothing_window
 
     @property
     def method_name(self) -> str:
@@ -389,19 +408,17 @@ class SSSStartTrimStrategy(TrimStrategy):
             Returns an empty DataFrame if no SSS is identified.
         """
 
-        workflow = self.workflow
-
         # Get the decorrelation length (in number of points)
         # Note: this approach assumes signal points are spaced equally in time
         n_pts = len(data_stream.data)
-        max_lag = int(workflow._max_lag_frac * n_pts)  # max lag for autocorrelation
+        max_lag = int(self.max_lag_frac * n_pts)  # max lag for autocorrelation
 
         acf_vals = ststls.acf(
             data_stream.data[column_name].dropna().values, nlags=max_lag
         )
 
         # plot the autocorrelation function
-        if workflow._verbosity > 1:
+        if self.verbosity > 1:
             plt.figure(figsize=(10, 6))
             plt.stem(range(len(acf_vals)), acf_vals)
             plt.xlabel("Lag")
@@ -412,16 +429,16 @@ class SSSStartTrimStrategy(TrimStrategy):
             plt.close()
 
         # Use rigorous statistical measure for decorrelation length
-        z_critical = sts.norm.ppf(1 - workflow._autocorr_sig_level / 2)
+        z_critical = sts.norm.ppf(1 - self.autocorr_sig_level / 2)
         conf_interval = z_critical / np.sqrt(n_pts)
         significant_lags = np.where(np.abs(acf_vals[1:]) > conf_interval)[0]
         acf_sum = np.sum(np.abs(acf_vals[1:][significant_lags]))
         decor_length = int(np.ceil(1 + 2 * acf_sum))
 
         # Set smoothing window as multiple of decorrelation length, but not more than max_lag
-        decor_index = min(int(workflow._decor_multiplier * decor_length), max_lag)
+        decor_index = min(int(self.decor_multiplier * decor_length), max_lag)
 
-        if workflow._verbosity > 0:
+        if self.verbosity > 0:
             print(
                 f"stats decorrelation length {decor_length} gives smoothing window of {decor_index} points."
             )
@@ -447,7 +464,7 @@ class SSSStartTrimStrategy(TrimStrategy):
         )
         # Smooth this std dev to avoid it going to zero at end of signal
         std_dev_smoothed = std_dev_till_end_series.rolling(
-            window=workflow._final_smoothing_window
+            window=self.final_smoothing_window
         ).mean()
         # Fill initial NaNs with the first valid smoothed std dev value
         std_dev_sm_flld = std_dev_smoothed.bfill()
@@ -463,7 +480,7 @@ class SSSStartTrimStrategy(TrimStrategy):
         smoothed_start_time = df_smoothed["time"].iloc[rolling_window - 1]
 
         # plot smoothed signal and related quantities
-        if workflow._verbosity > 1:
+        if self.verbosity > 1:
             plt.figure(figsize=(10, 6))
             plt.plot(
                 data_stream.data["time"],
@@ -497,7 +514,7 @@ class SSSStartTrimStrategy(TrimStrategy):
             plt.show()
             plt.close()
 
-        if workflow._verbosity > 0:
+        if self.verbosity > 0:
             print("Getting start of SSS based on smoothed signal:")
 
         # Get start of SSS based on where the value of the flux in the smoothed signal
@@ -518,7 +535,7 @@ class SSSStartTrimStrategy(TrimStrategy):
         deviation_series = pd.Series(deviation_arr, index=data_stream.data.index)
         # Smooth this std dev to avoid it going to zero at end of signal
         deviation_smoothed = deviation_series.rolling(
-            window=workflow._final_smoothing_window
+            window=self.final_smoothing_window
         ).mean()
         # Fill initial NaNs with the first valid smoothed std dev value
         deviation_sm_flld = deviation_smoothed.bfill()
@@ -534,9 +551,9 @@ class SSSStartTrimStrategy(TrimStrategy):
         # stdv_frac * (std dev till end + a fudge factor * mean value at start of smoothed signal)
         # fudge factor is for in case there is no noise (and to guard against the tolerance
         # factor going to zero when std dev gets very small at end of signal)
-        tol_fac = workflow._std_dev_frac * (
+        tol_fac = self.std_dev_frac * (
             df_std_dev[column_name + "_std_till_end"]
-            + workflow._fudge_fac * abs(mean_vals[0])
+            + self.fudge_fac * abs(mean_vals[0])
         )
         tolerance = tol_fac * np.abs(mean_vals)
 
@@ -565,14 +582,11 @@ class SSSStartTrimStrategy(TrimStrategy):
             # but not all the way at the beginning of the rolling window as there is usually still some transient.
             true_sss_start_index = max(
                 0,
-                int(
-                    crit_met_index
-                    - workflow._smoothing_window_correction * rolling_window
-                ),
+                int(crit_met_index - self.smoothing_window_correction * rolling_window),
             )
             sss_start_time = df_smoothed["time"].iloc[true_sss_start_index]
 
-            if workflow._verbosity > 0:
+            if self.verbosity > 0:
                 print(f"Index where criterion is met: {crit_met_index}")
                 print(f"Rolling window: {rolling_window}")
                 print(f"time where criterion is met: {criterion_time}")
@@ -581,7 +595,7 @@ class SSSStartTrimStrategy(TrimStrategy):
                 )
 
             # Plot deviation and tolerance vs. time
-            if workflow._verbosity > 1:
+            if self.verbosity > 1:
                 plt.figure(figsize=(10, 6))
                 plt.plot(
                     df_smoothed["time"],
@@ -620,14 +634,14 @@ class SSSStartTrimStrategy(TrimStrategy):
             trimmed_stream = DataStream(trimmed_df)
 
         else:
-            if workflow._verbosity > 0:
+            if self.verbosity > 0:
                 print("No SSS found based on behavior of mean of smoothed signal.")
             trimmed_stream = pd.DataFrame(
                 columns=["time", "flux"]
             )  # Create empty DataFrame with same columns as original
 
             # Plot deviation and tolerance vs. time
-            if workflow._verbosity > 1:
+            if self.verbosity > 1:
                 plt.figure(figsize=(10, 6))
                 plt.plot(
                     df_smoothed["time"],
