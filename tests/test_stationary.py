@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -114,3 +116,62 @@ def test_make_stationary_verbose_output_fails(
     assert "not stationary" in captured.out
     assert result_ds.data.empty
     assert stationary is False or stationary == np.False_
+
+
+def test_make_stationary_retries_until_stationary(
+    capsys: pytest.CaptureFixture[str],
+):
+    ds = DataStream(pd.DataFrame({"time": range(10), "A": range(10)}))
+    op = make_stationary_op(
+        column="A",
+        n_pts_orig=len(ds.data),
+        verbosity=1,
+        drop_fraction=0.2,
+        n_pts_min=1,
+        n_pts_frac_min=0.0,
+    )
+
+    with patch.object(
+        DataStream,
+        "is_stationary",
+        side_effect=[{"A": False}, {"A": False}, {"A": True}],
+    ):
+        result_ds, stationary = op(ds)
+
+    captured = capsys.readouterr()
+
+    assert stationary is True
+    assert len(result_ds.data) == 7
+    assert "not stationary, even after dropping first 2 points." in captured.out
+    assert "is stationary after dropping first 3 points." in captured.out
+
+
+def test_make_stationary_loops_multiple_times(
+    capsys: pytest.CaptureFixture[str],
+):
+    df = pd.DataFrame({"time": range(20), "A": range(20)})
+    ds = DataStream(df)
+    op = make_stationary_op(
+        column="A",
+        n_pts_orig=len(ds.data),
+        verbosity=1,
+        drop_fraction=0.1,
+        n_pts_min=1,
+        n_pts_frac_min=0.0,
+    )
+
+    call_count = 0
+
+    def fake_is_stationary(self, columns):
+        nonlocal call_count
+        call_count += 1
+        col = columns[0] if isinstance(columns, list) else columns
+        return {col: call_count >= 3}
+
+    with patch.object(DataStream, "is_stationary", fake_is_stationary):
+        result_ds, stationary = op._apply(ds)
+
+    captured = capsys.readouterr()
+    assert call_count >= 3
+    assert "not stationary, even after dropping first" in captured.out
+    assert "is stationary after dropping first" in captured.out
