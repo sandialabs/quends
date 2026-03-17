@@ -5,63 +5,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
-import quends as qnd
-from quends import (
-    DataStream,
-    RollingVarianceTrimStrategy,
-    SSSStartTrimStrategy,
-    StandardDeviationTrimStrategy,
-    ThresholdTrimStrategy,
-    TrimDataStreamOperation,
-)
-from quends.base.stationary import MakeStationaryOperation
+from quends import DataStream
+
+pytest_plugins = ("tests._shared",)
 
 
-# === Fixtures ===
-@pytest.fixture
-def empty_data():
-    return pd.DataFrame()
-
-
-@pytest.fixture
-def simple_data():
-    return pd.DataFrame({"A": [1, 2, 3]})
-
-
-@pytest.fixture
-def long_data():
-    return pd.DataFrame(
-        {
-            "time": [0, 1, 2, 3, 4],
-            "A": [1, 2, 3, 4, 5],
-            "B": [5, 4, 3, 2, 1],
-        }
-    )
-
-
-@pytest.fixture
-def stationary_data():
-    return pd.DataFrame(
-        {"time": [0, 1, 2, 3, 4], "A": [1, 1, 1, 1, 1], "B": [2, 2, 2, 2, 2]}
-    )
-
-
-@pytest.fixture
-def trim_data():
-    return pd.DataFrame({"time": list(range(10)), "A": list(range(1, 11))})
-
-
-@pytest.fixture
-def nan_data():
-    return pd.DataFrame({"A": [None, None, None]})
-
-
-@pytest.fixture
-def no_valid_data():
-    return pd.DataFrame({"time": [0, 1], "A": [1, 2]})
-
-
-# === Initialization ===
 def test_init_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
     assert len(ds) == 3
@@ -74,15 +22,12 @@ def test_init_empty(empty_data: pd.DataFrame):
     assert ds.variables().tolist() == []
 
 
-# === Mean ===
+# ------------ mean --------------
+
+
 def test_mean_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
-    assert ds.mean(window_size=1) == {
-        "A": {
-            "mean": 2.0,
-            "window_size": 1,
-        }
-    }
+    assert ds.mean(window_size=1) == {"A": {"mean": 2.0, "window_size": 1}}
 
 
 def test_mean_empty(empty_data: pd.DataFrame):
@@ -90,49 +35,65 @@ def test_mean_empty(empty_data: pd.DataFrame):
     assert ds.mean() == {}
 
 
+def test_mean_no_data(nan_data: pd.DataFrame):
+    ds = DataStream(nan_data)
+    result = ds.mean()
+
+    for col in result:
+        assert (
+            "error" in result[col]
+        ), f"Expected error for column '{col}', got {result[col]}"
+
+
 def test_mean_long(long_data: pd.DataFrame):
     ds = DataStream(long_data)
     assert ds.mean() == {
-        "A": {
-            "mean": 3.0,
-            "window_size": 5,
-        },
-        "B": {
-            "mean": 3.0,
-            "window_size": 5,
-        },
+        "A": {"mean": 3.0, "window_size": 5},
+        "B": {"mean": 3.0, "window_size": 5},
     }
 
 
 def test_mean_long_overlapping_window(long_data: pd.DataFrame):
     ds = DataStream(long_data)
     assert ds.mean() == {
-        "A": {
-            "mean": 3.0,
-            "window_size": 5,
-        },
-        "B": {
-            "mean": 3.0,
-            "window_size": 5,
-        },
+        "A": {"mean": 3.0, "window_size": 5},
+        "B": {"mean": 3.0, "window_size": 5},
     }
 
 
 def test_mean_long_non_overlapping_window(long_data: pd.DataFrame):
     ds = DataStream(long_data)
     assert ds.mean(method="non-overlapping", window_size=2) == {
-        "A": {
-            "mean": 2.5,
-            "window_size": 2,
-        },
-        "B": {
-            "mean": 3.5,
-            "window_size": 2,
-        },
+        "A": {"mean": 2.5, "window_size": 2},
+        "B": {"mean": 3.5, "window_size": 2},
     }
 
 
-# === Mean Uncertainty ===
+def test_estimate_window_falls_back_when_ess_is_invalid(long_data: pd.DataFrame):
+    ds = DataStream(long_data)
+    column_data = ds.data["A"].dropna()
+    original_effective_sample_size = ds.effective_sample_size
+
+    ds.effective_sample_size = lambda *a, **k: {"results": {"A": object()}}
+
+    result = ds._estimate_window("A", column_data, window_size=None)
+
+    ds.effective_sample_size = original_effective_sample_size
+
+    assert result == 5
+
+
+# ------------ mean uncertainty --------------
+
+
+def test_mean_uncertainty_no_data(nan_data: pd.DataFrame):
+    ds = DataStream(nan_data)
+    result = ds.mean_uncertainty()
+
+    for col in result:
+        assert "error" in result[col], f"No data available for column '{col}"
+
+
 def test_mean_uncertainty_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
     mean_uncertainty = ds.mean_uncertainty(window_size=2)
@@ -140,22 +101,28 @@ def test_mean_uncertainty_simple(simple_data: pd.DataFrame):
     assert mean_uncertainty["A"]["window_size"] == 2
 
 
+def test_mean_uncertainty_sliding(stationary_noise_df: pd.DataFrame):
+    ds = DataStream(stationary_noise_df)
+    result = ds.mean_uncertainty(method="sliding")
+
+    assert "A" in result
+    assert "mean_uncertainty" in result["A"]
+    assert "window_size" in result["A"]
+    assert result["A"]["mean_uncertainty"] >= 0
+
+
 def test_mean_uncertainty_long(long_data: pd.DataFrame):
     ds = DataStream(long_data)
     mean_uncertainty = ds.mean_uncertainty(window_size=2)
     assert mean_uncertainty == {
-        "A": {
-            "mean_uncertainty": 1.0,
-            "window_size": 2,
-        },
-        "B": {
-            "mean_uncertainty": 1.0,
-            "window_size": 2,
-        },
+        "A": {"mean_uncertainty": 1.0, "window_size": 2},
+        "B": {"mean_uncertainty": 1.0, "window_size": 2},
     }
 
 
-# === Confidence Interval ===
+# ------------ confidence interval --------------
+
+
 def test_confidence_interval_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
     expected = {
@@ -176,168 +143,37 @@ def test_confidence_interval_long(long_data: pd.DataFrame):
     assert ds.confidence_interval(window_size=2) == expected
 
 
-# === Trim ===
-def test_trim_std(trim_data: pd.DataFrame):
-    ds = DataStream(trim_data)
-    strategy = StandardDeviationTrimStrategy(window_size=1, start_time=3.0, robust=True)
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    # Apply the operation
-    result = trim_op(ds, column_name="A")
-    assert isinstance(result, DataStream)
-    assert result.data.empty
-    assert list(result.data.columns) == ["time", "A"]
-    assert result._history == [
-        {"operation": "is_stationary", "options": {"columns": "A"}},
-        {
-            "operation": "trim",
-            "options": {
-                "column_name": "A",
-                "window_size": 1,
-                "start_time": 3.0,
-                "method": "std",
-                "robust": True,
-                "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-            },
-        },
-    ]
+def test_confidence_interval_no_data(nan_data: pd.DataFrame):
+    ds = DataStream(nan_data)
+    with pytest.raises(KeyError):
+        ds.confidence_interval()
 
 
-def test_trim_threshold(trim_data: pd.DataFrame):
-    ds = DataStream(trim_data.astype(float))
-    strategy = ThresholdTrimStrategy(window_size=1, start_time=3.0, threshold=4)
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    result = trim_op(ds, column_name="A")
-    assert isinstance(result, DataStream)
-    assert result.data.empty
-    assert list(result.data.columns) == ["time", "A"]
-    assert result._history == [
-        {"operation": "is_stationary", "options": {"columns": "A"}},
-        {
-            "operation": "trim",
-            "options": {
-                "column_name": "A",
-                "window_size": 1,
-                "start_time": 3.0,
-                "method": "threshold",
-                "threshold": 4,
-                "robust": True,
-                "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-            },
-        },
-    ]
-
-
-def test_trim_rolling_variance(trim_data: pd.DataFrame):
-    ds = DataStream(trim_data)
-    strategy = RollingVarianceTrimStrategy(window_size=1, start_time=3.0, threshold=4)
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    result = trim_op(ds, column_name="A")
-    assert isinstance(result, DataStream)
-    assert result.data.empty
-    assert list(result.data.columns) == ["time", "A"]
-    assert result._history == [
-        {"operation": "is_stationary", "options": {"columns": "A"}},
-        {
-            "operation": "trim",
-            "options": {
-                "column_name": "A",
-                "window_size": 1,
-                "start_time": 3.0,
-                "method": "rolling_variance",
-                "threshold": 4,
-                "robust": True,
-                "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-            },
-        },
-    ]
-
-
-def test_sss_start_strategy_accepts_explicit_args(long_data: pd.DataFrame):
+def test_confidence_interval_missing_data_for_column(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    strategy = SSSStartTrimStrategy(
-        max_lag_frac=0.5,
-        verbosity=0,
-        autocorr_sig_level=0.05,
-        decor_multiplier=4.0,
-        std_dev_frac=0.1,
-        fudge_fac=0.1,
-        smoothing_window_correction=0.8,
-        final_smoothing_window=10,
-    )
-    assert strategy.max_lag_frac == 0.5
-    assert strategy.decor_multiplier == 4.0
-    assert strategy.final_smoothing_window == 10
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    result = trim_op(ds, column_name="A")
-    assert isinstance(result, (DataStream, pd.DataFrame))
+    original_mean = ds.mean
+    original_mean_uncertainty = ds.mean_uncertainty
+
+    ds.mean = lambda *a, **k: {"A": {"mean": 3.0, "window_size": 2}}
+    ds.mean_uncertainty = lambda *a, **k: {
+        "A": {"mean_uncertainty": 1.0, "window_size": 2}
+    }
+
+    result = ds.confidence_interval(column_name=["A", "B"], window_size=2)
+
+    ds.mean = original_mean
+    ds.mean_uncertainty = original_mean_uncertainty
+
+    assert result["A"] == {
+        "confidence_interval": (1.04, 4.96),
+        "window_size": 2,
+    }
+    assert result["B"] == {"error": "Missing data for column 'B'"}
 
 
-def test_make_stationary_operation_accepts_explicit_args(long_data: pd.DataFrame):
-    ds = DataStream(long_data)
-    op = MakeStationaryOperation(
-        column="A",
-        n_pts_orig=len(ds.data),
-        operate_safe=True,
-        n_pts_min=100,
-        n_pts_frac_min=0.2,
-        drop_fraction=0.25,
-        verbosity=0,
-    )
-    result, stationary = op(ds)
-    assert not stationary
-    assert isinstance(result, DataStream)
+# ------------ compute stats --------------
 
 
-# def test_trim_invalid_method(trim_data: pd.DataFrame):
-#     ds = DataStream(trim_data)
-#     result = ds.trim(column_name="A", method="invalid_method")
-#     assert isinstance(result, DataStream)
-#     assert result.df.empty
-#     assert list(result.df.columns) == ["time", "A"]
-#     assert result._history == [
-#         {"operation": "is_stationary", "options": {"columns": "A"}},
-#         {
-#             "operation": "trim",
-#             "options": {
-#                 "column_name": "A",
-#                 "batch_size": 10,
-#                 "start_time": 0.0,
-#                 "method": "invalid_method",
-#                 "threshold": None,
-#                 "robust": True,
-#                 "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-#             },
-#         },
-#     ]
-
-
-def test_trim_missing_threshold(long_data: pd.DataFrame):
-    ds = DataStream(long_data)
-    strategy = ThresholdTrimStrategy()
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    result = trim_op(ds, column_name="A")
-    assert isinstance(result, DataStream)
-    assert result.data.empty
-    # Expect columns: ["time", "A", "B"] since that's what the DataFrame originally has.
-    assert set(result.data.columns) == set(["time", "A", "B"])
-    assert result._history == [
-        {"operation": "is_stationary", "options": {"columns": "A"}},
-        {
-            "operation": "trim",
-            "options": {
-                "column_name": "A",
-                "window_size": 10,
-                "start_time": 0.0,
-                "method": "threshold",
-                "threshold": None,
-                "robust": True,
-                "message": "Column 'A' is not stationary. Steady-state trimming requires stationary data.",
-            },
-        },
-    ]
-
-
-# === Compute Statistics ===
 def test_compute_stats_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
     expected = {
@@ -348,7 +184,7 @@ def test_compute_stats_simple(simple_data: pd.DataFrame):
             "pm_std": (1.4226497308103743, 2.5773502691896257),
             "effective_sample_size": 3,
             "window_size": 1,
-        },
+        }
     }
     assert ds.compute_statistics(column_name="A", window_size=1) == expected
 
@@ -363,7 +199,7 @@ def test_compute_stats_long(long_data: pd.DataFrame):
             "pm_std": (2.2928932188134525, 3.7071067811865475),
             "effective_sample_size": 5,
             "window_size": 1,
-        },
+        }
     }
     assert ds.compute_statistics(column_name="A", window_size=1) == expected
 
@@ -380,7 +216,27 @@ def test_compute_stats_ci_not_computed(long_data: pd.DataFrame):
     assert result["A"]["confidence_interval"] is None
 
 
-# === Cumulative Statistics ===
+def test_compute_statistics_missing_column(partial_nan_data: pd.DataFrame):
+    ds = DataStream(partial_nan_data)
+
+    ds.mean = lambda *a, **k: {"A": {"mean": 3.0, "window_size": 2}}
+    ds.mean_uncertainty = lambda *a, **k: {
+        "A": {"mean_uncertainty": 1.0, "window_size": 2}
+    }
+    ds.confidence_interval = lambda *a, **k: {
+        "A": {"confidence_interval": (1.04, 4.96), "window_size": 2}
+    }
+    ds.effective_sample_size = lambda *a, **k: {"results": {"A": 10}}
+
+    result = ds.compute_statistics(column_name=["A", "B"])
+
+    assert "mean" in result["A"]
+    assert result["B"] == {"error": "No data available for column 'B'"}
+
+
+# ------------ cumulative stats --------------
+
+
 def test_cumulative_stats_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
     result = ds.cumulative_statistics(window_size=1)
@@ -390,7 +246,7 @@ def test_cumulative_stats_simple(simple_data: pd.DataFrame):
             "cumulative_uncertainty": [np.nan, 0.7071067811865476, 1.0],
             "standard_error": [np.nan, 0.5, 0.5773502691896258],
             "window_size": 1,
-        },
+        }
     }
     for key in expected["A"]:
         if isinstance(expected["A"][key], list):
@@ -445,25 +301,26 @@ def test_cumulative_stats_long(long_data: pd.DataFrame):
 
 def test_cumulative_stats_empty(nan_data: pd.DataFrame):
     ds = DataStream(nan_data)
-    expected = {
-        "A": {"error": "No data available for column 'A'"},
-    }
+    expected = {"A": {"error": "No data available for column 'A'"}}
     assert ds.cumulative_statistics(window_size=1) == expected
 
 
 def assert_nested_approx(a, b, rel=1e-8):
     if isinstance(a, dict) and isinstance(b, dict):
         assert a.keys() == b.keys()
-        for k in a:
-            assert_nested_approx(a[k], b[k], rel=rel)
+        for key in a:
+            assert_nested_approx(a[key], b[key], rel=rel)
     elif isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):
         assert len(a) == len(b)
-        for i, j in zip(a, b):
-            assert_nested_approx(i, j, rel=rel)
+        for left, right in zip(a, b):
+            assert_nested_approx(left, right, rel=rel)
     elif isinstance(a, float) and isinstance(b, float):
         assert a == pytest.approx(b, rel=rel)
     else:
         assert a == b
+
+
+# ------------ additional data --------------
 
 
 def test_additional_data_simple(simple_data: pd.DataFrame):
@@ -481,7 +338,7 @@ def test_additional_data_simple(simple_data: pd.DataFrame):
             "n_target": 3.393548707049326,
             "additional_samples": 1,
             "window_size": 1,
-        },
+        }
     }
     assert_nested_approx(result, expected)
 
@@ -524,13 +381,93 @@ def test_additional_data_missing_cumulative(long_data: pd.DataFrame):
     ds = DataStream(long_data)
     ds.cumulative_statistics = mock_cumulative_statistics_missing
     additional_data = ds.additional_data(column_name="B", reduction_factor=0.1)
-    expected = {
-        "B": {"error": "No cumulative SEM data for column 'B'"},
-    }
+    expected = {"B": {"error": "No cumulative SEM data for column 'B'"}}
     assert additional_data == expected
 
 
-# === Effective Sample Size Below ===
+def test_additional_data_not_enough_valid_points(stationary_noise_df: pd.DataFrame):
+    ds = DataStream(stationary_noise_df)
+    ds.cumulative_statistics = lambda *a, **k: {
+        "A": {"cumulative_uncertainty": [float("nan")]}
+    }
+    result = ds.additional_data(column_name="A")
+    assert result["A"] == {"error": "Not enough valid data points for fitting."}
+
+
+def test_additional_data_non_overlapping(stationary_noise_df: pd.DataFrame):
+    ds = DataStream(stationary_noise_df)
+    result = ds.additional_data(column_name="A", method="non-overlapping")
+    assert "additional_samples" in result["A"]
+    assert "window_size" in result["A"]
+
+
+def test_effective_sample_size_below_column_names_none(
+    stationary_noise_df: pd.DataFrame,
+):
+    ds = DataStream(stationary_noise_df)
+    result = ds.effective_sample_size_below(column_names=None)
+    assert "A" in result
+    assert "time" not in result
+    assert result["A"] == 0
+
+
+def test_effective_sample_size_below_single_column_string_is_normalized(
+    long_data: pd.DataFrame,
+):
+    ds = DataStream(long_data)
+
+    result = ds.effective_sample_size_below(column_names="B")
+
+    assert result == {"B": 0}
+
+
+@pytest.mark.parametrize(
+    ("column_names", "expected"),
+    [
+        ("A", {"A": 0}),
+        (["A", "B"], {"A": 0, "B": 0}),
+    ],
+)
+def test_effective_sample_size_below_explicit_inputs(
+    long_data: pd.DataFrame,
+    column_names,
+    expected,
+):
+    ds = DataStream(long_data)
+
+    result = ds.effective_sample_size_below(column_names=column_names)
+
+    assert result == expected
+
+
+# ------------ estimate window --------------
+
+
+def test_estimate_window_with_results_key(stationary_noise_df: pd.DataFrame):
+    ds = DataStream(stationary_noise_df)
+    column_data = stationary_noise_df["A"].dropna()
+    result = ds._estimate_window("A", column_data, window_size=None)
+    assert result >= 5
+
+
+def test_estimate_window_flat_ess_dict(stationary_noise_df: pd.DataFrame):
+    ds = DataStream(stationary_noise_df)
+    ds.effective_sample_size = lambda *a, **k: {"A": 10}
+    column_data = stationary_noise_df["A"].dropna()
+    result = ds._estimate_window("A", column_data, window_size=None)
+    assert result >= 5
+
+
+def test_estimate_window_provided(stationary_noise_df: pd.DataFrame):
+    ds = DataStream(stationary_noise_df)
+    column_data = stationary_noise_df["A"].dropna()
+    result = ds._estimate_window("A", column_data, window_size=20)
+    assert result == 20
+
+
+# ------------ effective sample size --------------
+
+
 def test_effective_sample_size_below_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
     assert ds.effective_sample_size_below(column_names="A") == {"A": 0}
@@ -543,37 +480,22 @@ def test_effective_sample_size_below_long(long_data: pd.DataFrame):
 
 def test_effective_sample_size_below_invalid_column(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    result = ds.effective_sample_size_below(column_names="C")
-    assert result == {"C": 0}
+    assert ds.effective_sample_size_below(column_names="C") == {"C": 0}
 
 
 def test_effective_sample_size_below_empty_column():
-    empty_data = {
-        "time": [0, 1, 2, 3, 4],
-        "A": [None, None, None, None, None],
-        "B": [5, 4, 3, 2, 1],
-    }
-    ds = DataStream(pd.DataFrame(empty_data))
-    result = ds.effective_sample_size_below(column_names="A")
-    assert result == {"A": 0}
+    ds = DataStream(
+        pd.DataFrame(
+            {
+                "time": [0, 1, 2, 3, 4],
+                "A": [None, None, None, None, None],
+                "B": [5, 4, 3, 2, 1],
+            }
+        )
+    )
+    assert ds.effective_sample_size_below(column_names="A") == {"A": 0}
 
 
-# === Stationary ===
-def test_is_stationary(stationary_data: pd.DataFrame):
-    ds = DataStream(stationary_data)
-    assert ds.is_stationary(columns="A") == {"A": "Error: Invalid input, x is constant"}
-
-
-def test_is_not_stationary(long_data: pd.DataFrame):
-    ds = DataStream(long_data)
-    out = ds.is_stationary(columns="A")
-    if hasattr(np, "False_"):
-        assert out == {"A": np.False_}
-    else:
-        assert out == {"A": False}
-
-
-# === Head ===
 def test_head(long_data: pd.DataFrame):
     ds = DataStream(long_data)
     expected = pd.DataFrame(
@@ -582,675 +504,160 @@ def test_head(long_data: pd.DataFrame):
     pd.testing.assert_frame_equal(ds.head(5), expected)
 
 
-# === Process Column Error ===
 def test_process_column_missing_method(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
     with pytest.raises(ValueError):
         ds._process_column(column_data="A", estimated_window=1, method="invalid_method")
 
 
-# === Find Steady State Std ===
-def test_find_steady_state_std(trim_data: pd.DataFrame):
-    strategy = StandardDeviationTrimStrategy(window_size=1)
-    result = strategy._detection_method(data=trim_data, column_name="A")
-
-    assert result == 0
-
-
-def test_find_steady_state_std_non_robust(trim_data: pd.DataFrame):
-    strategy = StandardDeviationTrimStrategy(window_size=2, robust=False)
-
-    result = strategy._detection_method(
-        data=trim_data,
-        column_name="A",
-    )
-
-    assert result == 3
-
-
-def test_find_steady_state_not_valid(no_valid_data: pd.DataFrame):
-    strategy = StandardDeviationTrimStrategy(window_size=1)
-    result = strategy._detection_method(data=no_valid_data, column_name=["time", "A"])
-    assert result is None
-
-
-# === Find Steady State Threshold ===
-def test_find_steady_state_stationary(stationary_data: pd.DataFrame):
-    strategy = ThresholdTrimStrategy(window_size=2, threshold=0.1)
-    result = strategy._detection_method(data=stationary_data, column_name="A")
-    assert result == 1
-
-
-def test_find_steady_state_long_data(long_data: pd.DataFrame):
-    strategy = ThresholdTrimStrategy(window_size=2, threshold=0.1)
-    result = strategy._detection_method(data=long_data, column_name="A")
-    assert result is None
-
-
-def test_find_steady_state_trim_data(trim_data: pd.DataFrame):
-    strategy = ThresholdTrimStrategy(window_size=3, threshold=0.5)
-    result = strategy._detection_method(data=trim_data, column_name="A")
-    assert result == 2
-
-
-def test_find_steady_state_with_start_time(long_data: pd.DataFrame):
-    DataStream(long_data)
-    pass  #
-
-
-# === Find Steady State Rolling Variance ===
-def test_find_steady_state_rolling_variance_stationary(stationary_data: pd.DataFrame):
-    strategy = RollingVarianceTrimStrategy(window_size=3)
-    result = strategy._detection_method(data=stationary_data, column_name="A")
-    assert result is None
-
-
-def test_find_steady_state_none_rolling_variance(long_data: pd.DataFrame):
-    strategy = RollingVarianceTrimStrategy(window_size=3, threshold=0.1)
-    result = strategy._detection_method(data=long_data, column_name="A")
-    assert result is None
-
-
-def test_find_steady_state_rolling_variance_not_valid(no_valid_data: pd.DataFrame):
-    strategy = RollingVarianceTrimStrategy(window_size=1)
-    result = strategy._detection_method(data=no_valid_data, column_name="A")
-    assert result is None
-
-
-# === effective_sample_size ===
 def test_effective_sample_size_empty(empty_data: pd.DataFrame):
     ds = DataStream(empty_data)
-    expected = {
-        "results": {},
-    }
-    assert ds.effective_sample_size() == expected
+    assert ds.effective_sample_size() == {"results": {}}
 
 
 def test_effective_sample_size_nan(nan_data: pd.DataFrame):
     ds = DataStream(nan_data)
-    result = ds.effective_sample_size(column_names=["A"])
     expected = {
         "results": {
             "A": {
                 "effective_sample_size": None,
                 "message": "No data available for computation.",
             }
-        },
+        }
     }
-    assert result == expected
+    assert ds.effective_sample_size(column_names=["A"]) == expected
 
 
 def test_effective_sample_size_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
-    result = ds.effective_sample_size(column_names=["A"])
-    expected = {
-        "results": {"A": 3},
-    }
-    assert result == expected
+    assert ds.effective_sample_size(column_names=["A"]) == {"results": {"A": 3}}
 
 
 def test_effective_sample_size_long_data(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    result = ds.effective_sample_size(column_names=["A", "B"])
-    expected = {
-        "results": {"A": 5, "B": 5},
+    assert ds.effective_sample_size(column_names=["A", "B"]) == {
+        "results": {"A": 5, "B": 5}
     }
-    assert result == expected
 
 
 def test_effective_sample_size_stationary(stationary_data: pd.DataFrame):
     ds = DataStream(stationary_data)
-    result = ds.effective_sample_size(column_names=["A"])
-    expected = {
-        "results": {"A": 5},
-    }
-    assert result == expected
+    assert ds.effective_sample_size(column_names=["A"]) == {"results": {"A": 5}}
 
 
 def test_effective_sample_size_trim_data(trim_data: pd.DataFrame):
     ds = DataStream(trim_data)
-    result = ds.effective_sample_size(column_names=["A"])
-    expected = {
-        "results": {"A": 5},
-    }
-    assert result == expected
+    assert ds.effective_sample_size(column_names=["A"]) == {"results": {"A": 5}}
 
 
 def test_effective_sample_size_missing_col(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    result = ds.effective_sample_size(column_names=["C"])
     expected = {
-        "results": {"C": {"message": "Column 'C' not found in the DataStream."}},
+        "results": {"C": {"message": "Column 'C' not found in the DataStream."}}
     }
-    assert result == expected
+    assert ds.effective_sample_size(column_names=["C"]) == expected
 
 
-def make_stationary_op(
-    column: str,
-    n_pts_orig: int,
-    *,
-    operate_safe: bool = False,
-    verbosity: int = 1,
-    drop_fraction: float = 0.2,
-    n_pts_min: int = 50,
-    n_pts_frac_min: float = 0.2,
-):
-    return qnd.MakeStationaryOperation(
-        column=column,
-        n_pts_orig=n_pts_orig,
-        operate_safe=operate_safe,
-        verbosity=verbosity,
-        drop_fraction=drop_fraction,
-        n_pts_min=n_pts_min,
-        n_pts_frac_min=n_pts_frac_min,
+# ------------  robust effective sample size --------------
+
+
+def test_robust_effective_sample_size_too_few_samples():
+    result = DataStream.robust_effective_sample_size([1.0, 2.0, 3.0], min_samples=8)
+    assert np.isnan(result)
+
+
+def test_robust_effective_sample_size_constant_signal_returns_full_length():
+    result = DataStream.robust_effective_sample_size([5.0] * 10)
+    assert result == 10.0
+
+
+def test_robust_effective_sample_size_returns_relative_output():
+    x = np.linspace(0.0, 1.0, 12)
+    ess, relative = DataStream.robust_effective_sample_size(
+        x,
+        rank_normalize=False,
+        return_relative=True,
     )
 
+    assert 1.0 <= ess <= len(x)
+    assert relative == pytest.approx(ess / len(x))
 
-def make_sss_strategy(*, verbosity: int = 1):
-    return SSSStartTrimStrategy(
-        max_lag_frac=0.5,
-        verbosity=verbosity,
-        autocorr_sig_level=0.05,
-        decor_multiplier=4.0,
-        std_dev_frac=0.1,
-        fudge_fac=0.1,
-        smoothing_window_correction=0.3,
-        final_smoothing_window=10,
+
+def test_robust_effective_sample_size_rank_normalized_path():
+    x = np.array([10.0, 1.0, 7.0, 3.0, 9.0, 2.0, 8.0, 4.0, 6.0, 5.0])
+
+    result = DataStream.robust_effective_sample_size(
+        x,
+        rank_normalize=True,
+        min_samples=3,
     )
 
+    assert 1.0 <= result <= len(x)
 
-@pytest.fixture
-def stationary_noise_df():
-    """
-    Already stationary signal.
-    """
-    np.random.seed(0)
-    return pd.DataFrame(
-        {
-            "time": np.arange(300),
-            "A": np.random.normal(0, 1, 300),
-        }
+
+def test_robust_effective_sample_size_zero_variance_fallback():
+    x = np.linspace(0.0, 1.0, 10)
+
+    with patch("quends.base.data_stream.np.var", return_value=0.0):
+        result = DataStream.robust_effective_sample_size(
+            x,
+            rank_normalize=False,
+            min_samples=3,
+            return_relative=True,
+        )
+
+    assert result == (10.0, 1.0)
+
+
+def test_robust_effective_sample_size_loop_path_returns_bounded_ess():
+    x = np.array([1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0])
+
+    result = DataStream.robust_effective_sample_size(
+        x,
+        rank_normalize=False,
+        min_samples=3,
     )
 
-
-@pytest.fixture
-def slope_to_stationary_df():
-    """
-    Non-stationary trend followed by stationary noise.
-    This is the primary success case.
-    """
-    np.random.seed(42)
-
-    trend = 2 * np.arange(100)
-    stationary = np.random.normal(0, 5, 400)
-
-    signal = np.concatenate([trend, stationary])
-
-    return pd.DataFrame(
-        {
-            "time": np.arange(len(signal)),
-            "A": signal,
-        }
-    )
+    assert 1.0 <= result <= len(x)
 
 
-def test_make_stationary_with_stationary_data(stationary_data: pd.DataFrame):
+# ------------ ess robust --------------
+
+
+def test_ess_robust_returns_results_for_multiple_columns(long_data: pd.DataFrame):
+    ds = DataStream(long_data)
+
+    result = ds.ess_robust(column_names=["A", "B"], min_samples=3)
+
+    assert set(result["results"]) == {"A", "B"}
+    assert 1.0 <= result["results"]["A"] <= 5.0
+    assert 1.0 <= result["results"]["B"] <= 5.0
+
+
+def test_ess_robust_missing_column_reports_error(long_data: pd.DataFrame):
+    ds = DataStream(long_data)
+
+    result = ds.ess_robust(column_names=["A", "C"], min_samples=3)
+
+    assert "A" in result["results"]
+    assert result["results"]["C"] == {"error": "Column 'C' not found."}
+
+
+def test_ess_robust_defaults_to_all_non_time_columns(long_data: pd.DataFrame):
+    ds = DataStream(long_data)
+
+    result = ds.ess_robust(column_names=None, min_samples=3)
+
+    assert set(result["results"]) == {"A", "B"}
+
+
+def test_ess_robust_relative_for_constant_signal(stationary_data: pd.DataFrame):
     ds = DataStream(stationary_data)
-    col = "A"
-    n_pts_orig = len(stationary_data)
 
-    # Call the method
-    op = make_stationary_op(column=col, n_pts_orig=n_pts_orig)
-
-    result_ds, stationary = op(ds)
-
-    # Check if the returned DataStream is indeed stationary
-    assert (
-        stationary == "Error: Invalid input, x is constant"
-    ), "Expected an error message for constant input."
-    assert len(result_ds.data) == n_pts_orig
-
-
-def test_make_stationary_already_stationary(stationary_noise_df: pd.DataFrame):
-    ds = DataStream(stationary_noise_df)
-    n_pts_orig = len(ds.data)
-
-    op = make_stationary_op(column="A", n_pts_orig=n_pts_orig)
-
-    result_ds, stationary = op(ds)
-
-    assert stationary.any() == np.True_
-    assert len(result_ds.data) == n_pts_orig
-
-
-def test_make_stationary_drops_trend(slope_to_stationary_df: pd.DataFrame):
-    ds = DataStream(slope_to_stationary_df)
-    n_pts_orig = len(ds.data)
-
-    op = make_stationary_op(column="A", n_pts_orig=n_pts_orig)
-
-    result_ds, stationary = op(ds)
-
-    assert stationary == np.True_
-    assert len(result_ds.data) < n_pts_orig
-
-
-def test_make_stationary_verbose_output(
-    slope_to_stationary_df: pd.DataFrame,
-    capsys: pytest.CaptureFixture[str],
-):
-    """
-    Test that verbose output is printed when data becomes stationary after dropping.
-    """
-    ds = DataStream(slope_to_stationary_df)
-    n_pts_orig = len(ds.data)
-
-    op = make_stationary_op(column="A", n_pts_orig=n_pts_orig)
-
-    result_ds, stationary = op(ds)
-
-    captured = capsys.readouterr()
-    assert "stationary after dropping first" in captured.out
-
-
-@pytest.fixture
-def persistent_trend_df():
-    """
-    Strong non-stationary trend that persists even after dropping 20% of data.
-    Designed to fail stationarity tests even after point removal.
-    """
-    np.random.seed(123)
-    x = np.arange(500)  # More points to ensure enough remain after dropping
-    # Strong trend with some noise
-    signal = 5 * x + np.random.normal(0, 10, 500)
-
-    return pd.DataFrame(
-        {
-            "time": x,
-            "A": signal,
-        }
+    result = ds.ess_robust(
+        column_names="A",
+        min_samples=3,
+        return_relative=True,
     )
 
-
-def test_make_stationary_verbose_output_fails(
-    persistent_trend_df: pd.DataFrame,
-    capsys: pytest.CaptureFixture[str],
-):
-    """
-    Test that verbose output is printed when data fails to become stationary.
-    """
-    ds = DataStream(persistent_trend_df)
-    n_pts_orig = len(ds.data)
-
-    op = make_stationary_op(column="A", n_pts_orig=n_pts_orig)
-
-    result_ds, stationary = op(ds)
-
-    captured = capsys.readouterr()
-    print(f"Captured output: '{captured.out}'")
-    print(f"Stationary result: {stationary}")
-    print(f"Points remaining: {len(result_ds.data)}/{n_pts_orig}")
-
-    assert "not stationary" in captured.out
-
-
-# tests for trim_sss_start
-def test_trim_sss_start_detects_sss(slope_to_stationary_df: pd.DataFrame):
-    """
-    Primary success case:
-    non-stationary trend followed by steady state should be trimmed.
-    """
-    ds = DataStream(slope_to_stationary_df)
-
-    # Create strategy and operation
-    strategy = make_sss_strategy()
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-
-    # Apply the trim
-    trimmed = trim_op(ds, column_name="A")
-
-    assert isinstance(trimmed, DataStream)
-    assert not trimmed.data.empty
-
-    # Should trim off some transient
-    assert len(trimmed.data) < len(ds.data)
-
-    # Start time should be well after the transient begins
-    assert trimmed.data["time"].iloc[0] > 20
-
-
-def test_trim_sss_start_already_stationary(stationary_noise_df: pd.DataFrame):
-    """
-    Already-stationary data returns empty result (no transient to trim).
-    """
-    ds = DataStream(stationary_noise_df)
-    strategy = make_sss_strategy()
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    # Apply the trim
-    trimmed = trim_op(ds, column_name="A")
-
-    # Returns empty DataFrame when no SSS transition detected
-    assert isinstance(trimmed, pd.DataFrame)
-    assert trimmed.empty
-
-
-def test_trim_sss_start_no_sss_found(persistent_trend_df: pd.DataFrame):
-    """
-    Persistent trend incorrectly detects SSS and trims data.
-    """
-    ds = DataStream(persistent_trend_df)
-    strategy = make_sss_strategy()
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    # Apply the trim
-    trimmed = trim_op(ds, column_name="A")
-
-    assert isinstance(trimmed, DataStream)
-    assert not trimmed.data.empty
-
-
-def test_trim_sss_start_verbose_output(
-    slope_to_stationary_df: pd.DataFrame,
-    capsys: pytest.CaptureFixture[str],
-):
-    """
-    Verbose output should indicate SSS detection.
-    """
-    ds = DataStream(slope_to_stationary_df)
-    strategy = make_sss_strategy(verbosity=2)
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    # Apply the trim
-    trimmed = trim_op(ds, column_name="A")
-    captured = capsys.readouterr()
-
-    assert isinstance(trimmed, DataStream)
-    assert (
-        "Getting start of SSS" in captured.out
-        or "criterion is met" in captured.out
-        or "start of SSS" in captured.out
-    )
-
-
-def test_trim_sss_start_handles_nan_values(stationary_noise_df: pd.DataFrame):
-    """
-    NaNs should not cause a crash.
-    """
-    df = stationary_noise_df.copy()
-    df.loc[50:80, "A"] = np.nan
-    ds = DataStream(df)
-    strategy = make_sss_strategy()
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    # Apply the trim
-    trimmed = trim_op(ds, column_name="A")
-
-    assert trimmed is not None
-
-
-@pytest.fixture
-def intermittent_stationary_df():
-    """
-    Signal with random large spikes throughout that break SSS continuity.
-
-    The spikes are large enough and frequent enough that no point
-    satisfies "ALL remaining points within tolerance".
-    """
-    np.random.seed(789)
-    n = 300
-
-    # Base stationary signal centered at 0
-    base_signal = np.random.normal(0, 1, n)
-
-    # Add many random large spikes throughout the signal
-    # Spikes are very large relative to base signal
-    spike_count = 20
-    spike_indices = np.random.choice(range(50, n), size=spike_count, replace=False)
-    # Spikes are 50-100 times larger than typical signal values
-    base_signal[spike_indices] += np.random.uniform(50, 100, spike_count)
-
-    return pd.DataFrame(
-        {
-            "time": np.arange(n),
-            "A": base_signal,
-        }
-    )
-
-
-@pytest.fixture
-def high_frequency_noise_df():
-    """
-    Signal with high-frequency oscillations that never settle.
-
-    Continuous oscillation prevents establishing a consistent SSS.
-    """
-    np.random.seed(555)
-    t = np.arange(400)
-
-    # High frequency oscillation that doesn't decay
-    signal = 10 * np.sin(t * 0.5) + np.random.normal(50, 2, 400)
-
-    return pd.DataFrame(
-        {
-            "time": t,
-            "A": signal,
-        }
-    )
-
-
-@pytest.fixture
-def oscillating_to_stable_df():
-    """
-    Signal with decaying oscillations that eventually stabilize.
-
-    Early points may be within tolerance intermittently,
-    but only later points maintain it consistently.
-    """
-    np.random.seed(456)
-    t = np.arange(400)
-
-    # Decaying oscillation
-    oscillation = 20 * np.exp(-t / 100) * np.sin(t / 10)
-    noise = np.random.normal(0, 1, 400)
-    signal = oscillation + noise + 50
-
-    return pd.DataFrame(
-        {
-            "time": t,
-            "A": signal,
-        }
-    )
-
-
-@pytest.fixture
-def multiple_transitions_df():
-    """
-    Signal with multiple transitions: trend -> plateau -> trend -> final plateau
-    """
-    np.random.seed(999)
-
-    trend1 = np.linspace(0, 50, 100)
-    plateau1 = np.random.normal(50, 2, 100)
-    trend2 = np.linspace(50, 80, 100)
-    plateau2 = np.random.normal(80, 2, 200)
-
-    signal = np.concatenate([trend1, plateau1, trend2, plateau2])
-
-    return pd.DataFrame(
-        {
-            "time": np.arange(len(signal)),
-            "A": signal,
-        }
-    )
-
-
-def test_trim_sss_start_intermittent_spikes(intermittent_stationary_df: pd.DataFrame):
-    """
-    Test signal with random large spikes that prevent consistent SSS.
-
-    The algorithm should find some points within tolerance (len(sss_index) > 0)
-    but no point where ALL remaining points stay within tolerance.
-    """
-    ds = DataStream(intermittent_stationary_df)
-    strategy = make_sss_strategy()
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    # Apply the trim
-    trimmed = trim_op(ds, column_name="A")
-
-    # Algorithm currently finds SSS even with spikes
-    # This documents actual behavior rather than expected
-    assert trimmed is not None
-
-
-def test_trim_sss_start_high_frequency_noise(high_frequency_noise_df: pd.DataFrame):
-    """
-    Test signal with persistent high-frequency oscillations.
-
-    Should struggle to find consistent SSS due to continuous oscillation.
-    """
-    ds = DataStream(high_frequency_noise_df)
-    strategy = make_sss_strategy()
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    # Apply the trim
-    trimmed = trim_op(ds, column_name="A")
-
-    # Verify result exists
-    assert trimmed is not None
-
-
-def test_trim_sss_start_decaying_oscillation(oscillating_to_stable_df: pd.DataFrame):
-    """
-    Test signal with decaying oscillations that eventually stabilize.
-
-    Should find SSS after oscillations decay sufficiently.
-    """
-    ds = DataStream(oscillating_to_stable_df)
-    strategy = make_sss_strategy()
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    # Apply the trim
-    trimmed = trim_op(ds, column_name="A")
-
-    # Should successfully find and trim to SSS
-    assert isinstance(trimmed, DataStream)
-    assert not trimmed.data.empty
-    assert len(trimmed.data) < len(ds.data)
-
-    # SSS should start after oscillations begin to decay (relaxed threshold)
-    assert trimmed.data["time"].iloc[0] > 100
-
-
-def test_trim_sss_start_multiple_transitions(multiple_transitions_df: pd.DataFrame):
-    """
-    Test signal with multiple apparent transitions to steady state.
-
-    Should identify a point where steady state is maintained.
-    """
-    ds = DataStream(multiple_transitions_df)
-    strategy = make_sss_strategy()
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    # Apply the trim
-    trimmed = trim_op(ds, column_name="A")
-
-    # Should find a plateau region
-    assert isinstance(trimmed, DataStream)
-    assert not trimmed.data.empty
-
-    # Should trim past at least the first trend (relaxed from 200 to 150)
-    assert trimmed.data["time"].iloc[0] > 150
-
-
-def test_trim_sss_start_oscillation_trims_correctly(
-    oscillating_to_stable_df: pd.DataFrame,
-):
-    """
-    Verify decaying oscillation is trimmed to stable region.
-    """
-    ds = DataStream(oscillating_to_stable_df)
-    original_length = len(ds.data)
-    strategy = make_sss_strategy()
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    # Apply the trim
-    trimmed = trim_op(ds, column_name="A")
-
-    # Verify significant trimming occurred
-    trimmed_length = len(trimmed.data)
-    assert trimmed_length < original_length * 0.8  # At least 20% trimmed
-
-    # Verify it's a DataStream
-    assert hasattr(trimmed, "data")
-
-
-def test_trim_sss_start_intermittent_has_spikes(
-    intermittent_stationary_df: pd.DataFrame,
-):
-    """
-    Verify that intermittent signal fixture actually has large spikes.
-    """
-    ds = DataStream(intermittent_stationary_df)
-
-    # Check that signal has values much larger than typical
-    large_values = ds.data["A"] > 20
-
-    # Should have the spikes we added
-    assert large_values.sum() >= 15  # At least 15 of the 20 spikes
-
-
-def test_trim_sss_start_high_freq_oscillates(high_frequency_noise_df: pd.DataFrame):
-    """
-    Verify that high frequency fixture actually oscillates.
-    """
-    ds = DataStream(high_frequency_noise_df)
-
-    # Check for oscillation by counting zero crossings of detrended signal
-    detrended = ds.data["A"] - ds.data["A"].mean()
-    zero_crossings = np.sum(np.diff(np.sign(detrended)) != 0)
-
-    # Should have many zero crossings due to high frequency oscillation
-    assert zero_crossings > 50
-
-
-def test_trim_sss_start_returns_datastream_or_dataframe(
-    oscillating_to_stable_df: pd.DataFrame,
-):
-    """
-    Verify return type is either DataStream (success) or DataFrame (failure).
-    """
-    ds = DataStream(oscillating_to_stable_df)
-    strategy = make_sss_strategy()
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    # Apply the trim
-    trimmed = trim_op(ds, column_name="A")
-
-    # Must be one of these two types
-    assert isinstance(trimmed, (DataStream, pd.DataFrame))
-
-
-def test_trim_sss_start_verbose_plotting_no_sss(
-    intermittent_stationary_df: pd.DataFrame,
-):
-    """
-    Test verbose plotting when no SSS is found.
-
-    This tests the plotting code in the else branch (crit_met_index is None).
-    """
-    ds = DataStream(intermittent_stationary_df)
-
-    # This should trigger the else branch with plotting
-    strategy = make_sss_strategy(verbosity=2)
-    trim_op = TrimDataStreamOperation(strategy=strategy)
-    # Apply the trim
-    trimmed = trim_op(ds, column_name="A")
-
-    # Verify the function completes without error
-    assert trimmed is not None
-
-
-def test_trim_sss_start_verbose_plotting_runs_without_error(
-    oscillating_to_stable_df: pd.DataFrame,
-):
-    with patch("matplotlib.pyplot.show"), patch("matplotlib.pyplot.figure"):
-        ds = DataStream(oscillating_to_stable_df)
-        strategy = make_sss_strategy(verbosity=2)
-        trim_op = TrimDataStreamOperation(strategy=strategy)
-        # Apply the trim
-        trimmed = trim_op(ds, column_name="A")
-
-    assert isinstance(trimmed, DataStream)
-    assert not trimmed.data.empty
+    assert result == {"results": {"A": (5.0, 1.0)}}
