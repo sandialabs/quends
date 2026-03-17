@@ -4,8 +4,12 @@
 from .base.data_stream import DataStream
 from .base.ensemble import Ensemble
 from .base.operations import DataStreamOperation
-from .base.stationary import MakeStationaryOperation
+from .base.stationary import MakeDataStreamStationaryOperation
 from .base.trim import (
+    MeanVariationTrimStrategy,
+    NoiseThresholdTrimStrategy,
+    QuantileTrimStrategy,
+    RollingVarianceThresholdTrimStrategy,
     RollingVarianceTrimStrategy,
     SSSStartTrimStrategy,
     StandardDeviationTrimStrategy,
@@ -43,6 +47,10 @@ __all__ = [
     "from_netcdf",
     "from_numpy",
     "RobustWorkflow",
+    "QuantileTrimStrategy",
+    "NoiseThresholdTrimStrategy",
+    "RollingVarianceThresholdTrimStrategy",
+    "MeanVariationTrimStrategy",
     "StandardDeviationTrimStrategy",
     "ThresholdTrimStrategy",
     "RollingVarianceTrimStrategy",
@@ -50,5 +58,6 @@ __all__ = [
     "TrimStrategy",
     "DataStreamOperation",
     "TrimDataStreamOperation",
+    "MakeDataStreamStationaryOperation",
     "MakeStationaryOperation",
 ]
