@@ -6,10 +6,10 @@ import pytest
 
 from quends import (
     DataStream,
-    RollingVarianceTrimStrategy,
-    SSSStartTrimStrategy,
-    StandardDeviationTrimStrategy,
-    ThresholdTrimStrategy,
+    MeanVariationTrimStrategy,
+    NoiseThresholdTrimStrategy,
+    QuantileTrimStrategy,
+    RollingVarianceThresholdTrimStrategy,
     TrimDataStreamOperation,
 )
 
@@ -17,7 +17,7 @@ pytest_plugins = ("tests._shared",)
 
 
 def make_sss_strategy(*, verbosity: int = 1):
-    return SSSStartTrimStrategy(
+    return MeanVariationTrimStrategy(
         max_lag_frac=0.5,
         verbosity=verbosity,
         autocorr_sig_level=0.05,
@@ -31,7 +31,7 @@ def make_sss_strategy(*, verbosity: int = 1):
 
 def test_trim_std(trim_data: pd.DataFrame):
     ds = DataStream(trim_data)
-    strategy = StandardDeviationTrimStrategy(window_size=1, start_time=3.0, robust=True)
+    strategy = QuantileTrimStrategy(window_size=1, start_time=3.0, robust=True)
     trim_op = TrimDataStreamOperation(strategy=strategy)
 
     result = trim_op(ds, column_name="A")
@@ -57,7 +57,7 @@ def test_trim_std(trim_data: pd.DataFrame):
 
 def test_trim_threshold(trim_data: pd.DataFrame):
     ds = DataStream(trim_data.astype(float))
-    strategy = ThresholdTrimStrategy(window_size=1, start_time=3.0, threshold=4)
+    strategy = NoiseThresholdTrimStrategy(window_size=1, start_time=3.0, threshold=4)
     trim_op = TrimDataStreamOperation(strategy=strategy)
 
     result = trim_op(ds, column_name="A")
@@ -84,7 +84,9 @@ def test_trim_threshold(trim_data: pd.DataFrame):
 
 def test_trim_rolling_variance(trim_data: pd.DataFrame):
     ds = DataStream(trim_data)
-    strategy = RollingVarianceTrimStrategy(window_size=1, start_time=3.0, threshold=4)
+    strategy = RollingVarianceThresholdTrimStrategy(
+        window_size=1, start_time=3.0, threshold=4
+    )
     trim_op = TrimDataStreamOperation(strategy=strategy)
 
     result = trim_op(ds, column_name="A")
@@ -111,7 +113,7 @@ def test_trim_rolling_variance(trim_data: pd.DataFrame):
 
 def test_sss_start_strategy_accepts_explicit_args(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    strategy = SSSStartTrimStrategy(
+    strategy = MeanVariationTrimStrategy(
         max_lag_frac=0.5,
         verbosity=0,
         autocorr_sig_level=0.05,
@@ -131,7 +133,7 @@ def test_sss_start_strategy_accepts_explicit_args(long_data: pd.DataFrame):
 
 def test_trim_missing_threshold(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    strategy = ThresholdTrimStrategy()
+    strategy = NoiseThresholdTrimStrategy()
     trim_op = TrimDataStreamOperation(strategy=strategy)
 
     result = trim_op(ds, column_name="A")
@@ -157,33 +159,33 @@ def test_trim_missing_threshold(long_data: pd.DataFrame):
 
 
 def test_find_steady_state_std(trim_data: pd.DataFrame):
-    strategy = StandardDeviationTrimStrategy(window_size=1)
+    strategy = QuantileTrimStrategy(window_size=1)
     assert strategy._detection_method(data=trim_data, column_name="A") == 0
 
 
 def test_find_steady_state_std_non_robust(trim_data: pd.DataFrame):
-    strategy = StandardDeviationTrimStrategy(window_size=2, robust=False)
+    strategy = QuantileTrimStrategy(window_size=2, robust=False)
     assert strategy._detection_method(data=trim_data, column_name="A") == 3
 
 
 def test_find_steady_state_not_valid(no_valid_data: pd.DataFrame):
-    strategy = StandardDeviationTrimStrategy(window_size=1)
+    strategy = QuantileTrimStrategy(window_size=1)
     result = strategy._detection_method(data=no_valid_data, column_name=["time", "A"])
     assert result is None
 
 
 def test_find_steady_state_stationary(stationary_data: pd.DataFrame):
-    strategy = ThresholdTrimStrategy(window_size=2, threshold=0.1)
+    strategy = NoiseThresholdTrimStrategy(window_size=2, threshold=0.1)
     assert strategy._detection_method(data=stationary_data, column_name="A") == 1
 
 
 def test_find_steady_state_long_data(long_data: pd.DataFrame):
-    strategy = ThresholdTrimStrategy(window_size=2, threshold=0.1)
+    strategy = NoiseThresholdTrimStrategy(window_size=2, threshold=0.1)
     assert strategy._detection_method(data=long_data, column_name="A") is None
 
 
 def test_find_steady_state_trim_data(trim_data: pd.DataFrame):
-    strategy = ThresholdTrimStrategy(window_size=3, threshold=0.5)
+    strategy = NoiseThresholdTrimStrategy(window_size=3, threshold=0.5)
     assert strategy._detection_method(data=trim_data, column_name="A") == 2
 
 
@@ -192,17 +194,17 @@ def test_find_steady_state_with_start_time(long_data: pd.DataFrame):
 
 
 def test_find_steady_state_rolling_variance_stationary(stationary_data: pd.DataFrame):
-    strategy = RollingVarianceTrimStrategy(window_size=3)
+    strategy = RollingVarianceThresholdTrimStrategy(window_size=3)
     assert strategy._detection_method(data=stationary_data, column_name="A") is None
 
 
 def test_find_steady_state_none_rolling_variance(long_data: pd.DataFrame):
-    strategy = RollingVarianceTrimStrategy(window_size=3, threshold=0.1)
+    strategy = RollingVarianceThresholdTrimStrategy(window_size=3, threshold=0.1)
     assert strategy._detection_method(data=long_data, column_name="A") is None
 
 
 def test_find_steady_state_rolling_variance_not_valid(no_valid_data: pd.DataFrame):
-    strategy = RollingVarianceTrimStrategy(window_size=1)
+    strategy = RollingVarianceThresholdTrimStrategy(window_size=1)
     assert strategy._detection_method(data=no_valid_data, column_name="A") is None
 
 

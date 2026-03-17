@@ -28,7 +28,7 @@ class TrimStrategy(ABC):
     @abstractmethod
     def method_name(self) -> str:
         """Return the method name for this strategy."""
-        pass
+        pass  # pragma: no cover
 
     def apply(
         self, data_stream: DataStream, column_name: str, **kwargs: Any
@@ -131,7 +131,7 @@ class TrimStrategy(ABC):
         pass
 
 
-class StandardDeviationTrimStrategy(TrimStrategy):
+class QuantileTrimStrategy(TrimStrategy):
     """Trim based on sliding standard deviation criteria."""
 
     def __init__(
@@ -205,7 +205,7 @@ class StandardDeviationTrimStrategy(TrimStrategy):
         return None
 
 
-class ThresholdTrimStrategy(TrimStrategy):
+class NoiseThresholdTrimStrategy(TrimStrategy):
     """Trim using rolling standard deviation on normalized data."""
 
     def __init__(
@@ -287,7 +287,7 @@ class ThresholdTrimStrategy(TrimStrategy):
         return None
 
 
-class RollingVarianceTrimStrategy(TrimStrategy):
+class RollingVarianceThresholdTrimStrategy(TrimStrategy):
     """Detect steady-state when rolling variance falls below threshold."""
 
     def __init__(
@@ -343,7 +343,7 @@ class RollingVarianceTrimStrategy(TrimStrategy):
         return None
 
 
-class SSSStartTrimStrategy(TrimStrategy):
+class MeanVariationTrimStrategy(TrimStrategy):
     """Trim using Statistical Steady State detection."""
 
     def __init__(
@@ -377,7 +377,7 @@ class SSSStartTrimStrategy(TrimStrategy):
     ) -> Optional[float]:
         """Not used - SSS overrides apply() entirely."""
         raise NotImplementedError(
-            "SSSStartTrimStrategy overrides apply() and doesn't use _detection_method"
+            "MeanVariationTrimStrategy overrides apply() and doesn't use _detection_method"
         )
 
     def apply(
@@ -666,6 +666,12 @@ class SSSStartTrimStrategy(TrimStrategy):
         return trimmed_stream
 
 
+StandardDeviationTrimStrategy = QuantileTrimStrategy
+ThresholdTrimStrategy = NoiseThresholdTrimStrategy
+RollingVarianceTrimStrategy = RollingVarianceThresholdTrimStrategy
+SSSStartTrimStrategy = MeanVariationTrimStrategy
+
+
 class TrimDataStreamOperation(DataStreamOperation):
     """
     Operation that applies a TrimStrategy to a DataStream.
@@ -707,11 +713,9 @@ class TrimDataStreamOperation(DataStreamOperation):
         # Apply strategy
         result = self._strategy.apply(data_stream, **kwargs)
 
-        # Strategy may inject message / sss_start into kwargs
+        # Strategy may attach an error message to the result
         if hasattr(result, "message"):
             options["message"] = result.message
-        if "sss_start" in kwargs:
-            options["sss_start"] = kwargs["sss_start"]
 
         # Build history as a dictionary
         result._history = [

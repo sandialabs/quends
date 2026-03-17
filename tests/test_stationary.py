@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from quends import DataStream, MakeStationaryOperation
+from quends import DataStream, MakeDataStreamStationaryOperation
 
 pytest_plugins = ("tests._shared",)
 
@@ -19,7 +19,7 @@ def make_stationary_op(
     n_pts_min: int = 50,
     n_pts_frac_min: float = 0.2,
 ):
-    return MakeStationaryOperation(
+    return MakeDataStreamStationaryOperation(
         column=column,
         n_pts_orig=n_pts_orig,
         operate_safe=operate_safe,
@@ -46,7 +46,7 @@ def test_is_not_stationary(long_data: pd.DataFrame):
 
 def test_make_stationary_operation_accepts_explicit_args(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    op = MakeStationaryOperation(
+    op = MakeDataStreamStationaryOperation(
         column="A",
         n_pts_orig=len(ds.data),
         operate_safe=True,

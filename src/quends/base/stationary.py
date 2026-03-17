@@ -4,7 +4,7 @@ from .data_stream import DataStream
 from .operations import DataStreamOperation
 
 
-class MakeStationaryOperation(DataStreamOperation):
+class MakeDataStreamStationaryOperation(DataStreamOperation):
     def __init__(
         self,
         column,

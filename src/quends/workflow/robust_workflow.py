@@ -3,8 +3,8 @@ import numpy as np
 
 # QUENDS libraries
 from ..base.data_stream import DataStream
-from ..base.stationary import MakeStationaryOperation
-from ..base.trim import SSSStartTrimStrategy, TrimDataStreamOperation
+from ..base.stationary import MakeDataStreamStationaryOperation
+from ..base.trim import MeanVariationTrimStrategy, TrimDataStreamOperation
 
 
 class RobustWorkflow:
@@ -244,7 +244,7 @@ class RobustWorkflow:
         # Check if data stream is stationary
 
         # Check if it isn't stationary, if not drop fraction of data points
-        op = MakeStationaryOperation(
+        op = MakeDataStreamStationaryOperation(
             column=col,
             n_pts_orig=n_pts_orig,
             operate_safe=self._operate_safe,
@@ -258,7 +258,7 @@ class RobustWorkflow:
         if stationary:
 
             # detect and trim data stream to the start of statistcal steady state
-            strategy = SSSStartTrimStrategy(
+            strategy = MeanVariationTrimStrategy(
                 max_lag_frac=self._max_lag_frac,
                 verbosity=self._verbosity,
                 autocorr_sig_level=self._autocorr_sig_level,
