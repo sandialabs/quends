@@ -117,3 +117,16 @@ def multiple_transitions_df():
     plateau2 = np.random.normal(80, 2, 200)
     signal = np.concatenate([trend1, plateau1, trend2, plateau2])
     return pd.DataFrame({"time": np.arange(len(signal)), "A": signal})
+
+
+@pytest.fixture
+def long_stationary_data():
+    rng = np.random.default_rng(42)
+    n = 300
+    return pd.DataFrame(
+        {
+            "time": np.arange(n, dtype=float),
+            "A": rng.normal(loc=5.0, scale=0.3, size=n),
+            "B": rng.normal(loc=2.0, scale=0.3, size=n),
+        }
+    )
