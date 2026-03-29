@@ -517,5 +517,7 @@ class DataStream:
         pandas.DataFrame
         """
         scaler = MinMaxScaler()
-        df.iloc[:, 1:] = scaler.fit_transform(df.iloc[:, 1:])
+        signal_columns = df.columns[1:]
+        df[signal_columns] = df[signal_columns].astype(float)
+        df[signal_columns] = scaler.fit_transform(df[signal_columns])
         return df
