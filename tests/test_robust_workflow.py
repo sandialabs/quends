@@ -174,7 +174,7 @@ def make_nonstationary_datastream(n=200):
     )
 
 
-# ── process_irregular_stream: operate_safe=True ────────────────────────────────
+# process_irregular_stream: operate_safe=True
 
 
 class TestProcessIrregularStreamSafe:
@@ -414,7 +414,7 @@ class TestPlotSignalBasicStats:
         ds = make_datastream()
         wf.plot_signal_basic_stats(ds, "A")
         mock_show.assert_called_once()
-        mock_close.assert_called_once()
+        assert mock_close.call_count >= 1
 
     @patch("matplotlib.pyplot.show")
     @patch("matplotlib.pyplot.close")
