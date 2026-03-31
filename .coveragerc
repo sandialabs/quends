@@ -1,9 +1,12 @@
 [run]
 branch = True
 source = src/quends
+omit =
+    src/quends/postprocessing/*
 
 [report]
 omit =
+    src/quends/postprocessing/*
     */tests/*
     */venv/*
     */__init__.py
