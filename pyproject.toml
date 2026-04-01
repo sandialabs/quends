@@ -44,3 +44,19 @@ package-dir = {"" = "src"}
 filterwarnings = [
     "ignore"
 ]
+
+[tool.coverage.run]
+source = ["quends"]
+omit = [
+    "src/quends/postprocessing/*",
+]
+
+[tool.coverage.report]
+omit = [
+    "src/quends/postprocessing/*",
+]
+
+[tool.coverage.html]
+omit = [
+    "src/quends/postprocessing/*",
+]

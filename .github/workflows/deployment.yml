@@ -37,7 +37,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          coverage run --source=quends -m pytest tests/  # Run tests and generate coverage report
+          coverage run -m pytest tests/  # Run tests using pyproject.toml coverage config
           coverage html  # Generate HTML coverage report
 
       - name: Prepare coverage report for deployment
