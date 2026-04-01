@@ -3,6 +3,7 @@ branch = True
 source = src/quends
 omit =
     src/quends/postprocessing/*
+    */tests/*
 
 [report]
 omit =
