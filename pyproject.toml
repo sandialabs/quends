@@ -51,6 +51,12 @@ omit = [
     "src/quends/postprocessing/*",
 ]
 
+[tool.coverage.paths]
+source = [
+    "src/quends",
+    "*/site-packages/quends",
+]
+
 [tool.coverage.report]
 omit = [
     "src/quends/postprocessing/*",

@@ -28,8 +28,8 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install sphinx sphinx_rtd_theme myst_parser sphinx-book-theme sphinx-autoapi sphinx-autodoc-typehints sphinx-gallery sphinx_automodapi
-          pip install .[dev]  # Install your development dependencies
-          pip install coveralls ipython
+          pip install -e .[dev]  # Install editable so coverage maps to src/quends
+          pip install ipython
 
       - name: Build Sphinx documentation
         run: |
@@ -38,6 +38,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           coverage run -m pytest tests/  # Run tests using pyproject.toml coverage config
+          coverage xml  # Generate Cobertura XML for Coveralls
           coverage html  # Generate HTML coverage report
 
       - name: Prepare coverage report for deployment
@@ -50,9 +51,11 @@ jobs:
           fi
 
       - name: Upload coverage to Coveralls
-        run: coveralls
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: coverallsapp/github-action@v2
+        with:
+          format: cobertura
+          file: coverage.xml
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
