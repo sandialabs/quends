@@ -29,7 +29,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest --cov=src/quends --cov-report=xml:coverage.xml tests/
+          pytest --cov=quends --cov-report=xml:coverage.xml tests/
 
       - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@v2
