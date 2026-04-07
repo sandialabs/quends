@@ -77,6 +77,32 @@ def test_json_writer_round_trip_multiple_history_entries(tmp_path):
 
     writer = JsonWriter(str(file_path))
     writer.save(stream)
+
+    with open(file_path, encoding="utf-8") as f:
+        saved_payload = json.load(f)
+
+    assert saved_payload == {
+        "data": {
+            "time": [0, 1],
+            "signal": [4.0, 5.0],
+        },
+        "metadata": {
+            "history": [
+                {
+                    "operation_name": "normalize",
+                    "parameters": {"column_name": "signal"},
+                },
+                {
+                    "operation_name": "smooth",
+                    "parameters": {
+                        "window_size": 5,
+                        "method": "moving_average",
+                    },
+                },
+            ]
+        },
+    }
+
     loaded_stream = writer.load()
 
     assert isinstance(loaded_stream.history, DataStreamHistory)
