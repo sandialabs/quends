@@ -73,9 +73,7 @@ class MakeDataStreamStationaryOperation(DataStreamOperation):
         n_pts_orig = self.n_pts_orig
 
         ds = data_stream
-        stationary = ds.is_stationary([col])[
-            col
-        ]  # is_stationary() returns dictionary. The value for key qoi tells us if it is stationary
+        stationary = ds.is_stationary([col])[col]
         n_pts = len(ds.data)
 
         n_dropped = 0

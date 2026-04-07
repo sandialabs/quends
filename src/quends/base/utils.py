@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.stats import norm
 from statsmodels.tsa.stattools import acf
+from statsmodels.stats.diagnostic import acorr_ljungbox
 
 
 def power_law_model(n, A, p):
@@ -44,6 +45,78 @@ def _resolve_columns(data, column_names):
     if column_names is None:
         return [col for col in data.columns if col != "time"]
     return [column_names] if isinstance(column_names, str) else column_names
+
+
+def _geyer_ess_on_blocks(block_means: np.ndarray) -> float:
+    """
+    Geyer positive-pair ESS on an already block-meaned series.
+    Stops accumulating pairs once rho_t + rho_{t+1} < 0.
+    """
+    x = np.asarray(block_means, dtype=float)
+    n = x.size
+    if n <= 2:
+        return 1.0
+    r = acf(x, nlags=max(1, n // 4), fft=False)
+    s, t = 0.0, 1
+    while t + 1 < len(r):
+        pair_sum = r[t] + r[t + 1]
+        if pair_sum < 0:
+            break
+        s += pair_sum
+        t += 2
+    return max(1.0, n / (1.0 + 2.0 * s))
+
+
+def _tau_int_geyer_from_acf(rho: np.ndarray) -> float:
+    """
+    Estimate integrated autocorrelation time tau_int via Geyer positive-pair truncation.
+    rho[0] must equal 1 (standard ACF array).
+    """
+    if rho is None or len(rho) < 2:
+        return 1.0
+    s, t = 0.0, 1
+    while t + 1 < len(rho):
+        pair_sum = rho[t] + rho[t + 1]
+        if pair_sum < 0:
+            break
+        s += pair_sum
+        t += 2
+    return float(max(1.0, 1.0 + 2.0 * s))
+
+
+def _ljung_box_pass(
+    block_means: np.ndarray,
+    alpha: float = 0.05,
+    lag_set=(5, 10),
+) -> tuple:
+    """
+    Ljung-Box test on block means at multiple lags.
+    Pass means p-value > alpha for ALL tested lags.
+
+    Returns (passed: bool, details: dict).
+    """
+    bm = np.asarray(block_means, dtype=float)
+    n_blocks = bm.size
+    if n_blocks < 2:
+        return False, {"n_blocks": int(n_blocks), "lags": [], "pvalues": []}
+
+    tested_lags, pvalues = [], []
+    for lag in lag_set:
+        L = int(min(lag, n_blocks - 1))
+        if L < 1:
+            continue
+        try:
+            lb = acorr_ljungbox(bm, lags=[L], return_df=True)
+            pvalues.append(float(lb["lb_pvalue"].iloc[0]))
+            tested_lags.append(L)
+        except Exception:
+            pass
+
+    if not tested_lags:
+        return False, {"n_blocks": int(n_blocks), "lags": [], "pvalues": []}
+
+    passed = all(p > alpha for p in pvalues)
+    return passed, {"n_blocks": int(n_blocks), "lags": tested_lags, "pvalues": pvalues}
 
 
 def _compute_ess(data, col, alpha):

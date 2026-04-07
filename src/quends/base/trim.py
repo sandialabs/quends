@@ -6,7 +6,7 @@ import pandas as pd
 import scipy.stats as sts
 import statsmodels.tsa.stattools as ststls
 from matplotlib import pyplot as plt
-from statsmodels.robust.scale import mad
+from statsmodels.robust.scale import mad as _mad
 
 from .data_stream import DataStream
 from .operations import DataStreamOperation
@@ -186,7 +186,7 @@ class QuantileTrimStrategy(TrimStrategy):
 
             if robust:
                 central_value = np.median(remaining_data)
-                scale_value = mad(remaining_data)
+                scale_value = _mad(remaining_data)
             else:
                 central_value = np.mean(remaining_data)
                 scale_value = np.std(remaining_data)
@@ -359,14 +359,14 @@ class MeanVariationTrimStrategy(TrimStrategy):
         final_smoothing_window=None,
     ):
         super().__init__(window_size=0, start_time=0.0)
-        self.max_lag_frac = max_lag_frac
-        self.verbosity = verbosity
-        self.autocorr_sig_level = autocorr_sig_level
-        self.decor_multiplier = decor_multiplier
-        self.std_dev_frac = std_dev_frac
-        self.fudge_fac = fudge_fac
-        self.smoothing_window_correction = smoothing_window_correction
-        self.final_smoothing_window = final_smoothing_window
+        self.max_lag_frac = max_lag_frac if max_lag_frac is not None else 0.25
+        self.verbosity = verbosity if verbosity is not None else 0
+        self.autocorr_sig_level = autocorr_sig_level if autocorr_sig_level is not None else 0.05
+        self.decor_multiplier = decor_multiplier if decor_multiplier is not None else 2.0
+        self.std_dev_frac = std_dev_frac if std_dev_frac is not None else 0.1
+        self.fudge_fac = fudge_fac if fudge_fac is not None else 1e-6
+        self.smoothing_window_correction = smoothing_window_correction if smoothing_window_correction is not None else 0.5
+        self.final_smoothing_window = final_smoothing_window if final_smoothing_window is not None else 5
 
     @property
     def method_name(self) -> str:
@@ -636,9 +636,8 @@ class MeanVariationTrimStrategy(TrimStrategy):
         else:
             if self.verbosity > 0:
                 print("No SSS found based on behavior of mean of smoothed signal.")
-            trimmed_stream = pd.DataFrame(
-                columns=["time", "flux"]
-            )  # Create empty DataFrame with same columns as original
+            empty_df = data_stream.data.iloc[0:0].copy()
+            trimmed_stream = DataStream(empty_df)  # empty DataStream — no SSS found
 
             # Plot deviation and tolerance vs. time
             if self.verbosity > 1:
@@ -666,10 +665,249 @@ class MeanVariationTrimStrategy(TrimStrategy):
         return trimmed_stream
 
 
+class SelfConsistentTrimStrategy(TrimStrategy):
+    """
+    Trim using self-consistent block comparison:
+    find the earliest time where consecutive non-overlapping blocks of size W
+    agree in both mean and spread (within relative tolerances).
+
+    Parameters
+    ----------
+    window_size : int
+        Block size W.
+    robust : bool
+        Use median + MAD (scaled) vs mean + std.
+    rel_tol_mu : float
+        Relative tolerance for mean comparison across blocks.
+    rel_tol_sigma : float
+        Relative tolerance for spread comparison across blocks.
+    """
+
+    def __init__(
+        self,
+        window_size: int = 10,
+        start_time: float = 0.0,
+        robust: bool = True,
+        rel_tol_mu: float = 0.1,
+        rel_tol_sigma: float = 0.05,
+    ):
+        super().__init__(
+            window_size=window_size,
+            start_time=start_time,
+            robust=robust,
+            rel_tol_mu=rel_tol_mu,
+            rel_tol_sigma=rel_tol_sigma,
+        )
+
+    @property
+    def method_name(self) -> str:
+        return "self_consistent"
+
+    def _detection_method(
+        self, data: pd.DataFrame, column_name: str
+    ) -> Optional[float]:
+        if data is None or data.empty:
+            return None
+        if "time" not in data.columns or column_name not in data.columns:
+            return None
+
+        t = data["time"].to_numpy(dtype=float)
+        x = data[column_name].to_numpy(dtype=float)
+        W = int(self.window_size)
+        if W < 1:
+            return None
+        n = x.size
+        if n < 2 * W:
+            return None
+
+        robust = self.robust
+        rel_tol_mu = self.rel_tol_mu
+        rel_tol_sigma = self.rel_tol_sigma
+        eps_floor = 1e-12
+
+        def block_mu_sigma(arr):
+            arr = np.asarray(arr, dtype=float)
+            if arr.size == 0:
+                return np.nan, np.nan
+            if robust:
+                mu = float(np.median(arr))
+                s = 1.4826 * float(_mad(arr, center=mu))
+                if not np.isfinite(s) or s <= 0:
+                    s = float(np.std(arr, ddof=1)) if arr.size > 1 else 0.0
+            else:
+                mu = float(np.mean(arr))
+                s = float(np.std(arr, ddof=1)) if arr.size > 1 else 0.0
+            return mu if np.isfinite(mu) else np.nan, s if np.isfinite(s) else np.nan
+
+        best_time = None
+        for i in range(W):
+            m = (n - i) // W
+            if m < 2:
+                continue
+            mus = np.empty(m, dtype=float)
+            sigs = np.empty(m, dtype=float)
+            starts = np.empty(m, dtype=int)
+            for k in range(m):
+                a = i + k * W
+                mus[k], sigs[k] = block_mu_sigma(x[a : a + W])
+                starts[k] = a
+
+            for k0 in range(m - 1):
+                ok = True
+                for k in range(k0, m - 1):
+                    muA, muB, sA, sB = mus[k], mus[k + 1], sigs[k], sigs[k + 1]
+                    if not all(np.isfinite(v) for v in (muA, muB, sA, sB)):
+                        ok = False
+                        break
+                    if abs(muA - muB) > max(eps_floor, rel_tol_mu * max(eps_floor, abs(muB))):
+                        ok = False
+                        break
+                    if abs(sA - sB) > max(eps_floor, rel_tol_sigma * max(eps_floor, abs(sB))):
+                        ok = False
+                        break
+                if ok:
+                    candidate = float(t[int(starts[k0])])
+                    if best_time is None or candidate < best_time:
+                        best_time = candidate
+                    break
+
+        return best_time
+
+
+class IQRTrimStrategy(TrimStrategy):
+    """
+    Trim using IQR-based steady-state detection:
+    IQR(remaining) <= threshold * |median(remaining)|.
+
+    Parameters
+    ----------
+    window_size : int
+        Minimum samples before evaluating (used for loop start only).
+    threshold : float
+        Fraction of |median| that IQR must fall below.
+    """
+
+    def __init__(
+        self,
+        window_size: int = 10,
+        start_time: float = 0.0,
+        threshold: float = 0.05,
+    ):
+        super().__init__(
+            window_size=window_size,
+            start_time=start_time,
+            threshold=threshold,
+        )
+
+    @property
+    def method_name(self) -> str:
+        return "iqr"
+
+    def _detection_method(
+        self, data: pd.DataFrame, column_name: str
+    ) -> Optional[float]:
+        time_vals = data["time"].values
+        x = data[column_name].values
+        eps_floor = 1e-12
+        W = int(self.window_size)
+        threshold = float(self.threshold)
+
+        for i in range(len(x) - W + 1):
+            rem = x[i:]
+            q25, q75 = np.percentile(rem, [25, 75])
+            iqr = q75 - q25
+            med = np.median(rem)
+            scale_ref = max(eps_floor, abs(med))
+            if iqr <= threshold * scale_ref:
+                return time_vals[i]
+        return None
+
+
 StandardDeviationTrimStrategy = QuantileTrimStrategy
 ThresholdTrimStrategy = NoiseThresholdTrimStrategy
 RollingVarianceTrimStrategy = RollingVarianceThresholdTrimStrategy
 SSSStartTrimStrategy = MeanVariationTrimStrategy
+
+
+def build_trim_strategy(
+    method: str = "std",
+    window_size: int = 10,
+    start_time: float = 0.0,
+    threshold: Optional[float] = None,
+    robust: bool = True,
+) -> TrimStrategy:
+    """
+    Factory: map a method string to a configured :class:`TrimStrategy` instance.
+
+    This is the **single canonical source of truth** for the method-string →
+    strategy-class mapping.  All convenience wrappers (``DataStream.trim``,
+    ``Ensemble.trim``, ``Plotter._trim_datastream``) delegate here so the
+    mapping never drifts apart.
+
+    Parameters
+    ----------
+    method : str
+        One of ``"std"``, ``"threshold"``, ``"rolling_variance"``,
+        ``"self_consistent"``, ``"iqr"``.
+    window_size : int
+        Block / window size passed to the strategy.
+    start_time : float
+        Ignore data before this time.
+    threshold : float or None
+        Required for ``"threshold"``; optional for ``"rolling_variance"``
+        (default 0.1) and ``"iqr"`` (default 0.05).
+    robust : bool
+        Use median/MAD instead of mean/std where applicable.
+
+    Returns
+    -------
+    TrimStrategy
+
+    Raises
+    ------
+    ValueError
+        If *method* is not one of the recognised strings.
+
+    Examples
+    --------
+    >>> strategy = build_trim_strategy("std", window_size=20)
+    >>> op = TrimDataStreamOperation(strategy)
+    >>> trimmed = op(ds, column_name="Q")
+    """
+    _map = {
+        "std": lambda: QuantileTrimStrategy(
+            window_size=window_size,
+            start_time=start_time,
+            robust=robust,
+        ),
+        "threshold": lambda: NoiseThresholdTrimStrategy(
+            window_size=window_size,
+            start_time=start_time,
+            threshold=threshold,
+            robust=robust,
+        ),
+        "rolling_variance": lambda: RollingVarianceThresholdTrimStrategy(
+            window_size=window_size,
+            start_time=start_time,
+            threshold=threshold if threshold is not None else 0.1,
+        ),
+        "self_consistent": lambda: SelfConsistentTrimStrategy(
+            window_size=window_size,
+            start_time=start_time,
+            robust=robust,
+        ),
+        "iqr": lambda: IQRTrimStrategy(
+            window_size=window_size,
+            start_time=start_time,
+            threshold=threshold if threshold is not None else 0.05,
+        ),
+    }
+    if method not in _map:
+        raise ValueError(
+            f"Unknown trim method '{method}'. "
+            f"Valid choices: {sorted(_map)}"
+        )
+    return _map[method]()
 
 
 class TrimDataStreamOperation(DataStreamOperation):

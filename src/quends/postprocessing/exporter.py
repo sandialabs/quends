@@ -225,3 +225,26 @@ class Exporter:
         with open(file_path, "w") as f:
             f.write(j)
         print(f"JSON saved to {file_path}")
+
+    def export_figure(self, fig, filename="figure.png", dpi=300):
+        """
+        Save a Matplotlib figure to file.
+
+        Args:
+            fig: A Matplotlib Figure object.
+            filename (str): Output filename (default: 'figure.png').
+            dpi (int): Dots per inch for raster formats (default: 300).
+        """
+        file_path = os.path.join(self.output_dir, filename)
+        fig.savefig(file_path, dpi=dpi, bbox_inches="tight")
+        print(f"Figure exported to {file_path}")
+
+    def export_dataframe(self, data, filename="dataframe.csv"):
+        """
+        Alias for save_dataframe. Save data as a CSV file.
+
+        Args:
+            data: Data convertible to DataFrame.
+            filename (str): Output filename (default: 'dataframe.csv').
+        """
+        self.save_dataframe(data, file_name=filename)
