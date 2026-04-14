@@ -1,3 +1,4 @@
+# Helper to convert the list of dictionaries back into a DataStreamHistory object
 import json
 from abc import ABC, abstractmethod
 from typing import Any
@@ -8,41 +9,18 @@ from quends import DataStream
 from quends.base.history import DataStreamHistory, DataStreamHistoryEntry
 
 
-# Abstract base class
-class Printer(ABC):
+# Abstract base class for loaders
+class Loader(ABC):
     def __init__(self, filepath: str):
         self.filepath = filepath
 
     @abstractmethod
-    def save(self, stream: DataStream) -> None:
-        pass
-
-    @abstractmethod
-    def load(self) -> DataStream:
+    def load(self, filepath: str = None) -> DataStream:
         pass
 
 
-# Handles JSON files specifically
-class JsonWriter(Printer):
-    def __init__(self, filepath: str, indent: int = 2):
-        super().__init__(filepath)
-        self.indent = indent
-
-    # Helper to convert the DataStreamHistory into plain list of dicitonaries
-    # JSON can't store Python objects directly
-    @staticmethod
-    def _serialize_history(history: Any) -> Any:
-        if isinstance(history, DataStreamHistory):
-            return [
-                {
-                    "operation_name": entry.operation_name,
-                    "parameters": dict(entry.parameters),
-                }
-                for entry in history.entries()
-            ]
-        return history
-
-    # Helper to convert the list of dictionaries back into a DataStreamHistory object
+# Concrete loader for JSON files
+class JsonLoader(Loader):
     @staticmethod
     def _deserialize_history(history_payload: Any) -> Any:
         if isinstance(history_payload, list) and all(
@@ -61,17 +39,6 @@ class JsonWriter(Printer):
                 ]
             )
         return history_payload
-
-    def save(self, stream: DataStream) -> None:
-        """
-        Save the DataStream to a JSON file, including its history."""
-        payload = {
-            "data": stream.data.to_dict(orient="list"),
-            "metadata": {"history": self._serialize_history(stream.history)},
-        }
-        with open(self.filepath, "w", encoding="utf-8") as f:
-            json.dump(payload, f, indent=self.indent)
-        print(f"[JsonWriter] saved -> {self.filepath}")
 
     def load(self, filepath: str = None) -> DataStream:
         """
