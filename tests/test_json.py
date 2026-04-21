@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import pytest
 
+import quends.preprocessing.json as json_module
 from quends import DataStream, from_json
 
 
@@ -26,6 +27,37 @@ def test_from_json_loads_single_requested_variable(create_json_file):
     pd.testing.assert_frame_equal(
         data_stream.data,
         pd.DataFrame({"HeatFlux_st": [15.0, 16.5, 18.0, 19.5, 21.0]}),
+    )
+
+
+def test_from_json_falls_back_to_payload_data_when_pandas_read_json_fails(
+    tmp_path, monkeypatch
+):
+    test_file = tmp_path / "writer_style.json"
+    test_file.write_text(
+        json.dumps(
+            {
+                "data": {
+                    "time": [0, 1, 2],
+                    "HeatFlux_st": [10.0, 20.0, 30.0],
+                },
+                "metadata": {"history": []},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    def raise_value_error(_file):
+        raise ValueError("forced fallback")
+
+    monkeypatch.setattr(json_module.pd, "read_json", raise_value_error)
+
+    data_stream = from_json(str(test_file), variable="HeatFlux_st")
+
+    assert isinstance(data_stream, DataStream)
+    pd.testing.assert_frame_equal(
+        data_stream.data,
+        pd.DataFrame({"HeatFlux_st": [10.0, 20.0, 30.0]}),
     )
 
 
