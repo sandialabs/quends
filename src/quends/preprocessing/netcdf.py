@@ -8,7 +8,7 @@ from netCDF4 import Dataset
 from ..base.data_stream import DataStream  # Adjust base on structure
 
 
-def from_netcdf(file, variables=None):
+def from_netcdf(file, variable):
     """
     Load specified variables from a NetCDF4 file into a pandas DataFrame,
     ensuring all variables have the same length, and extracting only variables
@@ -22,6 +22,7 @@ def from_netcdf(file, variables=None):
     Returns:
         DataStream: A DataStream object containing the data as a pandas DataFrame.
     """
+    # Check if the file exists
     if not os.path.isfile(file):
         raise ValueError(f"Error: file {file} does not exist.")
 
@@ -32,6 +33,7 @@ def from_netcdf(file, variables=None):
         extracted_data = {"time": time}
 
         diagnostics = dataset["Diagnostics"]
+        # Extract variables that end with '_t' or '_st' and ensure they have the same length as 'time'
         for var_name in diagnostics.variables:
             if var_name.endswith("_t") or var_name.endswith("_st"):
                 data = diagnostics[var_name][:]
@@ -57,14 +59,14 @@ def from_netcdf(file, variables=None):
 
     df = pd.DataFrame(extracted_data)
 
-    # If variables is not specified, use all columns; otherwise filter to those provided.
-    if variables is None:
-        variables = df.columns.tolist()  # Load all variable names
-    else:
-        # Optionally, filter out any variable names not in Dataframe
-        variables = [var for var in variables if var in df.columns]
+    # Check if the specified variable exists in the DataFrame
+    if variable not in df.columns:
+        raise ValueError(
+            f"Error: variable '{variable}' does not exist in file '{file}'. "
+            f"Available columns: {df.columns.tolist()}"
+        )
 
-    df = df[variables]
+    df = df[variable]
 
     # Return DataStream initialized with the DataFrame
     return DataStream(df)

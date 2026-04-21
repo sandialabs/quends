@@ -14,6 +14,8 @@ import pytest
 
 from quends import DataStream, RobustWorkflow
 
+pytest_plugins = ("tests._shared",)
+
 os.chdir("examples/notebooks")
 
 # Constants
