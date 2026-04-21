@@ -5,7 +5,7 @@ from ..base.data_stream import (  # Adjust import based on your module structure
 )
 
 
-def from_dict(data_dict, variables=None):
+def from_dict(data_dict, variable):
     """
     Load a data stream from a dictionary.
 
@@ -17,16 +17,21 @@ def from_dict(data_dict, variables=None):
     Returns:
         DataStream: A DataStream object containing the data from the dictionary.
     """
+    # Validate input
     if not isinstance(data_dict, dict):
         raise ValueError("Input must be a dictionary.")
 
+    # Convert the dictionary to a DataFrame
     df = pd.DataFrame(data_dict)
 
     # If variables is not provided, use all columns.
-    if variables is None:
-        variables = df.columns.tolist()
+    if variable not in df.columns:
+        raise ValueError(
+            f"Error: variable '{variable}' does not exist in the dictionary. "
+            f"Available columns: {df.columns.tolist()}"
+        )
 
     # Filter the DataFrame to include only the specified columns.
-    df = df[variables]
+    df = df[[variable]]
 
     return DataStream(df)
