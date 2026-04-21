@@ -20,8 +20,11 @@ def from_gx(file, variables=None):
 
     # Load data stream and determine file type
     if file.endswith("nc"):
-        return from_netcdf(file, variables=variables)
+        loader = from_netcdf
     elif file.endswith(".csv"):
-        return from_csv(file, variables=variables)
+        loader = from_csv
     else:
         raise ValueError("Unsupported file format. Please provide a .nc or .csv file.")
+
+    # load each variable separately
+    return {variable: loader(file, variable=variable) for variable in variables}
