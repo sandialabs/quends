@@ -33,7 +33,10 @@ from .preprocessing.json import from_json
 from .preprocessing.netcdf import from_netcdf
 from .preprocessing.numpy import from_numpy
 
-# Importing functions from workflow module
+# Importing classes from workflow module
+from .workflow.batch_ensemble_workflow import BatchEnsembleWorkflow
+from .workflow.ensemble_average_workflow import EnsembleAverageWorkflow
+from .workflow.ensemble_statistics_workflow import EnsembleStatisticsWorkflow
 from .workflow.robust_workflow import RobustWorkflow
 
 # Optionally, you can define the __all__ variable to specify what is exported
@@ -54,6 +57,9 @@ __all__ = [
     "from_numpy",
     # Workflow
     "RobustWorkflow",
+    "EnsembleAverageWorkflow",
+    "EnsembleStatisticsWorkflow",
+    "BatchEnsembleWorkflow",
     # Trim — canonical entry point
     "build_trim_strategy",
     # Trim — strategy classes (concrete)

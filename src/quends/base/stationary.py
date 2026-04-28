@@ -2,6 +2,7 @@ from quends.base.history import DataStreamHistoryEntry
 
 from .data_stream import DataStream
 from .operations import DataStreamOperation
+from .utils import stationarity_value
 
 
 class MakeDataStreamStationaryOperation(DataStreamOperation):
@@ -10,11 +11,11 @@ class MakeDataStreamStationaryOperation(DataStreamOperation):
         column,
         n_pts_orig,
         *,
-        operate_safe=None,
-        n_pts_min=None,
-        n_pts_frac_min=None,
-        drop_fraction=None,
-        verbosity=None,
+        operate_safe=False,
+        n_pts_min=50,
+        n_pts_frac_min=0.2,
+        drop_fraction=0.2,
+        verbosity=0,
     ):
         super().__init__(operation_name="make_stationary")
         self.column = column
@@ -33,7 +34,12 @@ class MakeDataStreamStationaryOperation(DataStreamOperation):
         """
         result_ds, is_stationary = self._apply(data_stream, **kwargs)
 
-        if not is_stationary:
+        # Only return an empty DataStream when the loop actually ran and failed to
+        # achieve stationarity.  If the loop never executed (e.g. the dataset is
+        # smaller than n_pts_min), _apply returns the original reference unchanged;
+        # in that case we keep the original data and let the caller interpret the
+        # False flag.
+        if not is_stationary and result_ds is not data_stream:
             empty_df = data_stream.data.iloc[0:0].copy()
             result_ds = DataStream(empty_df, history=data_stream.history)
             result_ds.message = f"Column '{self.column}' is not stationary"
@@ -53,7 +59,7 @@ class MakeDataStreamStationaryOperation(DataStreamOperation):
 
         return result_ds, is_stationary
 
-    def _apply(self, data_stream: DataStream) -> DataStream:
+    def _apply(self, data_stream: DataStream) -> tuple[DataStream, bool]:
         """
         Attempt to make the data stream into being stationary by removing an initial
         fraction of data.
@@ -73,7 +79,7 @@ class MakeDataStreamStationaryOperation(DataStreamOperation):
         n_pts_orig = self.n_pts_orig
 
         ds = data_stream
-        stationary = ds.is_stationary([col])[col]
+        stationary = stationarity_value(ds.is_stationary([col]), col, False)
         n_pts = len(ds.data)
 
         n_dropped = 0
@@ -86,10 +92,10 @@ class MakeDataStreamStationaryOperation(DataStreamOperation):
             # See if we get a stationary stream if we drop some initial fraction of the data
             n_drop = int(n_pts * self.drop_fraction)
             df_shortened = ds.data.iloc[n_drop:]
-            ds = DataStream(df_shortened)
+            ds = DataStream(df_shortened, history=ds.history)
             n_pts = len(ds.data)
             n_dropped = n_pts_orig - n_pts
-            stationary = ds.is_stationary([col])[col]
+            stationary = stationarity_value(ds.is_stationary([col]), col, False)
 
             if self.verbosity > 0:
                 if stationary:

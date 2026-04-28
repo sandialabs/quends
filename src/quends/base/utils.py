@@ -47,6 +47,26 @@ def _resolve_columns(data, column_names):
     return [column_names] if isinstance(column_names, str) else column_names
 
 
+def stationarity_results(result):
+    """
+    Normalize supported stationarity return schemas to a plain results mapping.
+
+    DataStream currently returns ``{column: bool}``, while richer callers may
+    use ``{"results": {column: bool}, "metadata": ...}``.  Keeping this small
+    adapter at call sites prevents schema drift from turning into indexing bugs.
+    """
+    if isinstance(result, dict) and isinstance(result.get("results"), dict):
+        return result["results"]
+    if isinstance(result, dict):
+        return result
+    return {}
+
+
+def stationarity_value(result, column, default=False):
+    """Extract one column's stationarity boolean from any supported schema."""
+    return stationarity_results(result).get(column, default)
+
+
 def _geyer_ess_on_blocks(block_means: np.ndarray) -> float:
     """
     Geyer positive-pair ESS on an already block-meaned series.

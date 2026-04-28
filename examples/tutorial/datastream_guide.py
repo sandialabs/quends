@@ -57,28 +57,36 @@ data_stream_gx.is_stationary(["HeatFlux_st", "Wg_st", "Phi2_t"])
 #
 
 # %%
-# Trim the data based on standard deviation method
+# Trim the data based on standard deviation method (Quantile strategy)
+# Use the strategy-operation pattern from quends.base.trim directly.
 
-# Returns: Dictionary with keys like "results" and "metadata"
-trimmed = data_stream_gx.trim(column_name="HeatFlux_st", batch_size=50, method="std")
+from quends.base.trim import QuantileTrimStrategy, TrimDataStreamOperation
+
+strategy = QuantileTrimStrategy(window_size=50, robust=True)
+op = TrimDataStreamOperation(strategy=strategy)
+trimmed = op(data_stream_gx, column_name="HeatFlux_st")
 
 # Print first 5 rows of dataframe
 trimmed.head()
 
 # %%
 # Trim the data based on rolling variance method
-trimmed = data_stream_gx.trim(
-    column_name="HeatFlux_st", batch_size=50, method="rolling_variance", threshold=0.10
-)
+from quends.base.trim import RollingVarianceThresholdTrimStrategy, TrimDataStreamOperation
+
+strategy = RollingVarianceThresholdTrimStrategy(window_size=50, threshold=0.10)
+op = TrimDataStreamOperation(strategy=strategy)
+trimmed = op(data_stream_gx, column_name="HeatFlux_st")
 
 # Gather results
 trimmed.head()
 
 # %%
-# Trim the data based on threshold method
-trimmed = data_stream_gx.trim(
-    column_name="HeatFlux_st", batch_size=50, method="threshold", threshold=0.1
-)
+# Trim the data based on noise threshold method
+from quends.base.trim import NoiseThresholdTrimStrategy, TrimDataStreamOperation
+
+strategy = NoiseThresholdTrimStrategy(window_size=50, threshold=0.1)
+op = TrimDataStreamOperation(strategy=strategy)
+trimmed = op(data_stream_gx, column_name="HeatFlux_st")
 
 # View trimmed data
 trimmed.head()
@@ -175,8 +183,11 @@ data_stream_cg.head()
 len(data_stream_cg)
 
 # %%
-# Trim the data based on threshold method
-trimmed_ = data_stream_cg.trim(column_name="Q_D/Q_GBD", method="std", robust=True)
+# Trim the CGYRO data using the Quantile (std) strategy
+from quends.base.trim import QuantileTrimStrategy, TrimDataStreamOperation
+strategy = QuantileTrimStrategy(robust=True)
+op = TrimDataStreamOperation(strategy=strategy)
+trimmed_ = op(data_stream_cg, column_name="Q_D/Q_GBD")
 # View trimmed data
 print(trimmed_)
 

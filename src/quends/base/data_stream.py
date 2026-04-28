@@ -8,15 +8,14 @@ from scipy.stats import norm, rankdata
 from sklearn.preprocessing import MinMaxScaler
 from statsmodels.tsa.stattools import acf, adfuller
 
-from quends.base.utils import power_law_model
-
-from .history import DataStreamHistory
+from .history import DataStreamHistory, DataStreamHistoryEntry
 from .utils import (
     _compute_ess,
     _geyer_ess_on_blocks,
     _ljung_box_pass,
     _resolve_columns,
     _tau_int_geyer_from_acf,
+    power_law_model,
     to_native_types,
 )
 
@@ -31,16 +30,54 @@ Usage signature for the new trimming workflow::
 
 
 # Goes into datastream
+def _coerce_history(history: Optional[Any] = None) -> DataStreamHistory:
+    """Return an independent typed history object from typed or legacy input."""
+
+    if history is None:
+        return DataStreamHistory()
+    if isinstance(history, DataStreamHistory):
+        return history.copy()
+
+    entries = []
+    for entry in history:
+        if isinstance(entry, DataStreamHistoryEntry):
+            entries.append(entry)
+        elif isinstance(entry, dict):
+            entries.append(
+                DataStreamHistoryEntry(
+                    operation_name=entry.get("operation", "unknown"),
+                    parameters=entry.get("options", {}),
+                )
+            )
+        else:
+            entries.append(
+                DataStreamHistoryEntry(
+                    operation_name=type(entry).__name__,
+                    parameters={"value": entry},
+                )
+            )
+    return DataStreamHistory(entries)
+
+
 class DataStream:
 
     def __init__(self, data: Any, history: Optional[DataStreamHistory] = None) -> None:
         self._data = data
-        self._history = history or DataStreamHistory()
+        self._history = _coerce_history(history)
 
     @property
     def data(self) -> Any:
         """The underlying pandas DataFrame."""
         return self._data
+
+    @property
+    def df(self) -> Any:
+        """Backward-compatible alias for the underlying pandas DataFrame."""
+        return self._data
+
+    @df.setter
+    def df(self, value: Any) -> None:
+        self._data = value
 
     @property
     def history(self) -> DataStreamHistory:
@@ -54,12 +91,16 @@ class DataStream:
 
     def variables(self):
         """
-        List the signal variable (column) names, excluding the 'time' column.
+        Return all column names in the underlying DataFrame (including 'time').
+
+        To obtain only signal columns use::
+
+            [c for c in ds.variables() if c != "time"]
 
         Returns
         -------
         pandas.Index
-            Column names in ``self.data``.
+            All column names in ``self.data``.
         """
         return self.data.columns
 
@@ -496,7 +537,10 @@ class DataStream:
         tau = self._estimate_tau_int(x)
         w = int(max(w_min, math.ceil(c0 * tau)))
 
-        # Cap to keep >= B_min blocks where possible
+        # Hard cap: w must never exceed n so that at least 1 block can be formed.
+        w = min(w, max(1, n))
+
+        # Soft cap: try to keep >= B_min blocks where possible.
         w_cap = (n // B_min) if (B_min and n // B_min >= 1) else n
         cap_applied = w_cap >= w_min and w > w_cap
         if cap_applied:
