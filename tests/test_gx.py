@@ -61,25 +61,44 @@ def create_csv_file():
         yield test_file
 
 
-def test_from_gx_without_variables_returns_default_stream_mapping(create_netcdf_file):
-    streams = from_gx(create_netcdf_file)
+def test_from_gx_netcdf_loads_single_requested_variable(create_netcdf_file):
+    data_stream = from_gx(create_netcdf_file, variable="HeatFlux_st")
 
-    assert set(streams) == {"time", "HeatFlux_st", "Wg_st", "Wphi_st"}
-    assert all(isinstance(stream, DataStream) for stream in streams.values())
-    assert streams["time"].data.name == "time"
-    assert streams["HeatFlux_st"].data.name == "HeatFlux_st"
+    assert isinstance(data_stream, DataStream)
+    pd.testing.assert_series_equal(
+        data_stream.data,
+        pd.Series(
+            np.linspace(15.0, 24.0, 10).astype(np.float32),
+            name="HeatFlux_st",
+        ),
+    )
 
 
-def test_from_gx_with_variables_returns_requested_stream_mapping(create_netcdf_file):
-    streams = from_gx(create_netcdf_file, variables=["time", "HeatFlux_st"])
+def test_from_gx_netcdf_loads_time_when_requested(create_netcdf_file):
+    data_stream = from_gx(create_netcdf_file, variable="time")
 
-    assert set(streams) == {"time", "HeatFlux_st"}
-    assert all(isinstance(stream, DataStream) for stream in streams.values())
+    assert isinstance(data_stream, DataStream)
+    pd.testing.assert_series_equal(
+        data_stream.data,
+        pd.Series(np.arange(10, dtype=np.float64), name="time"),
+    )
+
+
+def test_from_gx_without_variable_prints_guidance(create_netcdf_file, capsys):
+    data_stream = from_gx(create_netcdf_file, variable=None)
+
+    captured = capsys.readouterr()
+    assert data_stream is None
+    assert "No variable specified." in captured.out
+    assert (
+        "Please specify a variable to load only that variable "
+        "(e.g. variable='temperature')."
+    ) in captured.out
 
 
 def test_from_gx_invalid_file():
     with pytest.raises(ValueError, match="Error: file .* does not exist."):
-        from_gx("non_existent_file.nc")
+        from_gx("non_existent_file.nc", variable="HeatFlux_st")
 
 
 def test_from_gx_unsupported_file_format():
@@ -91,23 +110,45 @@ def test_from_gx_unsupported_file_format():
             ValueError,
             match="Unsupported file format. Please provide a .nc or .csv file.",
         ):
-            from_gx(temp_file.name)
+            from_gx(temp_file.name, variable="HeatFlux_st")
 
 
-def test_from_gx_csv_without_variables_returns_default_stream_mapping(create_csv_file):
-    streams = from_gx(create_csv_file)
+def test_from_gx_csv_loads_single_requested_variable(create_csv_file):
+    data_stream = from_gx(create_csv_file, variable="HeatFlux_st")
 
-    assert set(streams) == {"time", "HeatFlux_st", "Wg_st", "Wphi_st"}
-    assert all(isinstance(stream, DataStream) for stream in streams.values())
+    assert isinstance(data_stream, DataStream)
     pd.testing.assert_frame_equal(
-        streams["time"].data, pd.DataFrame({"time": list(range(10))})
+        data_stream.data,
+        pd.DataFrame(
+            {
+                "HeatFlux_st": [
+                    20.5,
+                    21.0,
+                    19.5,
+                    22.0,
+                    23.5,
+                    24.0,
+                    25.0,
+                    26.5,
+                    27.0,
+                    28.0,
+                ]
+            }
+        ),
     )
 
 
-def test_from_gx_csv_with_specific_variables_returns_requested_stream_mapping(
-    create_csv_file,
-):
-    streams = from_gx(create_csv_file, variables=["time", "HeatFlux_st"])
+def test_from_gx_csv_loads_time_when_requested(create_csv_file):
+    data_stream = from_gx(create_csv_file, variable="time")
 
-    assert set(streams) == {"time", "HeatFlux_st"}
-    assert all(isinstance(stream, DataStream) for stream in streams.values())
+    assert isinstance(data_stream, DataStream)
+    pd.testing.assert_frame_equal(
+        data_stream.data,
+        pd.DataFrame({"time": list(range(10))}),
+    )
+
+
+def test_from_gx_no_variable(create_netcdf_file):
+    data_stream = from_gx(create_netcdf_file, variable=None)
+
+    assert data_stream is None
