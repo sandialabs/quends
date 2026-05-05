@@ -239,7 +239,8 @@ class RobustWorkflow:
 
         if self._verbosity > 0:
             print(f"Original size of data stream: {len(data_stream_orig.data)} points.")
-            print(f"After enforcing start time there are {n_pts_orig} points left.")
+            if start_time > 0.0:
+                print(f"After enforcing start time of {start_time} there are {n_pts_orig} points left.")
 
         # Check if data stream is stationary
 
