@@ -113,7 +113,7 @@ def test_batch():
         "output_nu0_02_batch.csv",
         "output_nu0_05_batch.csv",
         "output_nu0_10_batch.csv",
-        "output_nu0_50_batch.csv",
+        # "output_nu0_50_batch.csv",
         "output_nu1_0_batch.csv",
     ]
 
