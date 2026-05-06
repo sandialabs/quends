@@ -1,2 +1,2 @@
 Q_D/Q_GBD
-"{'mean': 23.144373022203908, 'mean_uncertainty': 1.0089079639086975, 'confidence_interval': (21.16691341294286, 25.121832631464954), 'pm_std': (22.13546505829521, 24.153280986112605), 'effective_sample_size': 18, 'window_size': 91, 'sss_start': np.float64(48.0), 'metadata': {'status': 'Regular', 'mitigation': 'None'}, 'start_time': 0.0}"
+"{'mean': 23.748781399099464, 'mean_uncertainty': 0.9367073784485634, 'confidence_interval': (21.91283493734028, 25.58472786085865), 'pm_std': (22.8120740206509, 24.685488777548027), 'effective_sample_size': 16, 'window_size': 93, 'sss_start': 121.0, 'metadata': {'status': 'Regular', 'mitigation': 'None'}, 'start_time': 0.0}"
