@@ -312,6 +312,14 @@ class TestProcessDataSteamVerbosity:
         wf.process_data_steam(ds, "A")
         captured = capsys.readouterr()
         assert "Original size" in captured.out
+        assert "start time" not in captured.out
+
+    def test_verbosity_1_prints_size_and_start_info(self, capsys):
+        wf = make_workflow(verbosity=1)
+        ds = make_nonstationary_datastream()
+        wf.process_data_steam(ds, "A", start_time=10.0)
+        captured = capsys.readouterr()
+        assert "Original size" in captured.out
         assert "start time" in captured.out
 
     def test_verbosity_0_no_size_output(self, capsys):
