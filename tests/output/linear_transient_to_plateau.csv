@@ -1,2 +1,0 @@
-flux
-"{'mean': 4.953589400293961, 'mean_uncertainty': 0.0033180530700721244, 'confidence_interval': (4.94708601627662, 4.960092784311302), 'pm_std': (4.950271347223889, 4.956907453364033), 'effective_sample_size': 897, 'window_size': 5, 'sss_start': np.float64(104.0), 'metadata': {'status': 'Regular', 'mitigation': 'None'}, 'start_time': 0.0}"

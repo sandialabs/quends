@@ -1,4 +1,3 @@
-import os
 import tempfile
 import warnings
 from pathlib import Path
@@ -14,12 +13,14 @@ import pytest
 
 from quends import DataStream, RobustWorkflow
 
-os.chdir("examples/notebooks")
+pytest_plugins = ("tests._shared",)
 
 # Constants
-INPUT_NOTEBOOK = Path("robust_workflow.ipynb")
-OUTPUT_DIR = Path("../../tests/output")
-EXPECTED_DIR = Path("../../tests/expected")
+REPO_ROOT = Path(__file__).resolve().parents[1]
+NOTEBOOK_DIR = REPO_ROOT / "examples" / "notebooks"
+INPUT_NOTEBOOK = NOTEBOOK_DIR / "robust_workflow.ipynb"
+OUTPUT_DIR = REPO_ROOT / "tests" / "notebooks" / "robust_workflow" / "output"
+EXPECTED_DIR = REPO_ROOT / "tests" / "notebooks" / "robust_workflow" / "expected"
 
 
 def execute_notebook() -> Path:
@@ -30,9 +31,14 @@ def execute_notebook() -> Path:
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_nb = Path(tmpdirname) / "executed_notebook.ipynb"
-        pm.execute_notebook(str(INPUT_NOTEBOOK), str(output_nb), kernel_name="python3")
+        pm.execute_notebook(
+            str(INPUT_NOTEBOOK),
+            str(output_nb),
+            kernel_name="python3",
+            cwd=str(NOTEBOOK_DIR),
+        )
 
-        # Verify execution
+        # Verify executionßß
         assert output_nb.exists(), f"Executed notebook not created at {output_nb}"
 
         executed_nb = nbformat.read(output_nb, as_version=4)
