@@ -1,0 +1,2 @@
+flux.mean,flux.mean_uncertainty,flux.confidence_interval.lower,flux.confidence_interval.upper,flux.pm_std.lower,flux.pm_std.upper,flux.effective_sample_size,flux.window_size,flux.sss_start,flux.metadata.status,flux.metadata.mitigation,flux.start_time
+4.4693141072856015,0.007027608610841061,4.455539994408353,4.48308822016285,4.462286498674761,4.476341715896442,74,13,1027.0,Regular,None,1001.0
