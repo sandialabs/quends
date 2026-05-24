@@ -39,7 +39,7 @@ def execute_notebook() -> Path:
             cwd=str(NOTEBOOK_DIR),
         )
 
-        # Verify executionßß
+        # Verify execution
         assert output_nb.exists(), f"Executed notebook not created at {output_nb}"
 
         executed_nb = nbformat.read(output_nb, as_version=4)
@@ -319,6 +319,14 @@ class TestProcessDataSteamVerbosity:
         wf.process_data_steam(ds, "A")
         captured = capsys.readouterr()
         assert "Original size" in captured.out
+        assert "start time" not in captured.out
+
+    def test_verbosity_1_prints_size_and_start_info(self, capsys):
+        wf = make_workflow(verbosity=1)
+        ds = make_nonstationary_datastream()
+        wf.process_data_steam(ds, "A", start_time=10.0)
+        captured = capsys.readouterr()
+        assert "Original size" in captured.out
         assert "start time" in captured.out
 
     def test_verbosity_0_no_size_output(self, capsys):
@@ -396,6 +404,44 @@ class TestProcessDataSteamNoSSSAfterTrim:
             result = wf.process_data_steam(ds, "A")
 
         assert result["A"]["metadata"]["mitigation"] == "AdHoc"
+
+
+class TestProcessDataSteamRegularAfterTrim:
+
+    def test_returns_regular_stats_when_trim_succeeds(self):
+        wf = make_workflow(operate_safe=False)
+        ds = make_datastream(n=50)
+        trimmed_stream = MagicMock()
+        trimmed_stream.__len__ = lambda s: 4
+        trimmed_stream.data = pd.DataFrame(
+            {
+                "time": [10.0, 11.0, 12.0, 13.0],
+                "A": [1.0, 1.1, 0.9, 1.0],
+            }
+        )
+        trimmed_stream.compute_statistics.return_value = {
+            "A": {
+                "mean": 1.0,
+                "mean_uncertainty": 0.1,
+                "confidence_interval": (0.9, 1.1),
+            }
+        }
+
+        with patch(
+            "quends.MakeDataStreamStationaryOperation.__call__",
+            return_value=(ds, True),
+        ), patch(
+            "quends.TrimDataStreamOperation.__call__", return_value=trimmed_stream
+        ):
+            result = wf.process_data_steam(ds, "A", start_time=2.5)
+
+        assert result["A"]["mean"] == pytest.approx(1.0)
+        assert result["A"]["sss_start"] == pytest.approx(10.0)
+        assert result["A"]["metadata"] == {
+            "status": "Regular",
+            "mitigation": "None",
+        }
+        assert result["A"]["start_time"] == pytest.approx(2.5)
 
 
 # plot_signal_basic_stats

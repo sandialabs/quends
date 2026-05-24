@@ -67,7 +67,7 @@ class TrimStrategy(ABC):
         """Check if the column is stationary."""
         stationary_result = data_stream.is_stationary(column_name)
         if isinstance(stationary_result, dict):
-            return stationary_result.get(column_name) is True
+            return bool(stationary_result.get(column_name))
         return False
 
     def _preprocess(self, data_stream: DataStream, column_name: str) -> pd.DataFrame:
