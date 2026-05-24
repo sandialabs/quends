@@ -51,7 +51,7 @@ class DataStream:
         Returns
         -------
         Index
-            ColumnIndex of variable names in `self.df`.
+            ColumnIndex of variable names in `self.data`.
         """
         return self.data.columns
 
@@ -118,7 +118,12 @@ class DataStream:
             column_name, ddof=ddof, method=method, window_size=window_size
         )
         for col in self._get_columns(column_name):
-            if col not in mean_results or col not in uncertainty_results:
+            if (
+                col not in mean_results
+                or col not in uncertainty_results
+                or "mean" not in mean_results[col]
+                or "mean_uncertainty" not in uncertainty_results[col]
+            ):
                 results[col] = {"error": f"Missing data for column '{col}'"}
                 continue
             mean_val = mean_results[col]["mean"]

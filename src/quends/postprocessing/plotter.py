@@ -8,6 +8,12 @@ from statsmodels.tsa.stattools import acf
 
 from quends.base.data_stream import DataStream  # Adjust the import if necessary
 from quends.base.ensemble import Ensemble
+from quends.base.trim import (
+    RollingVarianceTrimStrategy,
+    StandardDeviationTrimStrategy,
+    ThresholdTrimStrategy,
+    TrimDataStreamOperation,
+)
 
 
 class Plotter:
@@ -49,10 +55,10 @@ class Plotter:
             dict: A dictionary of DataFrames keyed by dataset name.
         """
         if isinstance(data, DataStream):
-            return {"DataStream": data.df}
+            return {"DataStream": data.data}
         elif isinstance(data, Ensemble):
             return {
-                f"DataStream {k}": data.data_streams[k].df for k in range(len(data))
+                f"DataStream {k}": data.data_streams[k].data for k in range(len(data))
             }
         elif isinstance(data, dict):
             return data
@@ -75,6 +81,46 @@ class Plotter:
         width = max(8, num_cols * 3)
         height = max(6, num_rows * 3)
         return (width, height)
+
+    @staticmethod
+    def _trim_data_stream(
+        data_stream,
+        column,
+        batch_size=10,
+        start_time=0.0,
+        method="std",
+        threshold=None,
+        robust=True,
+    ):
+        """Apply the trim operation selected by method name."""
+        if method == "std":
+            strategy = StandardDeviationTrimStrategy(
+                window_size=batch_size,
+                start_time=start_time,
+                robust=robust,
+            )
+        elif method == "threshold":
+            strategy = ThresholdTrimStrategy(
+                window_size=batch_size,
+                start_time=start_time,
+                threshold=threshold,
+                robust=robust,
+            )
+        elif method == "rolling_variance":
+            kwargs = {
+                "window_size": batch_size,
+                "start_time": start_time,
+                "robust": robust,
+            }
+            if threshold is not None:
+                kwargs["threshold"] = threshold
+            strategy = RollingVarianceTrimStrategy(**kwargs)
+        else:
+            raise ValueError(f"Unsupported trim method: {method}")
+
+        return TrimDataStreamOperation(strategy=strategy)(
+            data_stream, column_name=column
+        )
 
     def trace_plot(self, data, variables_to_plot=None, save=False):
         """
@@ -182,18 +228,21 @@ class Plotter:
 
             for j, column in enumerate(variables_to_plot):
                 ds = DataStream(df)
-                tds = ds.trim(column)
-                m = tds.mean()[column]["mean"]
-                lower, upper = tds.confidence_interval()[column]["confidence interval"]
+                tds = self._trim_data_stream(ds, column)
+                stats_ds = tds if tds is not None and not tds.data.empty else ds
+                m = stats_ds.mean(column_name=column)[column]["mean"]
+                lower, upper = stats_ds.confidence_interval(column_name=column)[column][
+                    "confidence_interval"
+                ]
                 axes[j].plot(time_series, df[column], label=column)
                 axes[j].plot(
-                    tds.df["time"],
-                    m * np.ones(len(tds.df["time"])),
+                    stats_ds.data["time"],
+                    m * np.ones(len(stats_ds.data["time"])),
                     color="r",
                     label="mean",
                 )
                 axes[j].fill_between(
-                    tds.df["time"],
+                    stats_ds.data["time"],
                     lower,
                     upper,
                     color="r",
@@ -303,10 +352,11 @@ class Plotter:
         threshold=None,
         robust=True,
         save=False,
+        window_size=None,
     ):
         """
         Plot steady state detection for each variable in the data. For each variable, the method uses the
-        DataStream.trim() function to estimate the steady state start time. If a steady state is detected,
+        configured trim operation to estimate the steady state start time. If a steady state is detected,
         the function plots the original time series along with:
 
             - A vertical dashed red line indicating the steady state start time.
@@ -326,6 +376,9 @@ class Plotter:
             robust (bool, optional): Whether to use robust statistics (median/MAD) in the 'std' method.
             save (bool, optional): If True, save the plot to disk. Defaults to False.
         """
+        if window_size is not None:
+            batch_size = window_size
+
         data_frames = self._prepare_data_frames(data)
 
         # If no variables provided, infer from the first DataFrame (excluding 'time')
@@ -354,7 +407,8 @@ class Plotter:
                 signal = df[column]
                 # Create a DataStream from the DataFrame and try to trim using the specified variable
                 ds = DataStream(df)
-                trimmed_ds = ds.trim(
+                trimmed_ds = self._trim_data_stream(
+                    ds,
                     column,
                     batch_size=batch_size,
                     start_time=start_time,
@@ -362,8 +416,8 @@ class Plotter:
                     threshold=threshold,
                     robust=robust,
                 )
-                if trimmed_ds is not None:
-                    steady_state_start = trimmed_ds.df["time"].iloc[0]
+                if trimmed_ds is not None and not trimmed_ds.data.empty:
+                    steady_state_start = trimmed_ds.data["time"].iloc[0]
                     after_ss = signal[time >= steady_state_start]
                     overall_mean = after_ss.mean()
                     overall_std = after_ss.std()
@@ -565,7 +619,7 @@ class Plotter:
         """
         # If data is a DataStream, extract the specified column.
         if isinstance(data, DataStream):
-            df = data.df
+            df = data.data
             if column is None:
                 cols = [col for col in df.columns if col != "time"]
                 if not cols:
@@ -577,7 +631,8 @@ class Plotter:
 
         n = len(filtered)
         if n == 0:
-            raise ValueError("Data is empty after filtering.")
+            print("No data available after filtering. Skipping ACF plot.")
+            return ax
 
         # Compute ACF values with nlags = int(n / 3)
         nlags = int(n / 3)
@@ -658,12 +713,13 @@ class Plotter:
         threshold=None,
         robust=True,
         save=False,
+        window_size=None,
     ):
         """
         Plot steady state detection automatically for each ensemble member on a grid.
 
         For each ensemble member in the Ensemble object, for each variable (if multiple are provided,
-        all are overlaid on the same subplot), the method uses DataStream.trim() to estimate the steady
+        all are overlaid on the same subplot), the method uses the configured trim operation to estimate the steady
         state start time. If detected, it plots the original signal with:
 
         - A vertical dashed red line at the estimated steady state start.
@@ -690,6 +746,9 @@ class Plotter:
         """
         import math
 
+        if window_size is not None:
+            batch_size = window_size
+
         n_members = len(ensemble_obj.data_streams)
         ncols = min(3, n_members)
         nrows = int(math.ceil(n_members / ncols))
@@ -697,7 +756,7 @@ class Plotter:
         axes = np.array(axes).flatten()
 
         for i, ds in enumerate(ensemble_obj.data_streams):
-            df = ds.df
+            df = ds.data
             # Determine variables to plot.
             if variables_to_plot is None:
                 vars_plot = [col for col in df.columns if col != "time"]
@@ -711,7 +770,8 @@ class Plotter:
                 signal = df[var]
                 # Create a DataStream copy and attempt automatic trimming.
                 ds_temp = DataStream(df)
-                trimmed_ds = ds_temp.trim(
+                trimmed_ds = self._trim_data_stream(
+                    ds_temp,
                     var,
                     batch_size=batch_size,
                     start_time=start_time,
@@ -720,8 +780,8 @@ class Plotter:
                     robust=robust,
                 )
                 # PATCH: Only plot steady state if we have data!
-                if trimmed_ds is not None and not trimmed_ds.df.empty:
-                    steady_state_start = trimmed_ds.df["time"].iloc[0]
+                if trimmed_ds is not None and not trimmed_ds.data.empty:
+                    steady_state_start = trimmed_ds.data["time"].iloc[0]
                     after_ss = signal[time >= steady_state_start]
                     overall_mean = after_ss.mean()
                     overall_std = after_ss.std()
@@ -810,7 +870,7 @@ class Plotter:
         axes = np.array(axes).flatten()
 
         for i, ds in enumerate(ensemble_obj.data_streams):
-            df = ds.df
+            df = ds.data
             if variables_to_plot is None:
                 vars_plot = [col for col in df.columns if col != "time"]
             else:
@@ -890,15 +950,15 @@ class Plotter:
         """
         # 1) collect each member’s DataFrame
         member_dfs = {
-            f"Member {i}": ds.df for i, ds in enumerate(ensemble_obj.data_streams)
+            f"Member {i}": ds.data for i, ds in enumerate(ensemble_obj.data_streams)
         }
 
         # 2) compute the ensemble average DataStream and add it
         avg_stream = ensemble_obj.compute_average_ensemble()
-        member_dfs["Ensemble Average"] = avg_stream.df
+        member_dfs["Ensemble Average"] = avg_stream.data
 
         # 3) pick variables
-        all_cols = avg_stream.df.columns.tolist()
+        all_cols = avg_stream.data.columns.tolist()
         vars_to_plot = (
             [c for c in all_cols if c != "time"]
             if variables_to_plot is None

@@ -19,8 +19,9 @@ pytest_plugins = ("tests._shared",)
 REPO_ROOT = Path(__file__).resolve().parents[1]
 NOTEBOOK_DIR = REPO_ROOT / "examples" / "notebooks"
 INPUT_NOTEBOOK = NOTEBOOK_DIR / "robust_workflow.ipynb"
-OUTPUT_DIR = REPO_ROOT / "tests" / "notebooks" / "robust_workflow" / "output"
-EXPECTED_DIR = REPO_ROOT / "tests" / "notebooks" / "robust_workflow" / "expected"
+ROBUST_WORKFLOW_DIR = REPO_ROOT / "tests" / "robust_workflow"
+OUTPUT_DIR = ROBUST_WORKFLOW_DIR / "output"
+EXPECTED_DIR = ROBUST_WORKFLOW_DIR / "expected"
 
 
 def execute_notebook() -> Path:

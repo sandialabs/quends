@@ -4,6 +4,12 @@ import numpy as np
 import pandas as pd
 
 from quends.base.data_stream import DataStream
+from quends.base.trim import (
+    RollingVarianceTrimStrategy,
+    StandardDeviationTrimStrategy,
+    ThresholdTrimStrategy,
+    TrimDataStreamOperation,
+)
 
 """
 Module: ensemble.py
@@ -110,7 +116,7 @@ class Ensemble:
         -------
         List[str]
         """
-        all_cols = [set(ds.df.columns) - {"time"} for ds in self.data_streams]
+        all_cols = [set(ds.data.columns) - {"time"} for ds in self.data_streams]
         if not all_cols:
             return []
         return sorted(list(set.intersection(*all_cols)))
@@ -132,8 +138,8 @@ class Ensemble:
         """
         summary_dict = {
             f"Member {i}": {
-                "n_samples": len(ds.df),
-                "columns": list(ds.df.columns),
+                "n_samples": len(ds.data),
+                "columns": list(ds.data.columns),
                 "head": ds.head().to_dict(orient="list"),
             }
             for i, ds in enumerate(self.data_streams)
@@ -162,7 +168,7 @@ class Ensemble:
         method="non-overlapping",
         window_size=None,
     ):
-        return ds._mean(column_name, method=method, window_size=window_size)
+        return ds.mean(column_name, method=method, window_size=window_size)
 
     def _mean_uncertainty(
         self,
@@ -172,7 +178,7 @@ class Ensemble:
         method="non-overlapping",
         window_size=None,
     ):
-        return ds._mean_uncertainty(
+        return ds.mean_uncertainty(
             column_name, ddof=ddof, method=method, window_size=window_size
         )
 
@@ -184,7 +190,7 @@ class Ensemble:
         method="non-overlapping",
         window_size=None,
     ):
-        return ds._confidence_interval(
+        return ds.confidence_interval(
             column_name, ddof=ddof, method=method, window_size=window_size
         )
 
@@ -215,13 +221,18 @@ class Ensemble:
             If no streams are provided.
         """
         data_streams = members if members is not None else self.data_streams
-        data_frames: Dict[str, pd.DataFrame] = {
-            f"Member {i}": ds.df for i, ds in enumerate(data_streams)
-        }
-        if not data_frames:
+        if not data_streams:
             raise ValueError("No data streams provided for ensemble averaging.")
+
+        non_empty_streams = [ds for ds in data_streams if not ds.data.empty]
+        if not non_empty_streams:
+            return DataStream(data_streams[0].data.copy())
+
+        data_frames: Dict[str, pd.DataFrame] = {
+            f"Member {i}": ds.data for i, ds in enumerate(non_empty_streams)
+        }
         shortest_df = min(data_frames.values(), key=lambda df: len(df))
-        short_times = shortest_df["time"].values
+        # short_times = shortest_df["time"].values
         resampled = {
             name: self.resample_to_short_intervals(shortest_df, df)
             for name, df in data_frames.items()
@@ -287,26 +298,51 @@ class Ensemble:
         return [getattr(ds, "_history", []) for ds in ds_list]
 
     # ========== TRIM ==========
-    def trim(self, column_name, batch_size=10, start_time=0.0, method="std", threshold=None, robust=True):
-        trimmed = [
-            ds.trim(
-                column_name,
-                batch_size=batch_size,
+    def trim(
+        self,
+        column_name,
+        batch_size=10,
+        start_time=0.0,
+        method="std",
+        threshold=None,
+        robust=True,
+    ):
+        if method == "std":
+            strategy = StandardDeviationTrimStrategy(
+                window_size=batch_size,
                 start_time=start_time,
-                method=method,
+                robust=robust,
+            )
+        elif method == "threshold":
+            strategy = ThresholdTrimStrategy(
+                window_size=batch_size,
+                start_time=start_time,
                 threshold=threshold,
                 robust=robust,
             )
-            for ds in self.data_streams
+        elif method == "rolling_variance":
+            kwargs = {
+                "window_size": batch_size,
+                "start_time": start_time,
+                "robust": robust,
+            }
+            if threshold is not None:
+                kwargs["threshold"] = threshold
+            strategy = RollingVarianceTrimStrategy(**kwargs)
+        else:
+            raise ValueError(f"Unsupported trim method: {method}")
+
+        trim_operation = TrimDataStreamOperation(strategy=strategy)
+        trimmed = [
+            trim_operation(ds, column_name=column_name) for ds in self.data_streams
         ]
         # Only keep non-empty, valid DataStreams
-        trimmed_members = [t for t in trimmed if t is not None and (hasattr(t, 'df') and not t.df.empty)]
+        trimmed_members = [t for t in trimmed if t is not None and not t.data.empty]
         if not trimmed_members:
-            raise ValueError("No ensemble members survived trimming (all failed or empty)!")
+            raise ValueError(
+                "No ensemble members survived trimming (all failed or empty)!"
+            )
         return Ensemble(trimmed_members)
-
-
-
 
     # ========== IS_STATIONARY ==========
     def is_stationary(self, columns) -> Dict:
@@ -355,9 +391,9 @@ class Ensemble:
             aggregated = {
                 col: pd.concat(
                     [
-                        ds.df[col]
+                        ds.data[col]
                         for ds in self.data_streams
-                        if col in ds.df.columns and not ds.df[col].empty
+                        if col in ds.data.columns and not ds.data[col].empty
                     ],
                     axis=0,
                     ignore_index=True,
@@ -433,9 +469,9 @@ class Ensemble:
             aggregated = {
                 col: pd.concat(
                     [
-                        ds.df[col]
+                        ds.data[col]
                         for ds in self.data_streams
-                        if col in ds.df.columns and not ds.df[col].empty
+                        if col in ds.data.columns and not ds.data[col].empty
                     ],
                     axis=0,
                     ignore_index=True,
@@ -518,9 +554,9 @@ class Ensemble:
             aggregated = {
                 col: pd.concat(
                     [
-                        ds.df[col]
+                        ds.data[col]
                         for ds in self.data_streams
-                        if col in ds.df.columns and not ds.df[col].empty
+                        if col in ds.data.columns and not ds.data[col].empty
                     ],
                     axis=0,
                     ignore_index=True,
@@ -544,13 +580,13 @@ class Ensemble:
                 member_means[key] = self._mean(ds, column_name, method, window_size)
                 member_weights[key] = {}
                 cols = (
-                    ds.df.columns.drop("time")
+                    ds.data.columns.drop("time")
                     if column_name is None
                     else [column_name] if isinstance(column_name, str) else column_name
                 )
                 for col in cols:
-                    if col in ds.df.columns:
-                        col_data = ds.df[col].dropna()
+                    if col in ds.data.columns:
+                        col_data = ds.data[col].dropna()
                         if not col_data.empty:
                             est_win = ds._estimate_window(col, col_data, window_size)
                             processed = ds._process_column(col_data, est_win, method)
@@ -616,9 +652,9 @@ class Ensemble:
             aggregated = {
                 col: pd.concat(
                     [
-                        ds.df[col]
+                        ds.data[col]
                         for ds in self.data_streams
-                        if col in ds.df.columns and not ds.df[col].empty
+                        if col in ds.data.columns and not ds.data[col].empty
                     ],
                     axis=0,
                     ignore_index=True,
@@ -647,13 +683,13 @@ class Ensemble:
                 )
                 member_weights[key] = {}
                 cols = (
-                    ds.df.columns.drop("time")
+                    ds.data.columns.drop("time")
                     if column_name is None
                     else [column_name] if isinstance(column_name, str) else column_name
                 )
                 for col in cols:
-                    if col in ds.df.columns:
-                        col_data = ds.df[col].dropna()
+                    if col in ds.data.columns:
+                        col_data = ds.data[col].dropna()
                         if not col_data.empty:
                             est_win = ds._estimate_window(col, col_data, window_size)
                             processed = ds._process_column(col_data, est_win, method)
@@ -732,9 +768,9 @@ class Ensemble:
             aggregated = {
                 col: pd.concat(
                     [
-                        ds.df[col]
+                        ds.data[col]
                         for ds in self.data_streams
-                        if col in ds.df.columns and not ds.df[col].empty
+                        if col in ds.data.columns and not ds.data[col].empty
                     ],
                     axis=0,
                     ignore_index=True,
@@ -767,13 +803,13 @@ class Ensemble:
                 )
                 member_weights[key] = {}
                 cols = (
-                    ds.df.columns.drop("time")
+                    ds.data.columns.drop("time")
                     if column_name is None
                     else [column_name] if isinstance(column_name, str) else column_name
                 )
                 for col in cols:
-                    if col in ds.df.columns:
-                        col_data = ds.df[col].dropna()
+                    if col in ds.data.columns:
+                        col_data = ds.data[col].dropna()
                         if not col_data.empty:
                             est_win = ds._estimate_window(col, col_data, window_size)
                             processed = ds._process_column(col_data, est_win, method)

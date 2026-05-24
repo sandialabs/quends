@@ -145,8 +145,7 @@ def test_confidence_interval_long(long_data: pd.DataFrame):
 
 def test_confidence_interval_no_data(nan_data: pd.DataFrame):
     ds = DataStream(nan_data)
-    with pytest.raises(KeyError):
-        ds.confidence_interval()
+    assert ds.confidence_interval() == {"A": {"error": "Missing data for column 'A'"}}
 
 
 def test_confidence_interval_missing_data_for_column(long_data: pd.DataFrame):
