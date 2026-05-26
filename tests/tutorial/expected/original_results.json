@@ -1,0 +1,80 @@
+{
+  "baseline": {
+    "source_revision": "d2ffab1",
+    "notebook": "examples/notebooks/tutorial.ipynb",
+    "description": "Observable numerical output from the original tutorial before refactoring."
+  },
+  "single_stream_standard_deviation": {
+    "HeatFlux_st": {
+      "mean": 6.963602192927756,
+      "confidence_interval": [
+        6.843151538047605,
+        7.273276175184719
+      ]
+    }
+  },
+  "single_stream_threshold": {
+    "HeatFlux_st": {
+      "mean": 7.688177966980286,
+      "mean_uncertainty": 0.09034508309750032,
+      "confidence_interval": [
+        7.511101604109185,
+        7.865254329851386
+      ],
+      "pm_std": [
+        7.597832883882785,
+        7.778523050077786
+      ]
+    }
+  },
+  "ensemble_standard_deviation": {
+    "means": {
+      "Member 0": {
+        "HeatFlux_st": {
+          "mean": 7.959850951225491
+        }
+      },
+      "Member 1": {
+        "HeatFlux_st": {
+          "mean": 8.396685189666666
+        }
+      },
+      "Member 2": {
+        "HeatFlux_st": {
+          "mean": 7.943318924899598
+        }
+      },
+      "Member 3": {
+        "HeatFlux_st": {
+          "mean": 7.517684824341085
+        }
+      }
+    },
+    "confidence_intervals": {
+      "Member 0": {
+        "HeatFlux_st": [
+          7.7703645071606156,
+          8.149337395290367
+        ]
+      },
+      "Member 1": {
+        "HeatFlux_st": [
+          8.168494170655848,
+          8.624876208677485
+        ]
+      },
+      "Member 2": {
+        "HeatFlux_st": [
+          7.813182297581164,
+          8.073455552218032
+        ]
+      },
+      "Member 3": {
+        "HeatFlux_st": [
+          7.3972638344231685,
+          7.638105814259002
+        ]
+      }
+    }
+  }
+}
