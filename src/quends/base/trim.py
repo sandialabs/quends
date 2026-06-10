@@ -666,10 +666,10 @@ class MeanVariationTrimStrategy(TrimStrategy):
         return trimmed_stream
 
 
-StandardDeviationTrimStrategy = QuantileTrimStrategy
-ThresholdTrimStrategy = NoiseThresholdTrimStrategy
-RollingVarianceTrimStrategy = RollingVarianceThresholdTrimStrategy
-SSSStartTrimStrategy = MeanVariationTrimStrategy
+# StandardDeviationTrimStrategy = QuantileTrimStrategy
+# ThresholdTrimStrategy = NoiseThresholdTrimStrategy
+# RollingVarianceTrimStrategy = RollingVarianceThresholdTrimStrategy
+# SSSStartTrimStrategy = MeanVariationTrimStrategy
 
 
 class TrimDataStreamOperation(DataStreamOperation):

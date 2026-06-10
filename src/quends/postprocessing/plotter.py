@@ -9,9 +9,9 @@ from statsmodels.tsa.stattools import acf
 from quends.base.data_stream import DataStream  # Adjust the import if necessary
 from quends.base.ensemble import Ensemble
 from quends.base.trim import (
-    RollingVarianceTrimStrategy,
-    StandardDeviationTrimStrategy,
-    ThresholdTrimStrategy,
+    NoiseThresholdTrimStrategy,
+    QuantileTrimStrategy,
+    RollingVarianceThresholdTrimStrategy,
     TrimDataStreamOperation,
 )
 
@@ -94,13 +94,13 @@ class Plotter:
     ):
         """Apply the trim operation selected by method name."""
         if method == "std":
-            strategy = StandardDeviationTrimStrategy(
+            strategy = QuantileTrimStrategy(
                 window_size=batch_size,
                 start_time=start_time,
                 robust=robust,
             )
         elif method == "threshold":
-            strategy = ThresholdTrimStrategy(
+            strategy = NoiseThresholdTrimStrategy(
                 window_size=batch_size,
                 start_time=start_time,
                 threshold=threshold,
@@ -114,7 +114,7 @@ class Plotter:
             }
             if threshold is not None:
                 kwargs["threshold"] = threshold
-            strategy = RollingVarianceTrimStrategy(**kwargs)
+            strategy = RollingVarianceThresholdTrimStrategy(**kwargs)
         else:
             raise ValueError(f"Unsupported trim method: {method}")
 
