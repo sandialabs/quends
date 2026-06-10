@@ -1,0 +1,2 @@
+column,mean,mean_uncertainty,confidence_interval.lower,confidence_interval.upper,pm_std.lower,pm_std.upper,effective_sample_size,window_size
+Q_D/Q_GBD,38.211490777736856,1.3586039540183568,35.548627027860874,40.87435452761284,36.8528868237185,39.57009473175521,23,69

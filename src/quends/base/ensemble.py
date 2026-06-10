@@ -5,9 +5,9 @@ import pandas as pd
 
 from quends.base.data_stream import DataStream
 from quends.base.trim import (
-    RollingVarianceTrimStrategy,
-    StandardDeviationTrimStrategy,
-    ThresholdTrimStrategy,
+    NoiseThresholdTrimStrategy,
+    QuantileTrimStrategy,
+    RollingVarianceThresholdTrimStrategy,
     TrimDataStreamOperation,
 )
 
@@ -308,13 +308,13 @@ class Ensemble:
         robust=True,
     ):
         if method == "std":
-            strategy = StandardDeviationTrimStrategy(
+            strategy = QuantileTrimStrategy(
                 window_size=batch_size,
                 start_time=start_time,
                 robust=robust,
             )
         elif method == "threshold":
-            strategy = ThresholdTrimStrategy(
+            strategy = NoiseThresholdTrimStrategy(
                 window_size=batch_size,
                 start_time=start_time,
                 threshold=threshold,
@@ -328,7 +328,7 @@ class Ensemble:
             }
             if threshold is not None:
                 kwargs["threshold"] = threshold
-            strategy = RollingVarianceTrimStrategy(**kwargs)
+            strategy = RollingVarianceThresholdTrimStrategy(**kwargs)
         else:
             raise ValueError(f"Unsupported trim method: {method}")
 

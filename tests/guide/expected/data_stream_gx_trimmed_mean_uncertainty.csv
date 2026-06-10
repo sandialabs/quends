@@ -1,0 +1,2 @@
+column,mean,mean_uncertainty,confidence_interval_lower,confidence_interval_upper,pm_std_lower,pm_std_upper,effective_sample_size,window_size
+HeatFlux_st,7.815731042731574,0.05992075505570511,7.698286362822392,7.933175722640756,7.755810287675869,7.875651797787279,6,17
