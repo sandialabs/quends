@@ -79,7 +79,7 @@ class RobustWorkflow:
         decor_multiplier=4.0,
         std_dev_frac=0.1,
         fudge_fac=0.1,
-        smoothing_window_correction=0.8,
+        smoothing_window_correction=0.5,
         final_smoothing_window=10,
     ):
         """
@@ -125,7 +125,7 @@ class RobustWorkflow:
             This is to account for the fact that the smoothed signal at a given time point is
             the result of averaging over the smoothing window. So the SSS can be seen as starting
             before the point where the tolerance is met.
-            Default is 0.8 (80% of smoothing window size).
+            Default is 0.5 (50% of smoothing window size).
         final_smoothing_window: int, optional
             Smoothing window used to avoid quantities going to zero at end of signal. Default is 10 points.
         """
@@ -255,7 +255,8 @@ class RobustWorkflow:
 
         if self._verbosity > 0:
             print(f"Original size of data stream: {len(data_stream_orig.data)} points.")
-            print(f"After enforcing start time there are {n_pts_orig} points left.")
+            if start_time > 0.0:
+                print(f"After enforcing start time of {start_time} there are {n_pts_orig} points left.")
 
         # Check if data stream is stationary
 

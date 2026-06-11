@@ -1,0 +1,2 @@
+signal.mean,signal.mean_uncertainty,signal.confidence_interval.lower,signal.confidence_interval.upper,signal.pm_std.lower,signal.pm_std.upper,signal.effective_sample_size,signal.window_size,signal.sss_start,signal.metadata.status,signal.metadata.mitigation,signal.start_time
+200.3481564025074,0.7441767504730115,198.8895699715803,201.80674283343453,199.6039796520344,201.09233315298042,7,14,109.0909090909091,Regular,None,0.0

@@ -1,0 +1,2 @@
+HeatFlux_st.mean,HeatFlux_st.mean_uncertainty,HeatFlux_st.confidence_interval.lower,HeatFlux_st.confidence_interval.upper,HeatFlux_st.pm_std.lower,HeatFlux_st.pm_std.upper,HeatFlux_st.effective_sample_size,HeatFlux_st.window_size,HeatFlux_st.sss_start,HeatFlux_st.metadata.status,HeatFlux_st.metadata.mitigation,HeatFlux_st.start_time
+6.904274593181818,0.20790852219079364,6.496773889687863,7.311775296675774,6.696366070991025,7.112183115372612,12,33,686.2853296659573,Regular,None,0.0

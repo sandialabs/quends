@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "A Python package for quantifying uncertainty in ensembles of data streams."
 readme = "README.rst"
 license = { file = "LICENSE" }
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 
 dependencies = [
     "numpy>=1.21",

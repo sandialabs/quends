@@ -10,6 +10,8 @@ from statsmodels.tsa.stattools import adfuller
 
 from .history import DataStreamHistory, DataStreamHistoryEntry
 from .utils import (
+    SCHEMA_VERSION,
+    StatsResult,
     _compute_ess,
     _estimate_tau_int_from_series,
     _geyer_ess_on_blocks,
@@ -17,8 +19,6 @@ from .utils import (
     autotune_blocks,
     confidence_multiplier,
     power_law_model,
-    SCHEMA_VERSION,
-    StatsResult,
     to_native_types,
 )
 
@@ -538,7 +538,7 @@ class DataStream:
             try:
                 p_value = adfuller(self.data[column].dropna(), autolag="AIC")[1]
                 results[column] = bool(p_value < 0.05)
-            except Exception as e:
+            except Exception:
                 results[column] = False
         return results
 

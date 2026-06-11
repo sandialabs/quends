@@ -1,0 +1,2 @@
+Q_D/Q_GBD.mean,Q_D/Q_GBD.mean_uncertainty,Q_D/Q_GBD.confidence_interval.lower,Q_D/Q_GBD.confidence_interval.upper,Q_D/Q_GBD.pm_std.lower,Q_D/Q_GBD.pm_std.upper,Q_D/Q_GBD.effective_sample_size,Q_D/Q_GBD.window_size,Q_D/Q_GBD.sss_start,Q_D/Q_GBD.metadata.status,Q_D/Q_GBD.metadata.mitigation,Q_D/Q_GBD.start_time
+107.88082635863141,3.8138857458321525,100.40561029680039,115.35604242046243,104.06694061279926,111.69471210446356,9,44,634.0,Regular,None,0.0
