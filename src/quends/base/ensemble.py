@@ -3,13 +3,13 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-from quends.base.data_stream import DataStream
-from quends.base.utils import stationarity_results
+from .data_stream import DataStream
+from .utils import stationarity_results
 
 # ---------------------------------------------------------------------------
 # Reusable helpers (module-level, importable directly by workflow classes)
 # ---------------------------------------------------------------------------
-from quends.base.ensemble_utils import (
+from .ensemble_utils import (
     check_time_steps_uniformity as _check_time_steps_uniformity,
     compute_average_ensemble as _compute_average_ensemble,
     direct_average as _direct_average,
@@ -19,13 +19,15 @@ from quends.base.ensemble_utils import (
     trim_members as _trim_members,
     validate_members,
 )
-from quends.base.ensemble_statistics import (
-    autotune_member_blocks_until_independent as _autotune_blocks,
+from .ensemble_statistics import (
+    ENSEMBLE_AVERAGE,
+    IVW_MEMBER_MEANS,
+    POOLED_BLOCK_MEANS,
+    _normalize_technique,
     compute_ensemble_statistics as _compute_ensemble_statistics,
-    pool_block_means as _pool_block_means,
-    tech0_stats_for_col as _tech0_stats,
-    tech1_pooled_stats_for_col as _tech1_stats,
-    tech2_stats_for_col as _tech2_stats,
+    ensemble_average_stats_for_col as _ensemble_average_stats,
+    ivw_member_means_stats_for_col as _ivw_member_means_stats,
+    pooled_block_means_stats_for_col as _pooled_block_means_stats,
 )
 
 """
@@ -69,6 +71,45 @@ class Ensemble:
         validate_members(data_streams)
         self.data_streams = data_streams
 
+    @classmethod
+    def from_files(cls, paths, variable: str, *, loader=None) -> "Ensemble":
+        """Build an Ensemble by loading one variable from each file.
+
+        Convenience constructor that replaces the common
+        ``[from_csv(p, var) for p in paths]`` boilerplate. ``.nc`` files are
+        loaded with :func:`quends.preprocessing.from_netcdf`, everything else
+        with :func:`quends.preprocessing.from_csv`, unless an explicit ``loader``
+        callable ``loader(path, variable) -> DataStream`` is given.
+
+        Parameters
+        ----------
+        paths : iterable of str or pathlib.Path
+            File paths to load (one ensemble member each).
+        variable : str
+            The variable to load from every file.
+        loader : callable, optional
+            Override the auto-selected loader.
+
+        Returns
+        -------
+        Ensemble
+        """
+        # Local imports avoid importing the preprocessing layer at module load.
+        from ..preprocessing.csv import from_csv
+        from ..preprocessing.netcdf import from_netcdf
+
+        members: List[DataStream] = []
+        for p in paths:
+            sp = str(p)
+            if loader is not None:
+                ds = loader(sp, variable)
+            elif sp.endswith(".nc"):
+                ds = from_netcdf(sp, variable)
+            else:
+                ds = from_csv(sp, variable)
+            members.append(ds)
+        return cls(members)
+
     def __len__(self) -> int:
         return len(self.data_streams)
 
@@ -87,7 +128,15 @@ class Ensemble:
         """Column names shared by all members, excluding 'time'."""
         return _get_common_variables(self.data_streams)
 
-    def summary(self) -> Dict:
+    def summary(self, verbose: bool = False) -> Dict:
+        """Return a summary dict of the ensemble.
+
+        Parameters
+        ----------
+        verbose : bool
+            If True, also print a short header. Default False — this is a pure
+            getter and should not print as a side effect.
+        """
         info = {}
         for i, ds in enumerate(self.data_streams):
             info[f"Member {i}"] = {
@@ -100,8 +149,9 @@ class Ensemble:
             "common_variables": self.common_variables(),
             "members": info,
         }
-        print(f"Ensemble members: {len(self.data_streams)}")
-        print("Common variables:", out["common_variables"])
+        if verbose:
+            print(f"Ensemble members: {len(self.data_streams)}")
+            print("Common variables:", out["common_variables"])
         return out
 
     # ========== Helpers ==========
@@ -246,9 +296,9 @@ class Ensemble:
         cols = self._resolve_cols(None)
         return _direct_average(data_streams, cols=cols, min_coverage=min_coverage)
 
-    # ========== Technique 0: average-ensemble statistics ==========
+    # ========== ensemble_average (T0): single averaged trace ==========
 
-    def _tech0_stats_for_col(
+    def _ensemble_average_stats_for_col(
         self,
         col: str,
         ddof: int = 1,
@@ -256,8 +306,8 @@ class Ensemble:
         window_size: Optional[int] = None,
         avg_ds: Optional[DataStream] = None,
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-        """Compute Technique-0 statistics for one column."""
-        return _tech0_stats(
+        """Compute ensemble_average (T0) statistics for one column."""
+        return _ensemble_average_stats(
             data_streams=self.data_streams,
             col=col,
             ddof=ddof,
@@ -266,54 +316,9 @@ class Ensemble:
             avg_ds=avg_ds,
         )
 
-    # ========== Technique 1: pooled-block statistics ==========
+    # ========== pooled_block_means (T1) ==========
 
-    def _autotune_member_blocks_until_independent(
-        self,
-        ds: DataStream,
-        col: str,
-        window_size: Optional[int],
-        method: str = "non-overlapping",
-        lb_alpha: float = 0.05,
-        lb_lags: Optional[int] = None,
-        max_tries: int = 25,
-        min_blocks: int = 8,
-    ) -> Tuple[np.ndarray, Dict[str, Any]]:
-        """Delegate to :func:`~quends.base.ensemble_statistics.autotune_member_blocks_until_independent`."""
-        return _autotune_blocks(
-            ds=ds,
-            col=col,
-            window_size=window_size,
-            method=method,
-            lb_alpha=lb_alpha,
-            lb_lags=lb_lags,
-            max_tries=max_tries,
-            min_blocks=min_blocks,
-        )
-
-    def _pooled_block_means_from_trimmed(
-        self,
-        col: str,
-        window_size: Optional[int],
-        method: str = "non-overlapping",
-        lb_alpha: float = 0.05,
-        lb_lags: Optional[int] = None,
-        max_tries: int = 25,
-        min_blocks: int = 8,
-    ) -> Tuple[np.ndarray, Dict[str, Any]]:
-        """Delegate to :func:`~quends.base.ensemble_statistics.pool_block_means`."""
-        return _pool_block_means(
-            data_streams=self.data_streams,
-            col=col,
-            window_size=window_size,
-            method=method,
-            lb_alpha=lb_alpha,
-            lb_lags=lb_lags,
-            max_tries=max_tries,
-            min_blocks=min_blocks,
-        )
-
-    def _tech1_pooled_stats_for_col(
+    def _pooled_block_means_stats_for_col(
         self,
         col: str,
         ddof: int = 1,
@@ -323,8 +328,8 @@ class Ensemble:
         lb_alpha: float = 0.05,
         pooled_lb_alpha_bad: float = 0.01,
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-        """Compute Technique-1 (pooled-block) statistics for one column."""
-        return _tech1_stats(
+        """Compute pooled_block_means (T1) statistics for one column."""
+        return _pooled_block_means_stats(
             data_streams=self.data_streams,
             col=col,
             ddof=ddof,
@@ -335,9 +340,9 @@ class Ensemble:
             pooled_lb_alpha_bad=pooled_lb_alpha_bad,
         )
 
-    # ========== Technique 2: member-wise then aggregate ==========
+    # ========== ivw_member_means (T2) ==========
 
-    def _tech2_stats_for_col(
+    def _ivw_member_means_stats_for_col(
         self,
         col: str,
         ddof: int = 1,
@@ -345,8 +350,8 @@ class Ensemble:
         window_size: Optional[int] = None,
         diagnostics: str = "compact",
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-        """Compute Technique-2 statistics for one column."""
-        return _tech2_stats(
+        """Compute ivw_member_means (T2) statistics for one column."""
+        return _ivw_member_means_stats(
             data_streams=self.data_streams,
             col=col,
             ddof=ddof,
@@ -458,48 +463,89 @@ class Ensemble:
 
     # ========== Mean / SEM / CI ==========
 
+    # Map canonical technique → metadata key (used by the per-stat helpers below).
+    _METADATA_KEYS = {
+        ENSEMBLE_AVERAGE: "technique_0_ensemble_average",
+        POOLED_BLOCK_MEANS: "technique_1_pooled_block_means",
+        IVW_MEMBER_MEANS: "technique_2_ivw_member_means",
+    }
+
+    def _per_stat_dispatch(
+        self,
+        cols,
+        stat_key,
+        default,
+        ddof: int,
+        method: str,
+        window_size: Optional[int],
+        technique,
+        diagnostics: str,
+    ) -> Dict:
+        """Internal helper used by mean / mean_uncertainty / confidence_interval."""
+        canonical = _normalize_technique(technique)
+        result: Dict[str, Any] = {}
+        meta_cols: Dict[str, Any] = {}
+
+        if canonical == ENSEMBLE_AVERAGE:
+            avg_ds = self.compute_average_ensemble()
+            for col in cols:
+                s, m = self._ensemble_average_stats_for_col(
+                    col=col, ddof=ddof, method=method,
+                    window_size=window_size, avg_ds=avg_ds,
+                )
+                result[col] = s.get(stat_key, default)
+                meta_cols[col] = m
+        elif canonical == POOLED_BLOCK_MEANS:
+            for col in cols:
+                s, m = self._pooled_block_means_stats_for_col(
+                    col=col, ddof=ddof, window_size=window_size, method=method,
+                )
+                result[col] = s.get(stat_key, default)
+                meta_cols[col] = m
+        else:  # IVW_MEMBER_MEANS
+            for col in cols:
+                s, m = self._ivw_member_means_stats_for_col(
+                    col=col, ddof=ddof, method=method,
+                    window_size=window_size, diagnostics=diagnostics,
+                )
+                result[col] = s.get(stat_key, default)
+                meta_cols[col] = (
+                    m if diagnostics == "full"
+                    else {"n_members_used": m.get("n_members_used", 0)}
+                )
+
+        return {
+            "results": result,
+            "metadata": {self._METADATA_KEYS[canonical]: meta_cols},
+        }
+
     def mean(
         self,
         column_name=None,
         method: str = "non-overlapping",
         window_size: Optional[int] = None,
-        technique: int = 1,
+        technique=POOLED_BLOCK_MEANS,
         diagnostics: str = "compact",
     ) -> Dict:
         """
         Ensemble mean.
 
-        technique=0  average-ensemble: build single averaged trace, compute stats on it
-        technique=1  pooled-block (preferred for trimmed ensembles)
-        technique=2  member-wise then inverse-variance aggregate
+        technique
+            ``"ensemble_average"``     — build single averaged trace, compute stats on it
+            ``"pooled_block_means"``   — preferred for trimmed ensembles
+            ``"ivw_member_means"``     — member-wise then inverse-variance aggregate
+            (legacy ``0/1/2`` and ``"technique0"/1/2`` strings still accepted)
         """
-        cols = self._resolve_cols(column_name)
-        result, meta_cols = {}, {}
-
-        if technique == 0:
-            avg_ds = self.compute_average_ensemble()
-            for col in cols:
-                s, m = self._tech0_stats_for_col(col=col, ddof=1, method=method, window_size=window_size, avg_ds=avg_ds)
-                result[col] = s.get("mean", np.nan)
-                meta_cols[col] = m
-            return {"results": result, "metadata": {"technique_0_average_ensemble": meta_cols}}
-
-        elif technique == 1:
-            for col in cols:
-                s, m = self._tech1_pooled_stats_for_col(col=col, ddof=1, window_size=window_size, method=method)
-                result[col] = s.get("mean", np.nan)
-                meta_cols[col] = m
-            return {"results": result, "metadata": {"technique_1_pooled": meta_cols}}
-
-        elif technique == 2:
-            for col in cols:
-                s, m = self._tech2_stats_for_col(col=col, ddof=1, method=method, window_size=window_size, diagnostics=diagnostics)
-                result[col] = s.get("mean", np.nan)
-                meta_cols[col] = m if diagnostics == "full" else {"n_members_used": m.get("n_members_used", 0)}
-            return {"results": result, "metadata": {"technique_2_memberwise": meta_cols}}
-
-        else:
-            raise ValueError("Invalid technique. Use 0, 1, or 2.")
+        return self._per_stat_dispatch(
+            cols=self._resolve_cols(column_name),
+            stat_key="mean",
+            default=np.nan,
+            ddof=1,
+            method=method,
+            window_size=window_size,
+            technique=technique,
+            diagnostics=diagnostics,
+        )
 
     def mean_uncertainty(
         self,
@@ -507,37 +553,20 @@ class Ensemble:
         ddof: int = 1,
         method: str = "non-overlapping",
         window_size: Optional[int] = None,
-        technique: int = 1,
+        technique=POOLED_BLOCK_MEANS,
         diagnostics: str = "compact",
     ) -> Dict:
         """Ensemble SEM. See `mean()` for technique semantics."""
-        cols = self._resolve_cols(column_name)
-        result, meta_cols = {}, {}
-
-        if technique == 0:
-            avg_ds = self.compute_average_ensemble()
-            for col in cols:
-                s, m = self._tech0_stats_for_col(col=col, ddof=ddof, method=method, window_size=window_size, avg_ds=avg_ds)
-                result[col] = s.get("mean_uncertainty", np.nan)
-                meta_cols[col] = m
-            return {"results": result, "metadata": {"technique_0_average_ensemble": meta_cols}}
-
-        elif technique == 1:
-            for col in cols:
-                s, m = self._tech1_pooled_stats_for_col(col=col, ddof=ddof, window_size=window_size, method=method)
-                result[col] = s.get("mean_uncertainty", np.nan)
-                meta_cols[col] = m
-            return {"results": result, "metadata": {"technique_1_pooled": meta_cols}}
-
-        elif technique == 2:
-            for col in cols:
-                s, m = self._tech2_stats_for_col(col=col, ddof=ddof, method=method, window_size=window_size, diagnostics=diagnostics)
-                result[col] = s.get("mean_uncertainty", np.nan)
-                meta_cols[col] = m if diagnostics == "full" else {"n_members_used": m.get("n_members_used", 0)}
-            return {"results": result, "metadata": {"technique_2_memberwise": meta_cols}}
-
-        else:
-            raise ValueError("Invalid technique. Use 0, 1, or 2.")
+        return self._per_stat_dispatch(
+            cols=self._resolve_cols(column_name),
+            stat_key="mean_uncertainty",
+            default=np.nan,
+            ddof=ddof,
+            method=method,
+            window_size=window_size,
+            technique=technique,
+            diagnostics=diagnostics,
+        )
 
     def confidence_interval(
         self,
@@ -545,37 +574,20 @@ class Ensemble:
         ddof: int = 1,
         method: str = "non-overlapping",
         window_size: Optional[int] = None,
-        technique: int = 1,
+        technique=POOLED_BLOCK_MEANS,
         diagnostics: str = "compact",
     ) -> Dict:
-        """Ensemble 95% CI. See `mean()` for technique semantics."""
-        cols = self._resolve_cols(column_name)
-        result, meta_cols = {}, {}
-
-        if technique == 0:
-            avg_ds = self.compute_average_ensemble()
-            for col in cols:
-                s, m = self._tech0_stats_for_col(col=col, ddof=ddof, method=method, window_size=window_size, avg_ds=avg_ds)
-                result[col] = s.get("confidence_interval", (np.nan, np.nan))
-                meta_cols[col] = m
-            return {"results": result, "metadata": {"technique_0_average_ensemble": meta_cols}}
-
-        elif technique == 1:
-            for col in cols:
-                s, m = self._tech1_pooled_stats_for_col(col=col, ddof=ddof, window_size=window_size, method=method)
-                result[col] = s.get("confidence_interval", (np.nan, np.nan))
-                meta_cols[col] = m
-            return {"results": result, "metadata": {"technique_1_pooled": meta_cols}}
-
-        elif technique == 2:
-            for col in cols:
-                s, m = self._tech2_stats_for_col(col=col, ddof=ddof, method=method, window_size=window_size, diagnostics=diagnostics)
-                result[col] = s.get("confidence_interval", (np.nan, np.nan))
-                meta_cols[col] = m if diagnostics == "full" else {"n_members_used": m.get("n_members_used", 0)}
-            return {"results": result, "metadata": {"technique_2_memberwise": meta_cols}}
-
-        else:
-            raise ValueError("Invalid technique. Use 0, 1, or 2.")
+        """Ensemble confidence interval. See `mean()` for technique semantics."""
+        return self._per_stat_dispatch(
+            cols=self._resolve_cols(column_name),
+            stat_key="confidence_interval",
+            default=(np.nan, np.nan),
+            ddof=ddof,
+            method=method,
+            window_size=window_size,
+            technique=technique,
+            diagnostics=diagnostics,
+        )
 
     # ========== Full statistics ==========
 
@@ -585,15 +597,28 @@ class Ensemble:
         ddof: int = 1,
         method: str = "non-overlapping",
         window_size: Optional[int] = None,
-        technique: int = 1,
+        technique=POOLED_BLOCK_MEANS,
         diagnostics: str = "compact",
+        confidence_level: float = 0.95,
+        ci_method: str = "normal",
     ) -> Dict:
         """
         Aggregate mean, SEM, CI, ±SEM, variance, ESS across the ensemble.
 
-        technique=0  Average-ensemble then analyze (average-then-analyze workflow).
-        technique=1  Pooled-block (preferred for trimmed ensembles).
-        technique=2  Member-wise then aggregate.
+        technique=``"ensemble_average"``   Single averaged trace, then DataStream stats.
+        technique=``"pooled_block_means"`` Preferred for trimmed ensembles.
+        technique=``"ivw_member_means"``   Per-member stats, inverse-variance combined.
+        (Legacy ``0``/``1``/``2`` and ``"technique0"``/``"technique1"``/``"technique2"``
+        also accepted.)
+
+        Confidence-interval parameters (defaults preserve historical 95 %
+        normal CI, multiplier ``1.96``):
+
+        confidence_level : float
+            Two-sided confidence level.
+        ci_method : {'normal', 't'}
+            Quantile family.  ``'t'`` is supported for techniques 0 and 1
+            (where dof is well-defined); raises for technique 2.
 
         Returns {"results": {col: {stats}}, "metadata": {...}}.
 
@@ -610,6 +635,37 @@ class Ensemble:
             window_size=window_size,
             technique=technique,
             diagnostics=diagnostics,
+            confidence_level=confidence_level,
+            ci_method=ci_method,
+        )
+
+    def compute_uncertainty(
+        self,
+        method="pooled_block_means",
+        column_name=None,
+        *,
+        ddof: int = 1,
+        window_size: Optional[int] = None,
+        diagnostics: str = "compact",
+        confidence_level: float = 0.95,
+        ci_method: str = "normal",
+    ) -> Dict:
+        """Friendly alias for :meth:`compute_statistics` keyed by estimator name.
+
+        ``method`` is the estimator: ``"ensemble_average"`` | ``"pooled_block_means"``
+        | ``"ivw"`` (plus the legacy ``technique`` aliases). Equivalent to calling
+        ``compute_statistics(..., technique=method)`` — the latter still works.
+
+        Returns the same ``{"results": {...}, "metadata": {...}}`` schema.
+        """
+        return self.compute_statistics(
+            column_name=column_name,
+            ddof=ddof,
+            window_size=window_size,
+            technique=method,
+            diagnostics=diagnostics,
+            confidence_level=confidence_level,
+            ci_method=ci_method,
         )
 
     # ========== ESS ==========
@@ -618,7 +674,7 @@ class Ensemble:
         self,
         column_names=None,
         alpha: float = 0.05,
-        technique: int = 1,
+        technique=POOLED_BLOCK_MEANS,
     ) -> Dict:
         """Compute ESS via ensemble statistics (delegates to compute_statistics)."""
         out = self.compute_statistics(column_name=column_names, technique=technique)
@@ -636,7 +692,7 @@ class Ensemble:
         ddof: int = 1,
         method: str = "non-overlapping",
         window_size: Optional[int] = None,
-        technique: int = 1,
+        technique=POOLED_BLOCK_MEANS,
     ) -> Dict:
         """ESS on block means (Geyer) from compute_statistics."""
         out = self.compute_statistics(
@@ -653,7 +709,7 @@ class Ensemble:
         ddof: int = 1,
         method: str = "non-overlapping",
         window_size: Optional[int] = None,
-        technique: int = 1,
+        technique=POOLED_BLOCK_MEANS,
     ) -> Dict:
         """Count of block means from compute_statistics."""
         out = self.compute_statistics(

@@ -1,24 +1,26 @@
 """
 ensemble_statistics_workflow.py
 --------------------------------
-Ensemble Statistics Workflow (Technique 1 and/or Technique 2).
+Ensemble Statistics Workflow.
 
 This workflow supports two member-wise ensemble analysis techniques:
 
-Technique 1 — Pooled-block:
+``pooled_block_means`` (T1):
   1. Trim each ensemble member individually.
   2. For each surviving member, autotune the block window size until block
      means pass the Ljung-Box independence test.
   3. Pool all per-member block means into a single series.
   4. Compute statistics (mean, SEM, CI, ESS) on the pooled series.
 
-Technique 2 — Inverse-variance weighted:
+``ivw_member_means`` (T2):
   1. Trim each ensemble member individually.
   2. Compute statistics independently on each trimmed member.
   3. Combine per-member results using inverse-variance weighting
      (fallback: simple mean when all SEs are zero or unavailable).
 
-The workflow can run Technique 1 only, Technique 2 only, or both.
+The workflow can run either technique alone, or both via ``technique="both"``.
+Legacy values ``"technique1"`` / ``"technique2"`` are accepted as backward-
+compatible aliases.
 
 All core statistical logic is delegated to
 :mod:`quends.base.ensemble_statistics` and
@@ -29,7 +31,7 @@ Typical usage
 >>> from quends import Ensemble, from_csv
 >>> from quends.workflow import EnsembleStatisticsWorkflow
 >>>
->>> members = [from_csv("run_a.csv"), from_csv("run_b.csv"), from_csv("run_c.csv")]
+>>> members = [from_csv("run_a.csv", "HeatFlux_st"), from_csv("run_b.csv", "HeatFlux_st"), from_csv("run_c.csv", "HeatFlux_st")]
 >>> workflow = EnsembleStatisticsWorkflow(
 ...     column_name="HeatFlux_st",
 ...     technique="both",
@@ -39,29 +41,61 @@ Typical usage
 ...     verbosity=1,
 ... )
 >>> result = workflow.run(members)
->>> print(result["technique1"]["statistics"])
->>> print(result["technique2"]["statistics"])
+>>> print(result["pooled_block_means"]["statistics"])
+>>> print(result["ivw_member_means"]["statistics"])
 """
 
-from typing import Any, Dict, List, Optional, Union
-
-import numpy as np
+from typing import Any, Dict, List, Optional
 
 from ..base.data_stream import DataStream
 from ..base.ensemble_statistics import (
-    compute_ensemble_statistics,
-    tech1_pooled_stats_for_col,
-    tech2_stats_for_col,
+    IVW_MEMBER_MEANS,
+    POOLED_BLOCK_MEANS,
+    ivw_member_means_stats_for_col,
+    pooled_block_means_stats_for_col,
 )
 from ..base.ensemble_utils import (
-    get_common_variables,
     resolve_cols,
     trim_members,
     validate_members,
 )
 
-# Valid technique identifiers
-_VALID_TECHNIQUES = frozenset({"technique1", "technique2", "both"})
+# Canonical workflow technique identifiers.  Legacy aliases below are accepted
+# for backward compatibility but normalised to the canonical strings.
+_TECHNIQUE_BOTH = "both"
+_VALID_TECHNIQUES = frozenset({POOLED_BLOCK_MEANS, IVW_MEMBER_MEANS, _TECHNIQUE_BOTH})
+
+# Map every accepted alias → canonical workflow technique.
+_WORKFLOW_TECHNIQUE_ALIASES = {
+    # canonical
+    POOLED_BLOCK_MEANS: POOLED_BLOCK_MEANS,
+    IVW_MEMBER_MEANS: IVW_MEMBER_MEANS,
+    _TECHNIQUE_BOTH: _TECHNIQUE_BOTH,
+    # legacy
+    "technique1": POOLED_BLOCK_MEANS,
+    "technique2": IVW_MEMBER_MEANS,
+    "t1": POOLED_BLOCK_MEANS,
+    "t2": IVW_MEMBER_MEANS,
+    "ivw": IVW_MEMBER_MEANS,
+    "pool": POOLED_BLOCK_MEANS,
+    1: POOLED_BLOCK_MEANS,
+    2: IVW_MEMBER_MEANS,
+    "1": POOLED_BLOCK_MEANS,
+    "2": IVW_MEMBER_MEANS,
+}
+
+
+def _normalize_workflow_technique(value):
+    """Normalise any accepted workflow technique alias to its canonical form."""
+    key = value
+    if isinstance(key, str):
+        key = key.strip().lower()
+    if key in _WORKFLOW_TECHNIQUE_ALIASES:
+        return _WORKFLOW_TECHNIQUE_ALIASES[key]
+    raise ValueError(
+        f"technique must be one of {sorted(_VALID_TECHNIQUES)!r} "
+        f"(or legacy 'technique1'/'technique2'); got {value!r}."
+    )
 
 
 class EnsembleStatisticsWorkflow:
@@ -119,16 +153,14 @@ class EnsembleStatisticsWorkflow:
         stats_method: str = "non-overlapping",
         stats_window_size: Optional[int] = None,
         diagnostics: str = "compact",
+        confidence_level: float = 0.95,
+        ci_method: str = "normal",
         verbosity: int = 0,
         keep_trimmed: bool = False,
     ) -> None:
-        if technique not in _VALID_TECHNIQUES:
-            raise ValueError(
-                f"technique must be one of {sorted(_VALID_TECHNIQUES)!r}; "
-                f"got {technique!r}."
-            )
+        canonical_technique = _normalize_workflow_technique(technique)
         self._column_name = column_name
-        self._technique = technique
+        self._technique = canonical_technique
         self._trim_method = trim_method
         self._window_size = window_size
         self._start_time = start_time
@@ -139,6 +171,8 @@ class EnsembleStatisticsWorkflow:
         self._stats_method = stats_method
         self._stats_window_size = stats_window_size
         self._diagnostics = diagnostics
+        self._confidence_level = confidence_level
+        self._ci_method = ci_method
         self._verbosity = verbosity
         self._keep_trimmed = keep_trimmed
 
@@ -147,16 +181,9 @@ class EnsembleStatisticsWorkflow:
     # ------------------------------------------------------------------
 
     def _resolve_members(self, ensemble_or_members: Any) -> List[DataStream]:
-        from ..base.ensemble import Ensemble  # noqa: PLC0415
+        from ._common import resolve_members  # noqa: PLC0415
 
-        if isinstance(ensemble_or_members, Ensemble):
-            return ensemble_or_members.members()
-        if isinstance(ensemble_or_members, list):
-            return ensemble_or_members
-        raise TypeError(
-            "ensemble_or_members must be an Ensemble or a list of DataStream objects; "
-            f"got {type(ensemble_or_members).__name__!r}."
-        )
+        return resolve_members(ensemble_or_members)
 
     def _trim_all_members(self, members: List[DataStream], cols: List[str]) -> Dict[str, List[DataStream]]:
         """
@@ -185,57 +212,67 @@ class EnsembleStatisticsWorkflow:
             trimmed_by_col[col] = kept
         return trimmed_by_col
 
-    def _run_technique1(
+    def _run_pooled_block_means(
         self,
         trimmed_by_col: Dict[str, List[DataStream]],
     ) -> Dict[str, Any]:
-        """Run pooled-block statistics (Technique 1) for all columns."""
+        """Run *pooled_block_means* (T1) statistics for all columns."""
         stats: Dict[str, Any] = {}
         meta_cols: Dict[str, Any] = {}
 
         for col, kept in trimmed_by_col.items():
-            col_stats, col_meta = tech1_pooled_stats_for_col(
+            col_stats, col_meta = pooled_block_means_stats_for_col(
                 data_streams=kept,
                 col=col,
                 ddof=self._ddof,
                 window_size=self._stats_window_size,
                 method=self._stats_method,
+                confidence_level=self._confidence_level,
+                ci_method=self._ci_method,
             )
             stats[col] = col_stats
             meta_cols[col] = col_meta
 
         return {
-            "statistics": {"results": stats, "metadata": {"technique_1_pooled": meta_cols}},
+            "statistics": {
+                "results": stats,
+                "metadata": {"technique_1_pooled_block_means": meta_cols},
+            },
             "metadata": {
-                "technique": "technique1 (pooled-block)",
+                "technique": "pooled_block_means",
                 "n_trimmed_per_col": {col: len(kept) for col, kept in trimmed_by_col.items()},
             },
         }
 
-    def _run_technique2(
+    def _run_ivw_member_means(
         self,
         trimmed_by_col: Dict[str, List[DataStream]],
     ) -> Dict[str, Any]:
-        """Run inverse-variance weighted statistics (Technique 2) for all columns."""
+        """Run *ivw_member_means* (T2) statistics for all columns."""
         stats: Dict[str, Any] = {}
         meta_cols: Dict[str, Any] = {}
 
         for col, kept in trimmed_by_col.items():
-            col_stats, col_meta = tech2_stats_for_col(
+            col_stats, col_meta = ivw_member_means_stats_for_col(
                 data_streams=kept,
                 col=col,
                 ddof=self._ddof,
                 method=self._stats_method,
                 window_size=self._stats_window_size,
                 diagnostics=self._diagnostics,
+                confidence_level=self._confidence_level,
+                ci_method=self._ci_method,
             )
             stats[col] = col_stats
             meta_cols[col] = col_meta
 
         return {
-            "statistics": {"results": stats, "metadata": {"technique_2_memberwise": meta_cols}},
+            "statistics": {
+                "results": stats,
+                "metadata": {"technique_2_ivw_member_means": meta_cols},
+            },
             "metadata": {
-                "technique": "technique2 (member-wise inverse-variance weighted)",
+                "technique": "ivw_member_means",
                 "n_trimmed_per_col": {col: len(kept) for col, kept in trimmed_by_col.items()},
                 "diagnostics": self._diagnostics,
             },
@@ -259,14 +296,14 @@ class EnsembleStatisticsWorkflow:
         dict
             Structure depends on *technique*:
 
-            **technique="technique1"**::
+            **technique="pooled_block_means"**::
 
               {
                 "workflow": "ensemble_statistics",
                 "n_members": int,
                 "column_name": …,
-                "technique": "technique1",
-                "technique1": {
+                "technique": "pooled_block_means",
+                "pooled_block_means": {
                     "trimmed_members": list or None,
                     "statistics": {"results": {col: {…}}, "metadata": {…}},
                     "metadata": {…},
@@ -274,10 +311,14 @@ class EnsembleStatisticsWorkflow:
                 "metadata": {…},
               }
 
-            **technique="technique2"** — same shape but ``"technique2"`` key.
+            **technique="ivw_member_means"** — same shape but
+            ``"ivw_member_means"`` key.
 
-            **technique="both"** — both ``"technique1"`` and ``"technique2"``
-            keys are present.
+            **technique="both"** — both ``"pooled_block_means"`` and
+            ``"ivw_member_means"`` keys are present.
+
+            Legacy ``"technique1"`` / ``"technique2"`` inputs are normalised to
+            the canonical names; the result dict uses the canonical keys.
 
         Raises
         ------
@@ -321,34 +362,34 @@ class EnsembleStatisticsWorkflow:
                 )
 
         # ── Run requested technique(s) ────────────────────────────────
-        run_t1 = self._technique in ("technique1", "both")
-        run_t2 = self._technique in ("technique2", "both")
+        run_pooled = self._technique in (POOLED_BLOCK_MEANS, _TECHNIQUE_BOTH)
+        run_ivw = self._technique in (IVW_MEMBER_MEANS, _TECHNIQUE_BOTH)
 
-        t1_result: Optional[Dict] = None
-        t2_result: Optional[Dict] = None
+        pooled_result: Optional[Dict] = None
+        ivw_result: Optional[Dict] = None
 
-        if run_t1:
+        if run_pooled:
             if self._verbosity > 0:
-                print("  Running Technique 1 (pooled-block)…")
-            t1_result = self._run_technique1(trimmed_by_col)
+                print("  Running pooled_block_means (T1)…")
+            pooled_result = self._run_pooled_block_means(trimmed_by_col)
             if self._keep_trimmed:
                 # Attach trimmed members (same across techniques when col list is length 1)
-                t1_result["trimmed_members"] = {
+                pooled_result["trimmed_members"] = {
                     col: kept for col, kept in trimmed_by_col.items()
                 }
             else:
-                t1_result["trimmed_members"] = None
+                pooled_result["trimmed_members"] = None
 
-        if run_t2:
+        if run_ivw:
             if self._verbosity > 0:
-                print("  Running Technique 2 (inverse-variance weighted)…")
-            t2_result = self._run_technique2(trimmed_by_col)
+                print("  Running ivw_member_means (T2)…")
+            ivw_result = self._run_ivw_member_means(trimmed_by_col)
             if self._keep_trimmed:
-                t2_result["trimmed_members"] = {
+                ivw_result["trimmed_members"] = {
                     col: kept for col, kept in trimmed_by_col.items()
                 }
             else:
-                t2_result["trimmed_members"] = None
+                ivw_result["trimmed_members"] = None
 
         # ── Build result ───────────────────────────────────────────────
         result: Dict[str, Any] = {
@@ -370,13 +411,13 @@ class EnsembleStatisticsWorkflow:
             },
         }
 
-        if self._technique == "technique1":
-            result["technique1"] = t1_result
-        elif self._technique == "technique2":
-            result["technique2"] = t2_result
+        if self._technique == POOLED_BLOCK_MEANS:
+            result[POOLED_BLOCK_MEANS] = pooled_result
+        elif self._technique == IVW_MEMBER_MEANS:
+            result[IVW_MEMBER_MEANS] = ivw_result
         else:  # "both"
-            result["technique1"] = t1_result
-            result["technique2"] = t2_result
+            result[POOLED_BLOCK_MEANS] = pooled_result
+            result[IVW_MEMBER_MEANS] = ivw_result
 
         if self._verbosity > 0:
             print("[EnsembleStatisticsWorkflow] Done.")

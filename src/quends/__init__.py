@@ -1,5 +1,7 @@
 # quends/__init__.py
 
+__version__ = "0.1.0"
+
 # Importing classes and functions from base module
 from .base.data_stream import DataStream
 from .base.ensemble import Ensemble

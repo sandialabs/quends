@@ -1,4 +1,4 @@
-from quends.base.history import DataStreamHistoryEntry
+from .history import DataStreamHistoryEntry
 
 from .data_stream import DataStream
 from .operations import DataStreamOperation
@@ -59,21 +59,28 @@ class MakeDataStreamStationaryOperation(DataStreamOperation):
 
         return result_ds, is_stationary
 
-    def _apply(self, data_stream: DataStream) -> tuple[DataStream, bool]:
+    def _apply(self, data_stream: DataStream, **kwargs) -> tuple[DataStream, bool]:
         """
-        Attempt to make the data stream into being stationary by removing an initial
+        Attempt to make the data stream stationary by removing an initial
         fraction of data.
+
+        Detection parameters (``column``, ``n_pts_orig``, ``n_pts_min``,
+        ``n_pts_frac_min``, ``operate_safe``, ``verbosity``) are taken from the
+        instance attributes set in ``__init__``. Extra ``**kwargs`` forwarded by
+        ``__call__`` are accepted and ignored here so the signature stays
+        compatible with the base ``DataStreamOperation`` contract.
 
         Parameters
         ----------
-        col : str
-        n_pts_orig : int
-        workflow : RobustWorkflow
+        data_stream : DataStream
+            The stream to stationarize.
 
         Returns
         -------
-        self : DataStream
+        result : DataStream
+            The (possibly trimmed) stream.
         stationary : bool
+            Whether stationarity was achieved.
         """
         col = self.column
         n_pts_orig = self.n_pts_orig

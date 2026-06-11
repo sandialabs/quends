@@ -34,13 +34,21 @@ class TrimStrategy(ABC):
         pass  # pragma: no cover
 
     def apply(
-        self, data_stream: DataStream, column_name: str, **kwargs: Any
+        self,
+        data_stream: DataStream,
+        column_name: str,
+        _stationary_checked: bool = False,
+        **kwargs: Any,
     ) -> DataStream:
         """
         Template method that defines the trimming workflow.
+
+        ``_stationary_checked`` lets a subclass that has already verified
+        stationarity (e.g. :class:`NoiseThresholdTrimStrategy`) skip the
+        redundant re-check here without changing behavior.
         """
-        # Check stationarity
-        if not self._check_stationary(data_stream, column_name):
+        # Check stationarity (unless a caller already did it).
+        if not _stationary_checked and not self._check_stationary(data_stream, column_name):
             return self._create_error_result(
                 data_stream,
                 kwargs,
@@ -77,13 +85,25 @@ class TrimStrategy(ABC):
         self, data_stream: DataStream, column_name: str
     ) -> pd.DataFrame:
         """Preprocess the data"""
+        if "time" not in data_stream.data.columns:
+            raise ValueError(
+                "Steady-state trimming requires a 'time' column, but none was "
+                f"found (columns: {list(data_stream.data.columns)}). Load data "
+                "with a time axis (the preprocessing loaders attach one)."
+            )
         data = data_stream.data[
             data_stream.data["time"] >= self.start_time
         ].reset_index(drop=True)
 
-        non_zero_index = data[data[column_name] > 0].index.min()
-        if non_zero_index is not None and non_zero_index > 0:
-            data = data.loc[non_zero_index:].reset_index(drop=True)
+        # Skip a leading all/mostly-zero warm-up region (e.g. GX heat-flux traces
+        # that sit at ~0 during linear growth). This assumes a non-negative signal
+        # that starts near zero, so it is opt-out via ``drop_leading_nonpositive``
+        # for signals that legitimately go <= 0 (default True preserves prior
+        # behavior — see AUDIT_REPORT H6).
+        if getattr(self, "drop_leading_nonpositive", True):
+            non_zero_index = data[data[column_name] > 0].index.min()
+            if non_zero_index is not None and non_zero_index > 0:
+                data = data.loc[non_zero_index:].reset_index(drop=True)
 
         return data
 
@@ -280,7 +300,10 @@ class NoiseThresholdTrimStrategy(TrimStrategy):
                 "Threshold must be specified for the 'threshold' trim strategy.",
             )
 
-        return super().apply(data_stream, column_name, **kwargs)
+        # Stationarity already verified above — tell the base template to skip it.
+        return super().apply(
+            data_stream, column_name, _stationary_checked=True, **kwargs
+        )
 
     @property
     def method_name(self) -> str:
@@ -339,7 +362,13 @@ class NoiseThresholdTrimStrategy(TrimStrategy):
 
 
 class RollingVarianceThresholdTrimStrategy(TrimStrategy):
-    """Detect steady-state when rolling variance falls below threshold."""
+    """Detect steady-state when the rolling spread falls below a threshold.
+
+    Note: despite the historical name ("variance"), the criterion uses the
+    rolling **standard deviation** (``.std()``) compared against
+    ``threshold * mean(rolling_std)``. The name is retained for backward
+    compatibility (``build_trim_strategy("rolling_variance")``).
+    """
 
     def __init__(
         self,
@@ -443,7 +472,10 @@ class MeanVariationTrimStrategy(TrimStrategy):
 
     @property
     def method_name(self) -> str:
-        return "sss_start"
+        # Factory/label name (matches build_trim_strategy("mean_variation")).
+        # The detected steady-state time is still recorded under the
+        # trim_metadata key "sss_start".
+        return "mean_variation"
 
     def _detection_method(
         self, data: pd.DataFrame, column_name: str
@@ -482,6 +514,9 @@ class MeanVariationTrimStrategy(TrimStrategy):
         """
         # Lazy import: matplotlib is only needed when verbosity > 1 (plotting mode).
         if self.verbosity > 1:
+            import matplotlib
+
+            matplotlib.use("Agg", force=True)
             from matplotlib import pyplot as plt
 
         # Get the decorrelation length (in number of points)
@@ -1004,6 +1039,10 @@ def build_trim_strategy(
             start_time=start_time,
             threshold=threshold if threshold is not None else 0.05,
         ),
+        # Statistical-Steady-State (autocorrelation-based) detector. It manages
+        # its own windowing, so window_size/start_time/threshold are not used.
+        "mean_variation": lambda: MeanVariationTrimStrategy(),
+        "sss_start": lambda: MeanVariationTrimStrategy(),  # alias
     }
     if method not in _map:
         raise ValueError(

@@ -28,7 +28,7 @@ Typical usage
 >>> from quends import Ensemble, from_csv
 >>> from quends.workflow import EnsembleAverageWorkflow
 >>>
->>> members = [from_csv("run_a.csv"), from_csv("run_b.csv"), from_csv("run_c.csv")]
+>>> members = [from_csv("run_a.csv", "HeatFlux_st"), from_csv("run_b.csv", "HeatFlux_st"), from_csv("run_c.csv", "HeatFlux_st")]
 >>> workflow = EnsembleAverageWorkflow(
 ...     column_name="HeatFlux_st",
 ...     trim_method="std",
@@ -40,7 +40,7 @@ Typical usage
 >>> print(result["statistics"])
 """
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -116,6 +116,8 @@ class EnsembleAverageWorkflow:
         ddof: int = 1,
         stats_method: str = "non-overlapping",
         stats_window_size: Optional[int] = None,
+        confidence_level: float = 0.95,
+        ci_method: str = "normal",
         verbosity: int = 0,
         keep_intermediate: bool = False,
     ) -> None:
@@ -135,6 +137,8 @@ class EnsembleAverageWorkflow:
         self._ddof = ddof
         self._stats_method = stats_method
         self._stats_window_size = stats_window_size
+        self._confidence_level = confidence_level
+        self._ci_method = ci_method
         self._verbosity = verbosity
         self._keep_intermediate = keep_intermediate
 
@@ -147,17 +151,9 @@ class EnsembleAverageWorkflow:
         ensemble_or_members: Any,
     ) -> List[DataStream]:
         """Accept an Ensemble object or a plain list of DataStreams."""
-        # Import here to avoid circular import at module load time
-        from ..base.ensemble import Ensemble  # noqa: PLC0415
+        from ._common import resolve_members  # noqa: PLC0415
 
-        if isinstance(ensemble_or_members, Ensemble):
-            return ensemble_or_members.members()
-        if isinstance(ensemble_or_members, list):
-            return ensemble_or_members
-        raise TypeError(
-            "ensemble_or_members must be an Ensemble or a list of DataStream objects; "
-            f"got {type(ensemble_or_members).__name__!r}."
-        )
+        return resolve_members(ensemble_or_members)
 
     # ------------------------------------------------------------------
     # Main entry point
@@ -287,6 +283,8 @@ class EnsembleAverageWorkflow:
             ddof=self._ddof,
             method=self._stats_method,
             window_size=self._stats_window_size,
+            confidence_level=self._confidence_level,
+            ci_method=self._ci_method,
         )
 
         if self._verbosity > 0:

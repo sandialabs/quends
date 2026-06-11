@@ -1,46 +1,32 @@
 """
 batch_ensemble_workflow.py
 --------------------------
-Batch Ensemble Workflow — scaffold for future batch processing.
+Batch Ensemble Workflow — run a sub-workflow over many ensemble groups.
 
-This module provides a scaffold / placeholder class for a future workflow that
-will process *many* ensemble groups (e.g. multiple parameter configurations,
-multiple scan points, multiple output directories) in a unified batch run.
+Processes a list of ensemble groups (e.g. multiple parameter configurations,
+scan points, or output directories), dispatching each to a configurable
+sub-workflow (:class:`~quends.workflow.EnsembleAverageWorkflow` or
+:class:`~quends.workflow.EnsembleStatisticsWorkflow`) and collecting the
+per-group results. ``run()`` is implemented and returns a structured dict of
+results and per-group errors; with ``continue_on_error=True`` a failing group
+is logged and skipped rather than aborting the batch.
 
-The current implementation validates inputs and raises
-:class:`NotImplementedError` with a clear explanatory message when ``run()``
-is called, so that imports and downstream code that registers this workflow
-class do not break.
+Not yet implemented: cross-group aggregation (:meth:`_aggregate_results`),
+parallel execution, and file-discovery of groups.
 
-Future development
-------------------
-Planned capabilities include:
-
-* Accept a list of ensemble groups (each group is an
-  :class:`~quends.base.ensemble.Ensemble` or a list of
-  :class:`~quends.base.data_stream.DataStream`).
-* Apply a configurable sub-workflow (e.g.
-  :class:`~quends.workflow.EnsembleAverageWorkflow` or
-  :class:`~quends.workflow.EnsembleStatisticsWorkflow`) to every group.
-* Aggregate per-group results into a summary DataFrame / dict.
-* Support parallel execution (via ``concurrent.futures`` or similar).
-* Handle partial failures gracefully (log and continue rather than abort).
-* Export aggregated results to CSV / JSON via the
-  :class:`~quends.postprocessing.exporter.Exporter`.
-
-Typical usage (future)
------------------------
->>> from quends.workflow import BatchEnsembleWorkflow, EnsembleStatisticsWorkflow
+Typical usage
+-------------
+>>> from quends.workflow import BatchEnsembleWorkflow
 >>>
 >>> groups = [ensemble_a, ensemble_b, ensemble_c]   # list of Ensemble objects
 >>> workflow = BatchEnsembleWorkflow(
-...     ensemble_groups=groups,
 ...     column_name="HeatFlux_st",
 ...     sub_workflow_type="statistics",
 ...     technique="both",
 ...     verbosity=1,
 ... )
->>> result = workflow.run()  # raises NotImplementedError until implemented
+>>> result = workflow.run(groups)
+>>> result["n_success"], result["n_items"]
 """
 
 from typing import Any, Dict, List, Optional
@@ -52,11 +38,11 @@ _UNSET = object()
 
 class BatchEnsembleWorkflow:
     """
-    Batch Ensemble workflow — scaffold for future batch processing.
+    Batch Ensemble workflow — apply a sub-workflow to each ensemble group.
 
-    Accepts a list of ensemble groups and a batch configuration, but the
-    :meth:`run` method is not yet implemented.  Calling it raises
-    :class:`NotImplementedError` with a descriptive message.
+    ``run(groups)`` dispatches every group to the configured sub-workflow and
+    returns a structured dict ``{n_items, n_success, results, errors, metadata}``.
+    (Cross-group aggregation via :meth:`_aggregate_results` is not yet implemented.)
 
     Parameters
     ----------
@@ -91,7 +77,7 @@ class BatchEnsembleWorkflow:
     """
 
     _VALID_SUB_WORKFLOWS = frozenset({"average", "statistics"})
-    _VALID_TECHNIQUES = frozenset({"technique1", "technique2", "both"})
+    _VALID_TECHNIQUES = frozenset({"pooled_block_means", "ivw_member_means", "both"})
 
     def __init__(
         self,
@@ -109,12 +95,18 @@ class BatchEnsembleWorkflow:
                 f"{sorted(self._VALID_SUB_WORKFLOWS)!r}; "
                 f"got {sub_workflow_type!r}."
             )
-        # Validate technique
-        if technique not in self._VALID_TECHNIQUES:
+        # Validate technique — accept canonical names + legacy aliases for BC.
+        # The actual normalisation happens in EnsembleStatisticsWorkflow.
+        from .ensemble_statistics_workflow import (  # noqa: PLC0415
+            _normalize_workflow_technique,
+        )
+        try:
+            technique = _normalize_workflow_technique(technique)
+        except ValueError as exc:
             raise ValueError(
-                f"technique must be one of {sorted(self._VALID_TECHNIQUES)!r}; "
-                f"got {technique!r}."
-            )
+                f"technique must be one of {sorted(self._VALID_TECHNIQUES)!r} "
+                f"(or legacy 'technique1'/'technique2'); got {technique!r}."
+            ) from exc
         # Validate ensemble_groups shape (if provided)
         if ensemble_groups is not None:
             if not isinstance(ensemble_groups, list):
@@ -156,59 +148,63 @@ class BatchEnsembleWorkflow:
     def run(
         self,
         ensemble_groups: Optional[List[Any]] = None,
+        continue_on_error: bool = True,
     ) -> Dict[str, Any]:
         """
         Execute the batch workflow over all ensemble groups.
 
-        .. warning::
-            **Not yet implemented.**
-            This method raises :class:`NotImplementedError`.
-            The scaffold structure is in place; see module docstring for the
-            planned implementation roadmap.
+        Each group is dispatched to the appropriate sub-workflow
+        (:class:`~quends.workflow.EnsembleAverageWorkflow` for ``"average"``,
+        :class:`~quends.workflow.EnsembleStatisticsWorkflow` for
+        ``"statistics"``).  This is an in-process, object-level orchestrator —
+        file discovery and CSV/NetCDF loading are explicitly out of scope and
+        remain future work.
+
+        Each batch item may be:
+
+        * an :class:`~quends.base.ensemble.Ensemble` instance,
+        * a list of :class:`~quends.base.data_stream.DataStream` members,
+        * a ``dict`` with keys:
+
+          - ``"members"`` *or* ``"ensemble"`` — required, an Ensemble or list of
+            DataStreams,
+          - ``"name"`` or ``"id"`` — optional human-readable identifier,
+          - ``"workflow_type"`` — optional per-item override (``"average"`` or
+            ``"statistics"``),
+          - ``"workflow_config"`` — optional per-item config dict merged on top
+            of ``self._batch_config``.
 
         Parameters
         ----------
         ensemble_groups : list or None
-            Override the groups provided at construction time.  If ``None``,
-            the groups from :meth:`__init__` are used.
+            Override the groups provided at construction time.
+        continue_on_error : bool
+            If ``True`` (default), catch per-item exceptions and record them
+            in the ``"errors"`` map; if ``False``, re-raise the first failure.
 
         Returns
         -------
         dict
-            Placeholder scaffold result (see below).
+            ``{"workflow": "batch_ensemble", "n_items": int, "n_success": int,
+            "n_failed": int, "results": {id: per-item result}, "errors":
+            {id: error message}, "metadata": {…}}``
 
         Raises
         ------
-        NotImplementedError
-            Always raised — batch processing is not yet implemented.
         ValueError
-            If no ensemble groups are available (neither at construction
-            time nor in the *ensemble_groups* argument).
+            If no groups are available, or if a per-item dict is malformed.
+        TypeError
+            If a batch item is not an Ensemble, list, or dict.
 
         Notes
         -----
-        When implemented, the result schema will be::
-
-          {
-            "workflow":   "batch_ensemble",
-            "status":     "complete",
-            "n_groups":   int,
-            "results":    [<per-group result>, …],
-            "summary":    {…},
-            "metadata":   {…},
-          }
-
-        The current scaffold returns::
-
-          {
-            "workflow": "batch_ensemble",
-            "status":   "scaffold",
-            "metadata": {…},
-          }
-
-        before raising :class:`NotImplementedError`.
+        File-based batch loading (CSV directories, NetCDF globs, …) is future
+        work; this method only orchestrates already-constructed objects.
         """
-        # Resolve groups
+        # Local imports to avoid circular dependencies at module load time.
+        from .ensemble_average_workflow import EnsembleAverageWorkflow  # noqa: PLC0415
+        from .ensemble_statistics_workflow import EnsembleStatisticsWorkflow  # noqa: PLC0415
+
         groups = ensemble_groups if ensemble_groups is not None else self._ensemble_groups
         if groups is None:
             raise ValueError(
@@ -218,50 +214,176 @@ class BatchEnsembleWorkflow:
         if not isinstance(groups, list) or len(groups) == 0:
             raise ValueError("ensemble_groups must be a non-empty list.")
 
-        n_groups = len(groups)
-        scaffold_result: Dict[str, Any] = {
+        if self._verbosity > 0:
+            print(
+                f"[BatchEnsembleWorkflow] Starting — {len(groups)} groups, "
+                f"default sub_workflow_type='{self._sub_workflow_type}', "
+                f"technique='{self._technique}'."
+            )
+
+        results: Dict[str, Any] = {}
+        errors: Dict[str, str] = {}
+
+        for index, item in enumerate(groups):
+            # Tentative id for error reporting if unpacking fails.
+            item_id_fallback = (
+                str(item.get("name", item.get("id", f"item_{index}")))
+                if isinstance(item, dict)
+                else f"item_{index}"
+            )
+            try:
+                item_id, members, item_workflow_type, item_config = (
+                    self._unpack_item(item, index)
+                )
+                if self._verbosity > 0:
+                    print(f"  [{item_id}] running {item_workflow_type} workflow…")
+                sub_workflow = self._build_sub_workflow(
+                    workflow_type=item_workflow_type,
+                    extra_config=item_config,
+                )
+                results[item_id] = sub_workflow.run(members)
+            except Exception as exc:  # noqa: BLE001
+                if not continue_on_error:
+                    raise
+                errors[item_id_fallback] = f"{type(exc).__name__}: {exc}"
+                if self._verbosity > 0:
+                    print(f"  [{item_id_fallback}] FAILED: {errors[item_id_fallback]}")
+
+        if self._verbosity > 0:
+            print(
+                f"[BatchEnsembleWorkflow] Done — "
+                f"{len(results)} ok, {len(errors)} failed."
+            )
+
+        return {
             "workflow": "batch_ensemble",
-            "status": "scaffold",
+            "n_items": len(groups),
+            "n_success": len(results),
+            "n_failed": len(errors),
+            "results": results,
+            "errors": errors,
             "metadata": {
-                "n_groups": n_groups,
-                "column_name": self._column_name,
                 "sub_workflow_type": self._sub_workflow_type,
                 "technique": self._technique,
-                "batch_config": self._batch_config,
+                "batch_config": dict(self._batch_config),
+                "continue_on_error": continue_on_error,
             },
         }
 
-        # TODO: implement batch processing
-        #   for i, group in enumerate(groups):
-        #       sub_workflow = _build_sub_workflow(...)
-        #       result = sub_workflow.run(group)
-        #       per_group_results.append(result)
-        #   aggregate per_group_results into summary
-        raise NotImplementedError(
-            "BatchEnsembleWorkflow.run() is not yet implemented.\n"
-            "This class is a scaffold for future batch processing.\n"
-            "Use EnsembleAverageWorkflow or EnsembleStatisticsWorkflow for "
-            "single-ensemble analysis in the meantime.\n"
-            f"Scaffold result (before error): {scaffold_result}"
+    # ------------------------------------------------------------------
+    # Helpers
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _normalize_workflow_type(value: str) -> str:
+        """Map common aliases to the canonical sub-workflow type string."""
+        if value in ("average", "ensemble_average", "technique0", "t0", "0"):
+            return "average"
+        if value in (
+            "statistics",
+            "ensemble_statistics",
+            "techniques",
+            "t1_t2",
+            "t1",
+            "t2",
+        ):
+            return "statistics"
+        raise ValueError(
+            f"Unknown workflow_type {value!r}; expected 'average' or 'statistics'."
         )
 
-    # ------------------------------------------------------------------
-    # Future helper stubs (documented, not implemented)
-    # ------------------------------------------------------------------
+    def _unpack_item(self, item: Any, index: int):
+        """Resolve a batch entry to (item_id, members, workflow_type, extra_config)."""
+        # Local import — avoids circular import at module load.
+        from ..base.ensemble import Ensemble  # noqa: PLC0415
+        from ..base.data_stream import DataStream  # noqa: PLC0415
 
-    def _build_sub_workflow(self, **kwargs: Any) -> Any:
-        """
-        Instantiate the configured sub-workflow class with merged config.
+        item_workflow_type = self._normalize_workflow_type(self._sub_workflow_type)
+        item_config: Dict[str, Any] = {}
 
-        TODO: implement once batch dispatch logic is finalised.
-        """
-        raise NotImplementedError("_build_sub_workflow is not yet implemented.")
+        if isinstance(item, Ensemble):
+            members = item.members()
+            item_id = f"item_{index}"
+        elif isinstance(item, list):
+            if not item or not all(isinstance(d, DataStream) for d in item):
+                raise TypeError(
+                    f"Batch item {index} is a list, but not all elements are "
+                    "DataStream instances."
+                )
+            members = item
+            item_id = f"item_{index}"
+        elif isinstance(item, dict):
+            payload = item.get("ensemble", item.get("members"))
+            if payload is None:
+                raise ValueError(
+                    f"Batch item {index} is a dict but is missing 'members' or "
+                    "'ensemble' key."
+                )
+            if isinstance(payload, Ensemble):
+                members = payload.members()
+            elif isinstance(payload, list):
+                if not payload or not all(isinstance(d, DataStream) for d in payload):
+                    raise TypeError(
+                        f"Batch item {index} 'members' must be a non-empty list of "
+                        "DataStream instances."
+                    )
+                members = payload
+            else:
+                raise TypeError(
+                    f"Batch item {index} 'members'/'ensemble' has unsupported "
+                    f"type {type(payload).__name__!r}."
+                )
+            item_id = str(item.get("name", item.get("id", f"item_{index}")))
+            if "workflow_type" in item:
+                item_workflow_type = self._normalize_workflow_type(
+                    item["workflow_type"]
+                )
+            item_config = dict(item.get("workflow_config", {}) or {})
+        else:
+            raise TypeError(
+                f"Batch item {index} has unsupported type "
+                f"{type(item).__name__!r}; expected Ensemble, list, or dict."
+            )
+
+        return item_id, members, item_workflow_type, item_config
+
+    def _build_sub_workflow(
+        self,
+        workflow_type: Optional[str] = None,
+        extra_config: Optional[Dict[str, Any]] = None,
+    ) -> Any:
+        """Instantiate the configured sub-workflow class with merged config."""
+        from .ensemble_average_workflow import EnsembleAverageWorkflow  # noqa: PLC0415
+        from .ensemble_statistics_workflow import EnsembleStatisticsWorkflow  # noqa: PLC0415
+
+        wf_type = workflow_type or self._normalize_workflow_type(self._sub_workflow_type)
+        merged_config: Dict[str, Any] = dict(self._batch_config)
+        if extra_config:
+            merged_config.update(extra_config)
+        # Forward the configured verbosity unless the per-item config overrides it.
+        merged_config.setdefault("verbosity", self._verbosity)
+
+        if wf_type == "average":
+            # EnsembleAverageWorkflow requires column_name positionally.
+            column = merged_config.pop("column_name", self._column_name)
+            if column is None:
+                raise ValueError(
+                    "EnsembleAverageWorkflow requires 'column_name' — set it "
+                    "in the BatchEnsembleWorkflow config or per-item config."
+                )
+            return EnsembleAverageWorkflow(column_name=column, **merged_config)
+
+        if wf_type == "statistics":
+            merged_config.setdefault("technique", self._technique)
+            merged_config.setdefault("column_name", self._column_name)
+            return EnsembleStatisticsWorkflow(**merged_config)
+
+        raise ValueError(f"Unknown workflow_type {wf_type!r}.")
 
     def _aggregate_results(self, per_group_results: List[Dict]) -> Dict[str, Any]:
         """
         Aggregate per-group result dicts into an ensemble-level summary.
 
-        TODO: implement; planned to include cross-group mean, std, and
-        confidence interval tables.
+        TODO: future work — cross-group mean/std/CI tables.
         """
         raise NotImplementedError("_aggregate_results is not yet implemented.")

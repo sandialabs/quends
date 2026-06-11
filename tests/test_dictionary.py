@@ -1,3 +1,5 @@
+# Tests for the single-variable from_dict loader.
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -8,36 +10,34 @@ import quends as qds
 def simple_dict():
     return pd.DataFrame(
         {
-            "A": [1, 2, 3, 4, 5],
-            "B": [5, 4, 3, 2, 1],
+            "time": [0, 1, 2, 3, 4],
+            "HeatFlux_st": [10.0, 11.0, 12.0, 11.5, 12.5],
         }
     )
 
 
-# Test dictionary for simple_dict()
-# =============================================================================
 def test_from_dict_invalid_input():
     with pytest.raises(ValueError, match="Input must be a dictionary."):
-        qds.from_dict("not_a_dict")  # Passing a string instead of a dictionary
-
-
-def test_from_dict_empty_dict():
-    data_dict = {}
-    data_stream = qds.from_dict(data_dict)
-    assert isinstance(data_stream, qds.DataStream), "Expected a DataStream object"
-    df = data_stream.data
-    assert df.empty, "DataFrame should be empty for an empty dictionary."
+        qds.from_dict("not_a_dict", "HeatFlux_st")
 
 
 def test_from_dict_none_input():
     with pytest.raises(ValueError, match="Input must be a dictionary."):
-        qds.from_dict(None)  # Passing None instead of a dictionary
+        qds.from_dict(None, "HeatFlux_st")
 
 
-def test_from_dict_with_none_variables(simple_dict):
+def test_from_dict_missing_variable_raises():
+    with pytest.raises(ValueError, match="does not exist"):
+        qds.from_dict({}, "HeatFlux_st")
+
+
+def test_from_dict_keeps_time_and_variable(simple_dict):
     data_dict = simple_dict.to_dict(orient="list")
-    data_stream = qds.from_dict(data_dict, variables=None)  # Should include all columns
-    df = data_stream.data
-    expected_columns = ["A", "B"]
-    for column in expected_columns:
-        assert column in df.columns, f"DataFrame should contain '{column}' column."
+    ds = qds.from_dict(data_dict, "HeatFlux_st")
+    assert isinstance(ds, qds.DataStream)
+    df = ds.data
+    assert list(df.columns) == ["time", "HeatFlux_st"]
+    np.testing.assert_array_equal(df["time"].values, [0, 1, 2, 3, 4])
+    np.testing.assert_array_equal(
+        df["HeatFlux_st"].values, [10.0, 11.0, 12.0, 11.5, 12.5]
+    )

@@ -29,7 +29,7 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import CubicSpline, interp1d
 
-from quends.base.data_stream import DataStream
+from .data_stream import DataStream
 
 
 # ---------------------------------------------------------------------------

@@ -226,8 +226,9 @@ def test_trim_sss_start_already_stationary(stationary_noise_df: pd.DataFrame):
 
     trimmed = trim_op(ds, column_name="A")
 
-    assert isinstance(trimmed, pd.DataFrame)
-    assert trimmed.empty
+    # MeanVariationTrimStrategy returns a DataStream (empty when no SSS found)
+    assert isinstance(trimmed, DataStream)
+    assert trimmed.data.empty
 
 
 def test_trim_sss_start_no_sss_found(persistent_trend_df: pd.DataFrame):
@@ -535,12 +536,13 @@ def _make_no_sss_where_side_effect():
     return side_effect
 
 
-def test_trim_sss_no_sss_else_branch_returns_empty_dataframe(
+def test_trim_sss_no_sss_else_branch_returns_empty_datastream(
     persistent_trend_df: pd.DataFrame,
 ):
     """
-    When no SSS is found, trimmed_stream is a plain pd.DataFrame
-    with columns ['time', 'flux'] (hardcoded in the else branch).
+    When no SSS is found the strategy returns an empty DataStream (not a raw DataFrame).
+    The no-SSS branch in MeanVariationTrimStrategy.apply() constructs
+    DataStream(empty_df) and returns it.
     """
     ds = DataStream(persistent_trend_df)
     strategy = make_sss_strategy(verbosity=0)
@@ -550,10 +552,9 @@ def test_trim_sss_no_sss_else_branch_returns_empty_dataframe(
     ):
         result = strategy.apply(ds, column_name="A")
 
-    # The no-SSS path returns a raw DataFrame, not a DataStream
-    assert isinstance(result, pd.DataFrame)
-    assert list(result.columns) == ["time", "flux"]
-    assert result.empty
+    # The no-SSS path returns an empty DataStream
+    assert isinstance(result, DataStream)
+    assert result.data.empty
 
 
 def test_trim_sss_no_sss_verbosity_1_prints_message(

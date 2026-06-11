@@ -1,3 +1,5 @@
+from typing import Optional
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -5,6 +7,15 @@ import numpy as np
 from ..base.data_stream import DataStream
 from ..base.stationary import MakeDataStreamStationaryOperation
 from ..base.trim import MeanVariationTrimStrategy, TrimDataStreamOperation
+
+# --- ad-hoc fallback conventions (used only when no SSS segment is found) ---
+# The "ball-park" mean is taken over the final fraction (numerator/denominator)
+# of the trace; integer floor division preserves the historical index exactly.
+_IRREGULAR_TAIL_NUM = 2
+_IRREGULAR_TAIL_DEN = 3
+# Relative uncertainty assigned to that ball-park mean: 1.0 == 100% (the CI then
+# spans roughly [0, 2*mean]). Deliberately conservative for un-trimmable data.
+_IRREGULAR_REL_UNCERTAINTY = 1.0
 
 
 class RobustWorkflow:
@@ -131,7 +142,9 @@ class RobustWorkflow:
         self._smoothing_window_correction = smoothing_window_correction
         self._final_smoothing_window = final_smoothing_window
 
-    def process_irregular_stream(self, data_stream, col, start_time=0.0):
+    def process_irregular_stream(
+        self, data_stream: DataStream, col: str, start_time: float = 0.0
+    ) -> dict:
         """
         Process a data stream that is not stationary or has no steady state segment
 
@@ -181,13 +194,14 @@ class RobustWorkflow:
             # Get the data
             column_data = df_past_start[col].dropna()
 
-            # Compute index for 2/3rds of the data set
+            # Index marking the start of the final tail fraction of the data.
             n_pts = len(column_data)
-            n_66pc = (n_pts * 2) // 3
+            n_66pc = (n_pts * _IRREGULAR_TAIL_NUM) // _IRREGULAR_TAIL_DEN
 
-            # Get ad hoc statistics
+            # Get ad hoc statistics: mean over the tail, with a conservative
+            # 100% relative uncertainty (see _IRREGULAR_REL_UNCERTAINTY).
             mean_val = np.mean(column_data[n_66pc:])
-            uncertainty_val = mean_val  # Arbitrary 100% uncertainty
+            uncertainty_val = _IRREGULAR_REL_UNCERTAINTY * mean_val
             # For confidence interval, assume the true value is somewhere between 0 and twice the mean.
             ci_lower = mean_val - uncertainty_val
             ci_upper = mean_val + uncertainty_val
@@ -205,7 +219,9 @@ class RobustWorkflow:
 
             return results_dict
 
-    def process_data_steam(self, data_stream_orig, col, start_time=0.0):
+    def process_data_stream(
+        self, data_stream_orig: DataStream, col: str, start_time: float = 0.0
+    ) -> dict:
         """
         Process data_stream and handle exceptions gracefully.
         Return mean value and its statistics
@@ -312,8 +328,18 @@ class RobustWorkflow:
         # Return the statistics dictionary
         return trimmed_stats
 
+    #: Backward-compatible alias — ``process_data_steam`` was a long-standing
+    #: typo for :meth:`process_data_stream`.  Will be removed in a future release.
+    process_data_steam = process_data_stream
+
     # New function to plot signal with basic stats
-    def plot_signal_basic_stats(self, data_stream, col, stats=None, label=None):
+    def plot_signal_basic_stats(
+        self,
+        data_stream: DataStream,
+        col: str,
+        stats: Optional[dict] = None,
+        label: Optional[str] = None,
+    ):
         """
         NOTE: make this part of visualization class?
 
@@ -324,7 +350,7 @@ class RobustWorkflow:
         col: str
             The column name of the quantity to plot in the data stream.
         stats: dict, optional
-            Dictionary with statistics returned by process_data_steam(). Default is None.
+            Dictionary with statistics returned by process_data_stream(). Default is None.
         label: str, optional
             Label to use in title of graph. Default is None.
 
@@ -381,5 +407,5 @@ class RobustWorkflow:
         ax.legend(fontsize=12)
 
         # show and close the figure
-        plt.show(fig)
+        plt.show()
         plt.close(fig)

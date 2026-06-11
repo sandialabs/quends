@@ -1,11 +1,92 @@
+import math
+from typing import Optional
+
 import numpy as np
-from scipy.stats import norm
+import pandas as pd
 from statsmodels.tsa.stattools import acf
 from statsmodels.stats.diagnostic import acorr_ljungbox
 
 
+SCHEMA_VERSION = "1.0"
+
+
+class StatsResult(dict):
+    """A ``{column: stats}`` mapping with an attached ``.metadata`` dict.
+
+    Subclasses :class:`dict`, so it behaves exactly like the historical
+    ``{column: {...}}`` return value — ``res[col]["mean"]``, ``res == plain_dict``,
+    iteration, ``.get`` all work unchanged. It only *adds* a ``.metadata``
+    attribute (run-level info such as estimator, sample counts, schema_version),
+    so existing callers keep working while new code can read provenance.
+    """
+
+    def __init__(self, results=None, metadata=None):
+        super().__init__(results or {})
+        self.metadata = dict(metadata or {})
+
+    def __repr__(self):  # keep dict repr but hint at the extra attribute
+        return f"StatsResult({dict.__repr__(self)}, metadata={self.metadata!r})"
+
+
 def power_law_model(n, A, p):
     return A / (n**p)
+
+
+# ---------------------------------------------------------------------------
+# Confidence-interval multiplier
+# ---------------------------------------------------------------------------
+
+def confidence_multiplier(
+    confidence_level: float = 0.95,
+    method: str = "normal",
+    dof: Optional[int] = None,
+) -> float:
+    """
+    Return the multiplier ``z`` such that ``CI = mean ± z × SE``.
+
+    Parameters
+    ----------
+    confidence_level : float
+        Two-sided confidence level in (0, 1).  Default ``0.95``.
+    method : {"normal", "t"}
+        ``"normal"`` — standard-normal quantile.
+        ``"t"`` — Student's *t* quantile (requires *dof*).
+    dof : int or None
+        Degrees of freedom for the *t* distribution.  Required when
+        ``method="t"``.  Ignored otherwise.
+
+    Returns
+    -------
+    float
+        The CI multiplier.
+
+    Notes
+    -----
+    For the historical default ``(method="normal", confidence_level=0.95)``,
+    this function returns the literal value ``1.96`` to preserve byte-for-byte
+    backward compatibility with previously-stored results.  For all other
+    parameter values, the quantile is computed exactly via :mod:`scipy.stats`.
+    """
+    if method == "normal":
+        # Preserve the exact historical 1.96 value for the default case so
+        # that older tests/results that hard-code it remain reproducible.
+        if confidence_level == 0.95:
+            return 1.96
+        from scipy.stats import norm  # local import — avoid eager scipy load
+        return float(norm.ppf((1.0 + float(confidence_level)) / 2.0))
+
+    if method == "t":
+        if dof is None or int(dof) < 1:
+            raise ValueError(
+                "ci_method='t' requires a positive integer dof; "
+                f"got dof={dof!r}."
+            )
+        from scipy.stats import t as _t  # local import
+        return float(_t.ppf((1.0 + float(confidence_level)) / 2.0, df=int(dof)))
+
+    raise ValueError(
+        f"Unknown ci_method {method!r}; choose 'normal' or 't'."
+    )
 
 
 def to_native_types(obj):
@@ -121,10 +202,12 @@ def _ljung_box_pass(
         return False, {"n_blocks": int(n_blocks), "lags": [], "pvalues": []}
 
     tested_lags, pvalues = [], []
+    _seen_lags: set = set()
     for lag in lag_set:
         L = int(min(lag, n_blocks - 1))
-        if L < 1:
+        if L < 1 or L in _seen_lags:
             continue
+        _seen_lags.add(L)
         try:
             lb = acorr_ljungbox(bm, lags=[L], return_df=True)
             pvalues.append(float(lb["lb_pvalue"].iloc[0]))
@@ -139,7 +222,396 @@ def _ljung_box_pass(
     return passed, {"n_blocks": int(n_blocks), "lags": tested_lags, "pvalues": pvalues}
 
 
-def _compute_ess(data, col, alpha):
+# ---------------------------------------------------------------------------
+# Shared block-averaging and autotune helpers
+# ---------------------------------------------------------------------------
+
+def _compute_block_means(x: np.ndarray, w: int, method: str = "non-overlapping") -> np.ndarray:
+    """
+    Compute block means from a raw array without DataStream overhead.
+
+    Parameters
+    ----------
+    x : np.ndarray, dtype float
+        Raw series values (already dropna'd and converted to float).
+    w : int
+        Block / window size.
+    method : {"non-overlapping", "sliding"}
+        "non-overlapping" returns floor(n/w) non-overlapping block means.
+        "sliding" returns a pandas rolling mean (NaN head dropped).
+
+    Returns
+    -------
+    np.ndarray of float — the block-mean values.
+    """
+    x = np.asarray(x, dtype=float)
+    n = x.size
+    if method == "non-overlapping":
+        w = int(max(1, w))
+        n_blocks = n // w
+        if n_blocks < 1:
+            return np.array([], dtype=float)
+        return x[: n_blocks * w].reshape(n_blocks, w).mean(axis=1)
+    elif method == "sliding":
+        s = pd.Series(x).rolling(window=int(w)).mean().dropna()
+        return s.values.astype(float)
+    else:
+        raise ValueError(f"method must be 'non-overlapping' or 'sliding'; got {method!r}")
+
+
+def _estimate_tau_int_from_series(x: np.ndarray) -> float:
+    """
+    Estimate the integrated autocorrelation time (tau_int) from a raw 1-D array.
+
+    Uses Geyer positive-pair truncation of the sample ACF.
+    Always returns a value >= 1.0.
+
+    Parameters
+    ----------
+    x : array-like
+        1-D float array, already dropna'd.
+
+    Returns
+    -------
+    float
+    """
+    x = np.asarray(x, dtype=float)
+    n = x.size
+    if n < 3:
+        return 1.0
+    nlags = max(1, min(n // 4, 2000))
+    r = acf(x, nlags=nlags, fft=False)
+    return _tau_int_geyer_from_acf(r)
+
+
+def autotune_blocks(
+    x,
+    window_size=None,
+    method: str = "non-overlapping",
+    alpha: float = 0.05,
+    lag_set=(5, 10),
+    B_min: int = 15,
+    min_blocks: int = 2,
+    max_iter: int = 25,
+    w_min: int = 5,
+    c0: float = 2.0,
+) -> dict:
+    """
+    Shared core helper: autotune block window until block means are independent.
+
+    This is the single implementation used by *both* ``DataStream.compute_statistics``
+    and the ensemble statistics pipeline (Techniques 1 and 2).  All other
+    window-autotune helpers in this package are thin wrappers around this function.
+
+    Algorithm
+    ---------
+    If *window_size* is ``None`` (autotune path):
+
+    1. Estimate tau_int from the raw-series ACF via Geyer positive-pair
+       truncation.
+    2. Seed the starting window: ``w0 = max(w_min, ceil(c0 * tau_int))``,
+       soft-capped to ``n // B_min`` so that at least *B_min* blocks are
+       available at the start of the search.
+    3. Iterate: compute non-overlapping block means, run
+       ``_ljung_box_pass(lag_set, alpha)`` (lags are capped to ``n_blocks-1``
+       and deduplicated), advance ``w += 1``.
+    4. Return on the first window that passes (status ``"independent"``).
+    5. If the loop exhausts *max_iter* or the block count drops below
+       *min_blocks*, return the window with the best LB p-value seen
+       (status ``"best_p"``).
+    6. If no valid blocks exist at all, return status ``"too_few_blocks"``.
+
+    If *window_size* is provided (user-window path):
+
+    * Use the given window directly without searching.
+    * Still run the LB diagnostic for informational purposes.
+    * Always set status ``"user_window"``; SE should be computed via Geyer ESS.
+
+    Parameters
+    ----------
+    x : array-like
+        Raw series values.  NaNs and Infs are removed before processing.
+    window_size : int or None
+        User-supplied window size.  ``None`` triggers autotuning.
+    method : {"non-overlapping", "sliding"}
+        Block type.  Independence testing is designed for
+        ``"non-overlapping"``; Ljung-Box on sliding means may be misleading.
+    alpha : float
+        Ljung-Box significance level.  Default ``0.05``.
+    lag_set : tuple of int
+        Lags passed to ``_ljung_box_pass``.  Pass condition: ``p > alpha``
+        for **all** tested lags.  Lags are capped to ``n_blocks - 1`` and
+        deduplicated automatically.  Default ``(5, 10)``.
+    B_min : int
+        Soft starting-window cap.  The seed window is capped so that at
+        least *B_min* blocks are available at the start of the search.
+        Matches the ``B_min`` parameter of
+        ``DataStream._autotune_window_size``.  Default ``15``.
+    min_blocks : int
+        Hard stop.  The loop terminates immediately (without a LB test) if
+        the block count drops below *min_blocks*.  The best window found so
+        far is returned.  Default ``2`` (matches the old DataStream
+        behaviour of continuing until fewer than 2 blocks remain).
+    max_iter : int
+        Maximum window-increment iterations.  Default ``25``.
+    w_min : int
+        Minimum allowed window size.  Default ``5``.
+    c0 : float
+        Multiplier for tau_int: ``w0 = ceil(c0 * tau_int)``.  Default ``2.0``.
+
+    Returns
+    -------
+    dict
+        Keys:
+
+        ``blocks`` : np.ndarray
+            Final block-mean values (may be empty if no valid blocks).
+        ``window_size`` : int
+            Chosen window size.
+        ``n_blocks`` : int
+            Number of block means.
+        ``independence_status`` : str
+            ``"independent"``, ``"best_p"``, ``"user_window"``, or
+            ``"too_few_blocks"``.
+        ``independent`` : bool
+            ``True`` iff status is ``"independent"``.
+        ``ljungbox_lags`` : list[int]
+            Lags actually tested at the chosen window.
+        ``ljungbox_pvalues`` : list[float]
+            P-values at each tested lag.
+        ``best_pvalue`` : float
+            Minimum p-value across lags at the chosen window, or NaN.
+        ``tau_int`` : float
+            Estimated tau_int (NaN for ``user_window`` path).
+        ``initial_window`` : int
+            Seed window before iteration starts.
+        ``iterations`` : int
+            Loop iterations used.
+        ``autotuned`` : bool
+            ``False`` for ``user_window`` path.
+        ``warning`` : str or None
+    """
+    x = np.asarray(x, dtype=float)
+    x = x[np.isfinite(x)]
+    n = int(x.size)
+
+    # ------------------------------------------------------------------
+    # User-supplied window path
+    # ------------------------------------------------------------------
+    if window_size is not None:
+        w = int(window_size)
+        blocks = _compute_block_means(x, w, method)
+        n_blocks = int(blocks.size)
+        lb: dict = {"lags": [], "pvalues": []}
+        passed = False
+        if n_blocks >= max(2, int(min_blocks)):
+            passed, lb = _ljung_box_pass(blocks, alpha=alpha, lag_set=lag_set)
+        pvals = lb.get("pvalues", [])
+        return {
+            "blocks": blocks,
+            "window_size": int(w),
+            "n_blocks": int(n_blocks),
+            "independence_status": "user_window",
+            "independent": bool(passed),
+            "ljungbox_lags": lb.get("lags", []),
+            "ljungbox_pvalues": pvals,
+            "best_pvalue": float(min(pvals)) if pvals else float("nan"),
+            "tau_int": float("nan"),
+            "initial_window": int(w),
+            "iterations": 0,
+            "autotuned": False,
+            "warning": "User-supplied window; SE computed via Geyer ESS on block means.",
+        }
+
+    # ------------------------------------------------------------------
+    # Autotune path
+    # ------------------------------------------------------------------
+    if n < 2:
+        return {
+            "blocks": np.array([], dtype=float),
+            "window_size": int(w_min),
+            "n_blocks": 0,
+            "independence_status": "too_few_blocks",
+            "independent": False,
+            "ljungbox_lags": [],
+            "ljungbox_pvalues": [],
+            "best_pvalue": float("nan"),
+            "tau_int": 1.0,
+            "initial_window": int(w_min),
+            "iterations": 0,
+            "autotuned": True,
+            "warning": "Too few samples for block averaging.",
+        }
+
+    tau_int = _estimate_tau_int_from_series(x)
+
+    # ---- Starting window ------------------------------------------------
+    # Step 1: tau_int seed (no w_min floor here — handled below).
+    w_tau = int(max(1, math.ceil(c0 * float(tau_int))))
+
+    # Step 2: Soft cap — ensure >= B_min blocks at the start of the search.
+    #   w_cap = floor(n / B_min), giving exactly B_min blocks at w_cap.
+    w_cap = max(1, n // max(1, int(B_min)))
+
+    # Step 3: Start at the *smaller* of tau seed and soft cap (so we always
+    #   have at least B_min blocks).  Then apply the w_min advisory: raise w
+    #   to w_min if the series is long enough to still satisfy B_min.
+    #   Finally clamp to [1, n] so we always get >= 1 block.
+    w = min(w_tau, w_cap)
+    w = max(w, 1)
+    # Apply w_min advisory without busting the n hard cap.
+    w = min(max(w, min(int(w_min), n)), n)
+    # -----------------------------------------------------------------------
+
+    initial_window = int(w)
+    best: dict = {
+        "w": int(w),
+        "blocks": np.array([], dtype=float),
+        "p_min": float("-inf"),
+        "lb": {"lags": [], "pvalues": []},
+    }
+
+    iteration_count = 0
+    for _iter in range(int(max_iter)):
+        iteration_count += 1
+
+        blocks = _compute_block_means(x, w, method)
+        n_blocks = int(blocks.size)
+
+        if n_blocks < max(2, int(min_blocks)):
+            # Too few blocks for a meaningful independence test.
+            # Record the best blocks found (may only be 1 block) for the
+            # fallback path; then stop searching.
+            if best["blocks"].size == 0 and n_blocks > 0:
+                best["w"] = int(w)
+                best["blocks"] = blocks.copy()
+            break
+
+        passed, det = _ljung_box_pass(blocks, alpha=alpha, lag_set=lag_set)
+        p_score = float(min(det["pvalues"])) if det.get("pvalues") else float("-inf")
+
+        if p_score > best["p_min"]:
+            best = {
+                "w": int(w),
+                "blocks": blocks.copy(),
+                "p_min": p_score,
+                "lb": det,
+            }
+
+        if passed:
+            return {
+                "blocks": blocks,
+                "window_size": int(w),
+                "n_blocks": int(n_blocks),
+                "independence_status": "independent",
+                "independent": True,
+                "ljungbox_lags": det.get("lags", []),
+                "ljungbox_pvalues": det.get("pvalues", []),
+                "best_pvalue": float(p_score),
+                "tau_int": float(tau_int),
+                "initial_window": initial_window,
+                "iterations": iteration_count,
+                "autotuned": True,
+                "warning": None,
+            }
+
+        w_next = w + 1
+        # Stop when the next window would leave fewer than min_blocks blocks
+        # OR fewer than 1 block (series exhausted).
+        if w_next <= w or n // w_next < max(1, int(min_blocks)):
+            break
+        w = w_next
+
+    # ------------------------------------------------------------------
+    # Fallback — return best-p window found, or extreme fallback
+    # ------------------------------------------------------------------
+    if best["blocks"].size > 0:
+        lb = best["lb"]
+        p_score = best["p_min"]
+        status = "best_p"
+        # If we only have 1–(min_blocks-1) blocks and never ran a LB test,
+        # call it "too_few_blocks" to signal low statistical power.
+        if int(best["blocks"].size) < max(2, int(min_blocks)):
+            status = "too_few_blocks"
+        return {
+            "blocks": best["blocks"],
+            "window_size": int(best["w"]),
+            "n_blocks": int(best["blocks"].size),
+            "independence_status": status,
+            "independent": False,
+            "ljungbox_lags": lb.get("lags", []),
+            "ljungbox_pvalues": lb.get("pvalues", []),
+            "best_pvalue": float(p_score) if np.isfinite(float(p_score)) else float("nan"),
+            "tau_int": float(tau_int),
+            "initial_window": initial_window,
+            "iterations": iteration_count,
+            "autotuned": True,
+            "warning": "Block means did not pass Ljung-Box; using best-p window.",
+        }
+
+    # Extreme fallback — use the smallest practical window (≤ n) so that
+    # compute_statistics() can at least return a mean even for very short series.
+    w_final = min(n, max(1, min(int(w_min), n)))
+    blocks_final = _compute_block_means(x, w_final, method)
+    return {
+        "blocks": blocks_final,
+        "window_size": int(w_final),
+        "n_blocks": int(blocks_final.size),
+        "independence_status": "too_few_blocks",
+        "independent": False,
+        "ljungbox_lags": [],
+        "ljungbox_pvalues": [],
+        "best_pvalue": float("nan"),
+        "tau_int": float(tau_int),
+        "initial_window": initial_window,
+        "iterations": iteration_count,
+        "autotuned": True,
+        "warning": "Too few blocks for independence test; SE via Geyer ESS.",
+    }
+
+
+def _compute_ess(data, col, alpha=0.05):
+    """
+    Estimate the effective sample size (ESS) for one column of a DataFrame.
+
+    Uses Geyer positive-pair truncation of the sample ACF — the same estimator
+    used throughout the rest of QUENDS — rather than an absolute-value
+    significance-threshold sum.
+
+    Algorithm
+    ---------
+    1. Estimate ``tau_int`` via :func:`_estimate_tau_int_from_series`, which
+       applies Geyer's positive-pair truncation to the raw-series ACF.
+    2. Return ``ceil(n / tau_int)``, clamped to ``[1, n]``.
+
+    Why this is better than the old ``abs(ACF) > threshold`` approach
+    ------------------------------------------------------------------
+    * **Sign handling:** Negative autocorrelations *increase* ESS (anti-correlated
+      draws are more informative than i.i.d. draws).  The old code took absolute
+      values, which made negative ACF reduce ESS — exactly wrong.
+    * **Noisy long lags:** The significance threshold kept all lags whose |ACF|
+      exceeded ``z / sqrt(n)``, including spuriously large values at long lags.
+      Geyer truncation stops at the first pair whose sum is non-positive, so
+      long-lag noise never accumulates.
+    * **Consistency:** This estimator now agrees with the tau_int seeding used
+      in :func:`autotune_blocks` and the ``_geyer_ess_on_blocks`` denominator.
+
+    Parameters
+    ----------
+    data : pd.DataFrame
+        DataFrame containing the column.
+    col : str
+        Column name to estimate ESS for.
+    alpha : float, optional
+        Retained for API backward-compatibility; no longer used in the
+        computation.  Default ``0.05``.
+
+    Returns
+    -------
+    int
+        Estimated ESS, or a ``dict`` with an ``"message"`` key if the column
+        is missing or empty (backward-compatible error schema).
+    """
     if col not in data.columns:
         return {"message": f"Column '{col}' not found in the DataStream."}
 
@@ -151,9 +623,8 @@ def _compute_ess(data, col, alpha):
         }
 
     n = len(series)
-    acf_values = acf(series, nlags=n // 4)
-    threshold = norm.ppf(1 - alpha / 2) / np.sqrt(n)
-    significant_acf = acf_values[1:][np.abs(acf_values[1:]) > threshold]
-    ess = n / (1 + 2 * np.sum(np.abs(significant_acf)))
+    if n < 3:
+        return n
 
-    return int(np.ceil(ess))
+    tau = _estimate_tau_int_from_series(series.values)
+    return max(1, int(np.ceil(n / tau)))

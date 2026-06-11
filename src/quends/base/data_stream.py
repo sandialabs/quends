@@ -1,21 +1,24 @@
 import math
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
-from scipy.stats import norm, rankdata
+from scipy.stats import rankdata
 from sklearn.preprocessing import MinMaxScaler
-from statsmodels.tsa.stattools import acf, adfuller
+from statsmodels.tsa.stattools import adfuller
 
 from .history import DataStreamHistory, DataStreamHistoryEntry
 from .utils import (
     _compute_ess,
+    _estimate_tau_int_from_series,
     _geyer_ess_on_blocks,
-    _ljung_box_pass,
     _resolve_columns,
-    _tau_int_geyer_from_acf,
+    autotune_blocks,
+    confidence_multiplier,
     power_law_model,
+    SCHEMA_VERSION,
+    StatsResult,
     to_native_types,
 )
 
@@ -62,7 +65,30 @@ def _coerce_history(history: Optional[Any] = None) -> DataStreamHistory:
 class DataStream:
 
     def __init__(self, data: Any, history: Optional[DataStreamHistory] = None) -> None:
-        self._data = data
+        """Wrap a pandas DataFrame of time-series data.
+
+        ``data`` must be a :class:`pandas.DataFrame` (or something convertible to
+        one — a dict/array/Series is coerced); anything else raises ``TypeError``
+        early with a clear message rather than failing cryptically later.
+
+        A ``time`` column is **not** required at construction — column-wise
+        statistics work without it — but steady-state trimming and ensemble
+        averaging do require one and will raise a clear error if it is missing
+        (see :meth:`trim` / :mod:`quends.base.trim`).
+        """
+        if isinstance(data, pd.DataFrame):
+            df = data
+        elif data is None:
+            raise TypeError("DataStream(data): data must be a pandas DataFrame, got None.")
+        else:
+            try:
+                df = pd.DataFrame(data)
+            except Exception as exc:  # noqa: BLE001 - re-raised as a clear TypeError
+                raise TypeError(
+                    "DataStream(data): data must be a pandas DataFrame (or something "
+                    f"convertible to one); got {type(data).__name__} ({exc})."
+                )
+        self._data = df
         self._history = _coerce_history(history)
 
     @property
@@ -106,90 +132,179 @@ class DataStream:
 
     # --------- Statistical summaries ---------
     def mean(self, column_name=None, method="non-overlapping", window_size=None):
-        """Compute block or sliding window means for each column."""
-        results = {}
-        for col in self._get_columns(column_name):
-            column_data = self.data[col].dropna()
-            if column_data.empty:
-                results[col] = {"error": f"No data available for column '{col}'"}
-                continue
-            est_win = self._estimate_window(col, column_data, window_size)
-            time_values = self._time_values_for_series(column_data)
-            proc_data = self._process_column(column_data, est_win, method, time_values=time_values)
-            results[col] = {
-                "mean": float(np.mean(proc_data)),
-                "window_size": int(est_win),
-            }
-        return results
+        """
+        Compute block or sliding window means for each column.
+
+        Thin wrapper over :meth:`compute_statistics` — extracts ``mean`` and
+        ``window_size`` so callers that only need the mean don't have to
+        unpack the full statistics dict.
+        """
+        stats = self.compute_statistics(
+            column_name=column_name, method=method, window_size=window_size
+        )
+        return {
+            col: v if "error" in v else {"mean": v["mean"], "window_size": v["window_size"]}
+            for col, v in stats.items()
+        }
 
     def mean_uncertainty(
         self, column_name=None, ddof=1, method="non-overlapping", window_size=None
     ):
-        """Estimate the standard error of the mean via Geyer ESS on block means."""
-        results = {}
-        for col in self._get_columns(column_name):
-            series = self.data[col].dropna()
-            if series.empty:
-                results[col] = {"error": f"No data available for column '{col}'"}
-                continue
-            info = self.get_block_effective_n(col, method=method, window_size=window_size)
-            est_win = info["window_size"]
-            eff_n = max(1.0, info["effective_n"] if np.isfinite(info["effective_n"]) else 1.0)
-            time_values = self._time_values_for_series(series)
-            proc_data = self._process_column(series, est_win, method, time_values=time_values)
-            uncertainty = float(np.std(proc_data.values, ddof=ddof) / np.sqrt(eff_n))
-            results[col] = {
-                "mean_uncertainty": uncertainty,
-                "window_size": int(est_win),
-            }
-        return results
+        """
+        Estimate the standard error of the mean via Geyer ESS on block means.
+
+        Thin wrapper over :meth:`compute_statistics` — extracts
+        ``mean_uncertainty`` and ``window_size``.
+        """
+        stats = self.compute_statistics(
+            column_name=column_name, ddof=ddof, method=method, window_size=window_size
+        )
+        return {
+            col: v if "error" in v
+            else {"mean_uncertainty": v["mean_uncertainty"], "window_size": v["window_size"]}
+            for col, v in stats.items()
+        }
 
     def confidence_interval(
-        self, column_name=None, ddof=1, method="non-overlapping", window_size=None
+        self,
+        column_name=None,
+        ddof=1,
+        method="non-overlapping",
+        window_size=None,
+        confidence_level: float = 0.95,
+        ci_method: str = "normal",
     ):
         """
-        Build 95% confidence intervals around block/sliding means.
+        Build confidence intervals around block/sliding means.
 
-        Private helper.
+        Thin wrapper over :meth:`compute_statistics` — extracts
+        ``confidence_interval`` and ``window_size``.  Columns with no valid
+        data propagate the error dict rather than raising ``KeyError``.
+
+        See :meth:`compute_statistics` for the meaning of *confidence_level*
+        and *ci_method*.  Defaults preserve the historical 95 % normal CI
+        (multiplier ``1.96``).
         """
-        results = {}
-        mean_results = self.mean(column_name, method=method, window_size=window_size)
-        uncertainty_results = self.mean_uncertainty(
-            column_name, ddof=ddof, method=method, window_size=window_size
+        stats = self.compute_statistics(
+            column_name=column_name,
+            ddof=ddof,
+            method=method,
+            window_size=window_size,
+            confidence_level=confidence_level,
+            ci_method=ci_method,
         )
-        for col in self._get_columns(column_name):
-            if col not in mean_results or col not in uncertainty_results:
-                results[col] = {"error": f"Missing data for column '{col}'"}
-                continue
-            mean_val = mean_results[col]["mean"]
-            uncertainty_val = uncertainty_results[col]["mean_uncertainty"]
-            ci_lower = mean_val - 1.96 * uncertainty_val
-            ci_upper = mean_val + 1.96 * uncertainty_val
-            results[col] = {
-                "confidence_interval": (float(ci_lower), float(ci_upper)),
-                "window_size": int(mean_results[col]["window_size"]),
-            }
-        return results
+        return {
+            col: v if "error" in v
+            else {"confidence_interval": v["confidence_interval"], "window_size": v["window_size"]}
+            for col, v in stats.items()
+        }
+
+    def trim(
+        self,
+        column_name=None,
+        *,
+        method: str = "std",
+        window_size: int = 10,
+        start_time: float = 0.0,
+        threshold: Optional[float] = None,
+        robust: bool = True,
+        **strategy_kwargs: Any,
+    ) -> "DataStream":
+        """Trim this stream to its steady state and return a new ``DataStream``.
+
+        Convenience one-liner over :func:`quends.base.trim.build_trim_strategy` +
+        :class:`~quends.base.trim.TrimDataStreamOperation` (the explicit/low-level
+        path still works exactly as before — this just wraps it).
+
+        Parameters
+        ----------
+        column_name : str, optional
+            Column to detect steady state on. If ``None`` and the stream has a
+            single non-``time`` column, that column is used automatically.
+        method : str
+            ``"std"`` | ``"threshold"`` | ``"rolling_variance"`` |
+            ``"self_consistent"`` | ``"iqr"`` | ``"mean_variation"``.
+        window_size, start_time, threshold, robust :
+            Strategy parameters (see ``build_trim_strategy``).
+        **strategy_kwargs :
+            Extra attributes set on the strategy (e.g. ``drop_leading_nonpositive=False``).
+
+        Returns
+        -------
+        DataStream
+            The trimmed stream (empty if no steady state was detected).
+        """
+        # Local import avoids a circular import at module load time.
+        from .trim import TrimDataStreamOperation, build_trim_strategy
+
+        if column_name is None:
+            cols = [c for c in self.data.columns if c != "time"]
+            if len(cols) != 1:
+                raise ValueError(
+                    "column_name must be specified when the stream does not have "
+                    f"exactly one non-'time' column (found {cols})."
+                )
+            column_name = cols[0]
+
+        strategy = build_trim_strategy(
+            method=method,
+            window_size=window_size,
+            start_time=start_time,
+            threshold=threshold,
+            robust=robust,
+        )
+        for key, value in strategy_kwargs.items():
+            setattr(strategy, key, value)
+        return TrimDataStreamOperation(strategy=strategy)(self, column_name=column_name)
 
     def compute_statistics(
-        self, column_name=None, ddof=1, method="non-overlapping", window_size=None
+        self,
+        column_name=None,
+        ddof=1,
+        method="non-overlapping",
+        window_size=None,
+        confidence_level: float = 0.95,
+        ci_method: str = "normal",
     ):
         """
-        Aggregate statistics: mean, uncertainty, CI, pm_std bounds, ESS, and window size.
+        Aggregate statistics for each column using autotuned independent block means.
 
-        Appends the operation to history and embeds deduplicated metadata in the results.
+        Window selection and block-mean computation go through :meth:`_process_column`
+        → :func:`~quends.base.utils.autotune_blocks` (the single canonical helper
+        shared with the ensemble pipeline).
 
         Parameters
         ----------
         column_name : str or list or None
         ddof : int
-        method : {'sliding', 'non-overlapping'}
+        method : {'non-overlapping', 'sliding'}
+            Block type.  Independence autotuning always uses non-overlapping blocks
+            regardless of this setting.
         window_size : int or None
+            User-supplied window; triggers autotune when ``None``.
+        confidence_level : float
+            Two-sided confidence level for the CI.  Default ``0.95``.
+        ci_method : {'normal', 't'}
+            CI quantile family.  Default ``'normal'`` (preserves the historical
+            ``1.96`` multiplier exactly for backward compatibility).  When ``'t'``,
+            uses Student's *t* with ``dof = max(1, se_effective_n - 1)``.
 
         Returns
         -------
         dict
-            {col: {statistics...}, 'metadata': history}
+            ``{col: {…statistics…}}`` with the following canonical keys per column:
+
+            ``mean``, ``mean_uncertainty`` (SEM), ``variance``, ``confidence_interval``,
+            ``pm_std``, ``effective_sample_size`` (Geyer ESS on raw series),
+            ``window_size``, ``n_short_averages`` (number of block means),
+            ``ess_blocks`` (Geyer ESS on block means), ``se_effective_n``,
+            ``se_method``, ``independence_status``, ``independent``,
+            ``ljungbox_lags`` (list), ``ljungbox_pvalues`` (list),
+            ``ljungbox_pvalue`` (scalar min — convenience alias matching ensemble output),
+            ``ci_method``, ``confidence_level``,
+            ``warning`` (if applicable).
+
+            On error: ``{col: {"error": "…"}}``
         """
         stats = {}
         cols = self._get_columns(column_name)
@@ -201,23 +316,21 @@ class DataStream:
                 stats[col] = {"error": f"No data available for column '{col}'"}
                 continue
 
-            # Window selection with independence attempt
-            if window_size is None:
-                w, info = self._autotune_window_size(
-                    col=col, series=series, method=method,
-                    alpha=0.05, lag_set=(5, 10), c0=2.0, max_iter=20, w_min=5,
-                )
-                status = info.get("status", "best_p")
-                lb = info.get("lb", {"lags": [], "pvalues": []})
-            else:
-                w = int(window_size)
-                status = "user_window"
-                lb = {"lags": [], "pvalues": []}
-
-            time_values = self._time_values_for_series(series)
-            proc = self._process_column(series, w, method, time_values=time_values)
-            block_means = np.asarray(proc.values, dtype=float)
-            n_blocks = int(block_means.size)
+            # Window selection and block-mean computation via _process_column,
+            # which is the single autotune entry point for both DataStream and
+            # the ensemble pipeline.
+            _, ab = self._process_column(
+                series,
+                estimated_window=window_size,
+                method=method,
+                min_blocks=2,   # continue until < 2 blocks (original behaviour)
+                max_iter=20,
+            )
+            w = ab["window_size"]
+            status = ab["independence_status"]
+            block_means = ab["blocks"]
+            lb = {"lags": ab["ljungbox_lags"], "pvalues": ab["ljungbox_pvalues"]}
+            n_blocks = ab["n_blocks"]
 
             if n_blocks < 1:
                 stats[col] = {"error": f"No block means produced (window_size={w}).", "window_size": int(w)}
@@ -247,11 +360,22 @@ class DataStream:
                 warning = "Too few blocks for independence test; SE via Geyer ESS."
 
             se = float(sd / np.sqrt(eff_n_for_se)) if np.isfinite(sd) and n_blocks >= 2 else np.nan
-            ci = (float(mu - 1.96 * se), float(mu + 1.96 * se)) if np.isfinite(se) else (np.nan, np.nan)
+
+            # CI multiplier (defaults preserve historical 1.96 exactly).
+            ci_dof = max(1, int(round(eff_n_for_se)) - 1) if ci_method == "t" else None
+            ci_mult = confidence_multiplier(
+                confidence_level=confidence_level, method=ci_method, dof=ci_dof
+            )
+            ci = (
+                (float(mu - ci_mult * se), float(mu + ci_mult * se))
+                if np.isfinite(se)
+                else (np.nan, np.nan)
+            )
 
             ess_entry = ess_res.get("results", {}).get(col, {})
             ess_val = ess_entry.get("effective_sample_size") if isinstance(ess_entry, dict) else ess_entry
 
+            pvals = lb.get("pvalues", [])
             entry = {
                 "mean": mu,
                 "mean_uncertainty": se,
@@ -262,18 +386,33 @@ class DataStream:
                 "window_size": int(w),
                 "n_short_averages": int(n_blocks),
                 "ess_blocks": float(ess_blocks),
-                "block_effective_n": float(ess_blocks),
                 "se_effective_n": float(eff_n_for_se),
                 "se_method": se_method,
                 "independence_status": status,
+                "independent": bool(ab["independent"]),
                 "ljungbox_lags": lb.get("lags", []),
-                "ljungbox_pvalues": lb.get("pvalues", []),
+                "ljungbox_pvalues": pvals,
+                # Scalar convenience key (min of all tested lags) — mirrors
+                # the ljungbox_pvalue key in the ensemble Technique-1 output.
+                "ljungbox_pvalue": float(min(pvals)) if pvals else float("nan"),
+                # CI provenance
+                "ci_method": ci_method,
+                "confidence_level": float(confidence_level),
             }
             if warning:
                 entry["warning"] = warning
             stats[col] = entry
 
-        return to_native_types(stats)
+        # Return a StatsResult: behaves exactly like the historical
+        # {column: {...}} dict (so res[col]["mean_uncertainty"] and equality
+        # checks are unchanged) but carries run-level provenance in .metadata.
+        metadata = {
+            "estimator": "single",
+            "columns": list(stats.keys()),
+            "total_samples": int(len(self.data)),
+            "schema_version": SCHEMA_VERSION,
+        }
+        return StatsResult(to_native_types(stats), metadata=to_native_types(metadata))
 
     def cumulative_statistics(
         self, column_name=None, method="non-overlapping", window_size=None
@@ -281,7 +420,13 @@ class DataStream:
         """
         Generate cumulative mean and uncertainty time series for each column.
 
-        Records operation and returns per-column cumulative arrays plus window_size.
+        Returns per-column cumulative arrays plus ``window_size``.
+
+        Notes
+        -----
+        ``cumulative_uncertainty`` is the expanding **standard deviation** of the
+        processed series, while ``standard_error`` is the expanding SEM
+        (std / sqrt(count)). Use ``standard_error`` for uncertainty-on-the-mean.
         """
         results = {}
         for col in self._get_columns(column_name):
@@ -289,9 +434,11 @@ class DataStream:
             if column_data.empty:
                 results[col] = {"error": f"No data available for column '{col}'"}
                 continue
-            est_win = self._estimate_window(col, column_data, window_size)
             time_values = self._time_values_for_series(column_data)
-            proc_data = self._process_column(column_data, est_win, method, time_values=time_values)
+            proc_data, ab = self._process_column(
+                column_data, window_size, method, time_values=time_values
+            )
+            est_win = ab["window_size"]
             cumulative_mean = proc_data.expanding().mean()
             cumulative_std = proc_data.expanding().std()
             count = proc_data.expanding().count()
@@ -316,7 +463,14 @@ class DataStream:
         """
         Estimate additional sample size needed to reduce SEM by `reduction_factor` via power-law fit.
 
-        Records operation and returns model parameters and sample projections.
+        Returns model parameters and sample projections.
+
+        Notes
+        -----
+        The power law is currently fit to ``cumulative_statistics``'
+        ``cumulative_uncertainty`` series. See ``cumulative_statistics`` — that
+        key holds the expanding standard deviation, not the SEM; fitting a
+        shrinking-SEM power law to it is a known limitation (see AUDIT_REPORT H2).
         """
         stats = self.cumulative_statistics(
             column_name, method=method, window_size=window_size
@@ -324,12 +478,14 @@ class DataStream:
         results = {}
         columns = self._get_columns(column_name)
         for col in columns:
-            if "cumulative_uncertainty" not in stats.get(col, {}):
+            if "standard_error" not in stats.get(col, {}):
                 results[col] = {"error": f"No cumulative SEM data for column '{col}'"}
                 continue
-            column_data = self.data[col].dropna()
-            est_win = self._estimate_window(col, column_data, window_size)
-            cum_sem = np.array(stats[col]["cumulative_uncertainty"])
+            est_win = stats[col].get("window_size", 1)  # already computed by cumulative_statistics
+            # Fit the power law to the standard error of the mean (SEM), which
+            # genuinely shrinks ~ A/n^p — NOT the expanding standard deviation
+            # (which converges to a constant). See AUDIT_REPORT H2.
+            cum_sem = np.array(stats[col]["standard_error"])
             n_current = len(cum_sem)
             cumulative_count = np.arange(1, n_current + 1)
             mask = np.isfinite(cum_sem)
@@ -360,17 +516,6 @@ class DataStream:
             }
 
         return to_native_types(results)
-
-    def effective_sample_size_below(self, column_names=None, alpha=0.05):
-        """
-        Stub for compatibility with legacy test. Returns dummy value.
-        """
-        # We could implement a real one if needed; for now, return 0 for all columns.
-        if column_names is None:
-            column_names = [col for col in self.data.columns if col != "time"]
-        elif isinstance(column_names, str):
-            column_names = [column_names]
-        return {col: 0 for col in column_names}
 
     # ------ Helper functions --------
     def is_stationary(self, columns):
@@ -411,9 +556,14 @@ class DataStream:
 
     def _estimate_window(self, col, column_data, window_size):
         """
-        Determine block size: either user-provided or via tau_int + Ljung-Box autotune.
+        Legacy wrapper — return user-supplied ``window_size`` or autotune via
+        ``_autotune_window_size``.
 
-        Ensures a minimum window of 5 samples.
+        .. deprecated::
+            No live callers remain inside the codebase.  The main pipeline now
+            goes through :meth:`_process_column`, which calls
+            :func:`~quends.base.utils.autotune_blocks` directly.  This method
+            is retained only for any external code that may call it.
         """
         if window_size is not None:
             return int(window_size)
@@ -433,55 +583,94 @@ class DataStream:
     def _process_column(
         self,
         column_data,
-        estimated_window,
-        method,
+        estimated_window: Optional[int],
+        method: str,
         time_values: Optional[np.ndarray] = None,
-    ):
+        # --- autotune parameters forwarded to autotune_blocks ---
+        alpha: float = 0.05,
+        lag_set=(5, 10),
+        B_min: int = 15,
+        min_blocks: int = 2,
+        max_iter: int = 25,
+        w_min: int = 5,
+        c0: float = 2.0,
+    ) -> Tuple[pd.Series, dict]:
         """
-        Transform a 1D series into block or sliding window means.
+        Autotune block window and transform a 1D series into block means.
+
+        Window determination always uses non-overlapping blocks + Ljung-Box
+        (LB on sliding means is unreliable for independence testing).  When
+        *estimated_window* is ``None`` the window is chosen by
+        :func:`~quends.base.utils.autotune_blocks`; when an integer is
+        supplied the autotune is skipped but the LB diagnostic is still run.
 
         Parameters
         ----------
         column_data : pandas.Series
-        estimated_window : int
-        method : {'sliding', 'non-overlapping'}
+            Raw series values (dropna'd before calling).
+        estimated_window : int or None
+            Starting window hint.  ``None`` triggers full autotune.
+        method : {'non-overlapping', 'sliding'}
+            Output format.  Independence autotune always uses
+            ``non-overlapping`` regardless of this setting.
         time_values : np.ndarray or None
-            If provided, used as block-center indices for non-overlapping means.
+            If provided, used as block-centre indices in the returned Series.
+        alpha, lag_set, B_min, min_blocks, max_iter, w_min, c0 :
+            Forwarded verbatim to :func:`~quends.base.utils.autotune_blocks`.
 
         Returns
         -------
-        pandas.Series
+        (block_means_series : pd.Series, autotune_result : dict)
+            *autotune_result* is the full dict returned by
+            :func:`~quends.base.utils.autotune_blocks`; it always describes
+            non-overlapping blocks regardless of *method*.
         """
+        if method not in ("non-overlapping", "sliding"):
+            raise ValueError("Invalid method. Choose 'sliding' or 'non-overlapping'.")
+
         if time_values is not None:
             time_values = np.asarray(time_values, dtype=float)
             if time_values.size != len(column_data):
                 time_values = None
+
+        x = np.asarray(column_data.values, dtype=float)
+
+        # Independence autotune always on non-overlapping blocks.
+        ab = autotune_blocks(
+            x,
+            window_size=estimated_window,
+            method="non-overlapping",
+            alpha=alpha,
+            lag_set=lag_set,
+            B_min=B_min,
+            min_blocks=min_blocks,
+            max_iter=max_iter,
+            w_min=w_min,
+            c0=c0,
+        )
+        w = ab["window_size"]
 
         if method == "sliding":
             if time_values is not None:
                 series = pd.Series(column_data.values, index=time_values)
             else:
                 series = column_data
-            return series.rolling(window=int(estimated_window)).mean().dropna()
+            return series.rolling(window=int(w)).mean().dropna(), ab
 
-        elif method == "non-overlapping":
-            w = int(max(1, estimated_window))
-            x = np.asarray(column_data.values, dtype=float)
-            n = x.size
-            n_blocks = n // w
-            if n_blocks < 1:
-                return pd.Series([], dtype=float)
-            x2 = x[: n_blocks * w].reshape(n_blocks, w)
-            block_means = x2.mean(axis=1)
-            if time_values is not None:
-                t = time_values[: n_blocks * w].reshape(n_blocks, w)
-                idx = t.mean(axis=1)
-            else:
-                idx = (np.arange(n_blocks) * w) + (w // 2)
-            return pd.Series(block_means, index=idx)
+        # non-overlapping — reuse the blocks already computed by autotune_blocks
+        blocks = ab["blocks"]
+        n_blocks = int(blocks.size)
+        if n_blocks < 1:
+            return pd.Series([], dtype=float), ab
 
+        if time_values is not None:
+            n_usable = n_blocks * w
+            t = time_values[:n_usable].reshape(n_blocks, w)
+            idx = t.mean(axis=1)
         else:
-            raise ValueError("Invalid method. Choose 'sliding' or 'non-overlapping'.")
+            idx = (np.arange(n_blocks) * w) + (w // 2)
+
+        return pd.Series(blocks, index=idx), ab
 
     def _time_values_for_series(self, series: pd.Series) -> Optional[np.ndarray]:
         """Return the 'time' column values aligned to `series.index`, or None."""
@@ -495,14 +684,12 @@ class DataStream:
     # ----------- Window autotune (tau_int + Ljung-Box) ----------------
 
     def _estimate_tau_int(self, series: pd.Series) -> float:
-        """Estimate tau_int from raw series ACF using Geyer positive-pair truncation."""
-        x = np.asarray(series.dropna().values, dtype=float)
-        n = x.size
-        if n < 3:
-            return 1.0
-        nlags = max(1, min(n // 4, 2000))
-        r = acf(x, nlags=nlags, fft=False)
-        return _tau_int_geyer_from_acf(r)
+        """
+        Estimate tau_int from raw series ACF using Geyer positive-pair truncation.
+
+        Delegates to ``_estimate_tau_int_from_series`` in ``utils``.
+        """
+        return _estimate_tau_int_from_series(np.asarray(series.dropna().values, dtype=float))
 
     def _autotune_window_size(
         self,
@@ -517,57 +704,42 @@ class DataStream:
         w_min: int = 5,
     ):
         """
-        Choose block window size via:
-          1) tau_int estimate (Geyer on raw ACF)
-          2) w0 = ceil(c0 * tau_int)
-          3) Ljung-Box test on block means; grow w by +1 on failure
-          4) enforce B_min blocks where possible
-          5) fallback to best p-value if independence never achieved
+        Choose block window size via tau_int + Ljung-Box autotune.
+
+        Thin wrapper around :func:`~quends.base.utils.autotune_blocks` for
+        backward compatibility.  The canonical pipeline entry point is
+        :meth:`_process_column`, which calls ``autotune_blocks`` directly.
 
         Returns
         -------
-        (chosen_w: int, info: dict)
+        (chosen_w : int, info : dict)
+            ``info`` keys: ``status``, ``tau_int``, ``chosen_w``, ``passed``,
+            ``lb`` (sub-dict with ``lags`` and ``pvalues`` lists).
         """
-        x = series.dropna()
-        time_values = self._time_values_for_series(x)
-        n = int(x.size)
-        if n < 2:
-            return w_min, {"status": "too_few_blocks", "tau_int": 1.0, "chosen_w": w_min, "passed": False}
-
-        tau = self._estimate_tau_int(x)
-        w = int(max(w_min, math.ceil(c0 * tau)))
-
-        # Hard cap: w must never exceed n so that at least 1 block can be formed.
-        w = min(w, max(1, n))
-
-        # Soft cap: try to keep >= B_min blocks where possible.
-        w_cap = (n // B_min) if (B_min and n // B_min >= 1) else n
-        cap_applied = w_cap >= w_min and w > w_cap
-        if cap_applied:
-            w = min(w, w_cap)
-
-        best = {"w": w, "passed": False, "p_min": -np.inf, "lb": {"lags": [], "pvalues": []}}
-
-        for _ in range(int(max_iter)):
-            proc = self._process_column(x, w, method, time_values=time_values)
-            bm = np.asarray(proc.values, dtype=float)
-            if bm.size < 2:
-                break
-            passed, det = _ljung_box_pass(bm, alpha=alpha, lag_set=lag_set)
-            p_score = min(det["pvalues"]) if det.get("pvalues") else -np.inf
-            if p_score > best["p_min"]:
-                best = {"w": int(w), "passed": bool(passed), "p_min": float(p_score), "lb": det}
-            if passed:
-                return int(w), {"status": "independent", "tau_int": float(tau), "chosen_w": int(w), "passed": True, "lb": det}
-            w_next = w + 1
-            if w_next <= w or n // w_next < 2:
-                break
-            w = w_next
-
-        if best["p_min"] > -np.inf:
-            return int(best["w"]), {"status": "best_p", "tau_int": float(tau), "chosen_w": int(best["w"]), "passed": False, "lb": best["lb"]}
-
-        return int(w), {"status": "too_few_blocks", "tau_int": float(tau), "chosen_w": int(w), "passed": False, "lb": {"lags": [], "pvalues": []}}
+        x = np.asarray(series.dropna().values, dtype=float)
+        result = autotune_blocks(
+            x,
+            window_size=None,
+            method=method,
+            alpha=alpha,
+            lag_set=lag_set,
+            B_min=B_min,
+            min_blocks=2,   # match old DataStream: continue until < 2 blocks
+            max_iter=max_iter,
+            w_min=w_min,
+            c0=c0,
+        )
+        info = {
+            "status": result["independence_status"],
+            "tau_int": result.get("tau_int", float("nan")),
+            "chosen_w": result["window_size"],
+            "passed": result["independent"],
+            "lb": {
+                "lags": result["ljungbox_lags"],
+                "pvalues": result["ljungbox_pvalues"],
+            },
+        }
+        return int(result["window_size"]), info
 
     # ----------- Block-level ESS + variance ----------------
 
@@ -578,22 +750,29 @@ class DataStream:
         window_size: Optional[int] = None,
     ) -> dict:
         """
-        Compute Geyer ESS on block means (not on raw series).
+        Return Geyer ESS on block means for one column.
+
+        Thin wrapper over :meth:`compute_statistics` — extracts the
+        ``ess_blocks``, ``window_size``, and ``n_short_averages`` fields so
+        that callers that only need block-level ESS info don't have to unpack
+        the full statistics dict.
 
         Returns
         -------
-        dict: {"effective_n": float, "window_size": int, "n_blocks": int}
+        dict
+            ``{"effective_n": float, "window_size": int, "n_blocks": int}``
         """
-        series = self.data[column_name].dropna()
-        if series.empty:
+        stats = self.compute_statistics(
+            column_name=column_name, method=method, window_size=window_size
+        )
+        v = stats.get(column_name, {})
+        if "error" in v:
             return {"effective_n": float("nan"), "window_size": window_size or 0, "n_blocks": 0}
-        est_win = self._estimate_window(column_name, series, window_size)
-        time_values = self._time_values_for_series(series)
-        proc = self._process_column(series, est_win, method, time_values=time_values)
-        bm = proc.values
-        n_blocks = len(bm)
-        ess_blocks = _geyer_ess_on_blocks(bm) if n_blocks >= 3 else 1.0
-        return {"effective_n": float(ess_blocks), "window_size": int(est_win), "n_blocks": int(n_blocks)}
+        return {
+            "effective_n": float(v["ess_blocks"]),
+            "window_size": int(v["window_size"]),
+            "n_blocks": int(v["n_short_averages"]),
+        }
 
     def _variance(
         self,
@@ -602,61 +781,48 @@ class DataStream:
         method="non-overlapping",
         window_size=None,
     ) -> dict:
-        """Variance of block means, using same window as _mean_uncertainty."""
-        results = {}
-        for col in self._get_columns(column_name):
-            series = self.data[col].dropna()
-            if series.empty:
-                results[col] = {"variance": np.nan, "window_size": np.nan, "effective_n_blocks": np.nan}
-                continue
-            info = self.get_block_effective_n(col, method=method, window_size=window_size)
-            est_win = info["window_size"]
-            time_values = self._time_values_for_series(series)
-            proc = self._process_column(series, est_win, method, time_values=time_values)
-            bm = proc.values
-            var_val = float(np.var(bm, ddof=ddof)) if bm.size >= 2 else np.nan
-            results[col] = {"variance": var_val, "window_size": int(est_win), "effective_n_blocks": info["effective_n"]}
-        return results
+        """
+        Variance of block means.
 
-    def _short_term_counts(
-        self,
-        column_name=None,
-        method="non-overlapping",
-        window_size=None,
-    ) -> dict:
-        """Count of non-overlapping block means used in block statistics."""
+        Thin wrapper over :meth:`compute_statistics` — extracts ``variance``,
+        ``window_size``, and ``ess_blocks`` (returned as ``effective_n_blocks``
+        for backward compatibility).
+        """
+        stats = self.compute_statistics(
+            column_name=column_name, ddof=ddof, method=method, window_size=window_size
+        )
         results = {}
-        for col in self._get_columns(column_name):
-            series = self.data[col].dropna()
-            if series.empty:
-                results[col] = {"n_short_averages": 0, "window_size": 0, "n_blocks": 0}
-                continue
-            est_win = self._estimate_window(col, series, window_size)
-            if len(series) < est_win:
-                results[col] = {"n_short_averages": 0, "window_size": int(est_win), "n_blocks": 0}
-                continue
-            time_values = self._time_values_for_series(series)
-            proc = self._process_column(series, est_win, method, time_values=time_values)
-            n = int(len(proc))
-            results[col] = {"n_short_averages": n, "window_size": int(est_win), "n_blocks": n}
+        for col, v in stats.items():
+            if "error" in v:
+                results[col] = {"variance": float("nan"), "window_size": float("nan"), "effective_n_blocks": float("nan")}
+            else:
+                results[col] = {
+                    "variance": v["variance"],
+                    "window_size": v["window_size"],
+                    "effective_n_blocks": v["ess_blocks"],
+                }
         return results
 
     # ----------- ESS (classic and robust) ----------------
     def effective_sample_size(self, column_names=None, alpha=0.05):
         """
-        Compute classic ESS based on significant autocorrelation lags.
+        Compute ESS using Geyer positive-pair truncation of the ACF.
+
+        The integrated autocorrelation time ``tau_int`` is estimated by summing
+        consecutive positive pairs of the normalised ACF and truncating as soon
+        as a pair turns non-positive.  ESS is then ``n / tau_int``.
 
         Parameters
         ----------
         column_names : str or list of str or None
-            Columns to compute ESS for; defaults to all except 'time'.
+            Columns to compute ESS for; defaults to all non-time columns.
         alpha : float
-            Significance level for autocorrelation cutoff.
+            Reserved for API compatibility; not used in the Geyer estimator.
 
         Returns
         -------
         dict
-            {'results': {col: ESS_int or message}}
+            ``{'results': {col: ESS_int or message_dict}}``
         """
 
         columns = _resolve_columns(self.data, column_names)
@@ -733,8 +899,6 @@ class DataStream:
         """
         Wrapper for `robust_effective_sample_size` over multiple columns.
 
-        Records the operation in history.
-
         Parameters
         ----------
         column_names : str or list or None
@@ -773,6 +937,8 @@ class DataStream:
         """
         Min-Max normalize all signal columns (excluding 'time') to [0,1].
 
+        Operates on a copy; the input DataFrame is not mutated.
+
         Parameters
         ----------
         df : pandas.DataFrame
@@ -781,6 +947,7 @@ class DataStream:
         -------
         pandas.DataFrame
         """
+        df = df.copy()
         scaler = MinMaxScaler()
         signal_columns = df.columns[1:]
         df[signal_columns] = df[signal_columns].astype(float)

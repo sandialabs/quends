@@ -5,16 +5,25 @@ from pathlib import Path
 from typing import Tuple
 from unittest.mock import MagicMock, patch
 
-import nbformat
+import pytest
+
+# These tests drive a Jupyter notebook via papermill; both papermill and
+# nbformat are optional dev dependencies.  Skip the entire module when either
+# is missing rather than failing at collection time.
+nbformat = pytest.importorskip("nbformat")
+pm = pytest.importorskip("papermill")
+
 import numpy as np
 import pandas as pd
 import pandas.testing as pdt
-import papermill as pm
-import pytest
 
 from quends import DataStream, RobustWorkflow
 
-os.chdir("examples/notebooks")
+# The notebook references resolve relative to the project root.  Only chdir
+# when the expected directory exists so that simply importing this module
+# (without papermill) does not silently move the working directory.
+if Path("examples/notebooks").is_dir():
+    os.chdir("examples/notebooks")
 
 # Constants
 INPUT_NOTEBOOK = Path("robust_workflow.ipynb")
