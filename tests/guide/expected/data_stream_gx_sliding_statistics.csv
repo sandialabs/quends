@@ -1,2 +1,2 @@
-column,mean,mean_uncertainty,confidence_interval.lower,confidence_interval.upper,pm_std.lower,pm_std.upper,effective_sample_size,window_size
-HeatFlux_st,7.815731042731574,0.05992075505570511,7.698286362822392,7.933175722640756,7.755810287675869,7.875651797787279,6,17
+column,mean,mean_uncertainty,variance,confidence_interval.lower,confidence_interval.upper,pm_std.lower,pm_std.upper,effective_sample_size,window_size,n_short_averages,ess_blocks,se_effective_n,se_method,independence_status,independent,ljungbox_lags.lower,ljungbox_lags.upper,ljungbox_pvalues.lower,ljungbox_pvalues.upper,ljungbox_pvalue,ci_method,confidence_level
+HeatFlux_st,7.875520959340661,0.12619473681313076,0.11147578119534739,7.628179275186925,8.122862643494397,7.749326222527531,8.001715696153791,6,13,7,7.0,7.0,iid_blocks,independent,True,5,6,0.07580322441070027,0.11874717074470793,0.07580322441070027,normal,0.95

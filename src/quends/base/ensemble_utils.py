@@ -474,6 +474,16 @@ def compute_average_ensemble(
     if not data_streams:
         raise ValueError("No data streams provided for ensemble averaging.")
 
+    # Ignore members that carry no rows: an empty member contributes nothing to
+    # the average and would otherwise break the time-step uniformity check.
+    non_empty = [ds for ds in data_streams if not ds.data.empty]
+    if not non_empty:
+        # Every member is empty -> return an empty trace that preserves the
+        # column schema of the first member rather than raising.
+        template = data_streams[0].data
+        return DataStream(template.iloc[0:0].copy())
+    data_streams = non_empty
+
     step_info = check_time_steps_uniformity(data_streams, tol=tol)
 
     if step_info["uniform"]:
