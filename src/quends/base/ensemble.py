@@ -1,960 +1,721 @@
-from typing import Dict, List
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 
-from quends.base.data_stream import DataStream
-from quends.base.trim import (
-    NoiseThresholdTrimStrategy,
-    QuantileTrimStrategy,
-    RollingVarianceThresholdTrimStrategy,
-    TrimDataStreamOperation,
+from .data_stream import DataStream
+from .utils import stationarity_results
+
+# ---------------------------------------------------------------------------
+# Reusable helpers (module-level, importable directly by workflow classes)
+# ---------------------------------------------------------------------------
+from .ensemble_utils import (
+    check_time_steps_uniformity as _check_time_steps_uniformity,
+    compute_average_ensemble as _compute_average_ensemble,
+    direct_average as _direct_average,
+    get_common_variables as _get_common_variables,
+    interpolate_to_common_time as _interpolate_to_common_time,
+    resolve_cols as _resolve_cols,
+    trim_members as _trim_members,
+    validate_members,
+)
+from .ensemble_statistics import (
+    ENSEMBLE_AVERAGE,
+    IVW_MEMBER_MEANS,
+    POOLED_BLOCK_MEANS,
+    _normalize_technique,
+    compute_ensemble_statistics as _compute_ensemble_statistics,
+    ensemble_average_stats_for_col as _ensemble_average_stats,
+    ivw_member_means_stats_for_col as _ivw_member_means_stats,
+    pooled_block_means_stats_for_col as _pooled_block_means_stats,
 )
 
 """
 Module: ensemble.py
 
-Defines the Ensemble class for handling collections of DataStream objects,
-providing ensemble-level aggregation, statistical summaries, and metadata history.
+Three analysis techniques are available (passed as ``technique`` parameter):
+
+  technique=0  Average-ensemble:
+    - Construct a single averaged trace (with optional interpolation to a
+      common time grid when members have different time axes).
+    - Run DataStream statistics on that single averaged trace.
+    - This is the standard "average-then-analyze" workflow.
+
+  technique=1  Pooled-block (preferred for trimmed ensembles):
+    - For each member and column, autotune window size until block means pass
+      Ljung-Box independence, or use the best achievable window.
+    - Concatenate per-member block means into one pooled series.
+    - Compute statistics on pooled blocks: mean, SEM, CI, ESS.
+
+  technique=2  Member-wise then aggregate:
+    - Call DataStream.compute_statistics() on each member.
+    - Aggregate using inverse-variance weighting (or simple mean as fallback).
+
+All core statistical and grid logic now lives in the reusable helper modules
+``ensemble_utils`` and ``ensemble_statistics``.  The Ensemble class is a thin
+wrapper that provides the object-oriented API.
 """
 
 
 class Ensemble:
     """
-    Manages an ensemble of DataStream instances, enabling multi-stream analysis.
+    Manages an ensemble of DataStream instances for multi-stream analysis.
 
-    Provides methods for:
-      - Simple accessors (.head, .get_member, .members).
-      - Identifying common variables across streams.
-      - Generating an average-ensemble stream aligned to the shortest time grid.
-      - Applying DataStream methods (mean, uncertainty, CI, ESS) at the ensemble level
-        via three techniques: average-ensemble, aggregate-then-statistics, and weighted.
-      - Tracking per-stream and ensemble metadata histories for reproducibility.
+    Core logic is implemented in :mod:`quends.base.ensemble_utils` and
+    :mod:`quends.base.ensemble_statistics`.  The methods here are thin wrappers
+    that delegate to those module-level functions so that workflow classes can
+    call the same logic without going through this class.
     """
 
     def __init__(self, data_streams: List[DataStream]):
-        """
-        Initialize the ensemble with a non-empty list of DataStream objects.
-
-        Parameters
-        ----------
-        data_streams : List[DataStream]
-            List of DataStream instances to include.
-
-        Raises
-        ------
-        ValueError
-            If input is not a list, is empty, or contains non-DataStream items.
-        """
-        if not isinstance(data_streams, list) or not data_streams:
-            raise ValueError("Provide a non-empty list of DataStream objects.")
-        if not all(isinstance(ds, DataStream) for ds in data_streams):
-            raise ValueError("All ensemble members must be DataStream instances.")
+        validate_members(data_streams)
         self.data_streams = data_streams
 
-    def __len__(self):
-        """
-        Number of members in the ensemble.
+    @classmethod
+    def from_files(cls, paths, variable: str, *, loader=None) -> "Ensemble":
+        """Build an Ensemble by loading one variable from each file.
+
+        Convenience constructor that replaces the common
+        ``[from_csv(p, var) for p in paths]`` boilerplate. ``.nc`` files are
+        loaded with :func:`quends.preprocessing.from_netcdf`, everything else
+        with :func:`quends.preprocessing.from_csv`, unless an explicit ``loader``
+        callable ``loader(path, variable) -> DataStream`` is given.
+
+        Parameters
+        ----------
+        paths : iterable of str or pathlib.Path
+            File paths to load (one ensemble member each).
+        variable : str
+            The variable to load from every file.
+        loader : callable, optional
+            Override the auto-selected loader.
 
         Returns
         -------
-        int
+        Ensemble
         """
+        # Local imports avoid importing the preprocessing layer at module load.
+        from ..preprocessing.csv import from_csv
+        from ..preprocessing.netcdf import from_netcdf
+
+        members: List[DataStream] = []
+        for p in paths:
+            sp = str(p)
+            if loader is not None:
+                ds = loader(sp, variable)
+            elif sp.endswith(".nc"):
+                ds = from_netcdf(sp, variable)
+            else:
+                ds = from_csv(sp, variable)
+            members.append(ds)
+        return cls(members)
+
+    def __len__(self) -> int:
         return len(self.data_streams)
 
-    def head(self, n=5):
-        """
-        Retrieve the first `n` rows from each DataStream member.
-
-        Parameters
-        ----------
-        n : int
-            Number of rows to return per stream.
-
-        Returns
-        -------
-        Dict[int, pandas.DataFrame]
-            Mapping from member index to its DataFrame head.
-        """
+    def head(self, n: int = 5) -> Dict[int, pd.DataFrame]:
         return {i: ds.head(n) for i, ds in enumerate(self.data_streams)}
 
-    def get_member(self, index):
-        """
-        Fetch a specific ensemble member by index.
+    def get_member(self, index: int) -> DataStream:
+        return self.data_streams[index]
+
+    def members(self) -> List[DataStream]:
+        return self.data_streams
+
+    # ========== Variables & summary ==========
+
+    def common_variables(self) -> List[str]:
+        """Column names shared by all members, excluding 'time'."""
+        return _get_common_variables(self.data_streams)
+
+    def summary(self, verbose: bool = False) -> Dict:
+        """Return a summary dict of the ensemble.
 
         Parameters
         ----------
-        index : int
-            Zero-based index of the DataStream in the ensemble.
-
-        Returns
-        -------
-        DataStream
-
-        Raises
-        ------
-        IndexError
-            If `index` is out of bounds.
+        verbose : bool
+            If True, also print a short header. Default False — this is a pure
+            getter and should not print as a side effect.
         """
-        return self.data_streams[index]
-
-    def members(self):
-        """
-        List all ensemble members.
-
-        Returns
-        -------
-        List[DataStream]
-        """
-        return self.data_streams
-
-    def common_variables(self):
-        """
-        Identify variable columns shared by all members, excluding 'time'.
-
-        Returns
-        -------
-        List[str]
-        """
-        all_cols = [set(ds.data.columns) - {"time"} for ds in self.data_streams]
-        if not all_cols:
-            return []
-        return sorted(list(set.intersection(*all_cols)))
-
-    def summary(self):
-        """
-        Print and return a structured summary of ensemble members.
-
-        Includes each member's sample count, column list, and head rows.
-
-        Returns
-        -------
-        dict
-            { 'n_members': int,
-              'common_variables': List[str],
-              'members': { 'Member i': { 'n_samples': int,
-                                          'columns': List[str],
-                                          'head': dict } } }
-        """
-        summary_dict = {
-            f"Member {i}": {
+        info = {}
+        for i, ds in enumerate(self.data_streams):
+            info[f"Member {i}"] = {
                 "n_samples": len(ds.data),
                 "columns": list(ds.data.columns),
                 "head": ds.head().to_dict(orient="list"),
             }
-            for i, ds in enumerate(self.data_streams)
-        }
-        overall_summary = {
+        out = {
             "n_members": len(self.data_streams),
             "common_variables": self.common_variables(),
-            "members": summary_dict,
+            "members": info,
         }
-        print("Ensemble Summary:")
-        print(f"Number of ensemble members: {len(self.data_streams)}")
-        print("Common variables:", self.common_variables())
-        for member, info in summary_dict.items():
-            print(f"\n{member}:")
-            print(f"  Number of samples: {info['n_samples']}")
-            print(f"  Columns: {info['columns']}")
-            print("  Head:")
-            print(pd.DataFrame(info["head"]))
-        return overall_summary
+        if verbose:
+            print(f"Ensemble members: {len(self.data_streams)}")
+            print("Common variables:", out["common_variables"])
+        return out
 
-    # ========== Core DataStream Method Shortcuts ==========
-    def _mean(
+    # ========== Helpers ==========
+
+    def _resolve_cols(self, column_name: Optional[Any]) -> List[str]:
+        return _resolve_cols(self.data_streams, column_name)
+
+    @staticmethod
+    def collect_histories(ds_list: List[DataStream]) -> List:
+        return [getattr(ds, "_history", []) for ds in ds_list]
+
+    # ========== Time-grid utilities ==========
+
+    def check_time_steps_uniformity(
         self,
-        ds: DataStream,
-        column_name=None,
-        method="non-overlapping",
-        window_size=None,
-    ):
-        return ds.mean(column_name, method=method, window_size=window_size)
-
-    def _mean_uncertainty(
-        self,
-        ds: DataStream,
-        column_name=None,
-        ddof=1,
-        method="non-overlapping",
-        window_size=None,
-    ):
-        return ds.mean_uncertainty(
-            column_name, ddof=ddof, method=method, window_size=window_size
-        )
-
-    def _confidence_interval(
-        self,
-        ds: DataStream,
-        column_name=None,
-        ddof=1,
-        method="non-overlapping",
-        window_size=None,
-    ):
-        return ds.confidence_interval(
-            column_name, ddof=ddof, method=method, window_size=window_size
-        )
-
-    def _classic_ess(self, ds: DataStream, column_names=None, alpha=0.05):
-        return ds.effective_sample_size(column_names, alpha)
-
-    def _robust_ess(self, ds: DataStream, column_names=None, **kwargs):
-        return ds.ess_robust(column_names, **kwargs)
-
-    # ========== Average-Ensemble Construction ==========
-    def compute_average_ensemble(self, members: List[DataStream] = None):
+        tol: float = 1e-8,
+        verbose: bool = False,
+    ) -> Dict[str, Any]:
         """
-        Build a DataStream whose columns are the elementwise mean across members,
-        aligned on the shortest time grid.
+        Inspect the time-step regularity of each ensemble member.
+
+        For each member, compute diffs of the 'time' column and classify as:
+          - "AllEqual"         all steps identical (within tol)
+          - "AllEqualButLast"  all steps equal except the last one
+          - "NotUniform"       multiple distinct step sizes
+
+        Returns
+        -------
+        dict
+            {
+              "uniform": bool,          True if all members are AllEqual with the same step
+              "majority_step": float,   most common step across all members
+              "members": {
+                "Member i": {
+                  "status": str,
+                  "unique_steps": list[float],
+                  "n_steps": int,
+                  "t_min": float,
+                  "t_max": float,
+                }
+              }
+            }
+
+        Notes
+        -----
+        Delegates to :func:`~quends.base.ensemble_utils.check_time_steps_uniformity`.
+        """
+        return _check_time_steps_uniformity(
+            self.data_streams, tol=tol, verbose=verbose
+        )
+
+    def interpolate_to_common_time(
+        self,
+        method: str = "spline",
+        tol: float = 1e-8,
+        verbose: bool = False,
+    ) -> Tuple["Ensemble", Dict[str, Any]]:
+        """
+        Interpolate all ensemble members onto a common, regular time grid.
+
+        The common grid spans [min(t_start), max(t_end)] across all members
+        using the majority time step.
 
         Parameters
         ----------
-        members : List[DataStream], optional
-            Subset of streams to average; defaults to all.
+        method : {"spline", "linear"}
+            Interpolation method: cubic spline or linear.
+        tol : float
+            Tolerance for step-size uniformity check.
+        verbose : bool
+            Print grid diagnostics.
+
+        Returns
+        -------
+        (interpolated_ensemble, diagnostics_dict)
+
+        Notes
+        -----
+        Delegates to
+        :func:`~quends.base.ensemble_utils.interpolate_to_common_time`.
+        """
+        new_members, diagnostics = _interpolate_to_common_time(
+            self.data_streams, method=method, tol=tol, verbose=verbose
+        )
+        return self.__class__(new_members), diagnostics
+
+    # ========== Average-ensemble construction ==========
+
+    def compute_average_ensemble(
+        self,
+        members: Optional[List[DataStream]] = None,
+        interp_method: str = "spline",
+        tol: float = 1e-8,
+        min_coverage: int = 1,
+        verbose: bool = False,
+    ) -> DataStream:
+        """
+        Build a single averaged DataStream from ensemble members.
+
+        If all members share the same time grid (detected via
+        check_time_steps_uniformity), averages directly.
+        If grids differ, interpolates all members to a common grid first.
+
+        Parameters
+        ----------
+        members : list of DataStream, optional
+            Subset to average; defaults to all.
+        interp_method : {"spline", "linear"}
+            Interpolation method when grids differ.
+        tol : float
+            Tolerance for uniformity check.
+        min_coverage : int
+            Minimum number of members that must contribute to a time point.
+        verbose : bool
+            Print diagnostics.
 
         Returns
         -------
         DataStream
+            Single averaged trace.
+
+        Notes
+        -----
+        Delegates to
+        :func:`~quends.base.ensemble_utils.compute_average_ensemble`.
+        """
+        data_streams = members if members is not None else self.data_streams
+        return _compute_average_ensemble(
+            data_streams,
+            interp_method=interp_method,
+            tol=tol,
+            min_coverage=min_coverage,
+            verbose=verbose,
+        )
+
+    def _direct_average(
+        self,
+        data_streams: List[DataStream],
+        min_coverage: int = 1,
+    ) -> Tuple[DataStream, Dict]:
+        """Backward-compatible wrapper around :func:`~quends.base.ensemble_utils.direct_average`."""
+        cols = self._resolve_cols(None)
+        return _direct_average(data_streams, cols=cols, min_coverage=min_coverage)
+
+    # ========== ensemble_average (T0): single averaged trace ==========
+
+    def _ensemble_average_stats_for_col(
+        self,
+        col: str,
+        ddof: int = 1,
+        method: str = "non-overlapping",
+        window_size: Optional[int] = None,
+        avg_ds: Optional[DataStream] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        """Compute ensemble_average (T0) statistics for one column."""
+        return _ensemble_average_stats(
+            data_streams=self.data_streams,
+            col=col,
+            ddof=ddof,
+            method=method,
+            window_size=window_size,
+            avg_ds=avg_ds,
+        )
+
+    # ========== pooled_block_means (T1) ==========
+
+    def _pooled_block_means_stats_for_col(
+        self,
+        col: str,
+        ddof: int = 1,
+        window_size: Optional[int] = None,
+        method: str = "non-overlapping",
+        lb_lags: Optional[int] = None,
+        lb_alpha: float = 0.05,
+        pooled_lb_alpha_bad: float = 0.01,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        """Compute pooled_block_means (T1) statistics for one column."""
+        return _pooled_block_means_stats(
+            data_streams=self.data_streams,
+            col=col,
+            ddof=ddof,
+            window_size=window_size,
+            method=method,
+            lb_lags=lb_lags,
+            lb_alpha=lb_alpha,
+            pooled_lb_alpha_bad=pooled_lb_alpha_bad,
+        )
+
+    # ========== ivw_member_means (T2) ==========
+
+    def _ivw_member_means_stats_for_col(
+        self,
+        col: str,
+        ddof: int = 1,
+        method: str = "non-overlapping",
+        window_size: Optional[int] = None,
+        diagnostics: str = "compact",
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        """Compute ivw_member_means (T2) statistics for one column."""
+        return _ivw_member_means_stats(
+            data_streams=self.data_streams,
+            col=col,
+            ddof=ddof,
+            method=method,
+            window_size=window_size,
+            diagnostics=diagnostics,
+        )
+
+    # ========== Trim ==========
+
+    def trim(
+        self,
+        column_name: str,
+        method: str = "std",
+        window_size: int = 10,
+        start_time: float = 0.0,
+        threshold: Optional[float] = None,
+        robust: bool = True,
+        **kwargs,
+    ) -> "Ensemble":
+        """
+        Thin wrapper: trim each ensemble member using the unified trim strategy system.
+
+        Uses :func:`~quends.base.trim.build_trim_strategy` and
+        :class:`~quends.base.trim.TrimDataStreamOperation` from ``trim.py``
+        directly — the same canonical low-level path used for all trimming.
+        No separate trimming logic is defined here.
+
+        Parameters
+        ----------
+        column_name : str
+            Column whose steady-state start drives the trim.
+        method : str
+            Trim strategy name: ``"std"``, ``"threshold"``, ``"rolling_variance"``,
+            ``"self_consistent"``, or ``"iqr"``.
+        window_size : int
+            Block / rolling-window size (passed through to the strategy).
+            Formerly named ``batch_size`` — that name is still accepted as a
+            deprecated keyword argument for backward compatibility.
+        start_time : float
+            Ignore data before this simulation time.
+        threshold : float or None
+        robust : bool
+
+        Returns
+        -------
+        Ensemble
+            A new Ensemble containing only the members that returned a
+            non-empty trimmed DataStream.
 
         Raises
         ------
         ValueError
-            If no streams are provided.
+            If *method* is unrecognised, or if every member produced an empty
+            result (no steady state found in any member).
+
+        Notes
+        -----
+        Backward compatibility: ``batch_size`` is silently mapped to
+        ``window_size`` so that existing callers are not broken.
+
+        Examples
+        --------
+        >>> trimmed_ens = ens.trim("HeatFlux_st", method="std", window_size=20)
+        >>> trimmed_ens = ens.trim("HeatFlux_st", method="iqr", threshold=0.05)
         """
-        data_streams = members if members is not None else self.data_streams
-        if not data_streams:
-            raise ValueError("No data streams provided for ensemble averaging.")
+        # Backward-compat: accept batch_size as alias for window_size
+        if "batch_size" in kwargs:
+            window_size = kwargs.pop("batch_size")
+        if kwargs:
+            raise TypeError(f"Unexpected keyword arguments: {list(kwargs)}")
 
-        non_empty_streams = [ds for ds in data_streams if not ds.data.empty]
-        if not non_empty_streams:
-            return DataStream(data_streams[0].data.copy())
-
-        data_frames: Dict[str, pd.DataFrame] = {
-            f"Member {i}": ds.data for i, ds in enumerate(non_empty_streams)
-        }
-        shortest_df = min(data_frames.values(), key=lambda df: len(df))
-        # short_times = shortest_df["time"].values
-        resampled = {
-            name: self.resample_to_short_intervals(shortest_df, df)
-            for name, df in data_frames.items()
-        }
-        ensemble_avg = shortest_df[["time"]].copy().reset_index(drop=True)
-        for col in shortest_df.columns:
-            if col == "time":
-                continue
-            arrays = [df[col].to_numpy() for df in resampled.values()]
-            ensemble_avg[col] = np.mean(arrays, axis=0)
-        return DataStream(ensemble_avg)
-
-    def resample_to_short_intervals(
-        self, short_df: pd.DataFrame, long_df: pd.DataFrame
-    ):
-        """
-        Align `long_df` onto `short_df.time` by block-averaging between boundaries.
-
-        Parameters
-        ----------
-        short_df : pandas.DataFrame
-            Reference DataFrame with the shortest time series.
-        long_df : pandas.DataFrame
-            Stream to resample.
-
-        Returns
-        -------
-        pandas.DataFrame
-            Resampled data matching `short_df.time`.
-        """
-        short_times = short_df["time"].values
-        long_times = long_df["time"].values
-        idx = np.searchsorted(long_times, short_times)
-        out = pd.DataFrame({"time": short_times.copy()})
-        for col in long_df.columns:
-            if col == "time":
-                continue
-            vals = long_df[col].values
-            means = [
-                np.nanmean(vals[start:end]) if end > start else np.nan
-                for start, end in zip(idx[:-1], idx[1:])
-            ]
-            tail = vals[idx[-1] :]
-            means.append(np.nanmean(tail) if tail.size else np.nan)
-            out[col] = means
-        return out
-
-    # ========== Utility ==========
-    @staticmethod
-    def collect_histories(ds_list: List[DataStream]):
-        """
-        Gather `_history` lists from each DataStream in `ds_list`.
-
-        Parameters
-        ----------
-        ds_list : List[DataStream]
-            Streams whose histories to collect.
-
-        Returns
-        -------
-        List[List[dict]]
-        """
-        return [getattr(ds, "_history", []) for ds in ds_list]
-
-    # ========== TRIM ==========
-    def trim(
-        self,
-        column_name,
-        batch_size=10,
-        start_time=0.0,
-        method="std",
-        threshold=None,
-        robust=True,
-    ):
-        if method == "std":
-            strategy = QuantileTrimStrategy(
-                window_size=batch_size,
-                start_time=start_time,
-                robust=robust,
-            )
-        elif method == "threshold":
-            strategy = NoiseThresholdTrimStrategy(
-                window_size=batch_size,
-                start_time=start_time,
-                threshold=threshold,
-                robust=robust,
-            )
-        elif method == "rolling_variance":
-            kwargs = {
-                "window_size": batch_size,
-                "start_time": start_time,
-                "robust": robust,
-            }
-            if threshold is not None:
-                kwargs["threshold"] = threshold
-            strategy = RollingVarianceThresholdTrimStrategy(**kwargs)
-        else:
-            raise ValueError(f"Unsupported trim method: {method}")
-
-        trim_operation = TrimDataStreamOperation(strategy=strategy)
-        trimmed = [
-            trim_operation(ds, column_name=column_name) for ds in self.data_streams
-        ]
-        # Only keep non-empty, valid DataStreams
-        trimmed_members = [t for t in trimmed if t is not None and not t.data.empty]
-        if not trimmed_members:
+        kept = _trim_members(
+            data_streams=self.data_streams,
+            column_name=column_name,
+            method=method,
+            window_size=window_size,
+            start_time=start_time,
+            threshold=threshold,
+            robust=robust,
+        )
+        if not kept:
             raise ValueError(
-                "No ensemble members survived trimming (all failed or empty)!"
+                "No ensemble members survived trimming (all failed or returned empty)!"
             )
-        return Ensemble(trimmed_members)
+        return Ensemble(kept)
 
-    # ========== IS_STATIONARY ==========
+    # ========== Stationarity ==========
+
     def is_stationary(self, columns) -> Dict:
         """
-        Test stationarity for `columns` across all members.
+        Test stationarity for columns across all members.
+
+        Returns an enriched per-member report (unlike DataStream.is_stationary
+        which returns a simple {col: bool} dict).
 
         Returns
         -------
         dict
-            { 'results': {Member i: {col: bool or error}},
-              'metadata': {Member i: history} }
+            {"results": {"Member i": {col: bool, ...}, ...},
+             "metadata": {"Member i": {}, ...}}
         """
         results, meta = {}, {}
         for i, ds in enumerate(self.data_streams):
             r = ds.is_stationary(columns)
-            results[f"Member {i}"] = r
-            meta[f"Member {i}"] = getattr(ds, "_history", None)
+            results[f"Member {i}"] = stationarity_results(r)
+            meta[f"Member {i}"] = {}
         return {"results": results, "metadata": meta}
 
-    # ========== EFFECTIVE SAMPLE SIZE ==========
-    def effective_sample_size(
-        self, column_names=None, alpha: float = 0.05, technique: int = 0
+    # ========== Mean / SEM / CI ==========
+
+    # Map canonical technique → metadata key (used by the per-stat helpers below).
+    _METADATA_KEYS = {
+        ENSEMBLE_AVERAGE: "technique_0_ensemble_average",
+        POOLED_BLOCK_MEANS: "technique_1_pooled_block_means",
+        IVW_MEMBER_MEANS: "technique_2_ivw_member_means",
+    }
+
+    def _per_stat_dispatch(
+        self,
+        cols,
+        stat_key,
+        default,
+        ddof: int,
+        method: str,
+        window_size: Optional[int],
+        technique,
+        diagnostics: str,
+    ) -> Dict:
+        """Internal helper used by mean / mean_uncertainty / confidence_interval."""
+        canonical = _normalize_technique(technique)
+        result: Dict[str, Any] = {}
+        meta_cols: Dict[str, Any] = {}
+
+        if canonical == ENSEMBLE_AVERAGE:
+            avg_ds = self.compute_average_ensemble()
+            for col in cols:
+                s, m = self._ensemble_average_stats_for_col(
+                    col=col, ddof=ddof, method=method,
+                    window_size=window_size, avg_ds=avg_ds,
+                )
+                result[col] = s.get(stat_key, default)
+                meta_cols[col] = m
+        elif canonical == POOLED_BLOCK_MEANS:
+            for col in cols:
+                s, m = self._pooled_block_means_stats_for_col(
+                    col=col, ddof=ddof, window_size=window_size, method=method,
+                )
+                result[col] = s.get(stat_key, default)
+                meta_cols[col] = m
+        else:  # IVW_MEMBER_MEANS
+            for col in cols:
+                s, m = self._ivw_member_means_stats_for_col(
+                    col=col, ddof=ddof, method=method,
+                    window_size=window_size, diagnostics=diagnostics,
+                )
+                result[col] = s.get(stat_key, default)
+                meta_cols[col] = (
+                    m if diagnostics == "full"
+                    else {"n_members_used": m.get("n_members_used", 0)}
+                )
+
+        return {
+            "results": result,
+            "metadata": {self._METADATA_KEYS[canonical]: meta_cols},
+        }
+
+    def mean(
+        self,
+        column_name=None,
+        method: str = "non-overlapping",
+        window_size: Optional[int] = None,
+        technique=POOLED_BLOCK_MEANS,
+        diagnostics: str = "compact",
     ) -> Dict:
         """
-        Compute classic ESS via three techniques:
-          0 - on average-ensemble
-          1 - on concatenated aggregate
-          2 - per-member then aggregate
+        Ensemble mean.
 
-        Returns
-        -------
-        dict
-            { 'results': ..., 'metadata': ... }
+        technique
+            ``"ensemble_average"``     — build single averaged trace, compute stats on it
+            ``"pooled_block_means"``   — preferred for trimmed ensembles
+            ``"ivw_member_means"``     — member-wise then inverse-variance aggregate
+            (legacy ``0/1/2`` and ``"technique0"/1/2`` strings still accepted)
         """
-        metadata = {}
-        if technique == 0:
-            avg_ds = self.compute_average_ensemble()
-            result = self._classic_ess(avg_ds, column_names, alpha)
-            metadata["average_ensemble"] = getattr(avg_ds, "_history", [])
-        elif technique == 1:
-            cols = (
-                [column_names]
-                if isinstance(column_names, str)
-                else self.common_variables() if column_names is None else column_names
-            )
-            aggregated = {
-                col: pd.concat(
-                    [
-                        ds.data[col]
-                        for ds in self.data_streams
-                        if col in ds.data.columns and not ds.data[col].empty
-                    ],
-                    axis=0,
-                    ignore_index=True,
-                )
-                for col in cols
-            }
-            if aggregated:
-                agg_df = pd.concat(aggregated, axis=1)
-                ds_agg = DataStream(agg_df)
-                result = self._classic_ess(ds_agg, list(agg_df.columns), alpha)
-                metadata["aggregated"] = getattr(ds_agg, "_history", [])
-            else:
-                result = {}
-                metadata["aggregated"] = []
-        elif technique == 2:
-            # Per-member ESS
-            per_member_results = {}
-            per_member_meta = {}
-            for i, ds in enumerate(self.data_streams):
-                res = self._classic_ess(ds, column_names, alpha)
-                per_member_results[f"Member {i}"] = (
-                    res.get("results") if isinstance(res, dict) else res
-                )
-                per_member_meta[f"Member {i}"] = (
-                    res.get("metadata", None) if isinstance(res, dict) else None
-                )
-            # Aggregate: mean, harmonic mean, etc.
-            ess_vals = []
-            for v in per_member_results.values():
-                if isinstance(v, dict):
-                    for ess in v.values():
-                        if isinstance(ess, (int, float)) and not np.isnan(ess):
-                            ess_vals.append(ess)
-            agg_ess = np.nanmean(ess_vals) if ess_vals else np.nan
-            result = {"ensemble_ess": agg_ess, "individual_ess": per_member_results}
-            metadata["per_member"] = per_member_meta
-        return {"results": result, "metadata": metadata}
+        return self._per_stat_dispatch(
+            cols=self._resolve_cols(column_name),
+            stat_key="mean",
+            default=np.nan,
+            ddof=1,
+            method=method,
+            window_size=window_size,
+            technique=technique,
+            diagnostics=diagnostics,
+        )
 
-    # ========== ESS ROBUST ==========
-    def ess_robust(
-        self,
-        column_names=None,
-        rank_normalize=True,
-        min_samples=8,
-        return_relative=False,
-        technique=0,
-    ):
-        """
-        Compute robust ESS (rank-based) via three techniques.
-
-        Returns
-        -------
-        dict
-            { 'results': ..., 'metadata': ... }
-        """
-        metadata = {}
-        if technique == 0:
-            avg_ds = self.compute_average_ensemble()
-            result = self._robust_ess(
-                avg_ds,
-                column_names,
-                rank_normalize=rank_normalize,
-                min_samples=min_samples,
-                return_relative=return_relative,
-            )
-            metadata["average_ensemble"] = getattr(avg_ds, "_history", [])
-        elif technique == 1:
-            cols = (
-                [column_names]
-                if isinstance(column_names, str)
-                else self.common_variables() if column_names is None else column_names
-            )
-            aggregated = {
-                col: pd.concat(
-                    [
-                        ds.data[col]
-                        for ds in self.data_streams
-                        if col in ds.data.columns and not ds.data[col].empty
-                    ],
-                    axis=0,
-                    ignore_index=True,
-                )
-                for col in cols
-            }
-            if aggregated:
-                agg_df = pd.concat(aggregated, axis=1)
-                ds_agg = DataStream(agg_df)
-                result = self._robust_ess(
-                    ds_agg,
-                    list(agg_df.columns),
-                    rank_normalize=rank_normalize,
-                    min_samples=min_samples,
-                    return_relative=return_relative,
-                )
-                metadata["aggregated"] = getattr(ds_agg, "_history", [])
-            else:
-                result = {}
-                metadata["aggregated"] = []
-        elif technique == 2:
-            # Per-member robust ESS
-            per_member_results = {}
-            per_member_meta = {}
-            for i, ds in enumerate(self.data_streams):
-                res = self._robust_ess(
-                    ds,
-                    column_names,
-                    rank_normalize=rank_normalize,
-                    min_samples=min_samples,
-                    return_relative=return_relative,
-                )
-                per_member_results[f"Member {i}"] = (
-                    res.get("results") if isinstance(res, dict) else res
-                )
-                per_member_meta[f"Member {i}"] = (
-                    res.get("metadata", None) if isinstance(res, dict) else None
-                )
-            # Aggregate: mean, harmonic mean, etc.
-            ess_vals = []
-            for v in per_member_results.values():
-                if isinstance(v, dict):
-                    for ess in v.values():
-                        if isinstance(ess, (int, float)) and not np.isnan(ess):
-                            ess_vals.append(ess)
-            agg_ess = np.nanmean(ess_vals) if ess_vals else np.nan
-            result = {
-                "ensemble_robust_ess": agg_ess,
-                "individual_robust_ess": per_member_results,
-            }
-            metadata["per_member"] = per_member_meta
-        return {"results": result, "metadata": metadata}
-
-    # ========== MEAN ==========
-    def mean(
-        self, column_name=None, method="non-overlapping", window_size=None, technique=0
-    ):
-        """
-        Compute ensemble mean via three techniques:
-          0 - average-ensemble
-          1 - aggregate-then-statistics
-          2 - weighted per-member
-
-        Returns
-        -------
-        dict
-            { 'results': ..., 'metadata': ... }
-        """
-        metadata = {}
-        if technique == 0:
-            avg_ds = self.compute_average_ensemble()
-            result = self._mean(avg_ds, column_name, method, window_size)
-            metadata["average_ensemble"] = getattr(avg_ds, "_history", [])
-        elif technique == 1:
-            cols = (
-                [column_name]
-                if isinstance(column_name, str)
-                else self.common_variables() if column_name is None else column_name
-            )
-            aggregated = {
-                col: pd.concat(
-                    [
-                        ds.data[col]
-                        for ds in self.data_streams
-                        if col in ds.data.columns and not ds.data[col].empty
-                    ],
-                    axis=0,
-                    ignore_index=True,
-                )
-                for col in cols
-            }
-            if aggregated:
-                agg_df = pd.concat(aggregated, axis=1)
-                ds_agg = DataStream(agg_df)
-                result = self._mean(ds_agg, list(agg_df.columns), method, window_size)
-                metadata["aggregated"] = getattr(ds_agg, "_history", [])
-            else:
-                result = {}
-                metadata["aggregated"] = []
-        elif technique == 2:
-            # Per-member means and weights
-            member_means = {}
-            member_weights = {}
-            for i, ds in enumerate(self.data_streams):
-                key = f"Member {i}"
-                member_means[key] = self._mean(ds, column_name, method, window_size)
-                member_weights[key] = {}
-                cols = (
-                    ds.data.columns.drop("time")
-                    if column_name is None
-                    else [column_name] if isinstance(column_name, str) else column_name
-                )
-                for col in cols:
-                    if col in ds.data.columns:
-                        col_data = ds.data[col].dropna()
-                        if not col_data.empty:
-                            est_win = ds._estimate_window(col, col_data, window_size)
-                            processed = ds._process_column(col_data, est_win, method)
-                            member_weights[key][col] = len(processed)
-                        else:
-                            member_weights[key][col] = 0
-            agg_cols = (
-                self.common_variables()
-                if column_name is None
-                else ([column_name] if isinstance(column_name, str) else column_name)
-            )
-            ensemble_mean = {}
-            for col in agg_cols:
-                values, weights = [], []
-                for i in range(len(self.data_streams)):
-                    key = f"Member {i}"
-                    if key in member_means and col in member_means[key]:
-                        values.append(member_means[key][col]["mean"])
-                        weights.append(member_weights.get(key, {}).get(col, 0))
-                if values and np.sum(weights) > 0:
-                    ensemble_mean[col] = np.sum(
-                        np.array(weights) * np.array(values)
-                    ) / np.sum(weights)
-            metadata["individual"] = {
-                f"Member {i}": getattr(ds, "_history", None)
-                for i, ds in enumerate(self.data_streams)
-            }
-            result = {
-                "Member Ensemble": ensemble_mean,
-                "Individual Members": member_means,
-            }
-        return {"results": result, "metadata": metadata}
-
-    # ========== MEAN UNCERTAINTY ==========
     def mean_uncertainty(
         self,
         column_name=None,
-        ddof=1,
-        method="non-overlapping",
-        window_size=None,
-        technique=0,
-    ):
-        """
-        Compute SEM via three techniques (0: average, 1: aggregate, 2: weighted).
+        ddof: int = 1,
+        method: str = "non-overlapping",
+        window_size: Optional[int] = None,
+        technique=POOLED_BLOCK_MEANS,
+        diagnostics: str = "compact",
+    ) -> Dict:
+        """Ensemble SEM. See `mean()` for technique semantics."""
+        return self._per_stat_dispatch(
+            cols=self._resolve_cols(column_name),
+            stat_key="mean_uncertainty",
+            default=np.nan,
+            ddof=ddof,
+            method=method,
+            window_size=window_size,
+            technique=technique,
+            diagnostics=diagnostics,
+        )
 
-        Returns
-        -------
-        dict
-        """
-        metadata = {}
-        if technique == 0:
-            avg_ds = self.compute_average_ensemble()
-            result = self._mean_uncertainty(
-                avg_ds, column_name, ddof, method, window_size
-            )
-            metadata["average_ensemble"] = getattr(avg_ds, "_history", [])
-        elif technique == 1:
-            cols = (
-                [column_name]
-                if isinstance(column_name, str)
-                else self.common_variables() if column_name is None else column_name
-            )
-            aggregated = {
-                col: pd.concat(
-                    [
-                        ds.data[col]
-                        for ds in self.data_streams
-                        if col in ds.data.columns and not ds.data[col].empty
-                    ],
-                    axis=0,
-                    ignore_index=True,
-                )
-                for col in cols
-            }
-            if aggregated:
-                agg_df = pd.concat(aggregated, axis=1)
-                ds_agg = DataStream(agg_df)
-                result = self._mean_uncertainty(
-                    ds_agg, list(agg_df.columns), ddof, method, window_size
-                )
-                metadata["aggregated"] = getattr(ds_agg, "_history", [])
-            else:
-                result = {}
-                metadata["aggregated"] = []
-        elif technique == 2:
-            member_unc = {}
-            member_means = {}
-            member_weights = {}
-            for i, ds in enumerate(self.data_streams):
-                key = f"Member {i}"
-                member_means[key] = self._mean(ds, column_name, method, window_size)
-                member_unc[key] = self._mean_uncertainty(
-                    ds, column_name, ddof, method, window_size
-                )
-                member_weights[key] = {}
-                cols = (
-                    ds.data.columns.drop("time")
-                    if column_name is None
-                    else [column_name] if isinstance(column_name, str) else column_name
-                )
-                for col in cols:
-                    if col in ds.data.columns:
-                        col_data = ds.data[col].dropna()
-                        if not col_data.empty:
-                            est_win = ds._estimate_window(col, col_data, window_size)
-                            processed = ds._process_column(col_data, est_win, method)
-                            member_weights[key][col] = len(processed)
-                        else:
-                            member_weights[key][col] = 0
-            agg_cols = (
-                self.common_variables()
-                if column_name is None
-                else ([column_name] if isinstance(column_name, str) else column_name)
-            )
-            ensemble_unc = {}
-            for col in agg_cols:
-                mu_vals, u_vals, weights = [], [], []
-                for i in range(len(self.data_streams)):
-                    key = f"Member {i}"
-                    if (
-                        key in member_means
-                        and col in member_means[key]
-                        and key in member_unc
-                        and col in member_unc[key]
-                    ):
-                        mu_vals.append(member_means[key][col]["mean"])
-                        u_vals.append(member_unc[key][col]["mean_uncertainty"])
-                        weights.append(member_weights.get(key, {}).get(col, 0))
-                if mu_vals and np.sum(weights) > 0:
-                    weights = np.array(weights)
-                    mu_vals = np.array(mu_vals)
-                    u_vals = np.array(u_vals)
-                    weighted_mu = np.sum(weights * mu_vals) / np.sum(weights)
-                    weighted_avg_unc = np.sum(weights * u_vals) / np.sum(weights)
-                    weighted_var = np.sum(
-                        weights * (u_vals**2 + (mu_vals - weighted_mu) ** 2)
-                    ) / np.sum(weights)
-                    ensemble_sem = np.sqrt(weighted_var) / np.sqrt(np.sum(weights))
-                    ensemble_unc[col] = {
-                        "mean_uncertainty": ensemble_sem,
-                        "mean_uncertainty_average": weighted_avg_unc,
-                    }
-            metadata["individual"] = {
-                f"Member {i}": getattr(ds, "_history", None)
-                for i, ds in enumerate(self.data_streams)
-            }
-            result = {"Member Ensemble": ensemble_unc, "Individual Members": member_unc}
-        return {"results": result, "metadata": metadata}
-
-    # ========== CONFIDENCE INTERVAL ==========
     def confidence_interval(
         self,
         column_name=None,
-        ddof=1,
-        method="non-overlapping",
-        window_size=None,
-        technique=0,
-    ):
-        """
-        Compute 95% CI via three techniques.
+        ddof: int = 1,
+        method: str = "non-overlapping",
+        window_size: Optional[int] = None,
+        technique=POOLED_BLOCK_MEANS,
+        diagnostics: str = "compact",
+    ) -> Dict:
+        """Ensemble confidence interval. See `mean()` for technique semantics."""
+        return self._per_stat_dispatch(
+            cols=self._resolve_cols(column_name),
+            stat_key="confidence_interval",
+            default=(np.nan, np.nan),
+            ddof=ddof,
+            method=method,
+            window_size=window_size,
+            technique=technique,
+            diagnostics=diagnostics,
+        )
 
-        Returns
-        -------
-        dict
-        """
-        metadata = {}
-        if technique == 0:
-            avg_ds = self.compute_average_ensemble()
-            result = self._confidence_interval(
-                avg_ds, column_name, ddof, method, window_size
-            )
-            metadata["average_ensemble"] = getattr(avg_ds, "_history", [])
-        elif technique == 1:
-            cols = (
-                [column_name]
-                if isinstance(column_name, str)
-                else self.common_variables() if column_name is None else column_name
-            )
-            aggregated = {
-                col: pd.concat(
-                    [
-                        ds.data[col]
-                        for ds in self.data_streams
-                        if col in ds.data.columns and not ds.data[col].empty
-                    ],
-                    axis=0,
-                    ignore_index=True,
-                )
-                for col in cols
-            }
-            if aggregated:
-                agg_df = pd.concat(aggregated, axis=1)
-                ds_agg = DataStream(agg_df)
-                result = self._confidence_interval(
-                    ds_agg, list(agg_df.columns), ddof, method, window_size
-                )
-                metadata["aggregated"] = getattr(ds_agg, "_history", [])
-            else:
-                result = {}
-                metadata["aggregated"] = []
-        elif technique == 2:
-            member_cis = {}
-            member_means = {}
-            member_unc = {}
-            member_weights = {}
-            for i, ds in enumerate(self.data_streams):
-                key = f"Member {i}"
-                member_means[key] = self._mean(ds, column_name, method, window_size)
-                member_unc[key] = self._mean_uncertainty(
-                    ds, column_name, ddof, method, window_size
-                )
-                member_cis[key] = self._confidence_interval(
-                    ds, column_name, ddof, method, window_size
-                )
-                member_weights[key] = {}
-                cols = (
-                    ds.data.columns.drop("time")
-                    if column_name is None
-                    else [column_name] if isinstance(column_name, str) else column_name
-                )
-                for col in cols:
-                    if col in ds.data.columns:
-                        col_data = ds.data[col].dropna()
-                        if not col_data.empty:
-                            est_win = ds._estimate_window(col, col_data, window_size)
-                            processed = ds._process_column(col_data, est_win, method)
-                            member_weights[key][col] = len(processed)
-                        else:
-                            member_weights[key][col] = 0
-            agg_cols = (
-                self.common_variables()
-                if column_name is None
-                else ([column_name] if isinstance(column_name, str) else column_name)
-            )
-            ensemble_ci = {}
-            for col in agg_cols:
-                means, uncs, lowers, uppers, weights = [], [], [], [], []
-                for i in range(len(self.data_streams)):
-                    key = f"Member {i}"
-                    if (
-                        key in member_means
-                        and col in member_means[key]
-                        and key in member_unc
-                        and col in member_unc[key]
-                        and key in member_cis
-                        and col in member_cis[key]
-                    ):
-                        m_i = member_means[key][col]["mean"]
-                        u_i = member_unc[key][col]["mean_uncertainty"]
-                        ci = member_cis[key][col].get(
-                            "confidence_interval", (np.nan, np.nan)
-                        )
-                        w_i = member_weights[key][col]
-                        means.append(m_i)
-                        uncs.append(u_i)
-                        weights.append(w_i)
-                        lowers.append(ci[0])
-                        uppers.append(ci[1])
-                if means and np.sum(weights) > 0:
-                    weights = np.array(weights)
-                    means = np.array(means)
-                    uncs = np.array(uncs)
-                    weighted_mean = np.sum(weights * means) / np.sum(weights)
-                    weighted_var = np.sum(
-                        weights * (uncs**2 + (means - weighted_mean) ** 2)
-                    ) / np.sum(weights)
-                    ensemble_unc = np.sqrt(weighted_var) / np.sqrt(np.sum(weights))
-                    ensemble_ci[col] = (
-                        weighted_mean - 1.96 * ensemble_unc,
-                        weighted_mean + 1.96 * ensemble_unc,
-                    )
-            metadata["individual"] = {
-                f"Member {i}": getattr(ds, "_history", None)
-                for i, ds in enumerate(self.data_streams)
-            }
-            result = {"Member Ensemble": ensemble_ci, "Individual Members": member_cis}
-        return {"results": result, "metadata": metadata}
+    # ========== Full statistics ==========
 
-    # ========== FULL STATISTICS ==========
     def compute_statistics(
         self,
         column_name=None,
-        ddof=1,
-        method="non-overlapping",
-        window_size=None,
-        technique=0,
-    ):
+        ddof: int = 1,
+        method: str = "non-overlapping",
+        window_size: Optional[int] = None,
+        technique=POOLED_BLOCK_MEANS,
+        diagnostics: str = "compact",
+        confidence_level: float = 0.95,
+        ci_method: str = "normal",
+    ) -> Dict:
         """
-        Aggregate mean, SEM, CI, and ±1std across the ensemble.
+        Aggregate mean, SEM, CI, ±SEM, variance, ESS across the ensemble.
 
-        Returns
-        -------
-        dict
-            { 'results': {col: {stats}}, 'metadata': {...} }
+        technique=``"ensemble_average"``   Single averaged trace, then DataStream stats.
+        technique=``"pooled_block_means"`` Preferred for trimmed ensembles.
+        technique=``"ivw_member_means"``   Per-member stats, inverse-variance combined.
+        (Legacy ``0``/``1``/``2`` and ``"technique0"``/``"technique1"``/``"technique2"``
+        also accepted.)
+
+        Confidence-interval parameters (defaults preserve historical 95 %
+        normal CI, multiplier ``1.96``):
+
+        confidence_level : float
+            Two-sided confidence level.
+        ci_method : {'normal', 't'}
+            Quantile family.  ``'t'`` is supported for techniques 0 and 1
+            (where dof is well-defined); raises for technique 2.
+
+        Returns {"results": {col: {stats}}, "metadata": {...}}.
+
+        Notes
+        -----
+        Delegates to
+        :func:`~quends.base.ensemble_statistics.compute_ensemble_statistics`.
         """
-        mean_result = self.mean(column_name, method, window_size, technique)
-        unc_result = self.mean_uncertainty(
-            column_name, ddof, method, window_size, technique
+        return _compute_ensemble_statistics(
+            data_streams=self.data_streams,
+            column_name=column_name,
+            ddof=ddof,
+            method=method,
+            window_size=window_size,
+            technique=technique,
+            diagnostics=diagnostics,
+            confidence_level=confidence_level,
+            ci_method=ci_method,
         )
-        ci_result = self.confidence_interval(
-            column_name, ddof, method, window_size, technique
+
+    def compute_uncertainty(
+        self,
+        method="pooled_block_means",
+        column_name=None,
+        *,
+        ddof: int = 1,
+        window_size: Optional[int] = None,
+        diagnostics: str = "compact",
+        confidence_level: float = 0.95,
+        ci_method: str = "normal",
+    ) -> Dict:
+        """Friendly alias for :meth:`compute_statistics` keyed by estimator name.
+
+        ``method`` is the estimator: ``"ensemble_average"`` | ``"pooled_block_means"``
+        | ``"ivw"`` (plus the legacy ``technique`` aliases). Equivalent to calling
+        ``compute_statistics(..., technique=method)`` — the latter still works.
+
+        Returns the same ``{"results": {...}, "metadata": {...}}`` schema.
+        """
+        return self.compute_statistics(
+            column_name=column_name,
+            ddof=ddof,
+            window_size=window_size,
+            technique=method,
+            diagnostics=diagnostics,
+            confidence_level=confidence_level,
+            ci_method=ci_method,
         )
-        stats = {}
-        # Key structure depends on technique; adapt below as needed
-        if technique == 2:
-            for key in mean_result["results"]["Member Ensemble"]:
-                stats[key] = {
-                    "mean": mean_result["results"]["Member Ensemble"][key],
-                    "mean_uncertainty": unc_result["results"]["Member Ensemble"][key][
-                        "mean_uncertainty"
-                    ],
-                    "mean_uncertainty_average": unc_result["results"][
-                        "Member Ensemble"
-                    ][key]["mean_uncertainty_average"],
-                    "confidence_interval": ci_result["results"]["Member Ensemble"][key],
-                    "pm_std": (
-                        mean_result["results"]["Member Ensemble"][key]
-                        - unc_result["results"]["Member Ensemble"][key][
-                            "mean_uncertainty"
-                        ],
-                        mean_result["results"]["Member Ensemble"][key]
-                        + unc_result["results"]["Member Ensemble"][key][
-                            "mean_uncertainty"
-                        ],
-                    ),
-                }
-        else:
-            keys = mean_result["results"].keys()
-            for key in keys:
-                stats[key] = {
-                    "mean": (
-                        mean_result["results"][key]["mean"]
-                        if "mean" in mean_result["results"][key]
-                        else mean_result["results"][key]
-                    ),
-                    "mean_uncertainty": (
-                        unc_result["results"][key]["mean_uncertainty"]
-                        if "mean_uncertainty" in unc_result["results"][key]
-                        else unc_result["results"][key]
-                    ),
-                    "confidence_interval": (
-                        ci_result["results"][key]["confidence_interval"]
-                        if "confidence_interval" in ci_result["results"][key]
-                        else ci_result["results"][key]
-                    ),
-                    "pm_std": (
-                        (
-                            mean_result["results"][key]["mean"]
-                            - unc_result["results"][key]["mean_uncertainty"]
-                            if "mean" in mean_result["results"][key]
-                            and "mean_uncertainty" in unc_result["results"][key]
-                            else np.nan
-                        ),
-                        (
-                            mean_result["results"][key]["mean"]
-                            + unc_result["results"][key]["mean_uncertainty"]
-                            if "mean" in mean_result["results"][key]
-                            and "mean_uncertainty" in unc_result["results"][key]
-                            else np.nan
-                        ),
-                    ),
-                }
-        metadata = {
-            "mean": mean_result["metadata"],
-            "mean_uncertainty": unc_result["metadata"],
-            "confidence_interval": ci_result["metadata"],
-        }
-        return {"results": stats, "metadata": metadata}
 
+    # ========== ESS ==========
 
-# End of class
+    def effective_sample_size(
+        self,
+        column_names=None,
+        alpha: float = 0.05,
+        technique=POOLED_BLOCK_MEANS,
+    ) -> Dict:
+        """Compute ESS via ensemble statistics (delegates to compute_statistics)."""
+        out = self.compute_statistics(column_name=column_names, technique=technique)
+        res = {}
+        for col, s in out["results"].items():
+            if isinstance(s, dict):
+                res[col] = s.get("ess_blocks", np.nan)
+            else:
+                res[col] = np.nan
+        return {"results": res, "metadata": out.get("metadata", {})}
+
+    def effective_sample_size_blocks(
+        self,
+        column_name=None,
+        ddof: int = 1,
+        method: str = "non-overlapping",
+        window_size: Optional[int] = None,
+        technique=POOLED_BLOCK_MEANS,
+    ) -> Dict:
+        """ESS on block means (Geyer) from compute_statistics."""
+        out = self.compute_statistics(
+            column_name=column_name, ddof=ddof, method=method,
+            window_size=window_size, technique=technique,
+        )
+        res = {col: (s.get("ess_blocks", np.nan) if isinstance(s, dict) else np.nan)
+               for col, s in out["results"].items()}
+        return {"results": res, "metadata": out.get("metadata", {})}
+
+    def n_short_averages(
+        self,
+        column_name=None,
+        ddof: int = 1,
+        method: str = "non-overlapping",
+        window_size: Optional[int] = None,
+        technique=POOLED_BLOCK_MEANS,
+    ) -> Dict:
+        """Count of block means from compute_statistics."""
+        out = self.compute_statistics(
+            column_name=column_name, ddof=ddof, method=method,
+            window_size=window_size, technique=technique,
+        )
+        res = {col: (s.get("n_short_averages", np.nan) if isinstance(s, dict) else np.nan)
+               for col, s in out["results"].items()}
+        return {"results": res, "metadata": out.get("metadata", {})}

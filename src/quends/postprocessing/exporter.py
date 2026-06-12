@@ -1,59 +1,74 @@
 import json
+import logging
 import os
 
 import numpy as np
 import pandas as pd
 
+from ..base.utils import to_native_types as _canonical_to_native_types
+
+logger = logging.getLogger(__name__)
+
 
 class Exporter:
     """
-    A class for exporting data/results in various formats: DataFrame, JSON, dictionary, and NumPy array.
-    Provides both display (print to console) and save (to file) functions.
-    Includes automatic conversion of NumPy types to native Python types for compatibility.
+    Export data/results in various formats: DataFrame/CSV, JSON, dictionary, and
+    NumPy array. Provides both display (to console) and save (to file) helpers,
+    with automatic conversion of NumPy types to native Python types.
+
+    Safety
+    ------
+    By default the Exporter does **not** overwrite existing files: ``save_*`` /
+    ``export_*`` raise :class:`FileExistsError` if the target already exists.
+    Pass ``overwrite=True`` (per call) or construct with ``overwrite=True`` to
+    allow clobbering. This protects previously-saved results from silent loss
+    when a study is re-run.
     """
 
-    def __init__(self, output_dir="exported_results"):
+    def __init__(self, output_dir="exported_results", overwrite=False):
         """
-        Initialize the Exporter.
-
-        Args:
-            output_dir (str): Directory to save the exported files.
+        Parameters
+        ----------
+        output_dir : str
+            Directory to save exported files (created if missing).
+        overwrite : bool
+            Default overwrite policy for all ``save_*`` / ``export_*`` calls.
+            ``False`` (default) refuses to clobber existing files.
         """
         self.output_dir = output_dir
+        self.overwrite = bool(overwrite)
         os.makedirs(self.output_dir, exist_ok=True)
 
-    # --- NumPy → Python Conversion Helper ---
+    # --- path resolution + overwrite guard ---------------------------------
+    def _resolve_path(self, file_name, overwrite=None):
+        """Join ``file_name`` to ``output_dir`` and enforce the overwrite policy.
+
+        Ensures the output directory exists at save time (not just at
+        construction) and raises :class:`FileExistsError` if the target exists
+        and overwriting is not permitted.
+        """
+        allow = self.overwrite if overwrite is None else bool(overwrite)
+        os.makedirs(self.output_dir, exist_ok=True)
+        file_path = os.path.join(self.output_dir, file_name)
+        if os.path.exists(file_path) and not allow:
+            raise FileExistsError(
+                f"Refusing to overwrite existing file: {file_path}. "
+                f"Pass overwrite=True (or construct Exporter(overwrite=True)) to allow."
+            )
+        return file_path
+
+    # --- NumPy → Python conversion helper ----------------------------------
     @staticmethod
     def to_native_types(obj):
         """
-        Recursively convert NumPy scalar types in dicts/lists/tuples to native Python types.
-        Compatible with NumPy 2.x (no `np.float_`, `np.int_`, etc.).
+        Recursively convert NumPy scalar types in dicts/lists/tuples to native
+        Python types. Thin wrapper over :func:`quends.base.utils.to_native_types`.
         """
-        if isinstance(obj, dict):
-            return {k: Exporter.to_native_types(v) for k, v in obj.items()}
-        elif isinstance(obj, (list, tuple)):
-            return type(obj)(Exporter.to_native_types(v) for v in obj)
-        elif isinstance(obj, np.floating):
-            return float(obj)
-        elif isinstance(obj, np.integer):
-            return int(obj)
-        # Support for legacy float32/float64 directly (NumPy 2.x compatibility)
-        elif type(obj).__name__ in ["float32", "float64", "int32", "int64"]:
-            return obj.item()
-        else:
-            return obj
+        return _canonical_to_native_types(obj)
 
-    # --- Conversion Helper Methods ---
+    # --- conversion helpers ------------------------------------------------
     def to_dataframe(self, data):
-        """
-        Convert input data to a pandas DataFrame.
-
-        Args:
-            data: DataFrame, dict, NumPy array, or any structure convertible to DataFrame.
-
-        Returns:
-            pd.DataFrame: The converted DataFrame.
-        """
+        """Convert input data to a pandas DataFrame."""
         if isinstance(data, pd.DataFrame):
             return data
         elif isinstance(data, dict):
@@ -63,19 +78,11 @@ class Exporter:
         else:
             try:
                 return pd.DataFrame(data)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 - re-raised as a clear ValueError
                 raise ValueError("Cannot convert data to DataFrame: " + str(e))
 
     def to_dictionary(self, data):
-        """
-        Convert input data to a dictionary, and make all types native Python.
-
-        Args:
-            data: dict, DataFrame, or NumPy array.
-
-        Returns:
-            dict: The converted dictionary (native types).
-        """
+        """Convert input data to a dictionary with native Python types."""
         if isinstance(data, dict):
             d = data
         elif isinstance(data, pd.DataFrame):
@@ -87,15 +94,7 @@ class Exporter:
         return self.to_native_types(d)
 
     def to_numpy(self, data):
-        """
-        Convert input data to a NumPy array.
-
-        Args:
-            data: np.ndarray, DataFrame, or dict.
-
-        Returns:
-            np.ndarray: The converted NumPy array.
-        """
+        """Convert input data to a NumPy array."""
         if isinstance(data, np.ndarray):
             return data
         elif isinstance(data, pd.DataFrame):
@@ -106,15 +105,7 @@ class Exporter:
             raise ValueError("Cannot convert data to NumPy array.")
 
     def to_json(self, data):
-        """
-        Convert input data to a JSON string (with native Python types).
-
-        Args:
-            data: DataFrame, dict, or NumPy array.
-
-        Returns:
-            str: The JSON string.
-        """
+        """Convert input data to a JSON string with native Python types."""
         if isinstance(data, pd.DataFrame):
             d = data.to_dict(orient="list")
         elif isinstance(data, dict):
@@ -126,102 +117,100 @@ class Exporter:
         d = self.to_native_types(d)
         return json.dumps(d, indent=2)
 
-    # --- Display Functions ---
+    # --- display functions -------------------------------------------------
     def display_dataframe(self, data, head=None):
-        """
-        Display data as a DataFrame.
-
-        Args:
-            data: Data convertible to DataFrame.
-            head (int, optional): If provided, only display the first 'head' rows.
-        """
+        """Display data as a DataFrame."""
         df = self.to_dataframe(data)
-        if head is not None:
-            print(df.head(head))
-        else:
-            print(df)
+        print(df.head(head) if head is not None else df)
 
     def display_dictionary(self, data):
-        """
-        Display data as a dictionary, with all native types.
-
-        Args:
-            data: Data convertible to dictionary.
-        """
-        d = self.to_dictionary(data)
-        print(d)
+        """Display data as a (native-typed) dictionary."""
+        print(self.to_dictionary(data))
 
     def display_numpy(self, data):
-        """
-        Display data as a NumPy array.
-
-        Args:
-            data: Data convertible to a NumPy array.
-        """
-        arr = self.to_numpy(data)
-        print(arr)
+        """Display data as a NumPy array."""
+        print(self.to_numpy(data))
 
     def display_json(self, data):
-        """
-        Display data as a JSON string, with all native types.
+        """Display data as a (native-typed) JSON string."""
+        print(self.to_json(data))
 
-        Args:
-            data: Data convertible to JSON.
-        """
-        j = self.to_json(data)
-        print(j)
-
-    # --- Save Functions ---
-    def save_dataframe(self, data, file_name="dataframe.csv"):
-        """
-        Save data as a CSV file (DataFrame format).
-
-        Args:
-            data: Data convertible to DataFrame.
-            file_name (str): Name of the file (default: 'dataframe.csv').
-        """
+    # --- save functions ----------------------------------------------------
+    def save_dataframe(self, data, file_name="dataframe.csv", *, overwrite=None):
+        """Save data as a CSV file. Returns the written path."""
         df = self.to_dataframe(data)
-        file_path = os.path.join(self.output_dir, file_name)
+        file_path = self._resolve_path(file_name, overwrite)
         df.to_csv(file_path, index=False)
-        print(f"DataFrame saved to {file_path}")
+        logger.info("DataFrame saved to %s", file_path)
+        return file_path
 
-    def save_dictionary(self, data, file_name="data_dictionary.json"):
-        """
-        Save data as a JSON file representing a dictionary.
-
-        Args:
-            data: Data convertible to a dictionary.
-            file_name (str): Name of the file (default: 'data_dictionary.json').
-        """
+    def save_dictionary(self, data, file_name="data_dictionary.json", *, overwrite=None):
+        """Save data as a JSON dictionary file. Returns the written path."""
         d = self.to_dictionary(data)
-        file_path = os.path.join(self.output_dir, file_name)
-        with open(file_path, "w") as f:
+        file_path = self._resolve_path(file_name, overwrite)
+        with open(file_path, "w", encoding="utf-8") as f:
             json.dump(d, f, indent=2)
-        print(f"Dictionary saved to {file_path}")
+        logger.info("Dictionary saved to %s", file_path)
+        return file_path
 
-    def save_numpy(self, data, file_name="data.npy"):
-        """
-        Save data as a NumPy array file.
-
-        Args:
-            data: Data convertible to a NumPy array.
-            file_name (str): Name of the file (default: 'data.npy').
-        """
+    def save_numpy(self, data, file_name="data.npy", *, overwrite=None):
+        """Save data as a ``.npy`` file. Returns the written path."""
         arr = self.to_numpy(data)
-        file_path = os.path.join(self.output_dir, file_name)
+        file_path = self._resolve_path(file_name, overwrite)
         np.save(file_path, arr)
-        print(f"NumPy array saved to {file_path}")
+        logger.info("NumPy array saved to %s", file_path)
+        return file_path
 
-    def save_json(self, data, file_name="data.json"):
-        """
-        Save data as a JSON file (with all native types).
-
-        Args:
-            data: Data convertible to JSON.
-            file_name (str): Name of the file (default: 'data.json').
-        """
+    def save_json(self, data, file_name="data.json", *, overwrite=None):
+        """Save data as a JSON file. Returns the written path."""
         j = self.to_json(data)
-        file_path = os.path.join(self.output_dir, file_name)
-        with open(file_path, "w") as f:
+        file_path = self._resolve_path(file_name, overwrite)
+        with open(file_path, "w", encoding="utf-8") as f:
             f.write(j)
-        print(f"JSON saved to {file_path}")
+        logger.info("JSON saved to %s", file_path)
+        return file_path
+
+    def export_figure(self, fig, filename="figure.png", dpi=300, *, overwrite=None):
+        """Save a Matplotlib figure. Returns the written path."""
+        file_path = self._resolve_path(filename, overwrite)
+        fig.savefig(file_path, dpi=dpi, bbox_inches="tight")
+        logger.info("Figure exported to %s", file_path)
+        return file_path
+
+    def save_results(self, results, name, *, overwrite=None, metadata=None):
+        """Save a results object as CSV (if tabular) or JSON, plus a provenance
+        sidecar ``<name>.meta.json``.
+
+        Parameters
+        ----------
+        results : DataFrame | dict | ndarray
+            The results to persist.
+        name : str
+            Base name (without extension). A data file and a ``<name>.meta.json``
+            sidecar are written.
+        overwrite : bool, optional
+            Per-call overwrite policy (defaults to the instance policy).
+        metadata : dict, optional
+            Provenance to record in the sidecar (source file, variable, trim
+            parameters, etc.). ``schema_version`` is added automatically.
+
+        Returns
+        -------
+        (data_path, meta_path)
+        """
+        if isinstance(results, pd.DataFrame):
+            data_path = self.save_dataframe(results, f"{name}.csv", overwrite=overwrite)
+        else:
+            data_path = self.save_json(results, f"{name}.json", overwrite=overwrite)
+        sidecar = {"schema_version": "1.0", "data_file": os.path.basename(data_path)}
+        if metadata:
+            sidecar.update(self.to_native_types(dict(metadata)))
+        meta_path = self._resolve_path(f"{name}.meta.json", overwrite)
+        with open(meta_path, "w", encoding="utf-8") as f:
+            json.dump(sidecar, f, indent=2)
+        logger.info("Results + provenance saved to %s (+ %s)", data_path, meta_path)
+        return data_path, meta_path
+
+    def export_dataframe(self, data, filename="dataframe.csv", *, overwrite=None):
+        """Deprecated alias for :meth:`save_dataframe` (kept for compatibility)."""
+        return self.save_dataframe(data, file_name=filename, overwrite=overwrite)

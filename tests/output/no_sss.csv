@@ -1,0 +1,2 @@
+Q_D/Q_GBD
+"{'mean': np.float64(38.985710031436746), 'mean_uncertainty': np.float64(38.985710031436746), 'confidence_interval': (np.float64(0.0), np.float64(77.97142006287349)), 'sss_start': np.float64(508.0), 'metadata': {'status': 'NoStatSteadyState', 'mitigation': 'AdHoc'}, 'start_time': 0.0}"

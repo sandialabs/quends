@@ -1,21 +1,26 @@
 import pandas as pd
 
-from ..base.data_stream import (  # Adjust import based on your module structure
-    DataStream,
-)
+from ._utils import load_single_variable
 
 
 def from_dict(data_dict, variable):
     """
-    Load a data stream from a dictionary.
+    Load a single variable as a data stream from a dictionary.
+
+    The returned :class:`DataStream` contains the ``time`` column (when present)
+    together with the requested ``variable`` column.
 
     Args:
-        data_dict (dict): A dictionary where keys are column names and values are lists or arrays of data.
-        variables (list, optional): List of variable names (columns) to include.
-                                    If None, all dictionary keys are used.
+        data_dict (dict): A dictionary where keys are column names and values are
+            lists or arrays of data.
+        variable (str): The column name to load. Must exist in the dictionary.
 
     Returns:
-        DataStream: A DataStream object containing the data from the dictionary.
+        DataStream: A DataStream containing ``[time, variable]`` (or just
+        ``[variable]`` if no ``time`` key is present).
+
+    Raises:
+        ValueError: If the input is not a dictionary or the variable is not found.
     """
     # Validate input
     if not isinstance(data_dict, dict):
@@ -24,14 +29,13 @@ def from_dict(data_dict, variable):
     # Convert the dictionary to a DataFrame
     df = pd.DataFrame(data_dict)
 
-    # If variables is not provided, use all columns.
+    # Check if the specified variable exists in the DataFrame
     if variable not in df.columns:
         raise ValueError(
             f"Error: variable '{variable}' does not exist in the dictionary. "
             f"Available columns: {df.columns.tolist()}"
         )
 
-    # Filter the DataFrame to include only the specified columns.
-    df = df[[variable]]
-
-    return DataStream(df)
+    # Keep the time column (auto-detected, standardized to "time") alongside the
+    # requested variable, recording load provenance in the stream history.
+    return load_single_variable(df, variable, source="<dict>", loader="from_dict")

@@ -5,11 +5,12 @@ import numpy as np
 import pandas as pd
 import scipy.stats as sts
 import statsmodels.tsa.stattools as ststls
-from matplotlib import pyplot as plt
-from statsmodels.robust.scale import mad
+from statsmodels.robust.scale import mad as _mad
 
 from .data_stream import DataStream
+from .history import DataStreamHistoryEntry
 from .operations import DataStreamOperation
+from .utils import stationarity_value, to_native_types
 
 
 class TrimStrategy(ABC):
@@ -17,7 +18,9 @@ class TrimStrategy(ABC):
     Abstract base class describing a trim strategy.
     """
 
-    def __init__(self, window_size: int = 10, start_time: float = 0.0, **kwargs):
+    def __init__(
+        self, window_size: int = 10, start_time: float = 0.0, **kwargs
+    ):
         self.window_size = window_size
         self.start_time = start_time
         # Store any extra kwargs (like threshold, robust, etc.)
@@ -31,13 +34,21 @@ class TrimStrategy(ABC):
         pass  # pragma: no cover
 
     def apply(
-        self, data_stream: DataStream, column_name: str, **kwargs: Any
+        self,
+        data_stream: DataStream,
+        column_name: str,
+        _stationary_checked: bool = False,
+        **kwargs: Any,
     ) -> DataStream:
         """
         Template method that defines the trimming workflow.
+
+        ``_stationary_checked`` lets a subclass that has already verified
+        stationarity (e.g. :class:`NoiseThresholdTrimStrategy`) skip the
+        redundant re-check here without changing behavior.
         """
-        # Check stationarity
-        if not self._check_stationary(data_stream, column_name):
+        # Check stationarity (unless a caller already did it).
+        if not _stationary_checked and not self._check_stationary(data_stream, column_name):
             return self._create_error_result(
                 data_stream,
                 kwargs,
@@ -63,22 +74,36 @@ class TrimStrategy(ABC):
                 f"Steady-state start time could not be determined for column '{column_name}'.",
             )
 
-    def _check_stationary(self, data_stream: DataStream, column_name: str) -> bool:
+    def _check_stationary(
+        self, data_stream: DataStream, column_name: str
+    ) -> bool:
         """Check if the column is stationary."""
         stationary_result = data_stream.is_stationary(column_name)
-        if isinstance(stationary_result, dict):
-            return bool(stationary_result.get(column_name))
-        return False
+        return bool(stationarity_value(stationary_result, column_name, False))
 
-    def _preprocess(self, data_stream: DataStream, column_name: str) -> pd.DataFrame:
+    def _preprocess(
+        self, data_stream: DataStream, column_name: str
+    ) -> pd.DataFrame:
         """Preprocess the data"""
+        if "time" not in data_stream.data.columns:
+            raise ValueError(
+                "Steady-state trimming requires a 'time' column, but none was "
+                f"found (columns: {list(data_stream.data.columns)}). Load data "
+                "with a time axis (the preprocessing loaders attach one)."
+            )
         data = data_stream.data[
             data_stream.data["time"] >= self.start_time
         ].reset_index(drop=True)
 
-        non_zero_index = data[data[column_name] > 0].index.min()
-        if non_zero_index is not None and non_zero_index > 0:
-            data = data.loc[non_zero_index:].reset_index(drop=True)
+        # Skip a leading all/mostly-zero warm-up region (e.g. GX heat-flux traces
+        # that sit at ~0 during linear growth). This assumes a non-negative signal
+        # that starts near zero, so it is opt-out via ``drop_leading_nonpositive``
+        # for signals that legitimately go <= 0 (default True preserves prior
+        # behavior — see AUDIT_REPORT H6).
+        if getattr(self, "drop_leading_nonpositive", True):
+            non_zero_index = data[data[column_name] > 0].index.min()
+            if non_zero_index is not None and non_zero_index > 0:
+                data = data.loc[non_zero_index:].reset_index(drop=True)
 
         return data
 
@@ -95,6 +120,7 @@ class TrimStrategy(ABC):
         ][["time", column_name]].reset_index(drop=True)
 
         result = DataStream(trimmed_df, history=data_stream.history)
+        result.trim_metadata = {"sss_start": steady_state_start_time}
         kwargs["sss_start"] = steady_state_start_time
         return result
 
@@ -105,6 +131,7 @@ class TrimStrategy(ABC):
         empty_df = data_stream.data.iloc[0:0].copy()
         result = DataStream(empty_df, history=data_stream.history)
         result.message = message
+        result.trim_metadata = {"message": message}
         kwargs["message"] = message
         return result
 
@@ -132,7 +159,7 @@ class TrimStrategy(ABC):
 
 
 class QuantileTrimStrategy(TrimStrategy):
-    """Trim based on sliding standard deviation criteria."""
+    """Trim based on standard-deviation / robust MAD steady-state criteria."""
 
     def __init__(
         self,
@@ -156,51 +183,84 @@ class QuantileTrimStrategy(TrimStrategy):
         column_name: str,
     ) -> Optional[float]:
         """
-        Identify the earliest time point when the signal remains within ±1/2/3σ proportions.
+        Identify the earliest time point at which the signal satisfies the
+        standard-deviation-based steady-state criterion.
 
         Parameters
         ----------
-        data : DataFrame
-            Subset of the original df (must include 'time' and signal column).
+        data : pd.DataFrame
+            Preprocessed subset of the original data stream. The DataFrame must
+            contain a ``time`` column and the signal column specified by
+            ``column_name``.
         column_name : str
+            Name of the signal column to analyze.
         window_size : int
-            Number of samples to evaluate the steady-state criteria.
+            Minimum number of samples required before steady-state detection is
+            attempted.
         robust : bool
-            If True, use median and MAD; else mean and std.
+            If True, use the updated robust median/MAD z-score criterion.
+            If False, use the classical mean/std 68-95-99 standard-deviation rule.
 
         Returns
         -------
+        float or None
+            The earliest time value at which the signal is classified as steady
+            state. Returns None if no steady-state start time is detected.
         """
+
+        # column_name must be a plain string; a list/sequence is not supported and
+        # would produce multi-dimensional arrays that cannot be analysed here.
+        if not isinstance(column_name, str):
+            return None
 
         window_size = self.window_size
         robust = self.robust
 
-        time_filtered = data["time"].values
-        signal_filtered = data[column_name].values
+        time_vals = data["time"].values
+        x = data[column_name].values
 
-        if len(signal_filtered) < window_size:
+        if len(x) < window_size:
             return None
 
-        for i in range(len(signal_filtered) - window_size + 1):
-            remaining_data = signal_filtered[i:]
+        # Updated robust thresholds from the newer DataStream.find_steady_state_std()
+        z1, p1 = 2.5, 0.95
+        z2, p2 = 4.0, 0.99
+        eps_floor = 1e-12
+
+        for i in range(len(x) - window_size + 1):
+            rem = x[i:]
 
             if robust:
-                central_value = np.median(remaining_data)
-                scale_value = mad(remaining_data)
+                # Robust path: median + MAD z-score criterion
+                med = np.median(rem)
+                s = 1.4826 * _mad(rem)
+
+                if not np.isfinite(s) or s <= eps_floor:
+                    s = np.std(rem, ddof=1) if rem.size > 1 else 0.0
+                    if s <= eps_floor:
+                        # Data in this window is constant (zero variance) —
+                        # trivially at steady state.
+                        return time_vals[i]
+
+                z = np.abs(rem - med) / s
+
+                if (np.mean(z <= z1) >= p1) and (np.mean(z <= z2) >= p2):
+                    return time_vals[i]
+
             else:
-                central_value = np.mean(remaining_data)
-                scale_value = np.std(remaining_data)
+                # Classical path: original 68/95/99 normal-style rule
+                center = np.mean(rem)
+                scale = np.std(rem)
 
-            within_1 = np.mean(np.abs(remaining_data - central_value) <= scale_value)
-            within_2 = np.mean(
-                np.abs(remaining_data - central_value) <= 2 * scale_value
-            )
-            within_3 = np.mean(
-                np.abs(remaining_data - central_value) <= 3 * scale_value
-            )
+                if not np.isfinite(scale) or scale <= eps_floor:
+                    continue
 
-            if within_1 >= 0.68 and within_2 >= 0.95 and within_3 >= 0.99:
-                return time_filtered[i]
+                within_1 = np.mean(np.abs(rem - center) <= scale)
+                within_2 = np.mean(np.abs(rem - center) <= 2 * scale)
+                within_3 = np.mean(np.abs(rem - center) <= 3 * scale)
+
+                if within_1 >= 0.68 and within_2 >= 0.95 and within_3 >= 0.99:
+                    return time_vals[i]
 
         return None
 
@@ -240,7 +300,10 @@ class NoiseThresholdTrimStrategy(TrimStrategy):
                 "Threshold must be specified for the 'threshold' trim strategy.",
             )
 
-        return super().apply(data_stream, column_name, **kwargs)
+        # Stationarity already verified above — tell the base template to skip it.
+        return super().apply(
+            data_stream, column_name, _stationary_checked=True, **kwargs
+        )
 
     @property
     def method_name(self) -> str:
@@ -252,19 +315,30 @@ class NoiseThresholdTrimStrategy(TrimStrategy):
         column_name: str,
     ) -> Optional[float]:
         """
-        Use rolling standard deviation on normalized data to detect steady-state.
+        Detect the earliest steady-state start time using a rolling standard
+        deviation threshold on normalized data.
 
         Parameters
         ----------
-        data : DataFrame
+        data : pd.DataFrame
+            Preprocessed subset of the original data stream. The DataFrame must
+            contain a ``time`` column and the signal column specified by
+            ``column_name``.
         column_name : str
+            Name of the signal column to analyze.
         window_size : int
+            Number of samples used in the rolling standard deviation calculation.
         threshold : float
-            Std threshold under which to mark steady-state.
+            Rolling standard deviation threshold. The first time point where the
+            normalized signal's rolling standard deviation falls below this value
+            is classified as the steady-state start time.
 
         Returns
         -------
         float or None
+            The earliest time value at which the rolling standard deviation is
+            below ``threshold``. Returns None if no steady-state start time is
+            detected.
         """
         window_size = self.window_size
         threshold = self.threshold
@@ -288,7 +362,13 @@ class NoiseThresholdTrimStrategy(TrimStrategy):
 
 
 class RollingVarianceThresholdTrimStrategy(TrimStrategy):
-    """Detect steady-state when rolling variance falls below threshold."""
+    """Detect steady-state when the rolling spread falls below a threshold.
+
+    Note: despite the historical name ("variance"), the criterion uses the
+    rolling **standard deviation** (``.std()``) compared against
+    ``threshold * mean(rolling_std)``. The name is retained for backward
+    compatibility (``build_trim_strategy("rolling_variance")``).
+    """
 
     def __init__(
         self,
@@ -312,21 +392,33 @@ class RollingVarianceThresholdTrimStrategy(TrimStrategy):
         self, data: pd.DataFrame, column_name: str
     ) -> Optional[float]:
         """
-        Detect steady-state when rolling variance falls below a fraction of its mean.
+        Detect the earliest steady-state start time using a rolling standard
+        deviation threshold expressed as a fraction of the mean rolling standard
+        deviation.
 
         Parameters
         ----------
-        data : DataFrame
+        data : pd.DataFrame
+            Preprocessed subset of the original data stream. The DataFrame must
+            contain a ``time`` column and the signal column specified by
+            ``column_name``.
         column_name : str
+            Name of the signal column to analyze.
         window_size : int
+            Number of samples used in the rolling standard deviation calculation.
         threshold : float
-            Fraction of mean rolling std below which to consider steady-state.
+            Fraction of the mean rolling standard deviation used as the cutoff.
+            The cutoff is computed as:
+
+                mean(rolling_std) * threshold
 
         Returns
         -------
         float or None
-            Time of first below-threshold variance, or None.
-        """
+            The earliest time value at which the rolling standard deviation falls
+            below the computed cutoff. Returns None if no steady-state start time
+            is detected.
+    """
         window_size = self.window_size
         threshold = self.threshold
 
@@ -359,18 +451,31 @@ class MeanVariationTrimStrategy(TrimStrategy):
         final_smoothing_window=None,
     ):
         super().__init__(window_size=0, start_time=0.0)
-        self.max_lag_frac = max_lag_frac
-        self.verbosity = verbosity
-        self.autocorr_sig_level = autocorr_sig_level
-        self.decor_multiplier = decor_multiplier
-        self.std_dev_frac = std_dev_frac
-        self.fudge_fac = fudge_fac
-        self.smoothing_window_correction = smoothing_window_correction
-        self.final_smoothing_window = final_smoothing_window
+        self.max_lag_frac = max_lag_frac if max_lag_frac is not None else 0.25
+        self.verbosity = verbosity if verbosity is not None else 0
+        self.autocorr_sig_level = (
+            autocorr_sig_level if autocorr_sig_level is not None else 0.05
+        )
+        self.decor_multiplier = (
+            decor_multiplier if decor_multiplier is not None else 2.0
+        )
+        self.std_dev_frac = std_dev_frac if std_dev_frac is not None else 0.1
+        self.fudge_fac = fudge_fac if fudge_fac is not None else 1e-6
+        self.smoothing_window_correction = (
+            smoothing_window_correction
+            if smoothing_window_correction is not None
+            else 0.5
+        )
+        self.final_smoothing_window = (
+            final_smoothing_window if final_smoothing_window is not None else 5
+        )
 
     @property
     def method_name(self) -> str:
-        return "sss_start"
+        # Factory/label name (matches build_trim_strategy("mean_variation")).
+        # The detected steady-state time is still recorded under the
+        # trim_metadata key "sss_start".
+        return "mean_variation"
 
     def _detection_method(
         self, data: pd.DataFrame, column_name: str
@@ -407,6 +512,12 @@ class MeanVariationTrimStrategy(TrimStrategy):
             A new DataStream object containing the DataFrame trimmed to the SSS start.
             Returns an empty DataFrame if no SSS is identified.
         """
+        # Lazy import: matplotlib is only needed when verbosity > 1 (plotting mode).
+        if self.verbosity > 1:
+            import matplotlib
+
+            matplotlib.use("Agg", force=True)
+            from matplotlib import pyplot as plt
 
         # Get the decorrelation length (in number of points)
         # Note: this approach assumes signal points are spaced equally in time
@@ -448,7 +559,9 @@ class MeanVariationTrimStrategy(TrimStrategy):
         col_smoothed = (
             data_stream.data[column_name].rolling(window=rolling_window).mean()
         )  # get smoothed column as Series
-        col_sm_flld = col_smoothed.bfill()  # fill initial NaNs with first valid value
+        col_sm_flld = (
+            col_smoothed.bfill()
+        )  # fill initial NaNs with first valid value
         # create new DataFrame with time and smoothed flux
         df_smoothed = pd.DataFrame(
             {"time": data_stream.data["time"], column_name: col_sm_flld}
@@ -532,7 +645,9 @@ class MeanVariationTrimStrategy(TrimStrategy):
 
         # smooth this so the deviation does not go to zero at end of signal by construction
         # turn this into a pandas series with same index as col_smoothed
-        deviation_series = pd.Series(deviation_arr, index=data_stream.data.index)
+        deviation_series = pd.Series(
+            deviation_arr, index=data_stream.data.index
+        )
         # Smooth this std dev to avoid it going to zero at end of signal
         deviation_smoothed = deviation_series.rolling(
             window=self.final_smoothing_window
@@ -557,7 +672,9 @@ class MeanVariationTrimStrategy(TrimStrategy):
         )
         tolerance = tol_fac * np.abs(mean_vals)
 
-        within_tolerance_all = deviation[column_name + "_deviation"] <= tolerance
+        within_tolerance_all = (
+            deviation[column_name + "_deviation"] <= tolerance
+        )
         # Only consider points after the smoothed signal has started
         within_tolerance = within_tolerance_all & (
             df_smoothed["time"] >= smoothed_start_time
@@ -582,7 +699,10 @@ class MeanVariationTrimStrategy(TrimStrategy):
             # but not all the way at the beginning of the rolling window as there is usually still some transient.
             true_sss_start_index = max(
                 0,
-                int(crit_met_index - self.smoothing_window_correction * rolling_window),
+                int(
+                    crit_met_index
+                    - self.smoothing_window_correction * rolling_window
+                ),
             )
             sss_start_time = df_smoothed["time"].iloc[true_sss_start_index]
 
@@ -616,7 +736,10 @@ class MeanVariationTrimStrategy(TrimStrategy):
                     label="Small Change Criterion Met",
                 )
                 plt.axvline(
-                    x=sss_start_time, color="r", linestyle="--", label="Start SSS"
+                    x=sss_start_time,
+                    color="r",
+                    linestyle="--",
+                    label="Start SSS",
                 )
                 plt.xlabel("Time")
                 plt.ylabel("Value")
@@ -627,18 +750,26 @@ class MeanVariationTrimStrategy(TrimStrategy):
                 plt.close()
 
             # Trim the original data frame to start at this location minus the smoothing window
-            trimmed_df = data_stream.data[data_stream.data["time"] >= sss_start_time]
+            trimmed_df = data_stream.data[
+                data_stream.data["time"] >= sss_start_time
+            ]
             # Reset the index so it starts at 0
             trimmed_df = trimmed_df.reset_index(drop=True)
             # Create new data stream from trimmed data frame
-            trimmed_stream = DataStream(trimmed_df)
+            trimmed_stream = DataStream(trimmed_df, history=data_stream.history)
+            trimmed_stream.trim_metadata = {"sss_start": sss_start_time}
 
         else:
             if self.verbosity > 0:
-                print("No SSS found based on behavior of mean of smoothed signal.")
-            trimmed_stream = pd.DataFrame(
-                columns=["time", "flux"]
-            )  # Create empty DataFrame with same columns as original
+                print(
+                    "No SSS found based on behavior of mean of smoothed signal."
+                )
+            empty_df = data_stream.data.iloc[0:0].copy()
+            trimmed_stream = DataStream(
+                empty_df, history=data_stream.history
+            )  # empty DataStream — no SSS found
+            trimmed_stream.message = "Steady-state start time could not be determined."
+            trimmed_stream.trim_metadata = {"message": trimmed_stream.message}
 
             # Plot deviation and tolerance vs. time
             if self.verbosity > 1:
@@ -666,10 +797,258 @@ class MeanVariationTrimStrategy(TrimStrategy):
         return trimmed_stream
 
 
-# StandardDeviationTrimStrategy = QuantileTrimStrategy
-# ThresholdTrimStrategy = NoiseThresholdTrimStrategy
-# RollingVarianceTrimStrategy = RollingVarianceThresholdTrimStrategy
-# SSSStartTrimStrategy = MeanVariationTrimStrategy
+class SelfConsistentTrimStrategy(TrimStrategy):
+    """
+    Trim using self-consistent block comparison:
+    find the earliest time where consecutive non-overlapping blocks of size W
+    agree in both mean and spread (within relative tolerances).
+
+    Parameters
+    ----------
+    window_size : int
+        Block size W.
+    robust : bool
+        Use median + MAD (scaled) vs mean + std.
+    rel_tol_mu : float
+        Relative tolerance for mean comparison across blocks.
+    rel_tol_sigma : float
+        Relative tolerance for spread comparison across blocks.
+    """
+
+    def __init__(
+        self,
+        window_size: int = 10,
+        start_time: float = 0.0,
+        robust: bool = True,
+        rel_tol_mu: float = 0.1,
+        rel_tol_sigma: float = 0.05,
+    ):
+        super().__init__(
+            window_size=window_size,
+            start_time=start_time,
+            robust=robust,
+            rel_tol_mu=rel_tol_mu,
+            rel_tol_sigma=rel_tol_sigma,
+        )
+
+    @property
+    def method_name(self) -> str:
+        return "self_consistent"
+
+    def _detection_method(
+        self, data: pd.DataFrame, column_name: str
+    ) -> Optional[float]:
+        if data is None or data.empty:
+            return None
+        if "time" not in data.columns or column_name not in data.columns:
+            return None
+
+        t = data["time"].to_numpy(dtype=float)
+        x = data[column_name].to_numpy(dtype=float)
+        W = int(self.window_size)
+        if W < 1:
+            return None
+        n = x.size
+        if n < 2 * W:
+            return None
+
+        robust = self.robust
+        rel_tol_mu = self.rel_tol_mu
+        rel_tol_sigma = self.rel_tol_sigma
+        eps_floor = 1e-12
+
+        def block_mu_sigma(arr):
+            arr = np.asarray(arr, dtype=float)
+            if arr.size == 0:
+                return np.nan, np.nan
+            if robust:
+                mu = float(np.median(arr))
+                s = 1.4826 * float(_mad(arr, center=mu))
+                if not np.isfinite(s) or s <= 0:
+                    s = float(np.std(arr, ddof=1)) if arr.size > 1 else 0.0
+            else:
+                mu = float(np.mean(arr))
+                s = float(np.std(arr, ddof=1)) if arr.size > 1 else 0.0
+            return mu if np.isfinite(mu) else np.nan, (
+                s if np.isfinite(s) else np.nan
+            )
+
+        best_time = None
+        for i in range(W):
+            m = (n - i) // W
+            if m < 2:
+                continue
+            mus = np.empty(m, dtype=float)
+            sigs = np.empty(m, dtype=float)
+            starts = np.empty(m, dtype=int)
+            for k in range(m):
+                a = i + k * W
+                mus[k], sigs[k] = block_mu_sigma(x[a : a + W])
+                starts[k] = a
+
+            for k0 in range(m - 1):
+                ok = True
+                for k in range(k0, m - 1):
+                    muA, muB, sA, sB = mus[k], mus[k + 1], sigs[k], sigs[k + 1]
+                    if not all(np.isfinite(v) for v in (muA, muB, sA, sB)):
+                        ok = False
+                        break
+                    if abs(muA - muB) > max(
+                        eps_floor, rel_tol_mu * max(eps_floor, abs(muB))
+                    ):
+                        ok = False
+                        break
+                    if abs(sA - sB) > max(
+                        eps_floor, rel_tol_sigma * max(eps_floor, abs(sB))
+                    ):
+                        ok = False
+                        break
+                if ok:
+                    candidate = float(t[int(starts[k0])])
+                    if best_time is None or candidate < best_time:
+                        best_time = candidate
+                    break
+
+        return best_time
+
+
+class IQRTrimStrategy(TrimStrategy):
+    """
+    Trim using IQR-based steady-state detection:
+    IQR(remaining) <= threshold * |median(remaining)|.
+
+    Parameters
+    ----------
+    window_size : int
+        Minimum samples before evaluating (used for loop start only).
+    threshold : float
+        Fraction of |median| that IQR must fall below.
+    """
+
+    def __init__(
+        self,
+        window_size: int = 10,
+        start_time: float = 0.0,
+        threshold: float = 0.05,
+    ):
+        super().__init__(
+            window_size=window_size,
+            start_time=start_time,
+            threshold=threshold,
+        )
+
+    @property
+    def method_name(self) -> str:
+        return "iqr"
+
+    def _detection_method(
+        self, data: pd.DataFrame, column_name: str
+    ) -> Optional[float]:
+        time_vals = data["time"].values
+        x = data[column_name].values
+        eps_floor = 1e-12
+        W = int(self.window_size)
+        threshold = float(self.threshold)
+
+        for i in range(len(x) - W + 1):
+            rem = x[i:]
+            q25, q75 = np.percentile(rem, [25, 75])
+            iqr = q75 - q25
+            med = np.median(rem)
+            scale_ref = max(eps_floor, abs(med))
+            if iqr <= threshold * scale_ref:
+                return time_vals[i]
+        return None
+
+
+StandardDeviationTrimStrategy = QuantileTrimStrategy
+ThresholdTrimStrategy = NoiseThresholdTrimStrategy
+RollingVarianceTrimStrategy = RollingVarianceThresholdTrimStrategy
+SSSStartTrimStrategy = MeanVariationTrimStrategy
+
+
+def build_trim_strategy(
+    method: str = "std",
+    window_size: int = 10,
+    start_time: float = 0.0,
+    threshold: Optional[float] = None,
+    robust: bool = True,
+) -> TrimStrategy:
+    """
+    Factory: map a method string to a configured :class:`TrimStrategy` instance.
+
+    This is the **single canonical source of truth** for the method-string →
+    strategy-class mapping.  All convenience wrappers (``DataStream.trim``,
+    ``Ensemble.trim``, ``Plotter._trim_datastream``) delegate here so the
+    mapping never drifts apart.
+
+    Parameters
+    ----------
+    method : str
+        One of ``"std"``, ``"threshold"``, ``"rolling_variance"``,
+        ``"self_consistent"``, ``"iqr"``.
+    window_size : int
+        Block / window size passed to the strategy.
+    start_time : float
+        Ignore data before this time.
+    threshold : float or None
+        Required for ``"threshold"``; optional for ``"rolling_variance"``
+        (default 0.1) and ``"iqr"`` (default 0.05).
+    robust : bool
+        Use median/MAD instead of mean/std where applicable.
+
+    Returns
+    -------
+    TrimStrategy
+
+    Raises
+    ------
+    ValueError
+        If *method* is not one of the recognised strings.
+
+    Examples
+    --------
+    >>> strategy = build_trim_strategy("std", window_size=20)
+    >>> op = TrimDataStreamOperation(strategy)
+    >>> trimmed = op(ds, column_name="Q")
+    """
+    _map = {
+        "std": lambda: QuantileTrimStrategy(
+            window_size=window_size,
+            start_time=start_time,
+            robust=robust,
+        ),
+        "threshold": lambda: NoiseThresholdTrimStrategy(
+            window_size=window_size,
+            start_time=start_time,
+            threshold=threshold,
+            robust=robust,
+        ),
+        "rolling_variance": lambda: RollingVarianceThresholdTrimStrategy(
+            window_size=window_size,
+            start_time=start_time,
+            threshold=threshold if threshold is not None else 0.1,
+        ),
+        "self_consistent": lambda: SelfConsistentTrimStrategy(
+            window_size=window_size,
+            start_time=start_time,
+            robust=robust,
+        ),
+        "iqr": lambda: IQRTrimStrategy(
+            window_size=window_size,
+            start_time=start_time,
+            threshold=threshold if threshold is not None else 0.05,
+        ),
+        # Statistical-Steady-State (autocorrelation-based) detector. It manages
+        # its own windowing, so window_size/start_time/threshold are not used.
+        "mean_variation": lambda: MeanVariationTrimStrategy(),
+        "sss_start": lambda: MeanVariationTrimStrategy(),  # alias
+    }
+    if method not in _map:
+        raise ValueError(
+            f"Unknown trim method '{method}'. " f"Valid choices: {sorted(_map)}"
+        )
+    return _map[method]()
 
 
 class TrimDataStreamOperation(DataStreamOperation):
@@ -677,7 +1056,9 @@ class TrimDataStreamOperation(DataStreamOperation):
     Operation that applies a TrimStrategy to a DataStream.
     """
 
-    def __init__(self, strategy: TrimStrategy, operation_name: str = "trim") -> None:
+    def __init__(
+        self, strategy: TrimStrategy, operation_name: str = "trim"
+    ) -> None:
         super().__init__(
             operation_name=operation_name,
             strategy=type(strategy).__name__,
@@ -716,11 +1097,32 @@ class TrimDataStreamOperation(DataStreamOperation):
         # Strategy may attach an error message to the result
         if hasattr(result, "message"):
             options["message"] = result.message
+        if hasattr(result, "trim_metadata"):
+            options.update(result.trim_metadata)
 
-        # Build history as a dictionary
-        result._history = [
-            {"operation": "is_stationary", "options": {"columns": column_name}},
-            {"operation": "trim", "options": options},
-        ]
+        # Record history using proper DataStreamHistoryEntry objects so that
+        # result.history.entries() continues to work after trimming.
+        from .history import DataStreamHistory
+
+        new_history = DataStreamHistory()
+        # Carry forward any existing history from the source DataStream.
+        # Guard against MagicMock/test fixtures that set history to a plain list.
+        source_history = getattr(data_stream, "history", None)
+        if isinstance(source_history, DataStreamHistory):
+            for entry in source_history.entries():
+                new_history.append(entry)
+        new_history.append(
+            DataStreamHistoryEntry(
+                operation_name="is_stationary",
+                parameters={"columns": column_name},
+            )
+        )
+        new_history.append(
+            DataStreamHistoryEntry(
+                operation_name="trim",
+                parameters=to_native_types(options),
+            )
+        )
+        result._history = new_history
 
         return result
