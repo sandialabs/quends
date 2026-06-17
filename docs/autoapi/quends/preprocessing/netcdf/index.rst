@@ -15,18 +15,20 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: from_netcdf(file, variables=None)
+.. py:function:: from_netcdf(file, variable)
 
-   Load specified variables from a NetCDF4 file into a pandas DataFrame,
-   ensuring all variables have the same length, and extracting only variables
-   that end with '_t' or '_st' from the Diagnostics group.
+   Load a single variable from a NetCDF4 file into a data stream.
 
-   Args:
-       file (str): Path to the NetCDF4 file.
-       variables (list, optional): List of variable names to include.
-                                   If None, load all eligible variables.
+   Variables that end with ``'_t'`` or ``'_st'`` are extracted from the
+   ``Diagnostics`` group and aligned to the ``time`` grid. The returned
+   :class:`DataStream` contains the ``time`` column together with the requested
+   ``variable`` column.
 
-   Returns:
-       DataStream: A DataStream object containing the data as a pandas DataFrame.
+   :Parameters: * **file** (*str*) -- Path to the NetCDF4 file.
+                * **variable** (*str*) -- The variable name to load. Must exist in the file.
+
+   :returns: *DataStream* -- A DataStream containing ``[time, variable]``.
+
+   :raises ValueError: If the file does not exist or the variable is not found.
 
 

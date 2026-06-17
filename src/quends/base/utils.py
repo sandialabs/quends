@@ -390,6 +390,7 @@ def autotune_blocks(
         ``autotuned`` : bool
             ``False`` for ``user_window`` path.
         ``warning`` : str or None
+            Diagnostic message, or ``None`` when autotuning succeeded.
     """
     x = np.asarray(x, dtype=float)
     x = x[np.isfinite(x)]

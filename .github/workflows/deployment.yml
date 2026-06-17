@@ -36,7 +36,7 @@ jobs:
 
       - name: Build Sphinx documentation
         run: |
-          sphinx-build -b html docs docs/_build/html  # Adjust paths as necessary
+          sphinx-build -b html -W --keep-going docs docs/_build/html  # -W: fail on any warning
 
       - name: Run tests with coverage
         run: |

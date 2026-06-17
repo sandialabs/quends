@@ -102,7 +102,3 @@ Coverage
 ========
 
 You can view the coverage report |coveralls|.
-
-.. |coveralls| image:: https://coveralls.io/repos/github/sandialabs/quends/badge.svg?branch=main
-    :target: https://coveralls.io/github/sandialabs/quends?branch=main
-    :alt: Coverage Status

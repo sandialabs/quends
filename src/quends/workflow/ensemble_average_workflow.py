@@ -174,18 +174,20 @@ class EnsembleAverageWorkflow:
         Returns
         -------
         dict
-            ``{
-              "workflow":               "ensemble_average",
-              "n_members":              int,
-              "column_name":            str,
-              "interpolation_required": bool,
-              "common_grid":            dict or None,
-              "averaged_stream":        DataStream or None,
-              "trimmed_stream":         DataStream,
-              "statistics":             dict,
-              "trim_history":           list,
-              "metadata":               dict,
-            }``
+            Mapping with the structure::
+
+                {
+                  "workflow":               "ensemble_average",
+                  "n_members":              int,
+                  "column_name":            str,
+                  "interpolation_required": bool,
+                  "common_grid":            dict or None,
+                  "averaged_stream":        DataStream or None,
+                  "trimmed_stream":         DataStream,
+                  "statistics":             dict,
+                  "trim_history":           list,
+                  "metadata":               dict,
+                }
 
         Raises
         ------

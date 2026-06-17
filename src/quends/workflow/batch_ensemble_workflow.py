@@ -185,9 +185,11 @@ class BatchEnsembleWorkflow:
         Returns
         -------
         dict
-            ``{"workflow": "batch_ensemble", "n_items": int, "n_success": int,
-            "n_failed": int, "results": {id: per-item result}, "errors":
-            {id: error message}, "metadata": {…}}``
+            Mapping with the structure::
+
+                {"workflow": "batch_ensemble", "n_items": int, "n_success": int,
+                 "n_failed": int, "results": {id: per-item result}, "errors":
+                 {id: error message}, "metadata": {...}}
 
         Raises
         ------

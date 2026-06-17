@@ -915,14 +915,14 @@ class SelfConsistentTrimStrategy(TrimStrategy):
 class IQRTrimStrategy(TrimStrategy):
     """
     Trim using IQR-based steady-state detection:
-    IQR(remaining) <= threshold * |median(remaining)|.
+    IQR(remaining) <= threshold * abs(median(remaining)).
 
     Parameters
     ----------
     window_size : int
         Minimum samples before evaluating (used for loop start only).
     threshold : float
-        Fraction of |median| that IQR must fall below.
+        Fraction of abs(median) that IQR must fall below.
     """
 
     def __init__(

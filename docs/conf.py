@@ -21,7 +21,22 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
 ]
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
+
+# Local-only authoring notes / migration reports live in docs/ but are not part
+# of the published site.  Exclude them so they are not treated as orphan source
+# documents (these patterns match nothing in a clean checkout).
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    "*_usage_guide.md",
+    "*_cheat_sheet.md",
+    "*_migration_report.md",
+    "*_alignment_report.md",
+    "*_unification_report.md",
+    "notebook_tutorial_index.md",
+]
 master_doc = "index"
 project = "QUENDS"
 year = "2024"
@@ -59,8 +74,12 @@ autodoc_docstring_signature = True
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True
 
-# Add extensions
-extensions = [
+# Append (NOT reassign) so the base extensions above -- notably
+# sphinx.ext.napoleon, which converts the NumPy/Google docstring sections --
+# are preserved.  Reassigning here previously dropped napoleon and produced
+# dozens of malformed-docstring warnings.
+extensions += [
+    "myst_parser",
     "matplotlib.sphinxext.plot_directive",
     "IPython.sphinxext.ipython_console_highlighting",
     "IPython.sphinxext.ipython_directive",
@@ -101,7 +120,7 @@ autoapi_type = "python"
 autoapi_add_toctree_entry = True
 
 autoapi_template_dir = "_templates/autoapi"  # Templates for AutoAPI documentation
-suppress_warnings = ["autoapi"]
+suppress_warnings = ["autoapi", "config.cache"]
 autoapi_options = [
     "members",
     "undoc-members",

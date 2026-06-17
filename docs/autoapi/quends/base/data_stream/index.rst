@@ -12,253 +12,195 @@ Classes
    quends.base.data_stream.DataStream
 
 
-Functions
----------
-
-.. autoapisummary::
-
-   quends.base.data_stream.deduplicate_history
-   quends.base.data_stream.to_native_types
-
-
 Module Contents
 ---------------
 
-.. py:function:: deduplicate_history(history)
+.. py:class:: DataStream(data, history = None)
 
-   Remove duplicate operations from a history list, keeping only the most recent occurrence of each operation.
-
-   Scans the history of operations (each represented as a dict with at least an 'operation' key)
-   from end to start, retaining only the last entry for each unique operation name while preserving
-   the overall order of those final occurrences.
-
-   Parameters
-   ----------
-   history : list of dict
-       Each dict must contain:
-         - 'operation': str, the name of the operation.
-         - additional keys for operation-specific metadata (e.g., 'options').
-
-   Returns
-   -------
-   list of dict
-       A filtered list with only the final entry of each operation, ordered as in the original list.
+   .. py:property:: data
+      :type: Any
 
 
-.. py:function:: to_native_types(obj)
-
-   Recursively convert NumPy scalar and array types in nested structures to native Python types.
-
-   This function walks through dictionaries, lists, tuples, NumPy scalars, and arrays,
-   converting them into Python built-ins:
-
-   - NumPy scalar → Python int or float
-   - NumPy array  → Python list (recursively)
-
-   Parameters
-   ----------
-   obj : any
-       The object to convert. Supported container types are dict, list, tuple,
-       NumPy ndarray/scalar. Other types are returned unchanged.
-
-   Returns
-   -------
-   any
-       A new object mirroring the input structure but with all NumPy data types replaced
-       by their native Python equivalents.
+      The underlying pandas DataFrame.
 
 
-.. py:class:: DataStream(df, _history=None)
-
-   A pipeline for time-series and simulation trace analysis with provenance tracking.
-
-   DataStream encapsulates a pandas DataFrame with a required 'time' column and any number of
-   signal columns.  All analysis methods record their operation name and options in an internal
-   history, and returned results include deduplicated metadata lineage.
-
-   Core features include:
-   - Stationarity testing and steady-state trimming via multiple methods.
-   - Statistical summaries: means, uncertainties, confidence intervals, and effective sample size (ESS).
-   - Robust ESS estimation using rank-based and pairwise correlation techniques.
-   - Incremental and cumulative statistics, plus sample-size planning via power-law fits.
-
-   Attributes
-   ----------
-   df : pandas.DataFrame
-       The underlying time-series data, with 'time' as one column.
-   _history : list of dict
-       Records of all operations performed, including their options.
+   .. py:property:: df
+      :type: Any
 
 
-   .. py:attribute:: df
+      Backward-compatible alias for the underlying pandas DataFrame.
 
 
-   .. py:method:: get_metadata()
-
-      Return the deduplicated operation history for this DataStream.
-      Returns
-      -------
-          list of dict
-          The deduplicated operation history, with options for each operation.
+   .. py:property:: history
+      :type: quends.base.history.DataStreamHistory
 
 
 
-   .. py:method:: head(n=5)
-
-      Return the first `n` rows of the underlying DataFrame.
-
-      Parameters
-      ----------
-      n : int, optional
-          Number of rows to return. Defaults to 5.
-
-      Returns
-      -------
-      pandas.DataFrame
-          The first `n` rows of the DataFrame.
-
+   .. py:method:: head(n = 5)
 
 
    .. py:method:: variables()
 
-      List the signal variable (column) names, excluding the 'time' column.
+      Return all column names in the underlying DataFrame (including 'time').
 
-      Returns
-      -------
-      Index
-          ColumnIndex of variable names in `self.df`.
+      To obtain only signal columns use::
 
+          [c for c in ds.variables() if c != "time"]
 
-
-   .. py:method:: trim(column_name, batch_size=10, start_time=0.0, method='std', threshold=None, robust=True)
-
-      Trim the DataStream to its steady-state portion based on a chosen detection method.
-      Always returns a DataStream (possibly empty if trim fails), with operation metadata
-      and any messages stored in the _history attribute.
-
-      Parameters
-      ----------
-      column_name : str
-          Name of the signal column to analyze for steady-state.
-      batch_size : int, default=10
-          Window size for steady-state detection.
-      start_time : float, default=0.0
-          Earliest time to consider in the analysis.
-      method : {'std', 'threshold', 'rolling_variance'}, default='std'
-          Detection method:
-          - 'std': sliding std-based criteria (requires stationarity).
-          - 'threshold': rolling-std threshold (requires `threshold`).
-          - 'rolling_variance': comparison to mean variance times `threshold`.
-      threshold : float or None
-          Threshold value for the 'threshold' or 'rolling_variance' methods.
-      robust : bool, default=True
-          Use median/MAD instead of mean/std for the 'std' method.
-
-      Returns
-      -------
-      DataStream
-          New DataStream containing the trimmed data, or empty if trimming failed.
-          Operation metadata and any messages are in the ._history attribute.
+      :returns: *pandas.Index* -- All column names in ``self.data``.
 
 
 
-   .. py:method:: find_steady_state_std(data, column_name, window_size=10, robust=True)
-      :staticmethod:
+   .. py:method:: mean(column_name=None, method='non-overlapping', window_size=None)
 
+      Compute block or sliding window means for each column.
 
-      Identify the earliest time point when the signal remains within ±1/2/3σ proportions.
-
-      Parameters
-      ----------
-      data : DataFrame
-          Subset of the original df (must include 'time' and signal column).
-      column_name : str
-      window_size : int
-          Number of samples to evaluate the steady-state criteria.
-      robust : bool
-          If True, use median and MAD; else mean and std.
-
-      Returns
-      -------
-      float or None
-          Detected start time of steady-state, or None if not found.
+      Thin wrapper over :meth:`compute_statistics` — extracts ``mean`` and
+      ``window_size`` so callers that only need the mean don't have to
+      unpack the full statistics dict.
 
 
 
-   .. py:method:: find_steady_state_rolling_variance(data, column_name, window_size=50, threshold=0.1)
-      :staticmethod:
+   .. py:method:: mean_uncertainty(column_name=None, ddof=1, method='non-overlapping', window_size=None)
 
+      Estimate the standard error of the mean via Geyer ESS on block means.
 
-      Detect steady-state when rolling variance falls below a fraction of its mean.
-
-      Parameters
-      ----------
-      data : DataFrame
-      column_name : str
-      window_size : int
-      threshold : float
-          Fraction of mean rolling std below which to consider steady-state.
-
-      Returns
-      -------
-      float or None
-          Time of first below-threshold variance, or None.
+      Thin wrapper over :meth:`compute_statistics` — extracts
+      ``mean_uncertainty`` and ``window_size``.
 
 
 
-   .. py:method:: normalize_data(df)
-      :staticmethod:
+   .. py:method:: confidence_interval(column_name=None, ddof=1, method='non-overlapping', window_size=None, confidence_level = 0.95, ci_method = 'normal')
 
+      Build confidence intervals around block/sliding means.
 
-      Min-Max normalize all signal columns (excluding 'time') to [0,1].
+      Thin wrapper over :meth:`compute_statistics` — extracts
+      ``confidence_interval`` and ``window_size``.  Columns with no valid
+      data propagate the error dict rather than raising ``KeyError``.
 
-      Parameters
-      ----------
-      df : pandas.DataFrame
-
-      Returns
-      -------
-      pandas.DataFrame
+      See :meth:`compute_statistics` for the meaning of *confidence_level*
+      and *ci_method*.  Defaults preserve the historical 95 % normal CI
+      (multiplier ``1.96``).
 
 
 
-   .. py:method:: find_steady_state_threshold(data, column_name, window_size, threshold)
-      :staticmethod:
+   .. py:method:: trim(column_name=None, *, method = 'std', window_size = 10, start_time = 0.0, threshold = None, robust = True, **strategy_kwargs)
+
+      Trim this stream to its steady state and return a new ``DataStream``.
+
+      Convenience one-liner over :func:`quends.base.trim.build_trim_strategy` +
+      :class:`~quends.base.trim.TrimDataStreamOperation` (the explicit/low-level
+      path still works exactly as before — this just wraps it).
+
+      :Parameters: * **column_name** (*str, optional*) -- Column to detect steady state on. If ``None`` and the stream has a
+                     single non-``time`` column, that column is used automatically.
+                   * **method** (*str*) -- ``"std"`` | ``"threshold"`` | ``"rolling_variance"`` |
+                     ``"self_consistent"`` | ``"iqr"`` | ``"mean_variation"``.
+                   * **window_size, start_time, threshold, robust** -- Strategy parameters (see ``build_trim_strategy``).
+                   * **\*\*strategy_kwargs** -- Extra attributes set on the strategy (e.g. ``drop_leading_nonpositive=False``).
+
+      :returns: *DataStream* -- The trimmed stream (empty if no steady state was detected).
 
 
-      Use rolling standard deviation on normalized data to detect steady-state.
 
-      Parameters
-      ----------
-      data : DataFrame
-      column_name : str
-      window_size : int
-      threshold : float
-          Std threshold under which to mark steady-state.
+   .. py:method:: compute_statistics(column_name=None, ddof=1, method='non-overlapping', window_size=None, confidence_level = 0.95, ci_method = 'normal')
 
-      Returns
-      -------
-      float or None
+      Aggregate statistics for each column using autotuned independent block means.
+
+      Window selection and block-mean computation go through :meth:`_process_column`
+      → :func:`~quends.base.utils.autotune_blocks` (the single canonical helper
+      shared with the ensemble pipeline).
+
+      :Parameters: * **column_name** (*str or list or None*)
+                   * **ddof** (*int*)
+                   * **method** (*{'non-overlapping', 'sliding'}*) -- Block type.  Independence autotuning always uses non-overlapping blocks
+                     regardless of this setting.
+                   * **window_size** (*int or None*) -- User-supplied window; triggers autotune when ``None``.
+                   * **confidence_level** (*float*) -- Two-sided confidence level for the CI.  Default ``0.95``.
+                   * **ci_method** (*{'normal', 't'}*) -- CI quantile family.  Default ``'normal'`` (preserves the historical
+                     ``1.96`` multiplier exactly for backward compatibility).  When ``'t'``,
+                     uses Student's *t* with ``dof = max(1, se_effective_n - 1)``.
+
+      :returns: *dict* -- ``{col: {…statistics…}}`` with the following canonical keys per column:
+
+                ``mean``, ``mean_uncertainty`` (SEM), ``variance``, ``confidence_interval``,
+                ``pm_std``, ``effective_sample_size`` (Geyer ESS on raw series),
+                ``window_size``, ``n_short_averages`` (number of block means),
+                ``ess_blocks`` (Geyer ESS on block means), ``se_effective_n``,
+                ``se_method``, ``independence_status``, ``independent``,
+                ``ljungbox_lags`` (list), ``ljungbox_pvalues`` (list),
+                ``ljungbox_pvalue`` (scalar min — convenience alias matching ensemble output),
+                ``ci_method``, ``confidence_level``,
+                ``warning`` (if applicable).
+
+                On error: ``{col: {"error": "…"}}``
+
+
+
+   .. py:method:: cumulative_statistics(column_name=None, method='non-overlapping', window_size=None)
+
+      Generate cumulative mean and uncertainty time series for each column.
+
+      Returns per-column cumulative arrays plus ``window_size``.
+
+      .. rubric:: Notes
+
+      ``cumulative_uncertainty`` is the expanding **standard deviation** of the
+      processed series, while ``standard_error`` is the expanding SEM
+      (std / sqrt(count)). Use ``standard_error`` for uncertainty-on-the-mean.
+
+
+
+   .. py:method:: additional_data(column_name=None, ddof=1, method='sliding', window_size=None, reduction_factor=0.1)
+
+      Estimate additional sample size needed to reduce SEM by `reduction_factor` via power-law fit.
+
+      Returns model parameters and sample projections.
+
+      .. rubric:: Notes
+
+      The power law is currently fit to ``cumulative_statistics``'
+      ``cumulative_uncertainty`` series. See ``cumulative_statistics`` — that
+      key holds the expanding standard deviation, not the SEM; fitting a
+      shrinking-SEM power law to it is a known limitation (see AUDIT_REPORT H2).
+
+
+
+   .. py:method:: is_stationary(columns)
+
+      Perform Augmented Dickey-Fuller test for each specified column.
+
+      :Parameters: **columns** (*str or list of str*)
+
+      :returns: *dict* -- {column: True if stationary (p < 0.05), else False}
+
+
+
+   .. py:method:: get_block_effective_n(column_name, method = 'non-overlapping', window_size = None)
+
+      Return Geyer ESS on block means for one column.
+
+      Thin wrapper over :meth:`compute_statistics` — extracts the
+      ``ess_blocks``, ``window_size``, and ``n_short_averages`` fields so
+      that callers that only need block-level ESS info don't have to unpack
+      the full statistics dict.
+
+      :returns: *dict* -- ``{"effective_n": float, "window_size": int, "n_blocks": int}``
 
 
 
    .. py:method:: effective_sample_size(column_names=None, alpha=0.05)
 
-      Compute classic ESS based on significant autocorrelation lags.
+      Compute ESS using Geyer positive-pair truncation of the ACF.
 
-      Records the operation in history.
+      The integrated autocorrelation time ``tau_int`` is estimated by summing
+      consecutive positive pairs of the normalised ACF and truncating as soon
+      as a pair turns non-positive.  ESS is then ``n / tau_int``.
 
-      Parameters
-      ----------
-      column_names : str or list of str or None
-          Columns to compute ESS for; defaults to all except 'time'.
-      alpha : float
-          Significance level for autocorrelation cutoff.
+      :Parameters: * **column_names** (*str or list of str or None*) -- Columns to compute ESS for; defaults to all non-time columns.
+                   * **alpha** (*float*) -- Reserved for API compatibility; not used in the Geyer estimator.
 
-      Returns
-      -------
-      dict
-          {'results': {col: ESS_int or message}, 'metadata': history}
+      :returns: *dict* -- ``{'results': {col: ESS_int or message_dict}}``
 
 
 
@@ -268,17 +210,12 @@ Module Contents
 
       Compute a robust ESS via pairwise autocorrelations and optional rank-normalization.
 
-      Parameters
-      ----------
-      x : array-like
-      rank_normalize : bool
-      min_samples : int
-      return_relative : bool
+      :Parameters: * **x** (*array-like*)
+                   * **rank_normalize** (*bool*)
+                   * **min_samples** (*int*)
+                   * **return_relative** (*bool*)
 
-      Returns
-      -------
-      float or tuple
-          ESS (and ESS/n ratio if return_relative).
+      :returns: *float or tuple* -- ESS (and ESS/n ratio if return_relative).
 
 
 
@@ -286,102 +223,26 @@ Module Contents
 
       Wrapper for `robust_effective_sample_size` over multiple columns.
 
-      Records the operation in history.
+      :Parameters: * **column_names** (*str or list or None*)
+                   * **rank_normalize** (*bool*)
+                   * **min_samples** (*int*)
+                   * **return_relative** (*bool*)
 
-      Parameters
-      ----------
-      column_names : str or list or None
-      rank_normalize : bool
-      min_samples : int
-      return_relative : bool
-
-      Returns
-      -------
-      dict
-          {'results': {col: ESS or tuple}, 'metadata': history}
+      :returns: *dict* -- {'results': {col: ESS or tuple}}
 
 
 
-   .. py:method:: compute_statistics(column_name=None, ddof=1, method='non-overlapping', window_size=None)
-
-      Aggregate statistics: mean, uncertainty, CI, pm_std bounds, ESS, and window size.
-
-      Appends the operation to history and embeds deduplicated metadata in the results.
-
-      Parameters
-      ----------
-      column_name : str or list or None
-      ddof : int
-      method : {'sliding', 'non-overlapping'}
-      window_size : int or None
-
-      Returns
-      -------
-      dict
-          {col: {statistics...}, 'metadata': history}
+   .. py:method:: normalize_data(df)
+      :staticmethod:
 
 
+      Min-Max normalize all signal columns (excluding 'time') to [0,1].
 
-   .. py:method:: cumulative_statistics(column_name=None, method='non-overlapping', window_size=None)
+      Operates on a copy; the input DataFrame is not mutated.
 
-      Generate cumulative mean and uncertainty time series for each column.
+      :Parameters: **df** (*pandas.DataFrame*)
 
-      Records operation and returns per-column cumulative arrays plus window_size.
-
-
-
-   .. py:method:: additional_data(column_name=None, ddof=1, method='sliding', window_size=None, reduction_factor=0.1)
-
-      Estimate additional sample size needed to reduce SEM by `reduction_factor` via power-law fit.
-
-      Records operation and returns model parameters and sample projections.
-
-
-
-   .. py:method:: is_stationary(columns)
-
-      Perform Augmented Dickey-Fuller test for each specified column.
-
-      Records operation in history and returns a dict of bool or error.
-
-      Parameters
-      ----------
-      columns : str or list of str
-
-      Returns
-      -------
-      dict
-          {column: True if stationary (p<0.05), else False or error message}
-
-
-
-   .. py:method:: mean(column_name=None, method='non-overlapping', window_size=None)
-
-      Legacy wrapper for test compatibility. Returns only mean (not dict).
-
-
-
-   .. py:method:: mean_uncertainty(column_name=None, ddof=1, method='non-overlapping', window_size=None)
-
-      Legacy wrapper for test compatibility. Returns only mean_uncertainty (not dict).
-
-
-
-   .. py:method:: confidence_interval(column_name=None, ddof=1, method='non-overlapping', window_size=None)
-
-      Legacy wrapper for test compatibility. Returns only CI tuple.
-
-
-
-   .. py:method:: optimal_window_size(method='sliding')
-
-      Stub for compatibility. Return a default or best-guess window size.
-
-
-
-   .. py:method:: effective_sample_size_below(column_names=None, alpha=0.05)
-
-      Stub for compatibility with legacy test. Returns dummy value.
+      :returns: *pandas.DataFrame*
 
 
 
