@@ -15,16 +15,21 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: from_json(file, variables=None)
+.. py:function:: from_json(file, variable)
 
-   Load a data stream from a JSON file.
+   Load a single variable as a data stream from a JSON file.
 
-   Args:
-       file (str): The path to the JSON file.
-       variables (list, optional): List of variable names (columns) to load.
-                                   If None, all columns are loaded.
+   The JSON may be either an array of records or an object with a top-level
+   ``"data"`` key holding such an array. The returned :class:`DataStream`
+   contains the ``time`` column (when present) together with the requested
+   ``variable`` column.
 
-   Returns:
-       DataStream: A DataStream object containing the data from the JSON file.
+   :Parameters: * **file** (*str*) -- The path to the JSON file.
+                * **variable** (*str*) -- The column name to load. Must exist in the JSON file.
+
+   :returns: *DataStream* -- A DataStream containing ``[time, variable]`` (or just
+             ``[variable]`` if no ``time`` column is present).
+
+   :raises ValueError: If the file does not exist or the variable is not found.
 
 

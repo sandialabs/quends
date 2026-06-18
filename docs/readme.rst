@@ -4,35 +4,35 @@ Overview
 
 .. start-badges
 
-.. list-table::
-    :stub-columns: 1
+|maintained| |python-tests| |deployment| |python| |license| |black| |coveralls|
 
-    * - docs
-      - |docs|
-    * - tests
-      - |python-tests| |deployment| |coveralls|
-    * - package
-      - |commits-since|
-
-.. |docs| image:: https://readthedocs.org/projects/quends/badge/?style=flat
-    :target: https://readthedocs.org/projects/quends/
-    :alt: Documentation Status
+.. |maintained| image:: https://img.shields.io/badge/Maintained%3F-yes-brightgreen.svg
+    :target: https://github.com/sandialabs/quends/graphs/commit-activity
+    :alt: Maintained
 
 .. |python-tests| image:: https://github.com/sandialabs/quends/actions/workflows/python-tests.yml/badge.svg
-    :alt: Python Tests Build Status
     :target: https://github.com/sandialabs/quends/actions/workflows/python-tests.yml
+    :alt: Run Tests
 
 .. |deployment| image:: https://github.com/sandialabs/quends/actions/workflows/deployment.yml/badge.svg
-    :alt: Deployment Status
-    :target: https://github.com/sandialabs/quends/actions/workflows/deployment.yml
+    :target: https://sandialabs.github.io/quends/
+    :alt: Documentation
+
+.. |python| image:: https://img.shields.io/badge/python-3.9%2B-blue.svg
+    :target: https://www.python.org/
+    :alt: Python 3.9+
+
+.. |license| image:: https://img.shields.io/badge/license-BSD--3--Clause-green.svg
+    :target: https://github.com/sandialabs/quends/blob/main/LICENSE
+    :alt: License: BSD-3-Clause
+
+.. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
+    :alt: Code style: black
 
 .. |coveralls| image:: https://coveralls.io/repos/github/sandialabs/quends/badge.svg?branch=main
     :target: https://coveralls.io/github/sandialabs/quends?branch=main
     :alt: Coverage Status
-
-.. |commits-since| image:: https://img.shields.io/github/commits-since/sandialabs/quends/v0.0.0.svg
-    :alt: Commits since latest release
-    :target: https://github.com/sandialabs/quends/compare/v0.0.0...main
 
 .. end-badges
 
@@ -102,7 +102,3 @@ Coverage
 ========
 
 You can view the coverage report |coveralls|.
-
-.. |coveralls| image:: https://coveralls.io/repos/github/sandialabs/quends/badge.svg?branch=main
-    :target: https://coveralls.io/github/sandialabs/quends?branch=main
-    :alt: Coverage Status

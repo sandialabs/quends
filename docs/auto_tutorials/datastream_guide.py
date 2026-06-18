@@ -26,8 +26,8 @@ csv_file_path = "gx/tprim_2_0.out.csv"
 csv2_file_path = "gx/ensemble/tprim_2_5_a.out.csv"
 
 # Load the data from CSV files
-data_stream_csv = qnds.from_csv(csv_file_path)
-data_stream_gx = qnds.from_csv(csv2_file_path)
+data_stream_csv = qnds.from_csv(csv_file_path, "HeatFlux_st")
+data_stream_gx = qnds.from_csv(csv2_file_path, "HeatFlux_st")
 
 # Display the first few rows of the GX data
 data_stream_gx.head()
@@ -48,8 +48,10 @@ len(data_stream_gx)
 # Check if a single column is stationary
 data_stream_gx.is_stationary("HeatFlux_st")
 
-# Check if multiple columns are stationary
-data_stream_gx.is_stationary(["HeatFlux_st", "Wg_st", "Phi2_t"])
+# Check stationarity for several variables. With the single-variable API,
+# each column is loaded into its own DataStream.
+for _var in ["HeatFlux_st", "Wg_st", "Phi2_t"]:
+    print(_var, qnds.from_csv(csv2_file_path, _var).is_stationary(_var))
 
 # %%
 # Trimming data based to obtain steady-state portion
@@ -57,28 +59,36 @@ data_stream_gx.is_stationary(["HeatFlux_st", "Wg_st", "Phi2_t"])
 #
 
 # %%
-# Trim the data based on standard deviation method
+# Trim the data based on standard deviation method (Quantile strategy)
+# Use the strategy-operation pattern from quends.base.trim directly.
 
-# Returns: Dictionary with keys like "results" and "metadata"
-trimmed = data_stream_gx.trim(column_name="HeatFlux_st", batch_size=50, method="std")
+from quends.base.trim import QuantileTrimStrategy, TrimDataStreamOperation
+
+strategy = QuantileTrimStrategy(window_size=50, robust=True)
+op = TrimDataStreamOperation(strategy=strategy)
+trimmed = op(data_stream_gx, column_name="HeatFlux_st")
 
 # Print first 5 rows of dataframe
 trimmed.head()
 
 # %%
 # Trim the data based on rolling variance method
-trimmed = data_stream_gx.trim(
-    column_name="HeatFlux_st", batch_size=50, method="rolling_variance", threshold=0.10
-)
+from quends.base.trim import RollingVarianceThresholdTrimStrategy, TrimDataStreamOperation
+
+strategy = RollingVarianceThresholdTrimStrategy(window_size=50, threshold=0.10)
+op = TrimDataStreamOperation(strategy=strategy)
+trimmed = op(data_stream_gx, column_name="HeatFlux_st")
 
 # Gather results
 trimmed.head()
 
 # %%
-# Trim the data based on threshold method
-trimmed = data_stream_gx.trim(
-    column_name="HeatFlux_st", batch_size=50, method="threshold", threshold=0.1
-)
+# Trim the data based on noise threshold method
+from quends.base.trim import NoiseThresholdTrimStrategy, TrimDataStreamOperation
+
+strategy = NoiseThresholdTrimStrategy(window_size=50, threshold=0.1)
+op = TrimDataStreamOperation(strategy=strategy)
+trimmed = op(data_stream_gx, column_name="HeatFlux_st")
 
 # View trimmed data
 trimmed.head()
@@ -87,9 +97,10 @@ trimmed.head()
 # Effective Sample Size
 # ~~~~~~~~~~~~~~~~~~~~~
 #
-# Compute Effective Sample Size for specific columns in GX
-ess_dict = data_stream_gx.effective_sample_size(column_names=["HeatFlux_st", "Wg_st"])
-print(ess_dict)
+# Compute Effective Sample Size for specific columns in GX. With the
+# single-variable API, each column is loaded into its own DataStream.
+for _var in ["HeatFlux_st", "Wg_st"]:
+    print(_var, qnds.from_csv(csv2_file_path, _var).effective_sample_size())
 
 # %%
 # Compute Effective sample size for trimmed data
@@ -111,12 +122,12 @@ stats_df = stats["HeatFlux_st"]
 # Exporter
 # Below Displays the information as a DataFrame
 exporter = qnds.Exporter()
-exporter.display_dataframe(stats_df)
+exporter.display_dataframe(stats)
 
 # %%
 # Below Displays the information in JSON
 
-exporter.display_json(stats_df)
+exporter.display_json(stats)
 
 # %%
 # Other statistical methods
@@ -157,7 +168,7 @@ cumulative_df = cumulative["HeatFlux_st"]
 
 # %%
 # Display Cumulative Statistics as a DataFrame
-exporter.display_dataframe(cumulative_df)
+exporter.display_dataframe(cumulative)
 
 # %%
 # CGYRO Data Analysis
@@ -167,7 +178,7 @@ exporter.display_dataframe(cumulative_df)
 # %%
 # Specify the file paths
 csv_file_path = "cgyro/output_nu0_50.csv"
-data_stream_cg = qnds.from_csv(csv_file_path)
+data_stream_cg = qnds.from_csv(csv_file_path, "Q_D/Q_GBD")
 data_stream_cg.head()
 
 # %%
@@ -175,8 +186,11 @@ data_stream_cg.head()
 len(data_stream_cg)
 
 # %%
-# Trim the data based on threshold method
-trimmed_ = data_stream_cg.trim(column_name="Q_D/Q_GBD", method="std", robust=True)
+# Trim the CGYRO data using the Quantile (std) strategy
+from quends.base.trim import QuantileTrimStrategy, TrimDataStreamOperation
+strategy = QuantileTrimStrategy(robust=True)
+op = TrimDataStreamOperation(strategy=strategy)
+trimmed_ = op(data_stream_cg, column_name="Q_D/Q_GBD")
 # View trimmed data
 print(trimmed_)
 

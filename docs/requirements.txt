@@ -1,5 +1,14 @@
-sphinx>=1.3
+sphinx>=4
+sphinx-immaterial
+sphinx-design
 sphinx-book-theme
+pydata-sphinx-theme
+myst-parser
+sphinx-autoapi
+sphinx-gallery
+sphinx-automodapi
+sphinx-autodoc-typehints
+ipython
 numpy
 pandas
 matplotlib

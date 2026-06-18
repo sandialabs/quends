@@ -181,19 +181,21 @@ class Ensemble:
         Returns
         -------
         dict
-            {
-              "uniform": bool,          True if all members are AllEqual with the same step
-              "majority_step": float,   most common step across all members
-              "members": {
-                "Member i": {
-                  "status": str,
-                  "unique_steps": list[float],
-                  "n_steps": int,
-                  "t_min": float,
-                  "t_max": float,
+            Mapping with the structure::
+
+                {
+                  "uniform": bool,          # all members AllEqual with the same step
+                  "majority_step": float,   # most common step across all members
+                  "members": {
+                    "Member i": {
+                      "status": str,
+                      "unique_steps": list[float],
+                      "n_steps": int,
+                      "t_min": float,
+                      "t_max": float,
+                    }
+                  }
                 }
-              }
-            }
 
         Notes
         -----

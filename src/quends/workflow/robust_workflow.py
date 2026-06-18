@@ -29,6 +29,7 @@ class RobustWorkflow:
     Note: this class assumes the time points in the data stream are equally spaced in time.
 
     Core features include:
+
     - Stationarity assessment that progressively shortens the DataStream to see if the tail
       end of the DataStream is stationary.
     - Start of SSS detection that uses a robust approach based on the smoothed mean of the DataStream.
@@ -37,8 +38,6 @@ class RobustWorkflow:
 
     Attributes
     ----------
-    _drop_fraction: float, fraction of data to drop from the start of the DataStream to see if the shortened
-        DataStream is stationary.
     _operate_safe : bool
         If True: process data streams in a safe way insisting on stationarity and a segment
         that is clearly in SSS

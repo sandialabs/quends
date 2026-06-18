@@ -63,8 +63,8 @@ Analysis on GX Data
     csv2_file_path = "gx/ensemble/tprim_2_5_a.out.csv"
 
     # Load the data from CSV files
-    data_stream_csv = qnds.from_csv(csv_file_path)
-    data_stream_gx = qnds.from_csv(csv2_file_path)
+    data_stream_csv = qnds.from_csv(csv_file_path, "HeatFlux_st")
+    data_stream_gx = qnds.from_csv(csv2_file_path, "HeatFlux_st")
 
     # Display the first few rows of the GX data
     data_stream_gx.head()
@@ -96,382 +96,34 @@ Analysis on GX Data
         <tr style="text-align: right;">
           <th></th>
           <th>time</th>
-          <th>Phi2_t</th>
-          <th>Phi2_kxt</th>
-          <th>Phi2_kyt</th>
-          <th>Phi2_kxkyt</th>
-          <th>Phi2_zt</th>
-          <th>Apar2_t</th>
-          <th>Apar2_kxt</th>
-          <th>Apar2_kyt</th>
-          <th>Apar2_kxkyt</th>
-          <th>Apar2_zt</th>
-          <th>Phi2_zonal_t</th>
-          <th>Phi2_zonal_kxt</th>
-          <th>Phi2_zonal_zt</th>
-          <th>Wg_st</th>
-          <th>Wg_kxst</th>
-          <th>Wg_kyst</th>
-          <th>Wg_kxkyst</th>
-          <th>Wg_zst</th>
-          <th>Wg_lmst</th>
-          <th>Wphi_st</th>
-          <th>Wphi_kxst</th>
-          <th>Wphi_kyst</th>
-          <th>Wphi_kxkyst</th>
-          <th>Wphi_zst</th>
-          <th>Wapar_st</th>
-          <th>Wapar_kxst</th>
-          <th>Wapar_kyst</th>
-          <th>Wapar_kxkyst</th>
-          <th>Wapar_zst</th>
           <th>HeatFlux_st</th>
-          <th>HeatFlux_kxst</th>
-          <th>HeatFlux_kyst</th>
-          <th>HeatFlux_kxkyst</th>
-          <th>HeatFlux_zst</th>
-          <th>HeatFluxES_st</th>
-          <th>HeatFluxES_kxst</th>
-          <th>HeatFluxES_kyst</th>
-          <th>HeatFluxES_kxkyst</th>
-          <th>HeatFluxES_zst</th>
-          <th>HeatFluxApar_st</th>
-          <th>HeatFluxApar_kxst</th>
-          <th>HeatFluxApar_kyst</th>
-          <th>HeatFluxApar_kxkyst</th>
-          <th>HeatFluxApar_zst</th>
-          <th>HeatFluxBpar_st</th>
-          <th>HeatFluxBpar_kxst</th>
-          <th>HeatFluxBpar_kyst</th>
-          <th>HeatFluxBpar_kxkyst</th>
-          <th>HeatFluxBpar_zst</th>
-          <th>ParticleFlux_st</th>
-          <th>ParticleFlux_kxst</th>
-          <th>ParticleFlux_kyst</th>
-          <th>ParticleFlux_kxkyst</th>
-          <th>ParticleFlux_zst</th>
-          <th>TurbulentHeating_st</th>
-          <th>TurbulentHeating_kxst</th>
-          <th>TurbulentHeating_kyst</th>
-          <th>TurbulentHeating_kxkyst</th>
-          <th>TurbulentHeating_zst</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <th>0</th>
           <td>0.020072</td>
-          <td>0.000322</td>
-          <td>1.014122e-06</td>
-          <td>5.556982e-15</td>
-          <td>1.283244e-17</td>
-          <td>0.000004</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>5.556983e-15</td>
-          <td>1.283244e-17</td>
-          <td>8.195788e-17</td>
-          <td>0.001261</td>
-          <td>0.000010</td>
-          <td>2.157422e-14</td>
-          <td>7.842924e-17</td>
-          <td>0.000018</td>
-          <td>1.260900e-03</td>
-          <td>0.000090</td>
-          <td>4.728780e-07</td>
-          <td>2.252245e-15</td>
-          <td>7.758021e-18</td>
-          <td>8.470064e-07</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
           <td>0.000003</td>
-          <td>2.114464e-08</td>
-          <td>0.000000e+00</td>
-          <td>0.0</td>
-          <td>3.988991e-08</td>
-          <td>0.000003</td>
-          <td>2.114464e-08</td>
-          <td>0.000000e+00</td>
-          <td>0.0</td>
-          <td>3.988991e-08</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>-4.513479e-11</td>
-          <td>-1.238711e-14</td>
-          <td>0.000000e+00</td>
-          <td>0.0</td>
-          <td>-1.328687e-12</td>
         </tr>
         <tr>
           <th>1</th>
           <td>2.027322</td>
-          <td>0.000236</td>
-          <td>9.462429e-07</td>
-          <td>1.035192e-05</td>
-          <td>3.763393e-17</td>
-          <td>0.000004</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>1.477131e-10</td>
-          <td>3.763393e-17</td>
-          <td>9.182713e-17</td>
-          <td>0.001496</td>
-          <td>0.000009</td>
-          <td>2.018144e-05</td>
-          <td>4.068222e-16</td>
-          <td>0.000019</td>
-          <td>5.423472e-08</td>
-          <td>0.000064</td>
-          <td>4.470815e-07</td>
-          <td>1.587569e-06</td>
-          <td>1.941193e-17</td>
-          <td>9.091424e-07</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
           <td>0.000154</td>
-          <td>1.935043e-08</td>
-          <td>3.436235e-10</td>
-          <td>0.0</td>
-          <td>4.392872e-08</td>
-          <td>0.000154</td>
-          <td>1.935043e-08</td>
-          <td>3.436235e-10</td>
-          <td>0.0</td>
-          <td>4.392872e-08</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>6.326710e-12</td>
-          <td>-1.907196e-13</td>
-          <td>-2.302137e-12</td>
-          <td>0.0</td>
-          <td>-1.325463e-12</td>
         </tr>
         <tr>
           <th>2</th>
           <td>4.034571</td>
-          <td>0.000198</td>
-          <td>1.138735e-06</td>
-          <td>9.805337e-06</td>
-          <td>1.168341e-16</td>
-          <td>0.000005</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>3.704297e-10</td>
-          <td>1.168341e-16</td>
-          <td>1.050660e-16</td>
-          <td>0.002205</td>
-          <td>0.000011</td>
-          <td>1.770925e-05</td>
-          <td>7.266167e-16</td>
-          <td>0.000019</td>
-          <td>1.252036e-08</td>
-          <td>0.000053</td>
-          <td>5.322058e-07</td>
-          <td>1.374501e-06</td>
-          <td>6.295199e-17</td>
-          <td>9.924838e-07</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
           <td>0.000196</td>
-          <td>2.208835e-08</td>
-          <td>1.294924e-09</td>
-          <td>0.0</td>
-          <td>4.903913e-08</td>
-          <td>0.000196</td>
-          <td>2.208835e-08</td>
-          <td>1.294924e-09</td>
-          <td>0.0</td>
-          <td>4.903913e-08</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>-4.022337e-12</td>
-          <td>-2.190608e-13</td>
-          <td>-1.575239e-12</td>
-          <td>0.0</td>
-          <td>-4.890709e-13</td>
         </tr>
         <tr>
           <th>3</th>
           <td>6.041821</td>
-          <td>0.000206</td>
-          <td>1.060234e-06</td>
-          <td>9.191237e-06</td>
-          <td>2.735980e-16</td>
-          <td>0.000005</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>4.042708e-10</td>
-          <td>2.735980e-16</td>
-          <td>1.229009e-16</td>
-          <td>0.002964</td>
-          <td>0.000010</td>
-          <td>1.881524e-05</td>
-          <td>1.689178e-15</td>
-          <td>0.000020</td>
-          <td>2.801751e-09</td>
-          <td>0.000053</td>
-          <td>4.835276e-07</td>
-          <td>1.562852e-06</td>
-          <td>1.470741e-16</td>
-          <td>1.104677e-06</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
           <td>0.000236</td>
-          <td>2.078288e-08</td>
-          <td>2.700831e-09</td>
-          <td>0.0</td>
-          <td>5.548262e-08</td>
-          <td>0.000236</td>
-          <td>2.078288e-08</td>
-          <td>2.700831e-09</td>
-          <td>0.0</td>
-          <td>5.548262e-08</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>-1.022327e-11</td>
-          <td>-3.670521e-13</td>
-          <td>-1.553083e-13</td>
-          <td>0.0</td>
-          <td>-8.325619e-13</td>
         </tr>
         <tr>
           <th>4</th>
           <td>8.049070</td>
-          <td>0.000245</td>
-          <td>1.066248e-06</td>
-          <td>1.006626e-05</td>
-          <td>1.340230e-16</td>
-          <td>0.000005</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>7.481377e-10</td>
-          <td>1.340230e-16</td>
-          <td>1.443730e-16</td>
-          <td>0.003818</td>
-          <td>0.000009</td>
-          <td>1.914822e-05</td>
-          <td>7.813427e-16</td>
-          <td>0.000021</td>
-          <td>4.485645e-10</td>
-          <td>0.000061</td>
-          <td>4.882390e-07</td>
-          <td>1.435011e-06</td>
-          <td>7.265576e-17</td>
-          <td>1.238737e-06</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
           <td>0.000298</td>
-          <td>2.149553e-08</td>
-          <td>5.369387e-09</td>
-          <td>0.0</td>
-          <td>6.278837e-08</td>
-          <td>0.000298</td>
-          <td>2.149553e-08</td>
-          <td>5.369387e-09</td>
-          <td>0.0</td>
-          <td>6.278837e-08</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>0.0</td>
-          <td>-1.445467e-11</td>
-          <td>-5.255198e-14</td>
-          <td>2.001172e-12</td>
-          <td>0.0</td>
-          <td>-6.776345e-13</td>
         </tr>
       </tbody>
     </table>
@@ -499,23 +151,7 @@ Get available variables
  .. code-block:: none
 
 
-    Index(['time', 'Phi2_t', 'Phi2_kxt', 'Phi2_kyt', 'Phi2_kxkyt', 'Phi2_zt',
-           'Apar2_t', 'Apar2_kxt', 'Apar2_kyt', 'Apar2_kxkyt', 'Apar2_zt',
-           'Phi2_zonal_t', 'Phi2_zonal_kxt', 'Phi2_zonal_zt', 'Wg_st', 'Wg_kxst',
-           'Wg_kyst', 'Wg_kxkyst', 'Wg_zst', 'Wg_lmst', 'Wphi_st', 'Wphi_kxst',
-           'Wphi_kyst', 'Wphi_kxkyst', 'Wphi_zst', 'Wapar_st', 'Wapar_kxst',
-           'Wapar_kyst', 'Wapar_kxkyst', 'Wapar_zst', 'HeatFlux_st',
-           'HeatFlux_kxst', 'HeatFlux_kyst', 'HeatFlux_kxkyst', 'HeatFlux_zst',
-           'HeatFluxES_st', 'HeatFluxES_kxst', 'HeatFluxES_kyst',
-           'HeatFluxES_kxkyst', 'HeatFluxES_zst', 'HeatFluxApar_st',
-           'HeatFluxApar_kxst', 'HeatFluxApar_kyst', 'HeatFluxApar_kxkyst',
-           'HeatFluxApar_zst', 'HeatFluxBpar_st', 'HeatFluxBpar_kxst',
-           'HeatFluxBpar_kyst', 'HeatFluxBpar_kxkyst', 'HeatFluxBpar_zst',
-           'ParticleFlux_st', 'ParticleFlux_kxst', 'ParticleFlux_kyst',
-           'ParticleFlux_kxkyst', 'ParticleFlux_zst', 'TurbulentHeating_st',
-           'TurbulentHeating_kxst', 'TurbulentHeating_kyst',
-           'TurbulentHeating_kxkyst', 'TurbulentHeating_zst'],
-          dtype='object')
+    Index(['time', 'HeatFlux_st'], dtype='object')
 
 
 
@@ -548,7 +184,7 @@ Stationary Check
 ~~~~~~~~~~~~~~~~
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 47-54
+.. GENERATED FROM PYTHON SOURCE LINES 47-56
 
 .. code-block:: Python
 
@@ -556,8 +192,10 @@ Stationary Check
     # Check if a single column is stationary
     data_stream_gx.is_stationary("HeatFlux_st")
 
-    # Check if multiple columns are stationary
-    data_stream_gx.is_stationary(["HeatFlux_st", "Wg_st", "Phi2_t"])
+    # Check stationarity for several variables. With the single-variable API,
+    # each column is loaded into its own DataStream.
+    for _var in ["HeatFlux_st", "Wg_st", "Phi2_t"]:
+        print(_var, qnds.from_csv(csv2_file_path, _var).is_stationary(_var))
 
 
 
@@ -567,28 +205,34 @@ Stationary Check
 
  .. code-block:: none
 
+    HeatFlux_st {'HeatFlux_st': True}
+    Wg_st {'Wg_st': True}
+    Phi2_t {'Phi2_t': False}
 
-    {'HeatFlux_st': True, 'Wg_st': True, 'Phi2_t': False}
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 55-58
+.. GENERATED FROM PYTHON SOURCE LINES 57-60
 
 Trimming data based to obtain steady-state portion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-61
+.. GENERATED FROM PYTHON SOURCE LINES 62-64
 
-Trim the data based on standard deviation method
+Trim the data based on standard deviation method (Quantile strategy)
+Use the strategy-operation pattern from quends.base.trim directly.
 
-.. GENERATED FROM PYTHON SOURCE LINES 61-68
+.. GENERATED FROM PYTHON SOURCE LINES 64-74
 
 .. code-block:: Python
 
 
-    # Returns: Dictionary with keys like "results" and "metadata"
-    trimmed = data_stream_gx.trim(column_name="HeatFlux_st", batch_size=50, method="std")
+    from quends.base.trim import QuantileTrimStrategy, TrimDataStreamOperation
+
+    strategy = QuantileTrimStrategy(window_size=50, robust=True)
+    op = TrimDataStreamOperation(strategy=strategy)
+    trimmed = op(data_stream_gx, column_name="HeatFlux_st")
 
     # Print first 5 rows of dataframe
     trimmed.head()
@@ -626,28 +270,28 @@ Trim the data based on standard deviation method
       <tbody>
         <tr>
           <th>0</th>
-          <td>158.592772</td>
-          <td>8.508736</td>
+          <td>60.237553</td>
+          <td>26.427590</td>
         </tr>
         <tr>
           <th>1</th>
-          <td>160.600022</td>
-          <td>8.699987</td>
+          <td>62.244803</td>
+          <td>10.724146</td>
         </tr>
         <tr>
           <th>2</th>
-          <td>162.607271</td>
-          <td>8.852156</td>
+          <td>64.252052</td>
+          <td>7.917920</td>
         </tr>
         <tr>
           <th>3</th>
-          <td>164.614520</td>
-          <td>8.883341</td>
+          <td>66.259301</td>
+          <td>7.051886</td>
         </tr>
         <tr>
           <th>4</th>
-          <td>166.621770</td>
-          <td>8.713289</td>
+          <td>68.266551</td>
+          <td>6.507493</td>
         </tr>
       </tbody>
     </table>
@@ -656,17 +300,19 @@ Trim the data based on standard deviation method
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-70
+.. GENERATED FROM PYTHON SOURCE LINES 75-76
 
 Trim the data based on rolling variance method
 
-.. GENERATED FROM PYTHON SOURCE LINES 70-77
+.. GENERATED FROM PYTHON SOURCE LINES 76-85
 
 .. code-block:: Python
 
-    trimmed = data_stream_gx.trim(
-        column_name="HeatFlux_st", batch_size=50, method="rolling_variance", threshold=0.10
-    )
+    from quends.base.trim import RollingVarianceThresholdTrimStrategy, TrimDataStreamOperation
+
+    strategy = RollingVarianceThresholdTrimStrategy(window_size=50, threshold=0.10)
+    op = TrimDataStreamOperation(strategy=strategy)
+    trimmed = op(data_stream_gx, column_name="HeatFlux_st")
 
     # Gather results
     trimmed.head()
@@ -698,65 +344,7 @@ Trim the data based on rolling variance method
         <tr style="text-align: right;">
           <th></th>
           <th>time</th>
-          <th>Phi2_t</th>
-          <th>Phi2_kxt</th>
-          <th>Phi2_kyt</th>
-          <th>Phi2_kxkyt</th>
-          <th>Phi2_zt</th>
-          <th>Apar2_t</th>
-          <th>Apar2_kxt</th>
-          <th>Apar2_kyt</th>
-          <th>Apar2_kxkyt</th>
-          <th>Apar2_zt</th>
-          <th>Phi2_zonal_t</th>
-          <th>Phi2_zonal_kxt</th>
-          <th>Phi2_zonal_zt</th>
-          <th>Wg_st</th>
-          <th>Wg_kxst</th>
-          <th>Wg_kyst</th>
-          <th>Wg_kxkyst</th>
-          <th>Wg_zst</th>
-          <th>Wg_lmst</th>
-          <th>Wphi_st</th>
-          <th>Wphi_kxst</th>
-          <th>Wphi_kyst</th>
-          <th>Wphi_kxkyst</th>
-          <th>Wphi_zst</th>
-          <th>Wapar_st</th>
-          <th>Wapar_kxst</th>
-          <th>Wapar_kyst</th>
-          <th>Wapar_kxkyst</th>
-          <th>Wapar_zst</th>
           <th>HeatFlux_st</th>
-          <th>HeatFlux_kxst</th>
-          <th>HeatFlux_kyst</th>
-          <th>HeatFlux_kxkyst</th>
-          <th>HeatFlux_zst</th>
-          <th>HeatFluxES_st</th>
-          <th>HeatFluxES_kxst</th>
-          <th>HeatFluxES_kyst</th>
-          <th>HeatFluxES_kxkyst</th>
-          <th>HeatFluxES_zst</th>
-          <th>HeatFluxApar_st</th>
-          <th>HeatFluxApar_kxst</th>
-          <th>HeatFluxApar_kyst</th>
-          <th>HeatFluxApar_kxkyst</th>
-          <th>HeatFluxApar_zst</th>
-          <th>HeatFluxBpar_st</th>
-          <th>HeatFluxBpar_kxst</th>
-          <th>HeatFluxBpar_kyst</th>
-          <th>HeatFluxBpar_kxkyst</th>
-          <th>HeatFluxBpar_zst</th>
-          <th>ParticleFlux_st</th>
-          <th>ParticleFlux_kxst</th>
-          <th>ParticleFlux_kyst</th>
-          <th>ParticleFlux_kxkyst</th>
-          <th>ParticleFlux_zst</th>
-          <th>TurbulentHeating_st</th>
-          <th>TurbulentHeating_kxst</th>
-          <th>TurbulentHeating_kyst</th>
-          <th>TurbulentHeating_kxkyst</th>
-          <th>TurbulentHeating_zst</th>
         </tr>
       </thead>
       <tbody>
@@ -767,17 +355,19 @@ Trim the data based on rolling variance method
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 78-79
+.. GENERATED FROM PYTHON SOURCE LINES 86-87
 
-Trim the data based on threshold method
+Trim the data based on noise threshold method
 
-.. GENERATED FROM PYTHON SOURCE LINES 79-86
+.. GENERATED FROM PYTHON SOURCE LINES 87-96
 
 .. code-block:: Python
 
-    trimmed = data_stream_gx.trim(
-        column_name="HeatFlux_st", batch_size=50, method="threshold", threshold=0.1
-    )
+    from quends.base.trim import NoiseThresholdTrimStrategy, TrimDataStreamOperation
+
+    strategy = NoiseThresholdTrimStrategy(window_size=50, threshold=0.1)
+    op = TrimDataStreamOperation(strategy=strategy)
+    trimmed = op(data_stream_gx, column_name="HeatFlux_st")
 
     # View trimmed data
     trimmed.head()
@@ -845,19 +435,20 @@ Trim the data based on threshold method
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-91
+.. GENERATED FROM PYTHON SOURCE LINES 97-102
 
 Effective Sample Size
 ~~~~~~~~~~~~~~~~~~~~~
 
-Compute Effective Sample Size for specific columns in GX
+Compute Effective Sample Size for specific columns in GX. With the
+single-variable API, each column is loaded into its own DataStream.
 
-.. GENERATED FROM PYTHON SOURCE LINES 91-94
+.. GENERATED FROM PYTHON SOURCE LINES 102-105
 
 .. code-block:: Python
 
-    ess_dict = data_stream_gx.effective_sample_size(column_names=["HeatFlux_st", "Wg_st"])
-    print(ess_dict)
+    for _var in ["HeatFlux_st", "Wg_st"]:
+        print(_var, qnds.from_csv(csv2_file_path, _var).effective_sample_size())
 
 
 
@@ -867,16 +458,17 @@ Compute Effective Sample Size for specific columns in GX
 
  .. code-block:: none
 
-    {'results': {'HeatFlux_st': 24, 'Wg_st': 10}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'HeatFlux_st'}}, {'operation': 'effective_sample_size', 'options': {'column_names': ['HeatFlux_st', 'Wg_st'], 'alpha': 0.05}}]}
+    HeatFlux_st {'results': {'HeatFlux_st': 23}}
+    Wg_st {'results': {'Wg_st': 10}}
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 95-96
+.. GENERATED FROM PYTHON SOURCE LINES 106-107
 
 Compute Effective sample size for trimmed data
 
-.. GENERATED FROM PYTHON SOURCE LINES 96-99
+.. GENERATED FROM PYTHON SOURCE LINES 107-110
 
 .. code-block:: Python
 
@@ -891,19 +483,19 @@ Compute Effective sample size for trimmed data
 
  .. code-block:: none
 
-    {'results': {'HeatFlux_st': 5}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'HeatFlux_st'}}, {'operation': 'trim', 'options': {'column_name': 'HeatFlux_st', 'batch_size': 50, 'start_time': 0.0, 'method': 'threshold', 'threshold': 0.1, 'robust': True, 'sss_start': 158.59277222661015}}, {'operation': 'effective_sample_size', 'options': {'column_names': None, 'alpha': 0.05}}]}
+    {'results': {'HeatFlux_st': 5}}
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 100-104
+.. GENERATED FROM PYTHON SOURCE LINES 111-115
 
 UQ Analysis
 -----------
 
 Compute Statistics on trimmed dataframe
 
-.. GENERATED FROM PYTHON SOURCE LINES 104-110
+.. GENERATED FROM PYTHON SOURCE LINES 115-121
 
 .. code-block:: Python
 
@@ -921,22 +513,22 @@ Compute Statistics on trimmed dataframe
 
  .. code-block:: none
 
-    {'HeatFlux_st': {'mean': 7.9406914994528615, 'mean_uncertainty': 0.08981775761011032, 'confidence_interval': (7.764648694537045, 8.116734304368677), 'pm_std': (7.850873741842751, 8.030509257062972), 'effective_sample_size': 5, 'window_size': 24}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'HeatFlux_st'}}, {'operation': 'trim', 'options': {'column_name': 'HeatFlux_st', 'batch_size': 50, 'start_time': 0.0, 'method': 'threshold', 'threshold': 0.1, 'robust': True, 'sss_start': 158.59277222661015}}, {'operation': 'effective_sample_size', 'options': {'column_names': None, 'alpha': 0.05}}, {'operation': 'compute_statistics', 'options': {'column_name': None, 'ddof': 1, 'method': 'sliding', 'window_size': None}}]}
+    StatsResult({'HeatFlux_st': {'mean': 8.048877922222223, 'mean_uncertainty': 0.20194506821435293, 'variance': 0.2446908634565979, 'confidence_interval': (7.653065588522091, 8.444690255922355), 'pm_std': (7.84693285400787, 8.250822990436577), 'effective_sample_size': 5, 'window_size': 18, 'n_short_averages': 6, 'ess_blocks': 6.0, 'se_effective_n': 6.0, 'se_method': 'iid_blocks', 'independence_status': 'independent', 'independent': True, 'ljungbox_lags': [5], 'ljungbox_pvalues': [0.08846737984880443], 'ljungbox_pvalue': 0.08846737984880443, 'ci_method': 'normal', 'confidence_level': 0.95}}, metadata={'estimator': 'single', 'columns': ['HeatFlux_st'], 'total_samples': 122, 'schema_version': '1.0'})
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 111-113
+.. GENERATED FROM PYTHON SOURCE LINES 122-124
 
 Exporter
 Below Displays the information as a DataFrame
 
-.. GENERATED FROM PYTHON SOURCE LINES 113-116
+.. GENERATED FROM PYTHON SOURCE LINES 124-127
 
 .. code-block:: Python
 
     exporter = qnds.Exporter()
-    exporter.display_dataframe(stats_df)
+    exporter.display_dataframe(stats)
 
 
 
@@ -946,25 +538,39 @@ Below Displays the information as a DataFrame
 
  .. code-block:: none
 
-           mean  mean_uncertainty  ...  effective_sample_size  window_size
-    0  7.940691          0.089818  ...                      5           24
-    1  7.940691          0.089818  ...                      5           24
+                                                      HeatFlux_st
+    mean                                                 8.048878
+    mean_uncertainty                                     0.201945
+    variance                                             0.244691
+    confidence_interval    (7.653065588522091, 8.444690255922355)
+    pm_std                  (7.84693285400787, 8.250822990436577)
+    effective_sample_size                                       5
+    window_size                                                18
+    n_short_averages                                            6
+    ess_blocks                                                6.0
+    se_effective_n                                            6.0
+    se_method                                          iid_blocks
+    independence_status                               independent
+    independent                                              True
+    ljungbox_lags                                             [5]
+    ljungbox_pvalues                        [0.08846737984880443]
+    ljungbox_pvalue                                      0.088467
+    ci_method                                              normal
+    confidence_level                                         0.95
 
-    [2 rows x 6 columns]
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 117-118
+.. GENERATED FROM PYTHON SOURCE LINES 128-129
 
 Below Displays the information in JSON
 
-.. GENERATED FROM PYTHON SOURCE LINES 118-121
+.. GENERATED FROM PYTHON SOURCE LINES 129-132
 
 .. code-block:: Python
 
 
-    exporter.display_json(stats_df)
+    exporter.display_json(stats)
 
 
 
@@ -975,33 +581,51 @@ Below Displays the information in JSON
  .. code-block:: none
 
     {
-      "mean": 7.9406914994528615,
-      "mean_uncertainty": 0.08981775761011032,
-      "confidence_interval": [
-        7.764648694537045,
-        8.116734304368677
-      ],
-      "pm_std": [
-        7.850873741842751,
-        8.030509257062972
-      ],
-      "effective_sample_size": 5,
-      "window_size": 24
+      "HeatFlux_st": {
+        "mean": 8.048877922222223,
+        "mean_uncertainty": 0.20194506821435293,
+        "variance": 0.2446908634565979,
+        "confidence_interval": [
+          7.653065588522091,
+          8.444690255922355
+        ],
+        "pm_std": [
+          7.84693285400787,
+          8.250822990436577
+        ],
+        "effective_sample_size": 5,
+        "window_size": 18,
+        "n_short_averages": 6,
+        "ess_blocks": 6.0,
+        "se_effective_n": 6.0,
+        "se_method": "iid_blocks",
+        "independence_status": "independent",
+        "independent": true,
+        "ljungbox_lags": [
+          5
+        ],
+        "ljungbox_pvalues": [
+          0.08846737984880443
+        ],
+        "ljungbox_pvalue": 0.08846737984880443,
+        "ci_method": "normal",
+        "confidence_level": 0.95
+      }
     }
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 122-124
+.. GENERATED FROM PYTHON SOURCE LINES 133-135
 
 Other statistical methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 126-127
+.. GENERATED FROM PYTHON SOURCE LINES 137-138
 
 Calculate the mean with a window size of 10
 
-.. GENERATED FROM PYTHON SOURCE LINES 127-130
+.. GENERATED FROM PYTHON SOURCE LINES 138-141
 
 .. code-block:: Python
 
@@ -1016,16 +640,16 @@ Calculate the mean with a window size of 10
 
  .. code-block:: none
 
-    {'HeatFlux_st': 7.989677796666666}
+    {'HeatFlux_st': {'mean': 7.989677796666666, 'window_size': 10}}
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 131-132
+.. GENERATED FROM PYTHON SOURCE LINES 142-143
 
 Calculate the mean with the method of sliding
 
-.. GENERATED FROM PYTHON SOURCE LINES 132-135
+.. GENERATED FROM PYTHON SOURCE LINES 143-146
 
 .. code-block:: Python
 
@@ -1040,16 +664,16 @@ Calculate the mean with the method of sliding
 
  .. code-block:: none
 
-    {'HeatFlux_st': 7.9406914994528615}
+    {'HeatFlux_st': {'mean': 8.048877922222223, 'window_size': 18}}
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 136-137
+.. GENERATED FROM PYTHON SOURCE LINES 147-148
 
 Calculate the mean uncertainty
 
-.. GENERATED FROM PYTHON SOURCE LINES 137-140
+.. GENERATED FROM PYTHON SOURCE LINES 148-151
 
 .. code-block:: Python
 
@@ -1064,16 +688,16 @@ Calculate the mean uncertainty
 
  .. code-block:: none
 
-    {'HeatFlux_st': 0.23525686516667507}
+    {'HeatFlux_st': {'mean_uncertainty': 0.20194506821435293, 'window_size': 18}}
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 141-142
+.. GENERATED FROM PYTHON SOURCE LINES 152-153
 
 Calculate the mean uncertainty with the method of sliding
 
-.. GENERATED FROM PYTHON SOURCE LINES 142-145
+.. GENERATED FROM PYTHON SOURCE LINES 153-156
 
 .. code-block:: Python
 
@@ -1089,15 +713,15 @@ Calculate the mean uncertainty with the method of sliding
  .. code-block:: none
 
 
-    {'HeatFlux_st': 0.08981775761011032}
+    {'HeatFlux_st': {'mean_uncertainty': 0.20194506821435293, 'window_size': 18}}
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 146-147
+.. GENERATED FROM PYTHON SOURCE LINES 157-158
 
 Calculate the confidence intervale with the trimmed dataframe
 
-.. GENERATED FROM PYTHON SOURCE LINES 147-151
+.. GENERATED FROM PYTHON SOURCE LINES 158-162
 
 .. code-block:: Python
 
@@ -1113,16 +737,16 @@ Calculate the confidence intervale with the trimmed dataframe
 
  .. code-block:: none
 
-    {'HeatFlux_st': (7.528574340939983, 8.45078125239335)}
+    {'HeatFlux_st': {'confidence_interval': (7.653065588522091, 8.444690255922355), 'window_size': 18}}
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 152-153
+.. GENERATED FROM PYTHON SOURCE LINES 163-164
 
 Cumlative Statistics
 
-.. GENERATED FROM PYTHON SOURCE LINES 153-158
+.. GENERATED FROM PYTHON SOURCE LINES 164-169
 
 .. code-block:: Python
 
@@ -1139,20 +763,20 @@ Cumlative Statistics
 
  .. code-block:: none
 
-    {'HeatFlux_st': {'cumulative_mean': [8.777007562500001, 8.427817691666668, 8.308147695833334, 8.086430926041666, 7.989677796666667], 'cumulative_uncertainty': [nan, 0.4938290511758112, 0.40607424148898075, 0.553682367211838, 0.5260503426861878], 'standard_error': [nan, 0.3491898708333347, 0.23444707263463616, 0.276841183605919, 0.23525686516667502], 'window_size': 24}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'HeatFlux_st'}}, {'operation': 'trim', 'options': {'column_name': 'HeatFlux_st', 'batch_size': 50, 'start_time': 0.0, 'method': 'threshold', 'threshold': 0.1, 'robust': True, 'sss_start': 158.59277222661015}}, {'operation': 'effective_sample_size', 'options': {'column_names': 'HeatFlux_st', 'alpha': 0.05}}, {'operation': 'cumulative_statistics', 'options': {'column_name': None, 'method': 'non-overlapping', 'window_size': None}}]}
+    {'HeatFlux_st': {'cumulative_mean': [8.830798111111111, 8.536632072222222, 8.387344327777777, 8.308147695833334, 8.126222617777778, 8.048877922222223], 'cumulative_uncertainty': [nan, 0.41601360178623836, 0.39165565278635833, 0.35686298904721675, 0.5108787183289056, 0.4946623731967065], 'standard_error': [nan, 0.29416603888888915, 0.2261224965658426, 0.17843149452360837, 0.22847190848828014, 0.20194506821435285], 'window_size': 18}}
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 159-160
+.. GENERATED FROM PYTHON SOURCE LINES 170-171
 
 Display Cumulative Statistics as a DataFrame
 
-.. GENERATED FROM PYTHON SOURCE LINES 160-162
+.. GENERATED FROM PYTHON SOURCE LINES 171-173
 
 .. code-block:: Python
 
-    exporter.display_dataframe(cumulative_df)
+    exporter.display_dataframe(cumulative)
 
 
 
@@ -1162,32 +786,31 @@ Display Cumulative Statistics as a DataFrame
 
  .. code-block:: none
 
-       cumulative_mean  cumulative_uncertainty  standard_error  window_size
-    0         8.777008                     NaN             NaN           24
-    1         8.427818                0.493829        0.349190           24
-    2         8.308148                0.406074        0.234447           24
-    3         8.086431                0.553682        0.276841           24
-    4         7.989678                0.526050        0.235257           24
+                                                                  HeatFlux_st
+    cumulative_mean         [8.830798111111111, 8.536632072222222, 8.38734...
+    cumulative_uncertainty  [nan, 0.41601360178623836, 0.39165565278635833...
+    standard_error          [nan, 0.29416603888888915, 0.2261224965658426,...
+    window_size                                                            18
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 163-166
+.. GENERATED FROM PYTHON SOURCE LINES 174-177
 
 CGYRO Data Analysis
 ~~~~~~~~~~~~~~~~~~~
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 168-169
+.. GENERATED FROM PYTHON SOURCE LINES 179-180
 
 Specify the file paths
 
-.. GENERATED FROM PYTHON SOURCE LINES 169-173
+.. GENERATED FROM PYTHON SOURCE LINES 180-184
 
 .. code-block:: Python
 
     csv_file_path = "cgyro/output_nu0_50.csv"
-    data_stream_cg = qnds.from_csv(csv_file_path)
+    data_stream_cg = qnds.from_csv(csv_file_path, "Q_D/Q_GBD")
     data_stream_cg.head()
 
 
@@ -1216,47 +839,35 @@ Specify the file paths
       <thead>
         <tr style="text-align: right;">
           <th></th>
-          <th>Unnamed: 0</th>
           <th>time</th>
           <th>Q_D/Q_GBD</th>
-          <th>Q_e/Q_GBD</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <th>0</th>
-          <td>0</td>
           <td>0.5</td>
           <td>0.003355</td>
-          <td>0.001669</td>
         </tr>
         <tr>
           <th>1</th>
-          <td>1</td>
           <td>1.0</td>
           <td>0.003314</td>
-          <td>0.003338</td>
         </tr>
         <tr>
           <th>2</th>
-          <td>2</td>
           <td>1.5</td>
           <td>0.003160</td>
-          <td>0.003941</td>
         </tr>
         <tr>
           <th>3</th>
-          <td>3</td>
           <td>2.0</td>
           <td>0.002480</td>
-          <td>0.002337</td>
         </tr>
         <tr>
           <th>4</th>
-          <td>4</td>
           <td>2.5</td>
           <td>0.002004</td>
-          <td>0.001941</td>
         </tr>
       </tbody>
     </table>
@@ -1265,11 +876,11 @@ Specify the file paths
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 174-175
+.. GENERATED FROM PYTHON SOURCE LINES 185-186
 
 Get the number of rows
 
-.. GENERATED FROM PYTHON SOURCE LINES 175-177
+.. GENERATED FROM PYTHON SOURCE LINES 186-188
 
 .. code-block:: Python
 
@@ -1288,15 +899,18 @@ Get the number of rows
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 178-179
+.. GENERATED FROM PYTHON SOURCE LINES 189-190
 
-Trim the data based on threshold method
+Trim the CGYRO data using the Quantile (std) strategy
 
-.. GENERATED FROM PYTHON SOURCE LINES 179-184
+.. GENERATED FROM PYTHON SOURCE LINES 190-198
 
 .. code-block:: Python
 
-    trimmed_ = data_stream_cg.trim(column_name="Q_D/Q_GBD", method="std", robust=True)
+    from quends.base.trim import QuantileTrimStrategy, TrimDataStreamOperation
+    strategy = QuantileTrimStrategy(robust=True)
+    op = TrimDataStreamOperation(strategy=strategy)
+    trimmed_ = op(data_stream_cg, column_name="Q_D/Q_GBD")
     # View trimmed data
     print(trimmed_)
 
@@ -1309,12 +923,12 @@ Trim the data based on threshold method
 
  .. code-block:: none
 
-    <quends.base.data_stream.DataStream object at 0x13c7ce510>
+    <quends.base.data_stream.DataStream object at 0x12c477ca0>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 185-187
+.. GENERATED FROM PYTHON SOURCE LINES 199-201
 
 .. code-block:: Python
 
@@ -1353,28 +967,28 @@ Trim the data based on threshold method
       <tbody>
         <tr>
           <th>0</th>
-          <td>208.0</td>
-          <td>12.974854</td>
+          <td>0.5</td>
+          <td>0.003355</td>
         </tr>
         <tr>
           <th>1</th>
-          <td>208.5</td>
-          <td>13.264263</td>
+          <td>1.0</td>
+          <td>0.003314</td>
         </tr>
         <tr>
           <th>2</th>
-          <td>209.0</td>
-          <td>13.563313</td>
+          <td>1.5</td>
+          <td>0.003160</td>
         </tr>
         <tr>
           <th>3</th>
-          <td>209.5</td>
-          <td>13.815548</td>
+          <td>2.0</td>
+          <td>0.002480</td>
         </tr>
         <tr>
           <th>4</th>
-          <td>210.0</td>
-          <td>14.046638</td>
+          <td>2.5</td>
+          <td>0.002004</td>
         </tr>
       </tbody>
     </table>
@@ -1383,11 +997,11 @@ Trim the data based on threshold method
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 188-189
+.. GENERATED FROM PYTHON SOURCE LINES 202-203
 
 To check if data stream is stationary
 
-.. GENERATED FROM PYTHON SOURCE LINES 189-191
+.. GENERATED FROM PYTHON SOURCE LINES 203-205
 
 .. code-block:: Python
 
@@ -1406,11 +1020,11 @@ To check if data stream is stationary
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 192-193
+.. GENERATED FROM PYTHON SOURCE LINES 206-207
 
 To Plot for DataStream
 
-.. GENERATED FROM PYTHON SOURCE LINES 193-196
+.. GENERATED FROM PYTHON SOURCE LINES 207-210
 
 .. code-block:: Python
 
@@ -1420,16 +1034,11 @@ To Plot for DataStream
 
 
 
-.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_001.png
-   :alt: Time Series Plots for Datastream, Q_D/Q_GBD
-   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_001.png
-   :class: sphx-glr-single-img
 
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 197-201
+.. GENERATED FROM PYTHON SOURCE LINES 211-215
 
 .. code-block:: Python
 
@@ -1440,16 +1049,11 @@ To Plot for DataStream
 
 
 
-.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_002.png
-   :alt: Q_D/Q_GBD
-   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_002.png
-   :class: sphx-glr-single-img
 
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 202-204
+.. GENERATED FROM PYTHON SOURCE LINES 216-218
 
 .. code-block:: Python
 
@@ -1458,26 +1062,15 @@ To Plot for DataStream
 
 
 
-.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_003.png
-   :alt: Q_D/Q_GBD
-   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_003.png
-   :class: sphx-glr-single-img
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    For Q_D/Q_GBD, no manual steady state start provided. Plotting raw signal.
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 205-206
+.. GENERATED FROM PYTHON SOURCE LINES 219-220
 
 To show additional data use:
 
-.. GENERATED FROM PYTHON SOURCE LINES 206-209
+.. GENERATED FROM PYTHON SOURCE LINES 220-223
 
 .. code-block:: Python
 
@@ -1492,16 +1085,16 @@ To show additional data use:
 
  .. code-block:: none
 
-    {'HeatFlux_st': {'A_est': 0.03170698677588585, 'p_est': 0.5410018913986299, 'n_current': 99, 'current_sem': 0.00263944463499645, 'target_sem': 0.002375500171496805, 'n_target': 120.28580081212739, 'additional_samples': 22, 'window_size': 24}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'HeatFlux_st'}}, {'operation': 'trim', 'options': {'column_name': 'HeatFlux_st', 'batch_size': 50, 'start_time': 0.0, 'method': 'threshold', 'threshold': 0.1, 'robust': True, 'sss_start': 158.59277222661015}}, {'operation': 'effective_sample_size', 'options': {'column_names': 'HeatFlux_st', 'alpha': 0.05}}, {'operation': 'additional_data', 'options': {'column_name': None, 'ddof': 1, 'method': 'sliding', 'window_size': None, 'reduction_factor': 0.1}}]}
+    {'HeatFlux_st': {'A_est': 0.024194494008948783, 'p_est': 0.14227299799791995, 'n_current': 105, 'current_sem': 0.012478313223139024, 'target_sem': 0.011230481900825122, 'n_target': 220.1946848547204, 'additional_samples': 116, 'window_size': 18}}
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 210-211
+.. GENERATED FROM PYTHON SOURCE LINES 224-225
 
 To add a reduction factor
 
-.. GENERATED FROM PYTHON SOURCE LINES 211-213
+.. GENERATED FROM PYTHON SOURCE LINES 225-227
 
 .. code-block:: Python
 
@@ -1515,7 +1108,7 @@ To add a reduction factor
 
  .. code-block:: none
 
-    {'HeatFlux_st': {'A_est': 0.03170698677588585, 'p_est': 0.5410018913986299, 'n_current': 99, 'current_sem': 0.00263944463499645, 'target_sem': 0.00211155570799716, 'n_target': 149.54291116020593, 'additional_samples': 51, 'window_size': 24}, 'metadata': [{'operation': 'is_stationary', 'options': {'columns': 'HeatFlux_st'}}, {'operation': 'trim', 'options': {'column_name': 'HeatFlux_st', 'batch_size': 50, 'start_time': 0.0, 'method': 'threshold', 'threshold': 0.1, 'robust': True, 'sss_start': 158.59277222661015}}, {'operation': 'effective_sample_size', 'options': {'column_names': 'HeatFlux_st', 'alpha': 0.05}}, {'operation': 'additional_data', 'options': {'column_name': None, 'ddof': 1, 'method': 'sliding', 'window_size': None, 'reduction_factor': 0.2}}]}
+    {'HeatFlux_st': {'A_est': 0.024194494008948783, 'p_est': 0.14227299799791995, 'n_current': 105, 'current_sem': 0.012478313223139024, 'target_sem': 0.00998265057851122, 'n_target': 503.900331282976, 'additional_samples': 399, 'window_size': 18}}
 
 
 
@@ -1523,7 +1116,7 @@ To add a reduction factor
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 4.791 seconds)
+   **Total running time of the script:** (0 minutes 2.512 seconds)
 
 
 .. _sphx_glr_download_auto_tutorials_datastream_guide.py:

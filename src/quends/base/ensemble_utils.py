@@ -9,18 +9,20 @@ objects, making them reusable from workflow classes, helper scripts, and the
 
 Public API
 ----------
-validate_members        Check that a list of DataStreams is valid.
-validate_column         Check that a column exists in every member.
-get_common_variables    Column names shared by all members.
-resolve_cols            Normalize ``column_name`` to a concrete list of strings.
-check_time_steps_uniformity
-                        Classify the time-step regularity of each member.
-interpolate_to_common_time
-                        Interpolate all members onto a common regular grid.
-direct_average          Average DataStreams that already share the same grid.
-compute_average_ensemble
-                        Build one averaged DataStream (auto-interpolates if needed).
-trim_members            Trim each member and return only non-empty results.
+The module exposes the following helpers::
+
+    validate_members         Check that a list of DataStreams is valid.
+    validate_column          Check that a column exists in every member.
+    get_common_variables     Column names shared by all members.
+    resolve_cols             Normalize column_name to a concrete list of strings.
+    check_time_steps_uniformity
+                             Classify the time-step regularity of each member.
+    interpolate_to_common_time
+                             Interpolate all members onto a common regular grid.
+    direct_average           Average DataStreams that already share the same grid.
+    compute_average_ensemble
+                             Build one averaged DataStream (auto-interpolates).
+    trim_members             Trim each member and return only non-empty results.
 """
 
 from typing import Any, Dict, List, Optional, Tuple

@@ -1,4 +1,245 @@
 {
+ "NoiseThresholdTrimStrategy": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base.trim",
+   "module_short": "quends",
+   "name": "NoiseThresholdTrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "NoiseThresholdTrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "NoiseThresholdTrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base.trim",
+   "module_short": "quends",
+   "name": "TrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "TrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "TrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.trim",
+   "module_short": "quends",
+   "name": "NoiseThresholdTrimStrategy"
+  }
+ ],
+ "QuantileTrimStrategy": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base.trim",
+   "module_short": "quends",
+   "name": "QuantileTrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "QuantileTrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "QuantileTrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base.trim",
+   "module_short": "quends",
+   "name": "TrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "TrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "TrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.trim",
+   "module_short": "quends",
+   "name": "QuantileTrimStrategy"
+  }
+ ],
+ "RollingVarianceThresholdTrimStrategy": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base.trim",
+   "module_short": "quends",
+   "name": "RollingVarianceThresholdTrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "RollingVarianceThresholdTrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "RollingVarianceThresholdTrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base.trim",
+   "module_short": "quends",
+   "name": "TrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "TrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "TrimStrategy"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.trim",
+   "module_short": "quends",
+   "name": "RollingVarianceThresholdTrimStrategy"
+  }
+ ],
+ "TrimDataStreamOperation": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base.trim",
+   "module_short": "quends",
+   "name": "TrimDataStreamOperation"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "TrimDataStreamOperation"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "TrimDataStreamOperation"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base.operations",
+   "module_short": "quends",
+   "name": "DataStreamOperation"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "DataStreamOperation"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStreamOperation"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "abc",
+   "module_short": "abc",
+   "name": "ABC"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.trim",
+   "module_short": "quends",
+   "name": "TrimDataStreamOperation"
+  }
+ ],
+ "_var": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "str"
+  }
+ ],
  "addition_info": [
   {
    "is_class": false,
@@ -58,14 +299,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream"
   },
   {
@@ -81,14 +322,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.head"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.head"
   },
   {
@@ -104,14 +345,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.is_stationary"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.is_stationary"
   },
   {
@@ -120,29 +361,6 @@
    "module": "quends",
    "module_short": "quends",
    "name": "DataStream.is_stationary"
-  }
- ],
- "data_stream_cg.trim": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
-   "name": "DataStream.trim"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base",
-   "module_short": "quends.base",
-   "name": "DataStream.trim"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "DataStream.trim"
   }
  ],
  "data_stream_csv": [
@@ -150,14 +368,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream"
   },
   {
@@ -173,14 +391,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream"
   },
   {
@@ -189,29 +407,6 @@
    "module": "quends",
    "module_short": "quends",
    "name": "DataStream"
-  }
- ],
- "data_stream_gx.effective_sample_size": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
-   "name": "DataStream.effective_sample_size"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base",
-   "module_short": "quends.base",
-   "name": "DataStream.effective_sample_size"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "DataStream.effective_sample_size"
   }
  ],
  "data_stream_gx.head": [
@@ -219,14 +414,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.head"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.head"
   },
   {
@@ -242,14 +437,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.is_stationary"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.is_stationary"
   },
   {
@@ -258,29 +453,6 @@
    "module": "quends",
    "module_short": "quends",
    "name": "DataStream.is_stationary"
-  }
- ],
- "data_stream_gx.trim": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
-   "name": "DataStream.trim"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends.base",
-   "module_short": "quends.base",
-   "name": "DataStream.trim"
-  },
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "quends",
-   "module_short": "quends",
-   "name": "DataStream.trim"
   }
  ],
  "data_stream_gx.variables": [
@@ -288,14 +460,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.variables"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.variables"
   },
   {
@@ -315,28 +487,19 @@
    "name": "dict"
   }
  ],
- "ess_dict": [
-  {
-   "is_class": false,
-   "is_explicit": false,
-   "module": "builtins",
-   "module_short": "builtins",
-   "name": "dict"
-  }
- ],
  "exporter": [
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing.exporter",
-   "module_short": "quends.postprocessing.exporter",
+   "module_short": "quends",
    "name": "Exporter"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing",
-   "module_short": "quends.postprocessing",
+   "module_short": "quends",
    "name": "Exporter"
   },
   {
@@ -352,14 +515,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing.exporter",
-   "module_short": "quends.postprocessing.exporter",
+   "module_short": "quends",
    "name": "Exporter.display_dataframe"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing",
-   "module_short": "quends.postprocessing",
+   "module_short": "quends",
    "name": "Exporter.display_dataframe"
   },
   {
@@ -375,14 +538,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing.exporter",
-   "module_short": "quends.postprocessing.exporter",
+   "module_short": "quends",
    "name": "Exporter.display_json"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing",
-   "module_short": "quends.postprocessing",
+   "module_short": "quends",
    "name": "Exporter.display_json"
   },
   {
@@ -402,13 +565,36 @@
    "name": "dict"
   }
  ],
+ "op": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.trim",
+   "module_short": "quends",
+   "name": "TrimDataStreamOperation"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "TrimDataStreamOperation"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "TrimDataStreamOperation"
+  }
+ ],
  "plot": [
   {
    "is_class": false,
    "is_explicit": false,
    "module": "builtins",
    "module_short": "builtins",
-   "name": "NoneType"
+   "name": "list"
   }
  ],
  "plotter": [
@@ -416,14 +602,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing.plotter",
-   "module_short": "quends.postprocessing.plotter",
+   "module_short": "quends",
    "name": "Plotter"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing",
-   "module_short": "quends.postprocessing",
+   "module_short": "quends",
    "name": "Plotter"
   },
   {
@@ -439,14 +625,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing.plotter",
-   "module_short": "quends.postprocessing.plotter",
+   "module_short": "quends",
    "name": "Plotter.steady_state_automatic_plot"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing",
-   "module_short": "quends.postprocessing",
+   "module_short": "quends",
    "name": "Plotter.steady_state_automatic_plot"
   },
   {
@@ -462,14 +648,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing.plotter",
-   "module_short": "quends.postprocessing.plotter",
+   "module_short": "quends",
    "name": "Plotter.steady_state_plot"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing",
-   "module_short": "quends.postprocessing",
+   "module_short": "quends",
    "name": "Plotter.steady_state_plot"
   },
   {
@@ -485,14 +671,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing.plotter",
-   "module_short": "quends.postprocessing.plotter",
+   "module_short": "quends",
    "name": "Plotter.trace_plot"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.postprocessing",
-   "module_short": "quends.postprocessing",
+   "module_short": "quends",
    "name": "Plotter.trace_plot"
   },
   {
@@ -508,14 +694,14 @@
    "is_class": true,
    "is_explicit": false,
    "module": "quends.postprocessing.exporter",
-   "module_short": "quends.postprocessing.exporter",
+   "module_short": "quends",
    "name": "Exporter"
   },
   {
    "is_class": true,
    "is_explicit": false,
    "module": "quends.postprocessing",
-   "module_short": "quends.postprocessing",
+   "module_short": "quends",
    "name": "Exporter"
   },
   {
@@ -538,14 +724,14 @@
    "is_class": true,
    "is_explicit": false,
    "module": "quends.postprocessing.plotter",
-   "module_short": "quends.postprocessing.plotter",
+   "module_short": "quends",
    "name": "Plotter"
   },
   {
    "is_class": true,
    "is_explicit": false,
    "module": "quends.postprocessing",
-   "module_short": "quends.postprocessing",
+   "module_short": "quends",
    "name": "Plotter"
   },
   {
@@ -583,9 +769,23 @@
   {
    "is_class": false,
    "is_explicit": false,
-   "module": "builtins",
-   "module_short": "builtins",
-   "name": "dict"
+   "module": "quends.base.utils",
+   "module_short": "quends.base.utils",
+   "name": "StatsResult"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "StatsResult"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "StatsResult"
   }
  ],
  "stats_df": [
@@ -597,19 +797,42 @@
    "name": "dict"
   }
  ],
+ "strategy": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.trim",
+   "module_short": "quends",
+   "name": "QuantileTrimStrategy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "QuantileTrimStrategy"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "QuantileTrimStrategy"
+  }
+ ],
  "trimmed": [
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream"
   },
   {
@@ -625,14 +848,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.additional_data"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.additional_data"
   },
   {
@@ -648,14 +871,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.compute_statistics"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.compute_statistics"
   },
   {
@@ -671,14 +894,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.confidence_interval"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.confidence_interval"
   },
   {
@@ -694,14 +917,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.cumulative_statistics"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.cumulative_statistics"
   },
   {
@@ -717,14 +940,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.effective_sample_size"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.effective_sample_size"
   },
   {
@@ -740,14 +963,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.head"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.head"
   },
   {
@@ -763,14 +986,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.mean"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.mean"
   },
   {
@@ -786,14 +1009,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.mean_uncertainty"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.mean_uncertainty"
   },
   {
@@ -809,14 +1032,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream"
   },
   {
@@ -832,14 +1055,14 @@
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base.data_stream",
-   "module_short": "quends.base.data_stream",
+   "module_short": "quends",
    "name": "DataStream.head"
   },
   {
    "is_class": false,
    "is_explicit": false,
    "module": "quends.base",
-   "module_short": "quends.base",
+   "module_short": "quends",
    "name": "DataStream.head"
   },
   {
