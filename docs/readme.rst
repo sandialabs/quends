@@ -72,7 +72,7 @@ To install the package, you can choose one of the following methods:
 Documentation
 =============
 
-https://sandialabs.github.io/quends/documentation/index.html
+https://sandialabs.github.io/quends/
 
 Development
 ===========
