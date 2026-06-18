@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install sphinx sphinx_rtd_theme myst_parser sphinx-book-theme sphinx-autoapi sphinx-autodoc-typehints sphinx-gallery sphinx_automodapi
+          pip install sphinx sphinx_rtd_theme myst_parser sphinx-book-theme pydata-sphinx-theme sphinx-immaterial sphinx-design sphinx-autoapi sphinx-autodoc-typehints sphinx-gallery sphinx_automodapi
           pip install -e .[dev]  # Install editable so coverage maps to src/quends
           pip install ipython
 

@@ -86,7 +86,9 @@ Module Contents
                 * **keep_intermediate** (*bool*) -- If ``True``, include the (untrimmed) averaged DataStream in the
                   result under ``"averaged_stream"``.
 
-   :ivar (all parameters stored with ``_`` prefix, e.g. ``_column_name``):
+   .. attribute:: (all parameters stored with ``_`` prefix, e.g. ``_column_name``)
+
+
 
 
    .. py:method:: run(ensemble_or_members)

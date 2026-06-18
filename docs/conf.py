@@ -59,14 +59,85 @@ extlinks = {
     "pr": ("https://github.com/sandialabs/quends/pull/%s", "PR #%s"),
 }
 
-html_theme = "sphinx_book_theme"
+# Documentation theme.  Single switch -- the default is sphinx-immaterial, but a
+# maintainer can choose another supported theme without editing this file:
+#
+#     QUENDS_DOCS_THEME=sphinx_book_theme   sphinx-build -b html docs docs/_build/html
+#     QUENDS_DOCS_THEME=pydata_sphinx_theme sphinx-build -b html docs docs/_build/html
+#
+# (or just change the default string below). The dispatch keeps
+# ``html_theme_options`` valid -- and the ``-W`` build clean -- for whichever
+# theme is active, and loads the theme's extension only when it needs one.
+# The landing page (sphinx-design cards + image badges) and the Sandia colours
+# (docs/_static/sandia.css covers both Material's ``--md-*`` variables and the
+# pydata/book ``--pst-*`` variables) render under all three themes.
+html_theme = os.environ.get("QUENDS_DOCS_THEME", "sphinx_immaterial")
+
+_theme_extensions = []
+if html_theme == "sphinx_immaterial":
+    _theme_extensions = ["sphinx_immaterial"]
+    html_theme_options = {
+        "site_url": "https://sandialabs.github.io/quends/",
+        "repo_url": "https://github.com/sandialabs/quends/",
+        "repo_name": "quends",
+        "icon": {"repo": "fontawesome/brands/github"},
+        "features": [
+            "navigation.tabs",
+            "navigation.tabs.sticky",
+            "navigation.top",
+            "navigation.sections",
+            "toc.follow",
+            "search.highlight",
+            "search.share",
+            "content.code.copy",
+        ],
+        "palette": [
+            {
+                "scheme": "default",
+                "primary": "cyan",
+                "accent": "light-blue",
+                "toggle": {
+                    "icon": "material/weather-night",
+                    "name": "Switch to dark mode",
+                },
+            },
+            {
+                "scheme": "slate",
+                "primary": "cyan",
+                "accent": "light-blue",
+                "toggle": {
+                    "icon": "material/weather-sunny",
+                    "name": "Switch to light mode",
+                },
+            },
+        ],
+    }
+elif html_theme == "pydata_sphinx_theme":
+    html_theme_options = {
+        "github_url": "https://github.com/sandialabs/quends",
+        "use_edit_page_button": False,
+        "navigation_with_keys": False,
+    }
+elif html_theme == "sphinx_book_theme":
+    html_theme_options = {
+        "repository_url": "https://github.com/sandialabs/quends",
+        "use_repository_button": True,
+        "use_issues_button": True,
+        "home_page_in_toc": False,
+    }
+else:
+    html_theme_options = {}
 
 html_use_smartypants = True
 html_last_updated_fmt = "%b %d, %Y"
 html_split_index = False
 html_short_title = f"{project}-{version}"
 
-napoleon_use_ivar = True
+# Sandia National Laboratories brand colors (override the Material palette).
+html_static_path = ["_static"]
+html_css_files = ["sandia.css"]
+
+napoleon_use_ivar = False
 napoleon_use_rtype = False
 napoleon_use_param = False
 
@@ -80,12 +151,16 @@ napoleon_numpy_docstring = True
 # dozens of malformed-docstring warnings.
 extensions += [
     "myst_parser",
+    "sphinx_design",
     "matplotlib.sphinxext.plot_directive",
     "IPython.sphinxext.ipython_console_highlighting",
     "IPython.sphinxext.ipython_directive",
     "sphinx_automodapi.automodapi",
     "sphinx_gallery.gen_gallery",
 ]
+
+# Load the active theme's extension (only sphinx-immaterial needs one).
+extensions += _theme_extensions
 
 
 examples_tutorial = [

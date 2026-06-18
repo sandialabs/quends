@@ -33,37 +33,84 @@ Module Contents
    - Methods that return "ball park" statistics if the DataStream is not stationary,
      or if there is no SSS segment found.
 
-   :ivar _drop_fraction: DataStream is stationary.
-   :vartype _drop_fraction: float, fraction of data to drop from the start of the DataStream to see if the shortened
-   :ivar _operate_safe: If True: process data streams in a safe way insisting on stationarity and a segment
-                        that is clearly in SSS
-                        If False: try to get some results even if the data stream is not stationary or there is no
-                        SSS segment found.
-   :vartype _operate_safe: bool
-   :ivar _verbosity: 0. : very few print statements or plots
-                     > 0: more print statements
-                     > 1: also show plots of intermediate steps
-   :vartype _verbosity: int, level of verbosity for print statements and plots.
-   :ivar _drop_fraction: DataStream is stationary.
-   :vartype _drop_fraction: float, fraction of data to drop from the start of the DataStream to see if the shortened
-   :ivar _n_pts_min:
-   :vartype _n_pts_min: int, minimum number of points to keep in the DataStream when shortening it to check for stationarity.
-   :ivar _n_pts_frac_min: to check for stationarity.
-   :vartype _n_pts_frac_min: float, minimum fraction of the original number of points to keep in the DataStream when shortening it
-   :ivar _max_lag_frac: the autocorrelation function to determine the decorrelation length.
-   :vartype _max_lag_frac: float, maximum lag (as a fraction of the number of points in the DataStream) to use when computing
-   :ivar _autocorr_sig_level: function.
-   :vartype _autocorr_sig_level: float, significance level to use when determining the decorrelation length from the autocorrelation
-   :ivar _decor_multiplier:
-   :vartype _decor_multiplier: float, multiplier to apply to the decorrelation length to get the smoothing window size.
-   :ivar _std_dev_frac: of SSS.
-   :vartype _std_dev_frac: float, fraction of the std dev of the stationary signal to use as tolerance when determining the start
-   :ivar _fudge_fac: used to compute the tolerance for determining the start of SSS.
-   :vartype _fudge_fac: float, fudge factor to multiply the initial mean of the smoothed signal with before adding it to the std dev
-   :ivar _smoothing_window_correction:
-   :vartype _smoothing_window_correction: float, correction factor to apply to the smoothing window size when determining the start of SSS.
-   :ivar _final_smoothing_window:
-   :vartype _final_smoothing_window: int, smoothing window used to avoid quantities going to zero at end of signal.
+   .. attribute:: _operate_safe
+
+      If True: process data streams in a safe way insisting on stationarity and a segment
+      that is clearly in SSS
+      If False: try to get some results even if the data stream is not stationary or there is no
+      SSS segment found.
+
+      :type: bool
+
+   .. attribute:: _verbosity
+
+
+
+      0. : very few print statements or plots
+      > 0: more print statements
+      > 1: also show plots of intermediate steps
+
+      :type: int, level of verbosity for print statements and plots.
+
+   .. attribute:: _drop_fraction
+
+      DataStream is stationary.
+
+      :type: float, fraction of data to drop from the start of the DataStream to see if the shortened
+
+   .. attribute:: _n_pts_min
+
+
+
+      :type: int, minimum number of points to keep in the DataStream when shortening it to check for stationarity.
+
+   .. attribute:: _n_pts_frac_min
+
+      to check for stationarity.
+
+      :type: float, minimum fraction of the original number of points to keep in the DataStream when shortening it
+
+   .. attribute:: _max_lag_frac
+
+      the autocorrelation function to determine the decorrelation length.
+
+      :type: float, maximum lag (as a fraction of the number of points in the DataStream) to use when computing
+
+   .. attribute:: _autocorr_sig_level
+
+      function.
+
+      :type: float, significance level to use when determining the decorrelation length from the autocorrelation
+
+   .. attribute:: _decor_multiplier
+
+
+
+      :type: float, multiplier to apply to the decorrelation length to get the smoothing window size.
+
+   .. attribute:: _std_dev_frac
+
+      of SSS.
+
+      :type: float, fraction of the std dev of the stationary signal to use as tolerance when determining the start
+
+   .. attribute:: _fudge_fac
+
+      used to compute the tolerance for determining the start of SSS.
+
+      :type: float, fudge factor to multiply the initial mean of the smoothed signal with before adding it to the std dev
+
+   .. attribute:: _smoothing_window_correction
+
+
+
+      :type: float, correction factor to apply to the smoothing window size when determining the start of SSS.
+
+   .. attribute:: _final_smoothing_window
+
+
+
+      :type: int, smoothing window used to avoid quantities going to zero at end of signal.
 
 
    .. py:method:: process_irregular_stream(data_stream, col, start_time = 0.0)

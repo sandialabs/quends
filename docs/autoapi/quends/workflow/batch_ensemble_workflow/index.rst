@@ -69,18 +69,41 @@ Module Contents
                   See the sub-workflow class docs for valid keys.
                 * **verbosity** (*int*) -- ``0`` — silent; ``>0`` — print progress.
 
-   :ivar _ensemble_groups:
-   :vartype _ensemble_groups: list or None
-   :ivar _column_name:
-   :vartype _column_name: str or None
-   :ivar _sub_workflow_type:
-   :vartype _sub_workflow_type: str
-   :ivar _technique:
-   :vartype _technique: str
-   :ivar _batch_config:
-   :vartype _batch_config: dict
-   :ivar _verbosity:
-   :vartype _verbosity: int
+   .. attribute:: _ensemble_groups
+
+
+
+      :type: list or None
+
+   .. attribute:: _column_name
+
+
+
+      :type: str or None
+
+   .. attribute:: _sub_workflow_type
+
+
+
+      :type: str
+
+   .. attribute:: _technique
+
+
+
+      :type: str
+
+   .. attribute:: _batch_config
+
+
+
+      :type: dict
+
+   .. attribute:: _verbosity
+
+
+
+      :type: int
 
 
    .. py:property:: n_groups

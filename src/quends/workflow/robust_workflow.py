@@ -38,8 +38,6 @@ class RobustWorkflow:
 
     Attributes
     ----------
-    _drop_fraction: float, fraction of data to drop from the start of the DataStream to see if the shortened
-        DataStream is stationary.
     _operate_safe : bool
         If True: process data streams in a safe way insisting on stationarity and a segment
         that is clearly in SSS
