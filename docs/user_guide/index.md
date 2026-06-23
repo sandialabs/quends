@@ -1,17 +1,25 @@
 # User guide
 
-This guide explains the concepts behind QUENDS and the recommended workflow for
-each part of the library. It is organised to mirror the package layout, so each
-topic below corresponds to a module in the {doc}`API Reference <../autoapi/index>`.
+This guide explains the main concepts behind QUENDS and the recommended workflow
+for each part of the library. It is organised to mirror the package layout, so
+each topic below corresponds to a module in the
+{doc}`API Reference <../autoapi/index>`.
 
-| Topic | Module |
-|---|---|
-| [Loading data](#loading-data) | `quends.preprocessing` |
-| [Trimming & steady state](#trimming-and-steady-state) | `quends.base.trim` |
-| [Statistics & uncertainty](#statistics-and-uncertainty) | `quends.base.data_stream` |
-| [Ensembles](#ensembles) | `quends.base.ensemble` |
-| [Plotting & export](#plotting-and-export) | `quends.postprocessing` |
-| [Workflows](#workflows) | `quends.workflow` |
+For complete executable examples, see the
+{doc}`Gallery of examples <../auto_tutorials/index>`.
+
+| Topic | Module | Purpose |
+|---|---|---|
+| Core concepts | — | Introduces data streams, transients, steady state, ensembles, and uncertainty. |
+| [Loading data](#loading-data) | `quends.preprocessing` | Explains how to prepare CSV files, DataFrames, time columns, and signal variables. |
+| [Trimming & steady-state detection](#trimming-and-steady-state) | `quends.base.trim` | Explains how QUENDS detects transient behavior and identifies steady-state portions. |
+| [Statistics & uncertainty](#statistics-and-uncertainty) | `quends.base.data_stream` | Describes summary statistics, confidence intervals, uncertainty estimates, and effective sample size. |
+| Single-trace analysis | `quends.base.data_stream` | Shows the recommended workflow for analyzing one simulation output. |
+| [Ensemble analysis](#ensembles) | `quends.base.ensemble` | Explains how to analyze multiple simulation runs, align traces, and compute ensemble summaries. |
+| [Plotting & export](#plotting-and-export) | `quends.postprocessing` | Describes how to visualize results and export processed outputs. |
+| [Workflows](#workflows) | `quends.workflow` | Explains high-level workflow utilities for repeated QUENDS analyses. |
+| Method selection | `quends.base.trim` | Helps users choose appropriate trimming, steady-state, and uncertainty methods. |
+| Troubleshooting | — | Covers common issues such as non-stationary data, failed steady-state detection, irregular time steps, and inconsistent ensemble lengths. |
 
 QUENDS analyses follow one pipeline:
 

@@ -62,6 +62,14 @@ Quickstart
 
       The full, auto-generated API.
 
+Authors
+=======
+
+QUENDS is developed and maintained by **Abeyah Calpatura**,
+**Bert Debusschere**, **Evans Etrue Howard**, and **Pieterjan M. Robbe**,
+together with contributions from the wider community. See the
+:doc:`full author list <authors>`.
+
 .. toctree::
    :hidden:
    :caption: Home
