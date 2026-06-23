@@ -66,16 +66,21 @@ trimmed = ds.trim(
 )
 ```
 
-Available `method` values:
+Each `method` string maps to a concrete trim-strategy class in
+`quends.base.trim` (the canonical mapping lives in `build_trim_strategy`). Pass
+the `method` string to `DataStream.trim` / `Ensemble.trim`, or use the class
+directly through `TrimDataStreamOperation`:
 
-| Method | Idea |
-|---|---|
-| `std` | Median/MAD (or mean/std) z-score criterion over the tail. |
-| `threshold` | Rolling standard deviation on the normalised signal falls below a threshold. |
-| `rolling_variance` | Rolling variance falls below a threshold. |
-| `self_consistent` | Self-consistent steady-state segment. |
-| `iqr` | Interquartile-range based detection. |
-| `mean_variation` | Detects where the running mean stops drifting. |
+| Strategy class | `method=` | What it does |
+|---|---|---|
+| `TrimStrategy` | — | Abstract base class describing a trim strategy. |
+| `QuantileTrimStrategy` | `"std"` | Trim based on standard-deviation / robust MAD steady-state criteria. |
+| `NoiseThresholdTrimStrategy` | `"threshold"` | Trim using rolling standard deviation on normalized data. |
+| `RollingVarianceThresholdTrimStrategy` | `"rolling_variance"` | Detect steady state when the rolling spread falls below a threshold. |
+| `MeanVariationTrimStrategy` | `"mean_variation"` | Trim using statistical-steady-state detection (running-mean variation). |
+| `SelfConsistentTrimStrategy` | `"self_consistent"` | Trim using self-consistent block comparison. |
+| `IQRTrimStrategy` | `"iqr"` | Trim using IQR-based steady-state detection. |
+| `TrimDataStreamOperation` | — | Operation that applies a `TrimStrategy` to a `DataStream`. |
 
 `start_time` acts as a hard lower bound (everything before it is discarded);
 the detector then searches from there. The trimmed result records where it cut

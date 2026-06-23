@@ -165,13 +165,19 @@ extensions += _theme_extensions
 
 examples_tutorial = [
     "datastream_guide.py",
+    "ensemble_guide.py",
+    "robustworkflow_guide.py",
 ]
 
 
 class ExamplesExplicitOrder(_SortKey):
 
     def __call__(self, filename):
-        return examples_tutorial.index(filename)
+        # Listed files keep the explicit order above; anything else sorts after.
+        try:
+            return examples_tutorial.index(filename)
+        except ValueError:
+            return len(examples_tutorial)
 
 
 sphinx_gallery_conf = {
