@@ -28,7 +28,7 @@ three steps — **load → trim → quantify**:
 import quends as qnds
 
 # 1. Load one signal (plus its time column) from a CSV file.
-ds = qnds.from_csv("cgyro/output_nu0_50.csv", "Q_D/Q_GBD")
+ds = qnds.from_csv("data/cgyro/output_nu0_50.csv", "Q_D/Q_GBD")
 
 # 2. Trim the warm-up transient, keeping only the steady-state region.
 trimmed = ds.trim(method="threshold", window_size=100, threshold=0.1)

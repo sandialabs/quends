@@ -1,226 +1,255 @@
 r"""
 DataStream Class
-----------------
-This tutorial demonstrates the usage of the DataStream class,
-which provides methods for analyzing time-series data.
+================
+This tutorial walks through a complete QUENDS analysis on real gyrokinetic
+turbulence data, covering the inputs QUENDS is designed for:
 
-The following features are:
-    - **Trimming**: Identifies steady-state regions in data.
-    - **Statistical Analysis**: Computes mean, standard deviation, confidence intervals, and cumulative statistics.
-    - **Stationarity Testing**: Uses the Augmented Dickey-Fuller test.
-    - **Effective Sample Size (ESS)**: Estimates the independent sample size.
-    - **Optimal Window Size**: Determines the best window for data smoothing.
+* **single trace / single simulation output** -- one GX run,
+* **ensemble traces / multiple simulation runs** -- a small GX ensemble,
+* **already-trimmed data** -- reusing a steady-state slice without re-trimming,
+* **non-stationary / failed steady-state detection** -- what the diagnostics
+  look like and how trimming falls back.
+
+It demonstrates the core ``DataStream`` and ``Ensemble`` features:
+
+* **Loading & plotting** raw time-series,
+* **Stationarity testing** (Augmented Dickey-Fuller),
+* **Trimming** to the steady-state portion (two equivalent calling styles),
+* **Effective Sample Size (ESS)** and autocorrelation-aware **statistics**,
+* **Ensemble uncertainty** via the Ensemble Average, Serialization
+  (pooled block means), and Inverse-Variance-Weighted (IVW) approaches.
+
+The trim/statistics parameters used below (``method="threshold"``,
+``window_size=50``, ``start_time=100``, ``threshold≈0.1-0.19``,
+``method="non-overlapping"``) follow the QUENDS paper analysis notebooks for the
+stellarator GX ensemble.
 """
 
 # %%
-# Import DataStream
+# Import QUENDS
+import glob
+
 import quends as qnds
+
+COL = "HeatFlux_st"  # the heat-flux observable carried by the GX files
+plotter = qnds.Plotter()
 
 # %%
 # GX Data Analysis
 # ----------------
-# Analysis on GX Data
-
-# Specify the file paths
-csv_file_path = "gx/tprim_2_0.out.csv"
-csv2_file_path = "gx/ensemble/tprim_2_5_a.out.csv"
-
-# Load the data from CSV files
-data_stream_csv = qnds.from_csv(csv_file_path, "HeatFlux_st")
-data_stream_gx = qnds.from_csv(csv2_file_path, "HeatFlux_st")
-
-# Display the first few rows of the GX data
-data_stream_gx.head()
+# The GX data ships in ``data/gx`` (eight ensemble members) and the CGYRO data
+# in ``data/cgyro``.
 
 # %%
-# Get available variables
-data_stream_gx.variables()
+# Single Trace
+# ~~~~~~~~~~~~
+# **Input case 1: a single simulation output.** We analyse one GX member.
 
 # %%
-# Get number of rows from the following data in GX
-len(data_stream_gx)
+# Data Loading
+# ^^^^^^^^^^^^
+gx_files = sorted(glob.glob("data/gx/ens_run_*.csv"))
+single_path = gx_files[0]
+ds = qnds.from_csv(single_path, COL)
+print("loaded:", single_path, "| variables:", ds.variables(), "| rows:", len(ds))
+ds.head()
+
+# %%
+# Plotting the raw trace
+# ^^^^^^^^^^^^^^^^^^^^^^
+# The raw trace shows the initial transient followed by a noisy steady state.
+plot = plotter.trace_plot(ds, [COL], show=True)
 
 # %%
 # Stationary Check
-# ~~~~~~~~~~~~~~~~
-#
-
-# Check if a single column is stationary
-data_stream_gx.is_stationary("HeatFlux_st")
-
-# Check stationarity for several variables. With the single-variable API,
-# each column is loaded into its own DataStream.
-for _var in ["HeatFlux_st", "Wg_st", "Phi2_t"]:
-    print(_var, qnds.from_csv(csv2_file_path, _var).is_stationary(_var))
+# ^^^^^^^^^^^^^^^^
+# The Augmented Dickey-Fuller test reports whether the (raw) signal already
+# looks stationary.
+print("is_stationary (raw):", ds.is_stationary(COL))
 
 # %%
-# Trimming data based to obtain steady-state portion
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
+# Trimming data to obtain the steady-state portion
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# QUENDS offers **two equivalent ways** to trim. First, the explicit
+# strategy/operation pattern from :mod:`quends.base.trim` -- useful when you
+# want to build a strategy once and reuse it:
+from quends.base.trim import TrimDataStreamOperation, build_trim_strategy
+
+strat = build_trim_strategy(
+    method="threshold", window_size=50, start_time=100, threshold=0.1
+)
+trimmed = TrimDataStreamOperation(strategy=strat)(ds, column_name=COL)
+print("strategy/operation -> sss_start:", trimmed.trim_metadata.get("sss_start"))
 
 # %%
-# Trim the data based on standard deviation method (Quantile strategy)
-# Use the strategy-operation pattern from quends.base.trim directly.
-
-from quends.base.trim import QuantileTrimStrategy, TrimDataStreamOperation
-
-strategy = QuantileTrimStrategy(window_size=50, robust=True)
-op = TrimDataStreamOperation(strategy=strategy)
-trimmed = op(data_stream_gx, column_name="HeatFlux_st")
-
-# Print first 5 rows of dataframe
+# Second, the convenience wrapper ``DataStream.trim`` -- the same canonical path
+# in one call. Both produce the identical steady-state start:
+trimmed = ds.trim(method="threshold", threshold=0.1, window_size=50, start_time=100)
+print("ds.trim            -> sss_start:", trimmed.trim_metadata.get("sss_start"))
 trimmed.head()
 
 # %%
-# Trim the data based on rolling variance method
-from quends.base.trim import RollingVarianceThresholdTrimStrategy, TrimDataStreamOperation
-
-strategy = RollingVarianceThresholdTrimStrategy(window_size=50, threshold=0.10)
-op = TrimDataStreamOperation(strategy=strategy)
-trimmed = op(data_stream_gx, column_name="HeatFlux_st")
-
-# Gather results
-trimmed.head()
-
-# %%
-# Trim the data based on noise threshold method
-from quends.base.trim import NoiseThresholdTrimStrategy, TrimDataStreamOperation
-
-strategy = NoiseThresholdTrimStrategy(window_size=50, threshold=0.1)
-op = TrimDataStreamOperation(strategy=strategy)
-trimmed = op(data_stream_gx, column_name="HeatFlux_st")
-
-# View trimmed data
-trimmed.head()
+# Plot of the trace with the detected steady-state start
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# The automatic steady-state plot overlays the raw trace with the location
+# where the steady state is detected to begin.
+plot = plotter.steady_state_automatic_plot(ds, variables_to_plot=[COL], show=True)
 
 # %%
 # Effective Sample Size
-# ~~~~~~~~~~~~~~~~~~~~~
-#
-# Compute Effective Sample Size for specific columns in GX. With the
-# single-variable API, each column is loaded into its own DataStream.
-for _var in ["HeatFlux_st", "Wg_st"]:
-    print(_var, qnds.from_csv(csv2_file_path, _var).effective_sample_size())
+# ^^^^^^^^^^^^^^^^^^^^^
+# Autocorrelation means the trimmed series holds fewer *independent* samples
+# than rows; ESS quantifies that.
+print("ESS (trimmed):", trimmed.effective_sample_size())
 
 # %%
-# Compute Effective sample size for trimmed data
-ess_df = trimmed.effective_sample_size()
-print(ess_df)
+# Statistical Analysis
+# ^^^^^^^^^^^^^^^^^^^^
+# ``compute_statistics`` returns the mean, an autocorrelation-corrected
+# uncertainty, a confidence interval, and the block/window diagnostics.
+stats = trimmed.compute_statistics(method="non-overlapping")
+print(stats)
+qnds.Exporter().display_dataframe(stats)
+
+# %%
+# Ensemble Analysis
+# ~~~~~~~~~~~~~~~~~
+# **Input case 2: multiple simulation runs.** Instead of one long trace we use
+# several shorter runs and combine them.
+
+# %%
+# Data Loading
+# ^^^^^^^^^^^^
+ens = qnds.Ensemble.from_files(gx_files, COL)
+print("ensemble members:", len(ens.members()))
+
+# %%
+# Ensemble Average Approach
+# ^^^^^^^^^^^^^^^^^^^^^^^^^
+# Average the members onto a common time grid, then analyse that single
+# averaged trace exactly like a single run.
+
+# %%
+# *Plotting all members together with the ensemble average.*
+plot = plotter.plot_ensemble_with_average(
+    ens, variables_to_plot=[COL], condensed_legend=True, show=True
+)
+
+# %%
+# Build the averaged DataStream.
+avg = ens.compute_average_ensemble()
+print("averaged trace rows:", len(avg))
+
+# %%
+# *Stationary check* on the average.
+print("avg is_stationary:", avg.is_stationary(COL))
+
+# %%
+# *Trim* the averaged trace to its steady-state portion.
+avg_trimmed = avg.trim(
+    method="threshold", window_size=50, start_time=100, threshold=0.19
+)
+print("avg sss_start:", avg_trimmed.trim_metadata.get("sss_start"))
+
+# %%
+# *Effective sample size* and *statistical analysis* of the averaged trace.
+print("avg ESS:", avg_trimmed.effective_sample_size())
+ea = ens.compute_uncertainty(method="ensemble_average", column_name=COL)
+print("Ensemble Average ->", ea["results"][COL])
+
+# %%
+# Serialization (Pooled Block Means) Approach
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# Rather than averaging the traces, pool the per-member block means. Trim every
+# member first, then aggregate across members.
+ens_trimmed = ens.trim(
+    column_name=COL, method="threshold", window_size=50, start_time=100, threshold=0.19
+)
+
+# %%
+# *Stationary check* (per member) and *effective sample size* for the pooled
+# estimator.
+print("members stationary:", ens.is_stationary(COL)["results"])
+print("ESS (pooled_block_means):", ens_trimmed.effective_sample_size(COL)["results"])
+
+# %%
+# *Statistical analysis* -- the serialization estimate of mean and uncertainty.
+ser = ens.compute_uncertainty(method="pooled_block_means", column_name=COL)
+print("Serialization ->", ser["results"][COL])
+
+# %%
+# Inverse-Variance-Weighted (IVW) Approach
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# Combine the per-member means weighting each by its inverse variance, so
+# better-resolved members count more. Trimming/stationarity are as above.
+print("ESS (ivw):", ens_trimmed.effective_sample_size(COL, technique="ivw")["results"])
+ivw = ens.compute_uncertainty(method="ivw", column_name=COL)
+print("IVW ->", ivw["results"][COL])
+
+# %%
+# The three approaches give consistent means with different uncertainty
+# budgets -- a useful cross-check on an ensemble.
+
+# %%
+# Other input scenarios
+# ----------------------
+
+# %%
+# Already-trimmed data
+# ~~~~~~~~~~~~~~~~~~~~~
+# **Input case 3.** A trimmed result is itself a ``DataStream``: feed it
+# straight to the statistics without trimming again (and likewise if you load a
+# CSV that was trimmed elsewhere).
+print("rows already in steady state:", len(trimmed))
+print("mean of already-trimmed data:", trimmed.mean())
+
+# %%
+# Non-stationary / failed steady-state detection
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# **Input case 4.** When a strict threshold never clears, the detector falls
+# back to ``start_time`` instead of failing. Inspect ``trim_metadata`` to see
+# what happened, and pair it with the stationarity test before trusting a mean.
+strict = ds.trim(method="threshold", threshold=1e-4, window_size=50, start_time=100)
+print("strict-threshold trim_metadata:", strict.trim_metadata)
+print("stationary after fallback:", strict.is_stationary(COL))
 
 # %%
 # UQ Analysis
 # -----------
-#
-# Compute Statistics on trimmed dataframe
-
-stats = trimmed.compute_statistics(method="sliding")
-print(stats)
-
-stats_df = stats["HeatFlux_st"]
-
-# %%
-# Exporter
-# Below Displays the information as a DataFrame
-exporter = qnds.Exporter()
-exporter.display_dataframe(stats)
-
-# %%
-# Below Displays the information in JSON
-
-exporter.display_json(stats)
+# Convenience accessors return just the piece you need from the single-trace
+# trimmed data.
 
 # %%
 # Other statistical methods
-# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~
+print("mean:", trimmed.mean(method="sliding"))
+print("mean uncertainty:", trimmed.mean_uncertainty(method="sliding"))
+print("confidence interval:", trimmed.confidence_interval())
 
 # %%
-# Calculate the mean with a window size of 10
-mean_df = trimmed.mean(window_size=10)
-print(mean_df)
-
-# %%
-# Calculate the mean with the method of sliding
-mean_df = trimmed.mean(method="sliding")
-print(mean_df)
-
-# %%
-# Calculate the mean uncertainty
-uq_df = trimmed.mean_uncertainty()
-print(uq_df)
-
-# %%
-# Calculate the mean uncertainty with the method of sliding
-uq_df = trimmed.mean_uncertainty(method="sliding")
-uq_df
-
-# %%
-# Calculate the confidence intervale with the trimmed dataframe
-ci_df = trimmed.confidence_interval()
-print(ci_df)
-
-
-# %%
-# Cumlative Statistics
+# Cumulative statistics track how the estimate stabilises as more samples are
+# included.
 cumulative = trimmed.cumulative_statistics()
-print(cumulative)
-
-cumulative_df = cumulative["HeatFlux_st"]
+qnds.Exporter().display_dataframe(cumulative)
 
 # %%
-# Display Cumulative Statistics as a DataFrame
-exporter.display_dataframe(cumulative)
+# ``additional_data`` exposes the underlying block diagnostics.
+print(trimmed.additional_data(method="sliding"))
 
 # %%
 # CGYRO Data Analysis
-# ~~~~~~~~~~~~~~~~~~~
-#
+# -------------------
+# The same workflow applies to CGYRO output; here the observable is
+# ``Q_D/Q_GBD``.
+cg = qnds.from_csv("data/cgyro/output_nu0_50.csv", "Q_D/Q_GBD")
+print("cgyro rows:", len(cg), "| stationary:", cg.is_stationary("Q_D/Q_GBD"))
+cg.head()
 
 # %%
-# Specify the file paths
-csv_file_path = "cgyro/output_nu0_50.csv"
-data_stream_cg = qnds.from_csv(csv_file_path, "Q_D/Q_GBD")
-data_stream_cg.head()
+# Trim with the Quantile (std) strategy and plot the detected steady state.
+cg_trimmed = cg.trim(method="std", robust=True)
+print("cgyro sss_start:", cg_trimmed.trim_metadata.get("sss_start"))
+plot = plotter.trace_plot(cg, ["Q_D/Q_GBD"], show=True)
 
 # %%
-# Get the number of rows
-len(data_stream_cg)
-
-# %%
-# Trim the CGYRO data using the Quantile (std) strategy
-from quends.base.trim import QuantileTrimStrategy, TrimDataStreamOperation
-strategy = QuantileTrimStrategy(robust=True)
-op = TrimDataStreamOperation(strategy=strategy)
-trimmed_ = op(data_stream_cg, column_name="Q_D/Q_GBD")
-# View trimmed data
-print(trimmed_)
-
-
-# %%
-trimmed_.head()
-
-# %%
-# To check if data stream is stationary
-data_stream_cg.is_stationary("Q_D/Q_GBD")
-
-# %%
-# To Plot for DataStream
-plotter = qnds.Plotter()
-plot = plotter.trace_plot(data_stream_cg, ["Q_D/Q_GBD"])
-
-# %%
-plot = plotter.steady_state_automatic_plot(
-    data_stream_cg, variables_to_plot=["Q_D/Q_GBD"]
-)
-
-# %%
-plot = plotter.steady_state_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
-
-# %%
-# To show additional data use:
-addition_info = trimmed.additional_data(method="sliding")
-print(addition_info)
-
-# %%
-# To add a reduction factor
-addition_info = trimmed.additional_data(reduction_factor=0.2)
-print(addition_info)
+plot = plotter.steady_state_automatic_plot(cg, variables_to_plot=["Q_D/Q_GBD"], show=True)
