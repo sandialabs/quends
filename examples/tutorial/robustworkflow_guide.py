@@ -3,18 +3,20 @@ RobustWorkflow
 ==============
 This tutorial follows the ``robust_workflow`` notebook and demonstrates the
 :class:`~quends.RobustWorkflow` class. The workflow can process data streams
-that are **not** cleanly stationary: with ``operate_safe=False`` it repeatedly
-drops an initial fraction of the stream to find a stationary tail, and returns
-"ball-park" statistics (clearly flagged in the result ``metadata``) rather than
-aborting when no statistical steady state (SSS) can be found.
+that are **not** cleanly stationary: with ``operate_safe=False`` it will, when
+needed, drop an initial fraction of the stream to find a stationary tail and
+return "ball-park" statistics (flagged in the result ``metadata``) rather than
+aborting.
 
 For each signal the procedure is the same as in the notebook:
 
-#. load the signal into a :class:`~quends.DataStream`,
-#. set up ``RobustWorkflow(operate_safe=False, verbosity=...)``,
+#. build / load the signal into a :class:`~quends.DataStream`,
+#. set up ``RobustWorkflow(operate_safe=False, verbosity=2)`` (high verbosity so
+   the intermediate steps are plotted),
+#. plot the raw signal with
+   :meth:`~quends.RobustWorkflow.plot_signal_basic_stats`,
 #. call ``process_data_stream`` to get the statistics, and
-#. plot the signal with its mean, confidence interval, and SSS start via
-   :meth:`~quends.RobustWorkflow.plot_signal_basic_stats`.
+#. re-plot the signal with its mean, confidence interval, and SSS start.
 
 For clean single traces the *DataStream Class* guide is simpler; for many runs
 see *Ensemble Analysis*. ``RobustWorkflow`` assumes equally spaced time points.
@@ -24,9 +26,9 @@ see *Ensemble Analysis*. ``RobustWorkflow`` assumes equally spaced time points.
 # Setup
 # -----
 # ``RobustWorkflow`` *displays* its plots (it calls ``plt.show()`` and then
-# closes the figure). The small ``keep_figures`` helper below keeps those
-# figures open just long enough for the documentation gallery to capture the
-# workflow's own output -- it is not needed in a notebook or script.
+# closes the figure). The small ``keep_figures`` helper keeps those figures open
+# just long enough for the documentation gallery to capture the workflow's own
+# output -- it is not needed in a notebook or script.
 import contextlib
 import pprint
 
@@ -48,72 +50,89 @@ def keep_figures():
 
 
 # %%
-# A signal with a transient
-# --------------------------
-# A synthetic signal: a linear ramp into a flat plateau, plus noise. With
-# ``verbosity=2`` the workflow shows its intermediate steps -- the raw signal,
-# the autocorrelation used to set the averaging window, and the smoothed signal
-# with the detected SSS start.
-arr_time = np.linspace(0, 1000, 1001)
+# Synthetic data: linear transient to a plateau with some noise
+# -------------------------------------------------------------
+# A linear ramp into a flat signal, plus noise. With ``verbosity=2`` the
+# workflow shows its intermediate steps: the raw signal, the autocorrelation
+# used to set the averaging window, and the smoothed signal with the detected
+# start of statistical steady state (SSS).
+arr_time = np.linspace(start=0, stop=1000, num=1001)
 arr_signal = np.zeros_like(arr_time)
-arr_signal[:100] = 0.05 * arr_time[:100]
-arr_signal[100:] = arr_signal[99]
+n_pts = arr_signal.shape[0]
+for i_arr in range(100):
+    arr_signal[i_arr] = 0.05 * arr_time[i_arr]
+for i_arr in range(100, n_pts):
+    arr_signal[i_arr] = arr_signal[99]
 np.random.seed(42)
-arr_signal += np.random.normal(0.0, 0.1, size=arr_signal.shape)
-ds_transient = qnds.DataStream(pd.DataFrame({"time": arr_time, "flux": arr_signal}))
+arr_signal += np.random.normal(loc=0.0, scale=0.1, size=arr_signal.shape)
 
-rw = qnds.RobustWorkflow(operate_safe=False, verbosity=2)
+my_label = "Linear Transient with Noise"
+ds_flat = qnds.DataStream(pd.DataFrame({"time": arr_time, "flux": arr_signal}))
+col = "flux"
+
+my_wrkflw = qnds.RobustWorkflow(operate_safe=False, verbosity=2)
 with keep_figures():
-    stats = rw.process_data_stream(ds_transient, "flux")
+    # Plot raw signal
+    my_wrkflw.plot_signal_basic_stats(ds_flat, col, label=my_label)
+    # Get statistics
+    my_stats = my_wrkflw.process_data_stream(ds_flat, col)
+    # Plot trace with mean and start of steady state
+    if not my_stats[col]["metadata"]["mitigation"] == "Drop":
+        my_wrkflw.plot_signal_basic_stats(ds_flat, col, stats=my_stats, label=my_label)
 
 # %%
-# The result dictionary holds the numerical statistics; ``metadata`` reports how
-# the data was processed. Here ``status: Regular`` / ``mitigation: None`` means
-# no special handling was needed.
-pprint.pprint(stats)
+# The dictionary ``my_stats`` holds the numerical results; ``metadata`` reveals
+# how the data was processed. Here ``mitigation: None`` / ``status: Regular``
+# means no special handling was needed.
+pprint.pprint(my_stats)
 
 # %%
-# Regular signals: GX and CGYRO
-# -----------------------------
-# Well-behaved runs need no mitigation. We process each, then plot the signal
-# with the mean, confidence interval, and SSS start overlaid (passing the
-# ``stats`` back to ``plot_signal_basic_stats``).
-rw = qnds.RobustWorkflow(operate_safe=False, verbosity=0)
+# Regular signals: CGYRO
+# ----------------------
+# A well-behaved CGYRO run. The observable is the third column (after the index
+# and ``time``), exactly as in the notebook.
+data_paths = ["data/cgyro/output_nu0_02.csv"]
+col = pd.read_csv(data_paths[0]).columns[2]  # 3rd column (after index, time)
+data_stream = qnds.from_csv(data_paths[0], col)
+print("The data stream contains the following variables:")
+for column, name in enumerate(data_stream.variables()):
+    print(f"{column}: {name}")
 
-ds_gx = qnds.from_csv("data/gx/ens_run_0006.csv", "HeatFlux_st")
-gx_stats = rw.process_data_stream(ds_gx, "HeatFlux_st")
-print("GX status:", gx_stats["HeatFlux_st"]["metadata"])
+my_wrkflw = qnds.RobustWorkflow(operate_safe=False, verbosity=2)
 with keep_figures():
-    rw.plot_signal_basic_stats(
-        ds_gx, "HeatFlux_st", stats=gx_stats, label="GX run (HeatFlux_st)"
-    )
+    my_wrkflw.plot_signal_basic_stats(data_stream, col, label=data_paths[0])
+    my_stats = my_wrkflw.process_data_stream(data_stream, col)
+    if not my_stats[col]["metadata"]["mitigation"] == "Drop":
+        my_wrkflw.plot_signal_basic_stats(
+            data_stream, col, stats=my_stats, label=data_paths[0]
+        )
 
 # %%
-ds_cg = qnds.from_csv("data/cgyro/output_nu0_50.csv", "Q_D/Q_GBD")
-cg_stats = rw.process_data_stream(ds_cg, "Q_D/Q_GBD")
-print("CGYRO status:", cg_stats["Q_D/Q_GBD"]["metadata"])
-with keep_figures():
-    rw.plot_signal_basic_stats(
-        ds_cg, "Q_D/Q_GBD", stats=cg_stats, label="CGYRO run (Q_D/Q_GBD)"
-    )
+# Most of this signal is in SSS: the mean is steady and its high standard
+# deviation gives the steady-state criterion plenty of wiggle room.
+pprint.pprint(my_stats)
 
 # %%
-# A non-stationary signal
-# -----------------------
-# This signal adds a linear trend to stationary noise, so the full stream is not
-# stationary. With ``operate_safe=False`` the workflow drops successive initial
-# fractions until the tail is stationary, and records what it did in
-# ``metadata`` (note the non-``Regular`` status / mitigation).
-np.random.seed(0)
-t = np.linspace(0, 1000, 1001)
-trend = 0.01 * t
-sig = trend + np.random.normal(0.0, 1.0, size=t.shape)
-ds_nonstat = qnds.DataStream(pd.DataFrame({"time": t, "signal": sig}))
+# Regular signals: GX
+# -------------------
+# A GX heat-flux trace (``HeatFlux_st``).
+data_paths = ["data/gx/tprim_2_4.out.csv"]
+data_stream = qnds.from_csv(data_paths[0], "HeatFlux_st")
+print("The data stream contains the following variables:")
+for column, name in enumerate(data_stream.variables()):
+    print(f"{column}: {name}")
+col = "HeatFlux_st"
 
-rw = qnds.RobustWorkflow(operate_safe=False, verbosity=1)
-ns_stats = rw.process_data_stream(ds_nonstat, "signal")
-print("non-stationary metadata:", ns_stats["signal"]["metadata"])
+my_wrkflw = qnds.RobustWorkflow(operate_safe=False, verbosity=2)
 with keep_figures():
-    rw.plot_signal_basic_stats(
-        ds_nonstat, "signal", stats=ns_stats, label="Non-stationary signal"
-    )
+    my_wrkflw.plot_signal_basic_stats(data_stream, col, label=data_paths[0])
+    my_stats = my_wrkflw.process_data_stream(data_stream, col)
+    if not my_stats[col]["metadata"]["mitigation"] == "Drop":
+        my_wrkflw.plot_signal_basic_stats(
+            data_stream, col, stats=my_stats, label=data_paths[0]
+        )
+
+# %%
+# Here the decorrelation length is short, so the smoothed signal is more
+# variable and about half the trace is identified as steady state.
+pprint.pprint(my_stats)
