@@ -167,6 +167,7 @@ examples_tutorial = [
     "datastream_guide.py",
     "ensemble_guide.py",
     "robustworkflow_guide.py",
+    "robustworkflow_advanced_guide.py",
 ]
 
 
