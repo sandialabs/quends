@@ -1,13 +1,23 @@
-======
-QUENDS
-======
+=================
+Welcome to QUENDS
+=================
 
 |maintained| |python-tests| |deployment| |python| |license| |black| |coveralls|
 
-**QUENDS** (Quantifying Uncertainty in ENsemble Data Streams) turns raw
-time-series simulation output into trustworthy statistics: it trims transients,
-detects steady state, and quantifies uncertainty for single signals and for
-ensembles of runs.
+**QUENDS** : *Quantifying Uncertainty in ENsemble Data Streams*, is a
+Python-based framework for analyzing time-series outputs from simulations and
+experiments. It helps transform raw, noisy data streams into reliable
+statistical summaries by identifying and trimming transient behavior, detecting
+steady-state regions, and estimating uncertainty in both single-run and
+ensemble simulation outputs.
+
+QUENDS is designed for workflows where simulation outputs evolve over time and
+where trustworthy post-processing is needed before drawing conclusions. The
+framework supports single-trace analysis, ensemble-based analysis, steady-state
+detection, transient trimming, statistical estimation, and uncertainty
+quantification. By combining these capabilities into a unified workflow, QUENDS
+provides researchers with a reproducible way to move from raw simulation data to
+meaningful, uncertainty-aware results.
 
 Quickstart
 ==========
