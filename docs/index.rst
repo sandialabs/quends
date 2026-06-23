@@ -54,6 +54,12 @@ Quickstart
 
 .. toctree::
    :hidden:
+   :caption: Home
+
+   self
+
+.. toctree::
+   :hidden:
    :caption: Getting Started
 
    readme
