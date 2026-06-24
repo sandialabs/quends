@@ -141,37 +141,65 @@ JsonWriter(trimmed_path).save(trimmed)
 # %%
 # Already-trimmed data
 # ~~~~~~~~~~~~~~~~~~~~~
-# Load the trimmed stream we just saved and run the pipeline on it. Because the
-# data is already in steady state, this doubles as a check that trimming behaves
-# as expected.
+# Load the trimmed stream we just saved and re-run the pipeline on it. Because
+# the data is already in steady state, re-trimming doubles as a check on how the
+# different steady-state criteria behave.
 reloaded = JsonLoader(trimmed_path).load()
 print("reloaded rows:", len(reloaded), "| variables:", list(reloaded.data.columns))
 
 # %%
-# Plot the (already-trimmed) raw trace.
-plot = plotter.trace_plot(reloaded, [COL], show=True)
-
-# %%
-# It now tests as stationary -- there is no transient left to remove.
+# It tests as stationary -- there is no transient left to remove.
 print("reloaded is_stationary:", reloaded.is_stationary(COL))
 
 # %%
-# Re-trimming should be a **no-op** on data that is already in steady state. The
-# ``std`` / ``QuantileTrimStrategy`` criterion is idempotent here: trimming the
-# reloaded stream again returns the *exact* same data -- a clean check that the
-# trim correctly recognises the whole series as steady state. (The
-# ``threshold`` criterion is not idempotent: re-scanning an already-steady
-# series can still shave off a few leading points.)
-re_trimmed = reloaded.trim(method="std", window_size=50)
-identical = re_trimmed.data.reset_index(drop=True).equals(
+# Idempotent re-trim (std / Quantile)
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# The ``std`` / ``QuantileTrimStrategy`` criterion is **idempotent** here:
+# re-trimming returns the *exact* same data, so it recognises the whole reloaded
+# series as steady state. We annotate it with ``steady_state_automatic_plot``
+# using the **same std parameters** as the re-trim -- the detected start sits at
+# the very beginning, and because the method is ``std`` the ±1/2/3 std bands are
+# drawn over the steady region.
+re_std = reloaded.trim(method="std", window_size=50)
+identical = re_std.data.reset_index(drop=True).equals(
     reloaded.data.reset_index(drop=True)
 )
-print("rows: reloaded =", len(reloaded), "| re-trimmed =", len(re_trimmed))
-print("re-trim returns identical data:", identical)
-plot = plotter.trace_plot(re_trimmed, [COL], show=True)
+print("std re-trim rows:", len(re_std), "| identical to reloaded:", identical)
+plot = plotter.steady_state_automatic_plot(
+    reloaded, [COL], method="std", batch_size=50, show=True
+)
 
 # %%
-# The statistics of the reloaded stream also reproduce the original trim.
+# Non-idempotent re-trim (threshold)
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# The ``threshold`` criterion is **not** idempotent: re-scanning the
+# already-steady series (now with ``start_time=0``) still shaves off some
+# leading points, and how many depends on ``window_size`` and ``threshold`` -- a
+# larger window or smaller threshold is stricter and removes more.
+for w, th in [(20, 0.1), (50, 0.1), (100, 0.1), (50, 0.2)]:
+    rt = reloaded.trim(method="threshold", window_size=w, threshold=th, start_time=0)
+    print(f"threshold w={w:3d} th={th}: rows={len(rt):4d} start={rt.trim_metadata.get('sss_start'):.1f}")
+plot = plotter.steady_state_automatic_plot(
+    reloaded, [COL], method="threshold", batch_size=50, threshold=0.1,
+    start_time=0, show=True,
+)
+
+# %%
+# Sensitive re-trim (rolling variance)
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# The ``rolling_variance`` criterion is even more sensitive: a small threshold
+# rejects the *entire* series (0 rows), so it needs a larger threshold on this
+# already-steady data.
+for w, th in [(50, 0.1), (50, 0.5), (50, 1.0)]:
+    rt = reloaded.trim(method="rolling_variance", window_size=w, threshold=th, start_time=0)
+    print(f"rolling_variance w={w} th={th}: rows={len(rt):4d}")
+plot = plotter.steady_state_automatic_plot(
+    reloaded, [COL], method="rolling_variance", batch_size=50, threshold=1.0,
+    start_time=0, show=True,
+)
+
+# %%
+# The statistics of the reloaded stream reproduce the original trim.
 print("reloaded ESS  :", reloaded.effective_sample_size())
 print("reloaded stats:", reloaded.compute_statistics(method="non-overlapping"))
 
