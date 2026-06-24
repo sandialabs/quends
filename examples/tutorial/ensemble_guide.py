@@ -63,9 +63,14 @@ print("avg sss_start:", avg_trimmed.trim_metadata.get("sss_start"))
 print("avg ESS:", avg_trimmed.effective_sample_size())
 
 # %%
-# The Ensemble Average estimate of the mean and its uncertainty.
-ea = ens.compute_uncertainty(method="ensemble_average", column_name=COL)
-print("Ensemble Average ->", ea["results"][COL])
+# The Ensemble Average estimate of the mean and its uncertainty. We analyse the
+# **trimmed** averaged trace (average -> trim -> statistics), so the transient is
+# removed before the mean and its standard error are computed. NB: the
+# ``ensemble_average`` estimator does **not** trim internally -- running it on a
+# raw, un-trimmed average folds the transient into the variance and greatly
+# inflates the uncertainty.
+ea_stats = avg_trimmed.compute_statistics(method="non-overlapping")[COL]
+print("Ensemble Average ->", ea_stats)
 
 # %%
 # Serialization (Pooled Block Means) Approach
@@ -79,9 +84,12 @@ print("members stationary:", ens.is_stationary(COL)["results"])
 print("ESS (pooled_block_means):", ens_trimmed.effective_sample_size(COL)["results"])
 
 # %%
-# The serialization estimate of the mean and its uncertainty.
-ser = ens.compute_uncertainty(method="pooled_block_means", column_name=COL)
-print("Serialization ->", ser["results"][COL])
+# The serialization estimate of the mean and its uncertainty, on the trimmed
+# members.
+ser_stats = ens_trimmed.compute_uncertainty(
+    method="pooled_block_means", column_name=COL
+)["results"][COL]
+print("Serialization ->", ser_stats)
 
 # %%
 # Inverse-Variance-Weighted (IVW) Approach
@@ -89,12 +97,16 @@ print("Serialization ->", ser["results"][COL])
 # Combine the per-member means weighting each by its inverse variance, so
 # better-resolved members count more. Trimming/stationarity are as above.
 print("ESS (ivw):", ens_trimmed.effective_sample_size(COL, technique="ivw")["results"])
-ivw = ens.compute_uncertainty(method="ivw", column_name=COL)
-print("IVW ->", ivw["results"][COL])
+ivw_stats = ens_trimmed.compute_uncertainty(method="ivw", column_name=COL)["results"][COL]
+print("IVW ->", ivw_stats)
 
 # %%
-# The three approaches give consistent means with different uncertainty
-# budgets -- a useful cross-check on an ensemble.
-for name, out in [("Ensemble Average", ea), ("Serialization", ser), ("IVW", ivw)]:
-    r = out["results"][COL]
+# Computed on the trimmed steady-state data, the three approaches give
+# consistent means with comparable uncertainties -- a useful cross-check on an
+# ensemble.
+for name, r in [
+    ("Ensemble Average", ea_stats),
+    ("Serialization", ser_stats),
+    ("IVW", ivw_stats),
+]:
     print(f"{name:18s} mean={r.get('mean'):.4f}  uncertainty={r.get('uncertainty', r.get('mean_uncertainty')):.4f}")
