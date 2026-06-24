@@ -156,15 +156,22 @@ plot = plotter.trace_plot(reloaded, [COL], show=True)
 print("reloaded is_stationary:", reloaded.is_stationary(COL))
 
 # %%
-# Trimming again keeps essentially the same steady-state trace, and the
-# statistics reproduce the original trim -- confirming the pipeline is
-# consistent.
-re_trimmed = reloaded.trim(method="threshold", threshold=0.1, window_size=50, start_time=100)
-print("rows: original trim =", len(trimmed), "| reloaded =", len(reloaded),
-      "| re-trimmed =", len(re_trimmed))
+# Re-trimming should be a **no-op** on data that is already in steady state. The
+# ``std`` / ``QuantileTrimStrategy`` criterion is idempotent here: trimming the
+# reloaded stream again returns the *exact* same data -- a clean check that the
+# trim correctly recognises the whole series as steady state. (The
+# ``threshold`` criterion is not idempotent: re-scanning an already-steady
+# series can still shave off a few leading points.)
+re_trimmed = reloaded.trim(method="std", window_size=50)
+identical = re_trimmed.data.reset_index(drop=True).equals(
+    reloaded.data.reset_index(drop=True)
+)
+print("rows: reloaded =", len(reloaded), "| re-trimmed =", len(re_trimmed))
+print("re-trim returns identical data:", identical)
 plot = plotter.trace_plot(re_trimmed, [COL], show=True)
 
 # %%
+# The statistics of the reloaded stream also reproduce the original trim.
 print("reloaded ESS  :", reloaded.effective_sample_size())
 print("reloaded stats:", reloaded.compute_statistics(method="non-overlapping"))
 
