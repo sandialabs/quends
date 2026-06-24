@@ -343,10 +343,14 @@ class Plotter:
                 if ss_start is not None:
                     after_ss = signal[time >= ss_start]
                     mu, sigma = after_ss.mean(), after_ss.std()
+                    t_end = time.max()
                     ax.plot(time, signal, label=column, alpha=0.7)
-                    ax.axvline(x=ss_start, color="r", linestyle="--", label="SS Start")
-                    ax.axhline(y=mu, color="g", linestyle="-", label="Mean")
-                    self._draw_std_bands(ax, time[time >= ss_start], mu, sigma)
+                    ax.axvline(x=ss_start, color="r", linestyle="--", label="Steady-State Start")
+                    ax.plot([ss_start, t_end], [mu, mu], color="g", linewidth=2, label="Mean (Post-SS)")
+                    # ±1/2/3 std bands only for the std / QuantileTrimStrategy criterion,
+                    # drawn from the steady-state start to the end of the trace.
+                    if method == "std":
+                        self._draw_std_bands(ax, time[time >= ss_start], mu, sigma)
                 else:
                     ax.plot(time, signal, label=column, alpha=0.7)
                     logger.info("%s: no steady state detected — plotting full signal.", column)
@@ -372,10 +376,16 @@ class Plotter:
         return results
 
     def steady_state_plot(self, data, variables_to_plot=None, steady_state_start=None,
-                          *, save=False, show=False, output_dir=None, overwrite=False, dpi=150):
+                          *, show_std_bands=False, save=False, show=False,
+                          output_dir=None, overwrite=False, dpi=150):
         """Annotate steady state from a user-supplied start (float or {var: float}).
 
-        Returns list of (fig, axes).
+        Use this after :meth:`~quends.DataStream.trim` has identified the
+        steady-state start: pass ``steady_state_start=trimmed.trim_metadata
+        ["sss_start"]`` so the plot uses the exact same point as the trim. The
+        post-steady-state mean is drawn over that region; pass
+        ``show_std_bands=True`` to also draw the ±1/2/3 std bands (appropriate
+        for the std / QuantileTrimStrategy criterion). Returns list of (fig, axes).
         """
         data_frames = self._prepare_data_frames(data)
         variables_to_plot = self._select_vars(
@@ -408,10 +418,12 @@ class Plotter:
                 if manual_ss is not None:
                     after_ss = signal[time >= manual_ss]
                     mu, sigma = after_ss.mean(), after_ss.std()
+                    t_end = time.max()
                     ax.plot(time, signal, label=column, alpha=0.7)
-                    ax.axvline(x=manual_ss, color="r", linestyle="--", label="SS Start")
-                    ax.axhline(y=mu, color="g", linestyle="-", label="Mean")
-                    self._draw_std_bands(ax, time[time >= manual_ss], mu, sigma)
+                    ax.axvline(x=manual_ss, color="r", linestyle="--", label="Steady-State Start")
+                    ax.plot([manual_ss, t_end], [mu, mu], color="g", linewidth=2, label="Mean (Post-SS)")
+                    if show_std_bands:
+                        self._draw_std_bands(ax, time[time >= manual_ss], mu, sigma)
                 else:
                     ax.plot(time, signal, label=column, alpha=0.7)
                     logger.info("%s: no steady state start provided — plotting raw signal.", column)

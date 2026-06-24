@@ -10,24 +10,28 @@ It demonstrates the core single-trace features:
 * **Stationarity testing** (Augmented Dickey-Fuller),
 * **Trimming** to the steady-state portion (two equivalent calling styles),
 * **Effective Sample Size (ESS)** and autocorrelation-aware **statistics**,
-* handling **already-trimmed** data and **non-stationary / failed-detection**
-  inputs.
+* **saving / re-loading** a trimmed stream and handling
+  **non-stationary** inputs.
 
 For analysing **multiple runs together**, see the *Ensemble Analysis* guide; for
 noisy signals where stationarity is hard to assess, see the *RobustWorkflow*
 guide.
 
-The trim/statistics parameters used below (``method="threshold"``,
-``window_size=50``, ``start_time=100``, ``threshold=0.1``,
-``method="non-overlapping"``) follow the QUENDS paper analysis notebooks for the
-stellarator GX data.
+The GX trim/statistics parameters (``method="threshold"``, ``window_size=50``,
+``start_time=100``, ``threshold=0.1``, ``method="non-overlapping"``) and the
+CGYRO parameters (``method="threshold"``, ``window_size=100``,
+``threshold=0.1``) follow the QUENDS analysis notebooks.
 """
 
 # %%
 # Import QUENDS
 import glob
+import os
+import tempfile
 
 import quends as qnds
+from quends.postprocessing.loader import JsonLoader
+from quends.postprocessing.writer import JsonWriter
 
 COL = "HeatFlux_st"  # the heat-flux observable carried by the GX files
 plotter = qnds.Plotter()
@@ -82,15 +86,28 @@ print("strategy/operation -> sss_start:", trimmed.trim_metadata.get("sss_start")
 # Second, the convenience wrapper ``DataStream.trim`` -- the same canonical path
 # in one call. Both produce the identical steady-state start:
 trimmed = ds.trim(method="threshold", threshold=0.1, window_size=50, start_time=100)
-print("ds.trim            -> sss_start:", trimmed.trim_metadata.get("sss_start"))
+ss_start = trimmed.trim_metadata.get("sss_start")
+print("ds.trim            -> sss_start:", ss_start)
 trimmed.head()
 
 # %%
 # Plot of the trace with the detected steady-state start
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# The automatic steady-state plot overlays the raw trace with the location
-# where the steady state is detected to begin.
-plot = plotter.steady_state_automatic_plot(ds, variables_to_plot=[COL], show=True)
+# Plot using **the exact steady-state start that the trim found**
+# (``trimmed.trim_metadata["sss_start"]``) via ``steady_state_plot`` -- so the
+# annotation matches the trim instead of re-detecting with other parameters.
+# The post-steady-state mean is drawn over the steady region. (For a
+# ``std`` / ``QuantileTrimStrategy`` trim you can pass ``show_std_bands=True`` to
+# add the ±1/2/3 std bands; threshold-based trims are shown without them.)
+plot = plotter.steady_state_plot(ds, [COL], steady_state_start=ss_start, show=True)
+
+# %%
+# Equivalently, ``steady_state_automatic_plot`` re-detects the start, but it must
+# be given **the same trim parameters** to match:
+plot = plotter.steady_state_automatic_plot(
+    ds, [COL], method="threshold", threshold=0.1, batch_size=50, start_time=100,
+    show=True,
+)
 
 # %%
 # Effective Sample Size
@@ -109,29 +126,69 @@ print(stats)
 qnds.Exporter().display_dataframe(stats)
 
 # %%
+# Save the trimmed stream
+# ^^^^^^^^^^^^^^^^^^^^^^^
+# The postprocessing layer can serialise a ``DataStream`` (data + operation
+# history) to JSON with :class:`~quends.postprocessing.writer.JsonWriter`, and
+# read it back with :class:`~quends.postprocessing.loader.JsonLoader`.
+trimmed_path = os.path.join(tempfile.mkdtemp(), "trimmed_gx.json")
+JsonWriter(trimmed_path).save(trimmed)
+
+# %%
 # Other input scenarios
 # ----------------------
 
 # %%
 # Already-trimmed data
 # ~~~~~~~~~~~~~~~~~~~~~
-# A trimmed result is itself a ``DataStream``: feed it straight to the
-# statistics without trimming again (and likewise if you load a CSV that was
-# trimmed elsewhere).
-print("rows already in steady state:", len(trimmed))
-print("mean of already-trimmed data:", trimmed.mean())
+# Load the trimmed stream we just saved and run the pipeline on it. Because the
+# data is already in steady state, this doubles as a check that trimming behaves
+# as expected.
+reloaded = JsonLoader(trimmed_path).load()
+print("reloaded rows:", len(reloaded), "| variables:", list(reloaded.data.columns))
+
+# %%
+# Plot the (already-trimmed) raw trace.
+plot = plotter.trace_plot(reloaded, [COL], show=True)
+
+# %%
+# It now tests as stationary -- there is no transient left to remove.
+print("reloaded is_stationary:", reloaded.is_stationary(COL))
+
+# %%
+# Re-trimming should be a **no-op** on data that is already in steady state. The
+# ``std`` / ``QuantileTrimStrategy`` criterion is idempotent here: trimming the
+# reloaded stream again returns the *exact* same data -- a clean check that the
+# trim correctly recognises the whole series as steady state. (The
+# ``threshold`` criterion is not idempotent: re-scanning an already-steady
+# series can still shave off a few leading points.)
+re_trimmed = reloaded.trim(method="std", window_size=50)
+identical = re_trimmed.data.reset_index(drop=True).equals(
+    reloaded.data.reset_index(drop=True)
+)
+print("rows: reloaded =", len(reloaded), "| re-trimmed =", len(re_trimmed))
+print("re-trim returns identical data:", identical)
+plot = plotter.trace_plot(re_trimmed, [COL], show=True)
+
+# %%
+# The statistics of the reloaded stream also reproduce the original trim.
+print("reloaded ESS  :", reloaded.effective_sample_size())
+print("reloaded stats:", reloaded.compute_statistics(method="non-overlapping"))
 
 # %%
 # Non-stationary / failed steady-state detection
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# When a strict threshold never clears, the detector falls back to
-# ``start_time`` instead of failing. Inspect ``trim_metadata`` to see what
-# happened, and pair it with the stationarity test before trusting a mean. For
-# signals where stationarity itself is hard to assess, use the *RobustWorkflow*
-# guide.
-strict = ds.trim(method="threshold", threshold=1e-4, window_size=50, start_time=100)
-print("strict-threshold trim_metadata:", strict.trim_metadata)
-print("stationary after fallback:", strict.is_stationary(COL))
+# Not every channel reaches steady state. Several GX observables in
+# ``tprim_2_4`` are non-stationary -- here ``Phi2_t`` (the electrostatic
+# potential energy), which keeps drifting. (``Wg_st`` was suggested but tests as
+# stationary in this run, so we use a genuinely non-stationary column.) The
+# Augmented Dickey-Fuller test flags it, and a plain trim cannot find a clean
+# steady state. For signals like this, use the *RobustWorkflow* guide.
+ds_ns = qnds.from_csv("data/gx/tprim_2_4.out.csv", "Phi2_t")
+print("Phi2_t is_stationary:", ds_ns.is_stationary("Phi2_t"))
+plot = plotter.trace_plot(ds_ns, ["Phi2_t"], show=True)
+ns_trim = ds_ns.trim(method="threshold", threshold=0.1, window_size=50, start_time=100)
+print("Phi2_t trim_metadata:", ns_trim.trim_metadata)
 
 # %%
 # UQ Analysis
@@ -159,18 +216,28 @@ print(trimmed.additional_data(method="sliding"))
 # CGYRO Data Analysis
 # -------------------
 # The same workflow applies to CGYRO output; here the observable is
-# ``Q_D/Q_GBD``.
-cg = qnds.from_csv("data/cgyro/output_nu0_50.csv", "Q_D/Q_GBD")
-print("cgyro rows:", len(cg), "| stationary:", cg.is_stationary("Q_D/Q_GBD"))
+# ``Q_D/Q_GBD`` and the trim parameters follow the CGYRO notebook
+# (``method="threshold"``, ``window_size=100``, ``threshold=0.1``).
+CG = "Q_D/Q_GBD"
+cg = qnds.from_csv("data/cgyro/output_nu0_50.csv", CG)
+print("cgyro rows:", len(cg))
 cg.head()
 
 # %%
-# Trim with the Quantile (std) strategy and plot the detected steady state.
-cg_trimmed = cg.trim(method="std", robust=True)
-print("cgyro sss_start:", cg_trimmed.trim_metadata.get("sss_start"))
-plot = plotter.trace_plot(cg, ["Q_D/Q_GBD"], show=True)
+# Raw trace and stationarity check.
+plot = plotter.trace_plot(cg, [CG], show=True)
+print("cgyro is_stationary (raw):", cg.is_stationary(CG))
 
 # %%
-plot = plotter.steady_state_automatic_plot(
-    cg, variables_to_plot=["Q_D/Q_GBD"], show=True
-)
+# Trim to the steady-state portion and plot it at the detected start.
+cg_trimmed = cg.trim(method="threshold", window_size=100, start_time=0.0, threshold=0.1)
+cg_ss = cg_trimmed.trim_metadata.get("sss_start")
+print("cgyro sss_start:", cg_ss)
+plot = plotter.steady_state_plot(cg, [CG], steady_state_start=cg_ss, show=True)
+
+# %%
+# Effective sample size and statistics for the CGYRO run.
+print("cgyro ESS:", cg_trimmed.effective_sample_size())
+cg_stats = cg_trimmed.compute_statistics(method="non-overlapping")
+print(cg_stats)
+qnds.Exporter().display_dataframe(cg_stats)
