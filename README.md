@@ -103,6 +103,28 @@ Examples are shown in the `examples/notebooks` directories.
     black .
     ```
 
+## Developers: Publishing `quends` to PyPI
+This section is for maintainers who publish new releases of `quends`.
+
+1. **Update the version**
+    Update the version in `pyproject.oml` before each release.
+
+2. **Build the package**
+    ```bash
+    python3 -m build
+    ```
+
+3. **Test on TestPyPI**
+    ```bash
+    python3 -m twine upload --repository testpypi dist/*
+    pip install -i https://test.pypi.org/simple/ quends
+    ```
+
+4. **Upload to PyPI**
+    ```bash
+    python3 -m twine upload dist/*
+    ```
+
 ## Documentation
 For comprehensive information on how to use the QUENDS package, please refer to our [official documentation](https://sandialabs.github.io/quends/). 
 
