@@ -95,15 +95,32 @@ class TrimStrategy(ABC):
             data_stream.data["time"] >= self.start_time
         ].reset_index(drop=True)
 
-        # Skip a leading all/mostly-zero warm-up region (e.g. GX heat-flux traces
-        # that sit at ~0 during linear growth). This assumes a non-negative signal
-        # that starts near zero, so it is opt-out via ``drop_leading_nonpositive``
-        # for signals that legitimately go <= 0 (default True preserves prior
-        # behavior — see AUDIT_REPORT H6).
+        # Skip a leading near-zero warm-up region (e.g. GX heat-flux traces that
+        # sit at ~0 during linear growth) *before* steady-state detection. The
+        # rule is **sign-aware** so it never distorts a signal that legitimately
+        # changes sign:
+        #   * all-positive trace -> start at the first point that rises above a
+        #     small fraction of the peak (``warmup_rel_threshold``, default 1e-3);
+        #   * all-negative trace -> mirror image (first point below ``-threshold``);
+        #   * mixed-sign trace   -> no stripping (the early excursion is informative).
+        # Opt out entirely with ``drop_leading_nonpositive=False``.
         if getattr(self, "drop_leading_nonpositive", True):
-            non_zero_index = data[data[column_name] > 0].index.min()
-            if non_zero_index is not None and non_zero_index > 0:
-                data = data.loc[non_zero_index:].reset_index(drop=True)
+            col = data[column_name].to_numpy(dtype=float)
+            finite = col[np.isfinite(col)]
+            if finite.size:
+                has_pos = bool((finite > 0).any())
+                has_neg = bool((finite < 0).any())
+                scale = float(np.max(np.abs(finite)))
+                eps = getattr(self, "warmup_rel_threshold", 1e-3) * scale
+                mask = None
+                if has_pos and not has_neg:
+                    mask = col > eps  # all-positive: skip warm-up below +eps
+                elif has_neg and not has_pos:
+                    mask = col < -eps  # all-negative: skip warm-up above -eps
+                if mask is not None and mask.any():
+                    start_idx = int(np.argmax(mask))
+                    if start_idx > 0:
+                        data = data.loc[start_idx:].reset_index(drop=True)
 
         return data
 
