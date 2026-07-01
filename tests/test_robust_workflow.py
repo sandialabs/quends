@@ -1,11 +1,16 @@
-import os
 import tempfile
 import warnings
 from pathlib import Path
 from typing import Tuple
 from unittest.mock import MagicMock, patch
 
+import numpy as np
+import pandas as pd
 import pytest
+
+from quends import DataStream, RobustWorkflow
+
+pytest_plugins = ("tests._shared",)
 
 # These tests drive a Jupyter notebook via papermill; both papermill and
 # nbformat are optional dev dependencies.  Skip the entire module when either
@@ -13,22 +18,13 @@ import pytest
 nbformat = pytest.importorskip("nbformat")
 pm = pytest.importorskip("papermill")
 
-import numpy as np
-import pandas as pd
-import pandas.testing as pdt
 
-from quends import DataStream, RobustWorkflow
-
-# The notebook references resolve relative to the project root.  Only chdir
-# when the expected directory exists so that simply importing this module
-# (without papermill) does not silently move the working directory.
-if Path("examples/notebooks").is_dir():
-    os.chdir("examples/notebooks")
-
-# Constants
-INPUT_NOTEBOOK = Path("robust_workflow.ipynb")
-OUTPUT_DIR = Path("../../tests/output")
-EXPECTED_DIR = Path("../../tests/expected")
+REPO_ROOT = Path(__file__).resolve().parents[1]
+NOTEBOOK_DIR = REPO_ROOT / "examples" / "notebooks"
+INPUT_NOTEBOOK = NOTEBOOK_DIR / "robust_workflow.ipynb"
+ROBUST_WORKFLOW_TEST_DIR = REPO_ROOT / "tests" / "robust_workflow"
+OUTPUT_DIR = ROBUST_WORKFLOW_TEST_DIR / "output"
+EXPECTED_DIR = ROBUST_WORKFLOW_TEST_DIR / "expected"
 
 
 def execute_notebook() -> Path:
@@ -37,9 +33,18 @@ def execute_notebook() -> Path:
         "ignore", category=UserWarning, module="papermill.translators"
     )
 
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    for path in OUTPUT_DIR.glob("*.csv"):
+        path.unlink()
+
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_nb = Path(tmpdirname) / "executed_notebook.ipynb"
-        pm.execute_notebook(str(INPUT_NOTEBOOK), str(output_nb), kernel_name="python3")
+        pm.execute_notebook(
+            str(INPUT_NOTEBOOK),
+            str(output_nb),
+            kernel_name="python3",
+            cwd=str(NOTEBOOK_DIR),
+        )
 
         # Verify execution
         assert output_nb.exists(), f"Executed notebook not created at {output_nb}"
@@ -132,9 +137,9 @@ def compare_results(filename: str, atol: float = 1e-8):
     current, expected = load_csv_pair(filename)
     shared_cols = [c for c in expected.columns if c in current.columns]
     assert shared_cols, f"No shared columns found for {filename}"
-    assert len(current) == len(expected), (
-        f"Row count mismatch for {filename}: {len(current)} != {len(expected)}"
-    )
+    assert len(current) == len(
+        expected
+    ), f"Row count mismatch for {filename}: {len(current)} != {len(expected)}"
     for col in shared_cols:
         for idx in range(len(expected)):
             cur_val = _parse_stats_cell(current[col].iloc[idx])
