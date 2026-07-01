@@ -1,5 +1,6 @@
 from typing import Optional
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -12,6 +13,16 @@ from ..base.trim import MeanVariationTrimStrategy, TrimDataStreamOperation
 # The "ball-park" mean is taken over the final fraction (numerator/denominator)
 # of the trace; integer floor division preserves the historical index exactly.
 _IRREGULAR_TAIL_NUM = 2
+
+
+def _show_plot_if_interactive():
+    """Show a figure unless the current backend is non-interactive."""
+    backend = matplotlib.get_backend().lower()
+    if "agg" in backend:
+        return
+    plt.show()
+
+
 _IRREGULAR_TAIL_DEN = 3
 # Relative uncertainty assigned to that ball-park mean: 1.0 == 100% (the CI then
 # spans roughly [0, 2*mean]). Deliberately conservative for un-trimmable data.
@@ -406,5 +417,5 @@ class RobustWorkflow:
         ax.legend(fontsize=12)
 
         # show and close the figure
-        plt.show()
+        _show_plot_if_interactive()
         plt.close(fig)
