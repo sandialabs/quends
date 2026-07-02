@@ -10,6 +10,8 @@ from statsmodels.tsa.stattools import adfuller
 
 from .history import DataStreamHistory, DataStreamHistoryEntry
 from .utils import (
+    SCHEMA_VERSION,
+    StatsResult,
     _compute_ess,
     _estimate_tau_int_from_series,
     _geyer_ess_on_blocks,
@@ -17,8 +19,6 @@ from .utils import (
     autotune_blocks,
     confidence_multiplier,
     power_law_model,
-    SCHEMA_VERSION,
-    StatsResult,
     to_native_types,
 )
 
@@ -79,7 +79,9 @@ class DataStream:
         if isinstance(data, pd.DataFrame):
             df = data
         elif data is None:
-            raise TypeError("DataStream(data): data must be a pandas DataFrame, got None.")
+            raise TypeError(
+                "DataStream(data): data must be a pandas DataFrame, got None."
+            )
         else:
             try:
                 df = pd.DataFrame(data)
@@ -129,75 +131,6 @@ class DataStream:
             All column names in ``self.data``.
         """
         return self.data.columns
-
-    # --------- Statistical summaries ---------
-    def mean(self, column_name=None, method="non-overlapping", window_size=None):
-        """
-        Compute block or sliding window means for each column.
-
-        Thin wrapper over :meth:`compute_statistics` — extracts ``mean`` and
-        ``window_size`` so callers that only need the mean don't have to
-        unpack the full statistics dict.
-        """
-        stats = self.compute_statistics(
-            column_name=column_name, method=method, window_size=window_size
-        )
-        return {
-            col: v if "error" in v else {"mean": v["mean"], "window_size": v["window_size"]}
-            for col, v in stats.items()
-        }
-
-    def mean_uncertainty(
-        self, column_name=None, ddof=1, method="non-overlapping", window_size=None
-    ):
-        """
-        Estimate the standard error of the mean via Geyer ESS on block means.
-
-        Thin wrapper over :meth:`compute_statistics` — extracts
-        ``mean_uncertainty`` and ``window_size``.
-        """
-        stats = self.compute_statistics(
-            column_name=column_name, ddof=ddof, method=method, window_size=window_size
-        )
-        return {
-            col: v if "error" in v
-            else {"mean_uncertainty": v["mean_uncertainty"], "window_size": v["window_size"]}
-            for col, v in stats.items()
-        }
-
-    def confidence_interval(
-        self,
-        column_name=None,
-        ddof=1,
-        method="non-overlapping",
-        window_size=None,
-        confidence_level: float = 0.95,
-        ci_method: str = "normal",
-    ):
-        """
-        Build confidence intervals around block/sliding means.
-
-        Thin wrapper over :meth:`compute_statistics` — extracts
-        ``confidence_interval`` and ``window_size``.  Columns with no valid
-        data propagate the error dict rather than raising ``KeyError``.
-
-        See :meth:`compute_statistics` for the meaning of *confidence_level*
-        and *ci_method*.  Defaults preserve the historical 95 % normal CI
-        (multiplier ``1.96``).
-        """
-        stats = self.compute_statistics(
-            column_name=column_name,
-            ddof=ddof,
-            method=method,
-            window_size=window_size,
-            confidence_level=confidence_level,
-            ci_method=ci_method,
-        )
-        return {
-            col: v if "error" in v
-            else {"confidence_interval": v["confidence_interval"], "window_size": v["window_size"]}
-            for col, v in stats.items()
-        }
 
     def trim(
         self,
@@ -323,7 +256,7 @@ class DataStream:
                 series,
                 estimated_window=window_size,
                 method=method,
-                min_blocks=2,   # continue until < 2 blocks (original behaviour)
+                min_blocks=2,  # continue until < 2 blocks (original behaviour)
                 max_iter=20,
             )
             w = ab["window_size"]
@@ -333,7 +266,10 @@ class DataStream:
             n_blocks = ab["n_blocks"]
 
             if n_blocks < 1:
-                stats[col] = {"error": f"No block means produced (window_size={w}).", "window_size": int(w)}
+                stats[col] = {
+                    "error": f"No block means produced (window_size={w}).",
+                    "window_size": int(w),
+                }
                 continue
 
             mu = float(np.mean(block_means))
@@ -359,7 +295,11 @@ class DataStream:
                 se_method = "ess_blocks_fallback"
                 warning = "Too few blocks for independence test; SE via Geyer ESS."
 
-            se = float(sd / np.sqrt(eff_n_for_se)) if np.isfinite(sd) and n_blocks >= 2 else np.nan
+            se = (
+                float(sd / np.sqrt(eff_n_for_se))
+                if np.isfinite(sd) and n_blocks >= 2
+                else np.nan
+            )
 
             # CI multiplier (defaults preserve historical 1.96 exactly).
             ci_dof = max(1, int(round(eff_n_for_se)) - 1) if ci_method == "t" else None
@@ -373,7 +313,11 @@ class DataStream:
             )
 
             ess_entry = ess_res.get("results", {}).get(col, {})
-            ess_val = ess_entry.get("effective_sample_size") if isinstance(ess_entry, dict) else ess_entry
+            ess_val = (
+                ess_entry.get("effective_sample_size")
+                if isinstance(ess_entry, dict)
+                else ess_entry
+            )
 
             pvals = lb.get("pvalues", [])
             entry = {
@@ -481,7 +425,9 @@ class DataStream:
             if "standard_error" not in stats.get(col, {}):
                 results[col] = {"error": f"No cumulative SEM data for column '{col}'"}
                 continue
-            est_win = stats[col].get("window_size", 1)  # already computed by cumulative_statistics
+            est_win = stats[col].get(
+                "window_size", 1
+            )  # already computed by cumulative_statistics
             # Fit the power law to the standard error of the mean (SEM), which
             # genuinely shrinks ~ A/n^p — NOT the expanding standard deviation
             # (which converges to a constant). See AUDIT_REPORT H2.
@@ -538,7 +484,7 @@ class DataStream:
             try:
                 p_value = adfuller(self.data[column].dropna(), autolag="AIC")[1]
                 results[column] = bool(p_value < 0.05)
-            except Exception as e:
+            except Exception:
                 results[column] = False
         return results
 
@@ -689,7 +635,9 @@ class DataStream:
 
         Delegates to ``_estimate_tau_int_from_series`` in ``utils``.
         """
-        return _estimate_tau_int_from_series(np.asarray(series.dropna().values, dtype=float))
+        return _estimate_tau_int_from_series(
+            np.asarray(series.dropna().values, dtype=float)
+        )
 
     def _autotune_window_size(
         self,
@@ -724,7 +672,7 @@ class DataStream:
             alpha=alpha,
             lag_set=lag_set,
             B_min=B_min,
-            min_blocks=2,   # match old DataStream: continue until < 2 blocks
+            min_blocks=2,  # match old DataStream: continue until < 2 blocks
             max_iter=max_iter,
             w_min=w_min,
             c0=c0,
@@ -767,7 +715,11 @@ class DataStream:
         )
         v = stats.get(column_name, {})
         if "error" in v:
-            return {"effective_n": float("nan"), "window_size": window_size or 0, "n_blocks": 0}
+            return {
+                "effective_n": float("nan"),
+                "window_size": window_size or 0,
+                "n_blocks": 0,
+            }
         return {
             "effective_n": float(v["ess_blocks"]),
             "window_size": int(v["window_size"]),
@@ -794,7 +746,11 @@ class DataStream:
         results = {}
         for col, v in stats.items():
             if "error" in v:
-                results[col] = {"variance": float("nan"), "window_size": float("nan"), "effective_n_blocks": float("nan")}
+                results[col] = {
+                    "variance": float("nan"),
+                    "window_size": float("nan"),
+                    "effective_n_blocks": float("nan"),
+                }
             else:
                 results[col] = {
                     "variance": v["variance"],

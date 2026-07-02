@@ -15,6 +15,12 @@ The following features are:
 # %%
 # Import DataStream
 import quends as qnds
+from quends.base.trim import (
+    NoiseThresholdTrimStrategy,
+    QuantileTrimStrategy,
+    RollingVarianceThresholdTrimStrategy,
+    TrimDataStreamOperation,
+)
 
 # %%
 # GX Data Analysis
@@ -62,8 +68,6 @@ for _var in ["HeatFlux_st", "Wg_st", "Phi2_t"]:
 # Trim the data based on standard deviation method (Quantile strategy)
 # Use the strategy-operation pattern from quends.base.trim directly.
 
-from quends.base.trim import QuantileTrimStrategy, TrimDataStreamOperation
-
 strategy = QuantileTrimStrategy(window_size=50, robust=True)
 op = TrimDataStreamOperation(strategy=strategy)
 trimmed = op(data_stream_gx, column_name="HeatFlux_st")
@@ -73,8 +77,6 @@ trimmed.head()
 
 # %%
 # Trim the data based on rolling variance method
-from quends.base.trim import RollingVarianceThresholdTrimStrategy, TrimDataStreamOperation
-
 strategy = RollingVarianceThresholdTrimStrategy(window_size=50, threshold=0.10)
 op = TrimDataStreamOperation(strategy=strategy)
 trimmed = op(data_stream_gx, column_name="HeatFlux_st")
@@ -84,8 +86,6 @@ trimmed.head()
 
 # %%
 # Trim the data based on noise threshold method
-from quends.base.trim import NoiseThresholdTrimStrategy, TrimDataStreamOperation
-
 strategy = NoiseThresholdTrimStrategy(window_size=50, threshold=0.1)
 op = TrimDataStreamOperation(strategy=strategy)
 trimmed = op(data_stream_gx, column_name="HeatFlux_st")
@@ -135,27 +135,44 @@ exporter.display_json(stats)
 
 # %%
 # Calculate the mean with a window size of 10
-mean_df = trimmed.mean(window_size=10)
+stats = trimmed.compute_statistics(window_size=10)
+mean_df = {col: values["mean"] for col, values in stats.items() if "mean" in values}
 print(mean_df)
 
 # %%
 # Calculate the mean with the method of sliding
-mean_df = trimmed.mean(method="sliding")
+stats = trimmed.compute_statistics(method="sliding")
+mean_df = {col: values["mean"] for col, values in stats.items() if "mean" in values}
 print(mean_df)
 
 # %%
 # Calculate the mean uncertainty
-uq_df = trimmed.mean_uncertainty()
+stats = trimmed.compute_statistics()
+uq_df = {
+    col: values["mean_uncertainty"]
+    for col, values in stats.items()
+    if "mean_uncertainty" in values
+}
 print(uq_df)
 
 # %%
 # Calculate the mean uncertainty with the method of sliding
-uq_df = trimmed.mean_uncertainty(method="sliding")
+stats = trimmed.compute_statistics(method="sliding")
+uq_df = {
+    col: values["mean_uncertainty"]
+    for col, values in stats.items()
+    if "mean_uncertainty" in values
+}
 uq_df
 
 # %%
 # Calculate the confidence intervale with the trimmed dataframe
-ci_df = trimmed.confidence_interval()
+stats = trimmed.compute_statistics()
+ci_df = {
+    col: values["confidence_interval"]
+    for col, values in stats.items()
+    if "confidence_interval" in values
+}
 print(ci_df)
 
 
@@ -187,7 +204,6 @@ len(data_stream_cg)
 
 # %%
 # Trim the CGYRO data using the Quantile (std) strategy
-from quends.base.trim import QuantileTrimStrategy, TrimDataStreamOperation
 strategy = QuantileTrimStrategy(robust=True)
 op = TrimDataStreamOperation(strategy=strategy)
 trimmed_ = op(data_stream_cg, column_name="Q_D/Q_GBD")

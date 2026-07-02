@@ -27,17 +27,20 @@ def test_init_empty(empty_data: pd.DataFrame):
 
 def test_mean_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
-    assert ds.mean(window_size=1) == {"A": {"mean": 2.0, "window_size": 1}}
+    result = ds.compute_statistics(window_size=1)
+    assert result["A"]["mean"] == 2.0
+    assert result["A"]["window_size"] == 1
 
 
 def test_mean_empty(empty_data: pd.DataFrame):
     ds = DataStream(empty_data)
-    assert ds.mean() == {}
+    result = ds.compute_statistics()
+    assert result == {}
 
 
 def test_mean_no_data(nan_data: pd.DataFrame):
     ds = DataStream(nan_data)
-    result = ds.mean()
+    result = ds.compute_statistics()
 
     for col in result:
         assert (
@@ -47,26 +50,29 @@ def test_mean_no_data(nan_data: pd.DataFrame):
 
 def test_mean_long(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    assert ds.mean() == {
-        "A": {"mean": 3.0, "window_size": 5},
-        "B": {"mean": 3.0, "window_size": 5},
-    }
+    result = ds.compute_statistics()
+    assert result["A"]["mean"] == 3.0
+    assert result["A"]["window_size"] == 5
+    assert result["B"]["mean"] == 3.0
+    assert result["B"]["window_size"] == 5
 
 
 def test_mean_long_overlapping_window(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    assert ds.mean() == {
-        "A": {"mean": 3.0, "window_size": 5},
-        "B": {"mean": 3.0, "window_size": 5},
-    }
+    result = ds.compute_statistics()
+    assert result["A"]["mean"] == 3.0
+    assert result["A"]["window_size"] == 5
+    assert result["B"]["mean"] == 3.0
+    assert result["B"]["window_size"] == 5
 
 
 def test_mean_long_non_overlapping_window(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    assert ds.mean(method="non-overlapping", window_size=2) == {
-        "A": {"mean": 2.5, "window_size": 2},
-        "B": {"mean": 3.5, "window_size": 2},
-    }
+    result = ds.compute_statistics(method="non-overlapping", window_size=2)
+    assert result["A"]["mean"] == 2.5
+    assert result["A"]["window_size"] == 2
+    assert result["B"]["mean"] == 3.5
+    assert result["B"]["window_size"] == 2
 
 
 def test_estimate_window_falls_back_when_ess_is_invalid(long_data: pd.DataFrame):
@@ -88,7 +94,7 @@ def test_estimate_window_falls_back_when_ess_is_invalid(long_data: pd.DataFrame)
 
 def test_mean_uncertainty_no_data(nan_data: pd.DataFrame):
     ds = DataStream(nan_data)
-    result = ds.mean_uncertainty()
+    result = ds.compute_statistics()
 
     for col in result:
         assert "error" in result[col], f"No data available for column '{col}"
@@ -96,14 +102,14 @@ def test_mean_uncertainty_no_data(nan_data: pd.DataFrame):
 
 def test_mean_uncertainty_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
-    mean_uncertainty = ds.mean_uncertainty(window_size=2)
-    assert np.isnan(mean_uncertainty["A"]["mean_uncertainty"])
-    assert mean_uncertainty["A"]["window_size"] == 2
+    result = ds.compute_statistics(window_size=2)
+    assert np.isnan(result["A"]["mean_uncertainty"])
+    assert result["A"]["window_size"] == 2
 
 
 def test_mean_uncertainty_sliding(stationary_noise_df: pd.DataFrame):
     ds = DataStream(stationary_noise_df)
-    result = ds.mean_uncertainty(method="sliding")
+    result = ds.compute_statistics(method="sliding")
 
     assert "A" in result
     assert "mean_uncertainty" in result["A"]
@@ -113,15 +119,15 @@ def test_mean_uncertainty_sliding(stationary_noise_df: pd.DataFrame):
 
 def test_mean_uncertainty_long(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    mean_uncertainty = ds.mean_uncertainty(window_size=2)
+    result = ds.compute_statistics(window_size=2)
     # SE depends on Geyer ESS on the 2 block means; exact value is implementation-
     # dependent but must be non-negative and finite.
-    assert "A" in mean_uncertainty and "mean_uncertainty" in mean_uncertainty["A"]
-    assert "B" in mean_uncertainty and "mean_uncertainty" in mean_uncertainty["B"]
-    assert mean_uncertainty["A"]["window_size"] == 2
-    assert mean_uncertainty["B"]["window_size"] == 2
-    assert mean_uncertainty["A"]["mean_uncertainty"] >= 0
-    assert mean_uncertainty["B"]["mean_uncertainty"] >= 0
+    assert "A" in result and "mean_uncertainty" in result["A"]
+    assert "B" in result and "mean_uncertainty" in result["B"]
+    assert result["A"]["window_size"] == 2
+    assert result["B"]["window_size"] == 2
+    assert result["A"]["mean_uncertainty"] >= 0
+    assert result["B"]["mean_uncertainty"] >= 0
 
 
 # ------------ confidence interval --------------
@@ -129,18 +135,16 @@ def test_mean_uncertainty_long(long_data: pd.DataFrame):
 
 def test_confidence_interval_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
-    expected = {
-        "A": {
-            "confidence_interval": (0.8683934723883333, 3.131606527611667),
-            "window_size": 1,
-        }
-    }
-    assert ds.confidence_interval(window_size=1) == expected
+    result = ds.compute_statistics(window_size=1)
+    assert result["A"]["confidence_interval"] == pytest.approx(
+        (0.8683934723883333, 3.131606527611667)
+    )
+    assert result["A"]["window_size"] == 1
 
 
 def test_confidence_interval_long(long_data: pd.DataFrame):
     ds = DataStream(long_data)
-    result = ds.confidence_interval(window_size=2)
+    result = ds.compute_statistics(window_size=2)
     # SE now uses Geyer ESS on block means, so the exact bounds are
     # implementation-dependent.  Check structural invariants instead.
     for col in ("A", "B"):
@@ -152,19 +156,18 @@ def test_confidence_interval_long(long_data: pd.DataFrame):
 
 
 def test_confidence_interval_no_data(nan_data: pd.DataFrame):
-    # confidence_interval now propagates error dicts instead of raising KeyError.
+    # compute_statistics propagates error dicts instead of raising KeyError.
     ds = DataStream(nan_data)
-    result = ds.confidence_interval()
+    result = ds.compute_statistics()
     for col in result:
         assert "error" in result[col], f"Expected error dict for column '{col}'"
 
 
 def test_confidence_interval_missing_data_for_column(partial_nan_data: pd.DataFrame):
     # partial_nan_data: A=[1,2,3] (valid), B=[None,None,None] (all NaN).
-    # confidence_interval delegates to compute_statistics, which returns an error
-    # dict for B and a valid result for A.
+    # compute_statistics returns an error dict for B and a valid result for A.
     ds = DataStream(partial_nan_data)
-    result = ds.confidence_interval(window_size=2)
+    result = ds.compute_statistics(window_size=2)
 
     assert "confidence_interval" in result["A"], "A should produce a CI result"
     assert result["A"]["window_size"] == 2
@@ -185,9 +188,7 @@ def test_compute_stats_simple(simple_data: pd.DataFrame):
     assert col["confidence_interval"] == pytest.approx(
         (0.8683934723883333, 3.131606527611667)
     )
-    assert col["pm_std"] == pytest.approx(
-        (1.4226497308103743, 2.5773502691896257)
-    )
+    assert col["pm_std"] == pytest.approx((1.4226497308103743, 2.5773502691896257))
     assert col["effective_sample_size"] == 3
     assert col["window_size"] == 1
 
@@ -203,9 +204,7 @@ def test_compute_stats_long(long_data: pd.DataFrame):
     assert col["confidence_interval"] == pytest.approx(
         (1.6140707088743669, 4.385929291125633)
     )
-    assert col["pm_std"] == pytest.approx(
-        (2.2928932188134525, 3.7071067811865475)
-    )
+    assert col["pm_std"] == pytest.approx((2.2928932188134525, 3.7071067811865475))
     assert col["effective_sample_size"] == 5
     assert col["window_size"] == 1
 
@@ -231,13 +230,6 @@ def test_compute_stats_ci_not_computed(long_data: pd.DataFrame):
 def test_compute_statistics_missing_column(partial_nan_data: pd.DataFrame):
     ds = DataStream(partial_nan_data)
 
-    ds.mean = lambda *a, **k: {"A": {"mean": 3.0, "window_size": 2}}
-    ds.mean_uncertainty = lambda *a, **k: {
-        "A": {"mean_uncertainty": 1.0, "window_size": 2}
-    }
-    ds.confidence_interval = lambda *a, **k: {
-        "A": {"confidence_interval": (1.04, 4.96), "window_size": 2}
-    }
     ds.effective_sample_size = lambda *a, **k: {"results": {"A": 10}}
 
     result = ds.compute_statistics(column_name=["A", "B"])
@@ -402,9 +394,7 @@ def test_additional_data_missing_cumulative(long_data: pd.DataFrame):
 
 def test_additional_data_not_enough_valid_points(stationary_noise_df: pd.DataFrame):
     ds = DataStream(stationary_noise_df)
-    ds.cumulative_statistics = lambda *a, **k: {
-        "A": {"standard_error": [float("nan")]}
-    }
+    ds.cumulative_statistics = lambda *a, **k: {"A": {"standard_error": [float("nan")]}}
     result = ds.additional_data(column_name="A")
     assert result["A"] == {"error": "Not enough valid data points for fitting."}
 
@@ -458,7 +448,9 @@ def test_process_column_missing_method(simple_data: pd.DataFrame):
     # even with a valid pd.Series.
     column_data = simple_data["A"]
     with pytest.raises(ValueError):
-        ds._process_column(column_data=column_data, estimated_window=1, method="invalid_method")
+        ds._process_column(
+            column_data=column_data, estimated_window=1, method="invalid_method"
+        )
 
 
 def test_effective_sample_size_empty(empty_data: pd.DataFrame):
@@ -623,9 +615,9 @@ def test_compute_statistics_returns_statsresult_with_metadata(long_data):
     ds = DataStream(long_data)
     res = ds.compute_statistics("A")
     # Backward-compatible: behaves exactly like the historical {col: {...}} dict.
-    assert res["A"]["mean_uncertainty"] is not None        # key name preserved (not "sem")
+    assert res["A"]["mean_uncertainty"] is not None  # key name preserved (not "sem")
     assert "mean" in res["A"]
-    assert res == dict(res)                                # equals a plain dict
+    assert res == dict(res)  # equals a plain dict
     # New: carries run-level provenance in .metadata.
     assert res.metadata["estimator"] == "single"
     assert res.metadata["schema_version"] == "1.0"
@@ -635,14 +627,22 @@ def test_compute_statistics_returns_statsresult_with_metadata(long_data):
 # --- §2 convenience API: DataStream.trim one-liner + input validation --------
 def test_datastream_trim_one_liner_matches_explicit_path():
     import numpy as np
-    from quends.base.trim import build_trim_strategy, TrimDataStreamOperation
+
+    from quends.base.trim import TrimDataStreamOperation, build_trim_strategy
+
     rng = np.random.default_rng(0)
-    df = pd.DataFrame({"time": np.arange(400.0),
-                       "x": np.r_[np.linspace(0, 5, 80), 5 + 0.2 * rng.standard_normal(320)]})
+    df = pd.DataFrame(
+        {
+            "time": np.arange(400.0),
+            "x": np.r_[np.linspace(0, 5, 80), 5 + 0.2 * rng.standard_normal(320)],
+        }
+    )
     ds = DataStream(df)
     # column auto-detected (single non-time column)
     new = ds.trim(method="threshold", threshold=0.1, window_size=20)
-    strat = build_trim_strategy(method="threshold", window_size=20, start_time=0.0, threshold=0.1)
+    strat = build_trim_strategy(
+        method="threshold", window_size=20, start_time=0.0, threshold=0.1
+    )
     old = TrimDataStreamOperation(strategy=strat)(ds, column_name="x")
     assert isinstance(new, DataStream)
     assert len(new.data) == len(old.data)

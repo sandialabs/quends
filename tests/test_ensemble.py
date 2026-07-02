@@ -20,4 +20,6 @@ def test_compute_average_ensemble_preserves_empty_schema():
     average = Ensemble([empty]).compute_average_ensemble()
 
     pd.testing.assert_frame_equal(average.data, empty.data)
-    assert average.mean() == {"A": {"error": "No data available for column 'A'"}}
+    result = average.compute_statistics()
+    assert "error" in result["A"]
+    assert "No data available" in result["A"]["error"]

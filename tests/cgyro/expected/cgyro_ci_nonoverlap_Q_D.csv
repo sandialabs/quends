@@ -1,2 +1,2 @@
-Q_D/Q_GBD.confidence_interval.lower,Q_D/Q_GBD.confidence_interval.upper,Q_D/Q_GBD.window_size
-24.516022964446105,27.717442034196242,58
+column,confidence_interval.lower,confidence_interval.upper,window_size
+Q_D/Q_GBD,24.516022964446105,27.717442034196242,58
