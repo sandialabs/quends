@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 
 from quends import DataStream
+from quends.base.history import DataStreamHistoryEntry
 
 pytest_plugins = ("tests._shared",)
 
@@ -20,6 +21,37 @@ def test_init_empty(empty_data: pd.DataFrame):
     ds = DataStream(empty_data)
     assert len(ds) == 0
     assert ds.variables().tolist() == []
+
+
+def test_init_coerces_legacy_history_entries(simple_data: pd.DataFrame):
+    typed_entry = DataStreamHistoryEntry("typed", {"a": 1})
+
+    ds = DataStream(
+        simple_data,
+        history=[
+            typed_entry,
+            {"operation": "legacy_dict", "options": {"b": 2}},
+            "legacy_value",
+        ],
+    )
+
+    entries = ds.history.entries()
+    assert entries[0] is typed_entry
+    assert entries[1] == DataStreamHistoryEntry("legacy_dict", {"b": 2})
+    assert entries[2] == DataStreamHistoryEntry(
+        "str",
+        {"value": "legacy_value"},
+    )
+
+
+def test_df_setter_updates_underlying_data(simple_data: pd.DataFrame):
+    ds = DataStream(simple_data)
+    replacement = pd.DataFrame({"B": [10, 20]})
+
+    ds.df = replacement
+
+    assert ds.data is replacement
+    assert ds.df is replacement
 
 
 # ------------ mean --------------
@@ -238,6 +270,56 @@ def test_compute_statistics_missing_column(partial_nan_data: pd.DataFrame):
     assert result["B"] == {"error": "No data available for column 'B'"}
 
 
+def test_compute_statistics_handles_no_block_means(simple_data: pd.DataFrame):
+    ds = DataStream(simple_data)
+
+    def fake_process_column(*args, **kwargs):
+        return pd.Series(dtype=float), {
+            "window_size": 10,
+            "independence_status": "too_few_blocks",
+            "blocks": np.array([]),
+            "ljungbox_lags": [],
+            "ljungbox_pvalues": [],
+            "n_blocks": 0,
+            "independent": False,
+        }
+
+    ds._process_column = fake_process_column
+
+    result = ds.compute_statistics(column_name="A")
+
+    assert result["A"] == {
+        "error": "No block means produced (window_size=10).",
+        "window_size": 10,
+    }
+
+
+def test_compute_statistics_best_p_status_adds_warning(simple_data: pd.DataFrame):
+    ds = DataStream(simple_data)
+    ds.effective_sample_size = lambda *a, **k: {"results": {"A": 3}}
+
+    def fake_process_column(*args, **kwargs):
+        return pd.Series([1.0, 2.0, 3.0]), {
+            "window_size": 1,
+            "independence_status": "best_p",
+            "blocks": np.array([1.0, 2.0, 3.0]),
+            "ljungbox_lags": [2],
+            "ljungbox_pvalues": [0.01],
+            "n_blocks": 3,
+            "independent": False,
+        }
+
+    ds._process_column = fake_process_column
+
+    result = ds.compute_statistics(column_name="A", window_size=1)
+
+    assert result["A"]["se_method"] == "iid_blocks_best_p"
+    assert result["A"]["se_effective_n"] == 3.0
+    assert result["A"]["warning"] == (
+        "Block means did not pass Ljung-Box; using best-p window."
+    )
+
+
 # ------------ cumulative stats --------------
 
 
@@ -453,6 +535,72 @@ def test_process_column_missing_method(simple_data: pd.DataFrame):
         )
 
 
+def test_process_column_ignores_mismatched_time_values(simple_data: pd.DataFrame):
+    ds = DataStream(simple_data)
+
+    with patch(
+        "quends.base.data_stream.autotune_blocks",
+        return_value={
+            "window_size": 1,
+            "blocks": np.array([1.0, 2.0, 3.0]),
+            "n_blocks": 3,
+            "independence_status": "user_window",
+            "independent": False,
+            "ljungbox_lags": [],
+            "ljungbox_pvalues": [],
+        },
+    ):
+        processed, _ = ds._process_column(
+            simple_data["A"],
+            estimated_window=1,
+            method="non-overlapping",
+            time_values=np.array([10.0]),
+        )
+
+    assert processed.index.tolist() == [0, 1, 2]
+
+
+def test_process_column_returns_empty_when_no_blocks(simple_data: pd.DataFrame):
+    ds = DataStream(simple_data)
+
+    with patch(
+        "quends.base.data_stream.autotune_blocks",
+        return_value={
+            "window_size": 10,
+            "blocks": np.array([]),
+            "n_blocks": 0,
+            "independence_status": "too_few_blocks",
+            "independent": False,
+            "ljungbox_lags": [],
+            "ljungbox_pvalues": [],
+        },
+    ):
+        processed, ab = ds._process_column(
+            simple_data["A"],
+            estimated_window=10,
+            method="non-overlapping",
+        )
+
+    assert processed.empty
+    assert ab["n_blocks"] == 0
+
+
+def test_time_values_for_series_returns_none_on_alignment_error():
+    ds = DataStream(pd.DataFrame({"time": [0.0, 1.0], "A": [1.0, 2.0]}))
+    series = pd.Series([1.0], index=[99])
+
+    assert ds._time_values_for_series(series) is None
+
+
+def test_estimate_tau_int_delegates_and_returns_float(long_data: pd.DataFrame):
+    ds = DataStream(long_data)
+
+    result = ds._estimate_tau_int(long_data["A"])
+
+    assert isinstance(result, float)
+    assert result >= 1.0
+
+
 def test_effective_sample_size_empty(empty_data: pd.DataFrame):
     ds = DataStream(empty_data)
     assert ds.effective_sample_size() == {"results": {}}
@@ -648,6 +796,38 @@ def test_datastream_trim_one_liner_matches_explicit_path():
     assert len(new.data) == len(old.data)
 
 
+def test_datastream_trim_requires_column_when_multiple_signal_columns(long_data):
+    ds = DataStream(long_data)
+
+    with pytest.raises(ValueError, match="column_name must be specified"):
+        ds.trim(method="std")
+
+
+def test_datastream_trim_passes_extra_strategy_kwargs(simple_data: pd.DataFrame):
+    ds = DataStream(simple_data)
+
+    class DummyStrategy:
+        method_name = "dummy"
+
+    class DummyOperation:
+        def __init__(self, strategy):
+            self.strategy = strategy
+
+        def __call__(self, data_stream, column_name):
+            assert data_stream is ds
+            assert column_name == "A"
+            assert self.strategy.custom_option == "set-by-trim"
+            return DataStream(pd.DataFrame({"A": [42]}))
+
+    with patch(
+        "quends.base.trim.build_trim_strategy",
+        return_value=DummyStrategy(),
+    ), patch("quends.base.trim.TrimDataStreamOperation", DummyOperation):
+        result = ds.trim(column_name="A", custom_option="set-by-trim")
+
+    assert result.data["A"].tolist() == [42]
+
+
 def test_datastream_init_rejects_non_dataframe():
     for bad in (None, "nope", 42):
         with pytest.raises(TypeError):
@@ -657,3 +837,43 @@ def test_datastream_init_rejects_non_dataframe():
 def test_datastream_init_coerces_dict():
     ds = DataStream({"time": [0, 1, 2], "x": [1.0, 2.0, 3.0]})
     assert list(ds.data.columns) == ["time", "x"]
+
+
+def test_get_block_effective_n_returns_error_shape_for_bad_column(long_data):
+    ds = DataStream(long_data)
+    ds.compute_statistics = lambda *a, **k: {"missing": {"error": "no data"}}
+
+    result = ds.get_block_effective_n("missing", window_size=7)
+
+    assert np.isnan(result["effective_n"])
+    assert result["window_size"] == 7
+    assert result["n_blocks"] == 0
+
+
+def test_get_block_effective_n_extracts_statistics_fields(long_data):
+    ds = DataStream(long_data)
+
+    result = ds.get_block_effective_n("A", window_size=1)
+
+    assert result["effective_n"] >= 1.0
+    assert result["window_size"] == 1
+    assert result["n_blocks"] == 5
+
+
+def test_variance_extracts_success_and_error_entries(long_data):
+    ds = DataStream(long_data)
+    ds.compute_statistics = lambda *a, **k: {
+        "A": {"variance": 2.5, "window_size": 3, "ess_blocks": 4.0},
+        "B": {"error": "no data"},
+    }
+
+    result = ds._variance(column_name=["A", "B"])
+
+    assert result["A"] == {
+        "variance": 2.5,
+        "window_size": 3,
+        "effective_n_blocks": 4.0,
+    }
+    assert np.isnan(result["B"]["variance"])
+    assert np.isnan(result["B"]["window_size"])
+    assert np.isnan(result["B"]["effective_n_blocks"])
