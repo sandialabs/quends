@@ -184,6 +184,7 @@ Module Contents
       ``window_size`` so that existing callers are not broken.
 
       .. rubric:: Examples
+         :class: example
 
       >>> trimmed_ens = ens.trim("HeatFlux_st", method="std", window_size=20)
       >>> trimmed_ens = ens.trim("HeatFlux_st", method="iqr", threshold=0.05)

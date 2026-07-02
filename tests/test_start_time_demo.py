@@ -12,7 +12,7 @@ import pytest
 pytest_plugins = ("tests._shared",)
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-NOTEBOOK_DIR = REPO_ROOT / "examples" / "notebooks"
+NOTEBOOK_DIR = REPO_ROOT / "examples" / "tutorial" / "notebooks"
 INPUT_NOTEBOOK = NOTEBOOK_DIR / "start_time_demo.ipynb"
 START_TIME_DEMO_DIR = REPO_ROOT / "tests" / "start_time_demo"
 OUTPUT_DIR = START_TIME_DEMO_DIR / "output"

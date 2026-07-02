@@ -249,11 +249,16 @@ Package Contents
 
 
 
-   .. py:method:: steady_state_plot(data, variables_to_plot=None, steady_state_start=None, *, save=False, show=False, output_dir=None, overwrite=False, dpi=150)
+   .. py:method:: steady_state_plot(data, variables_to_plot=None, steady_state_start=None, *, show_std_bands=False, save=False, show=False, output_dir=None, overwrite=False, dpi=150)
 
       Annotate steady state from a user-supplied start (float or {var: float}).
 
-      Returns list of (fig, axes).
+      Use this after :meth:`~quends.DataStream.trim` has identified the
+      steady-state start: pass ``steady_state_start=trimmed.trim_metadata
+      ["sss_start"]`` so the plot uses the exact same point as the trim. The
+      post-steady-state mean is drawn over that region; pass
+      ``show_std_bands=True`` to also draw the ±1/2/3 std bands (appropriate
+      for the std / QuantileTrimStrategy criterion). Returns list of (fig, axes).
 
 
 

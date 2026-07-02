@@ -284,6 +284,7 @@ Module Contents
    :raises ValueError: If *method* is not one of the recognised strings.
 
    .. rubric:: Examples
+      :class: example
 
    >>> strategy = build_trim_strategy("std", window_size=20)
    >>> op = TrimDataStreamOperation(strategy)

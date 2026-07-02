@@ -51,39 +51,6 @@ Module Contents
 
 
 
-   .. py:method:: mean(column_name=None, method='non-overlapping', window_size=None)
-
-      Compute block or sliding window means for each column.
-
-      Thin wrapper over :meth:`compute_statistics` — extracts ``mean`` and
-      ``window_size`` so callers that only need the mean don't have to
-      unpack the full statistics dict.
-
-
-
-   .. py:method:: mean_uncertainty(column_name=None, ddof=1, method='non-overlapping', window_size=None)
-
-      Estimate the standard error of the mean via Geyer ESS on block means.
-
-      Thin wrapper over :meth:`compute_statistics` — extracts
-      ``mean_uncertainty`` and ``window_size``.
-
-
-
-   .. py:method:: confidence_interval(column_name=None, ddof=1, method='non-overlapping', window_size=None, confidence_level = 0.95, ci_method = 'normal')
-
-      Build confidence intervals around block/sliding means.
-
-      Thin wrapper over :meth:`compute_statistics` — extracts
-      ``confidence_interval`` and ``window_size``.  Columns with no valid
-      data propagate the error dict rather than raising ``KeyError``.
-
-      See :meth:`compute_statistics` for the meaning of *confidence_level*
-      and *ci_method*.  Defaults preserve the historical 95 % normal CI
-      (multiplier ``1.96``).
-
-
-
    .. py:method:: trim(column_name=None, *, method = 'std', window_size = 10, start_time = 0.0, threshold = None, robust = True, **strategy_kwargs)
 
       Trim this stream to its steady state and return a new ``DataStream``.

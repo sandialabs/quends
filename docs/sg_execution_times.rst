@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:02.512** total execution time for 1 file **from all galleries**:
+**00:03.594** total execution time for 4 files **from all galleries**:
 
 .. container::
 
@@ -32,6 +32,15 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_tutorials_datastream_guide.py` (``../examples/tutorial/datastream_guide.py``)
-     - 00:02.512
+   * - :ref:`sphx_glr_auto_tutorials_datastream_guide.py` (``../examples/tutorial/scripts/datastream_guide.py``)
+     - 00:03.594
+     - 0.0
+   * - :ref:`sphx_glr_auto_tutorials_ensemble_guide.py` (``../examples/tutorial/scripts/ensemble_guide.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_tutorials_robustworkflow_advanced_guide.py` (``../examples/tutorial/scripts/robustworkflow_advanced_guide.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_tutorials_robustworkflow_guide.py` (``../examples/tutorial/scripts/robustworkflow_guide.py``)
+     - 00:00.000
      - 0.0
