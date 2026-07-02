@@ -30,6 +30,7 @@ import os
 import tempfile
 
 import quends as qnds
+from quends.base.trim import TrimDataStreamOperation, build_trim_strategy
 from quends.postprocessing.loader import JsonLoader
 from quends.postprocessing.writer import JsonWriter
 
@@ -74,8 +75,6 @@ print("is_stationary (raw):", ds.is_stationary(COL))
 # QUENDS offers **two equivalent ways** to trim. First, the explicit
 # strategy/operation pattern from :mod:`quends.base.trim` -- useful when you
 # want to build a strategy once and reuse it:
-from quends.base.trim import TrimDataStreamOperation, build_trim_strategy
-
 strat = build_trim_strategy(
     method="threshold", window_size=50, start_time=100, threshold=0.1
 )
@@ -105,7 +104,12 @@ plot = plotter.steady_state_plot(ds, [COL], steady_state_start=ss_start, show=Tr
 # Equivalently, ``steady_state_automatic_plot`` re-detects the start, but it must
 # be given **the same trim parameters** to match:
 plot = plotter.steady_state_automatic_plot(
-    ds, [COL], method="threshold", threshold=0.1, batch_size=50, start_time=100,
+    ds,
+    [COL],
+    method="threshold",
+    threshold=0.1,
+    batch_size=50,
+    start_time=100,
     show=True,
 )
 
@@ -178,10 +182,17 @@ plot = plotter.steady_state_automatic_plot(
 # larger window or smaller threshold is stricter and removes more.
 for w, th in [(20, 0.1), (50, 0.1), (100, 0.1), (50, 0.2)]:
     rt = reloaded.trim(method="threshold", window_size=w, threshold=th, start_time=0)
-    print(f"threshold w={w:3d} th={th}: rows={len(rt):4d} start={rt.trim_metadata.get('sss_start'):.1f}")
+    print(
+        f"threshold w={w:3d} th={th}: rows={len(rt):4d} start={rt.trim_metadata.get('sss_start'):.1f}"
+    )
 plot = plotter.steady_state_automatic_plot(
-    reloaded, [COL], method="threshold", batch_size=50, threshold=0.1,
-    start_time=0, show=True,
+    reloaded,
+    [COL],
+    method="threshold",
+    batch_size=50,
+    threshold=0.1,
+    start_time=0,
+    show=True,
 )
 
 # %%
@@ -191,11 +202,18 @@ plot = plotter.steady_state_automatic_plot(
 # rejects the *entire* series (0 rows), so it needs a larger threshold on this
 # already-steady data.
 for w, th in [(50, 0.1), (50, 0.5), (50, 1.0)]:
-    rt = reloaded.trim(method="rolling_variance", window_size=w, threshold=th, start_time=0)
+    rt = reloaded.trim(
+        method="rolling_variance", window_size=w, threshold=th, start_time=0
+    )
     print(f"rolling_variance w={w} th={th}: rows={len(rt):4d}")
 plot = plotter.steady_state_automatic_plot(
-    reloaded, [COL], method="rolling_variance", batch_size=50, threshold=1.0,
-    start_time=0, show=True,
+    reloaded,
+    [COL],
+    method="rolling_variance",
+    batch_size=50,
+    threshold=1.0,
+    start_time=0,
+    show=True,
 )
 
 # %%
@@ -226,9 +244,11 @@ print("Phi2_t trim_metadata:", ns_trim.trim_metadata)
 # %%
 # Other statistical methods
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~
-print("mean:", trimmed.mean(method="sliding"))
-print("mean uncertainty:", trimmed.mean_uncertainty(method="sliding"))
-print("confidence interval:", trimmed.confidence_interval())
+stats = trimmed.compute_statistics(column_name=COL, method="sliding")
+col_stats = stats[COL]
+print("mean:", col_stats["mean"])
+print("mean uncertainty:", col_stats["mean_uncertainty"])
+print("confidence interval:", col_stats["confidence_interval"])
 
 # %%
 # Cumulative statistics track how the estimate stabilises as more samples are
