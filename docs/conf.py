@@ -1,12 +1,13 @@
 import os
 import sys
+from pathlib import Path
 
 from sphinx_gallery.sorting import ExplicitOrder, _SortKey
 
 # Add the src directory to the Python path
 sys.path.insert(0, os.path.abspath("../src"))  # Adjust this path if necessary
 sys.path.insert(0, os.path.abspath("../src/quends"))
-sys.path.insert(0, os.path.abspath("../examples/tutorial"))
+sys.path.insert(0, os.path.abspath("../examples/tutorial/scripts"))
 
 print("Python path:", sys.path)  # This will help you verify the path
 
@@ -62,6 +63,7 @@ extlinks = {
 # Documentation theme.  Single switch -- the default is sphinx-immaterial, but a
 # maintainer can choose another supported theme without editing this file:
 #
+#     QUENDS_DOCS_THEME=sphinx_immaterial    sphinx-build -b html docs docs/_build/html
 #     QUENDS_DOCS_THEME=sphinx_book_theme   sphinx-build -b html docs docs/_build/html
 #     QUENDS_DOCS_THEME=pydata_sphinx_theme sphinx-build -b html docs docs/_build/html
 #
@@ -136,6 +138,37 @@ html_short_title = f"{project}-{version}"
 # Sandia National Laboratories brand colors (override the Material palette).
 html_static_path = ["_static"]
 html_css_files = ["sandia.css"]
+html_js_files = []
+
+
+def _write_sphinx_immaterial_assets():
+    """Provide stable theme asset names for Sphinx-Immaterial local builds."""
+    import sphinx_immaterial
+
+    package_dir = Path(sphinx_immaterial.__file__).resolve().parent
+    static_dir = Path(__file__).resolve().parent / "_static"
+    static_dir.mkdir(exist_ok=True)
+
+    css_paths = [
+        package_dir / "bundles" / "stylesheets" / "main.css",
+        package_dir / "bundles" / "stylesheets" / "palette.css",
+    ]
+    css = "\n".join(path.read_text(encoding="utf-8") for path in css_paths)
+    css = css.replace("/*# sourceMappingURL=main.css.map */", "")
+    css = css.replace("/*# sourceMappingURL=palette.css.map */", "")
+    (static_dir / "sphinx_immaterial_local.css").write_text(css, encoding="utf-8")
+
+    js = (package_dir / "bundles" / "javascripts" / "bundle.js").read_text(
+        encoding="utf-8"
+    )
+    js = js.replace("//# sourceMappingURL=bundle.js.map", "")
+    (static_dir / "sphinx_immaterial_local.js").write_text(js, encoding="utf-8")
+
+
+if html_theme == "sphinx_immaterial":
+    _write_sphinx_immaterial_assets()
+    html_css_files = ["sphinx_immaterial_local.css", "sandia.css"]
+    html_js_files = ["sphinx_immaterial_local.js"]
 
 napoleon_use_ivar = False
 napoleon_use_rtype = False
@@ -182,11 +215,11 @@ class ExamplesExplicitOrder(_SortKey):
 
 
 sphinx_gallery_conf = {
-    "examples_dirs": "../examples/tutorial",
+    "examples_dirs": "../examples/tutorial/scripts",
     "gallery_dirs": "auto_tutorials",
     "subsection_order": ExplicitOrder(
         [
-            "../examples/tutorial",
+            "../examples/tutorial/scripts",
         ]
     ),
     "within_subsection_order": ExamplesExplicitOrder,

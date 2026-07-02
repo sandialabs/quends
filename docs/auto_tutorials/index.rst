@@ -1,11 +1,18 @@
 :orphan:
 
-#################
-Software Tutorial
-#################
+# Tutorial Scripts
 
-Below is a gallary of examples showing how to use different methods
-in QUENDS.
+These scripts are the source tutorials for the Sphinx gallery.
+
+They load data from `examples/data` via a path derived from each script's file
+location, so direct execution and documentation builds use the same datasets.
+
+Run a script from the repository root with, for example:
+
+```bash
+python examples/tutorial/scripts/datastream_guide.py
+```
+
 
 
 .. raw:: html
@@ -16,7 +23,7 @@ in QUENDS.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="The following features are:     - Trimming: Identifies steady-state regions in data.     - Statistical Analysis: Computes mean, standard deviation, confidence intervals, and cumulative statistics.     - Stationarity Testing: Uses the Augmented Dickey-Fuller test.     - Effective Sample Size (ESS): Estimates the independent sample size.     - Optimal Window Size: Determines the best window for data smoothing.">
+    <div class="sphx-glr-thumbcontainer" tooltip="It demonstrates the core single-trace features:">
 
 .. only:: html
 
@@ -31,6 +38,57 @@ in QUENDS.
     </div>
 
 
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Instead of one long trace, an ensemble combines several shorter runs. QUENDS provides three ways to turn an ensemble into a mean with an honest uncertainty:">
+
+.. only:: html
+
+  .. image:: /auto_tutorials/images/thumb/sphx_glr_ensemble_guide_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_tutorials_ensemble_guide.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Ensemble Analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="For each signal the procedure is the same as in the notebook:">
+
+.. only:: html
+
+  .. image:: /auto_tutorials/images/thumb/sphx_glr_robustworkflow_guide_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_tutorials_robustworkflow_guide.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">RobustWorkflow</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip=" a non-stationary signal, where the workflow drops successive initial   fractions until the tail is stationary,  the same signal with a stricter n_pts_min, where the workflow gives up   and returns &quot;ball-park&quot; (``AdHoc``) statistics,  a stationary signal with no steady state found because of deliberately bad   hyperparameters, and  batch processing of several runs followed by a flux-vs-collisionality   plot.">
+
+.. only:: html
+
+  .. image:: /auto_tutorials/images/thumb/sphx_glr_robustworkflow_advanced_guide_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_tutorials_robustworkflow_advanced_guide.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">RobustWorkflow: Difficult Cases & Batch Processing</div>
+    </div>
+
+
 .. thumbnail-parent-div-close
 
 .. raw:: html
@@ -42,6 +100,9 @@ in QUENDS.
    :hidden:
 
    /auto_tutorials/datastream_guide
+   /auto_tutorials/ensemble_guide
+   /auto_tutorials/robustworkflow_guide
+   /auto_tutorials/robustworkflow_advanced_guide
 
 
 .. only:: html

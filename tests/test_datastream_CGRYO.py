@@ -16,7 +16,7 @@ from quends import DataStream
 @pytest.fixture(scope="module")
 def cgyro_streams():
     repo_root = Path(__file__).resolve().parents[1]
-    cgyro_dir = repo_root / "examples" / "notebooks" / "cgyro"
+    cgyro_dir = repo_root / "examples" / "data" / "cgyro"
 
     files = [
         "output_nu0_02.csv",
@@ -41,7 +41,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 CGYRO_TEST_DIR = REPO_ROOT / "tests" / "cgyro"
 OUTPUT_DIR = CGYRO_TEST_DIR / "output"
 EXPECTED_DIR = CGYRO_TEST_DIR / "expected"
-NOTEBOOK_DIR = REPO_ROOT / "examples" / "notebooks"
+NOTEBOOK_DIR = REPO_ROOT / "examples" / "tutorial" / "notebooks"
 INPUT_NOTEBOOK = NOTEBOOK_DIR / "DataStream_Guide-CGYRO.ipynb"
 
 

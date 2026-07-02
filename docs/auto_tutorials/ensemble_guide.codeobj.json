@@ -1,0 +1,609 @@
+{
+ "COL": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "str"
+  }
+ ],
+ "DATA_DIR": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "PosixPath"
+  }
+ ],
+ "Path": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "Path"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "PurePath"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "Path"
+  }
+ ],
+ "Path.cwd": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "Path.cwd"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "PurePath.cwd"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pathlib.Path",
+   "module_short": "pathlib.Path",
+   "name": "cwd"
+  }
+ ],
+ "avg": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream"
+  }
+ ],
+ "avg.is_stationary": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends",
+   "name": "DataStream.is_stationary"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "DataStream.is_stationary"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.is_stationary"
+  }
+ ],
+ "avg.trim": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends",
+   "name": "DataStream.trim"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "DataStream.trim"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.trim"
+  }
+ ],
+ "avg_trimmed": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream"
+  }
+ ],
+ "avg_trimmed.compute_statistics": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends",
+   "name": "DataStream.compute_statistics"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "DataStream.compute_statistics"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.compute_statistics"
+  }
+ ],
+ "avg_trimmed.effective_sample_size": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends",
+   "name": "DataStream.effective_sample_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "DataStream.effective_sample_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.effective_sample_size"
+  }
+ ],
+ "avg_trimmed.trim_metadata.get": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  }
+ ],
+ "ea_stats": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "ens": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.ensemble",
+   "module_short": "quends",
+   "name": "Ensemble"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "Ensemble"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Ensemble"
+  }
+ ],
+ "ens.compute_average_ensemble": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.ensemble",
+   "module_short": "quends",
+   "name": "Ensemble.compute_average_ensemble"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "Ensemble.compute_average_ensemble"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Ensemble.compute_average_ensemble"
+  }
+ ],
+ "ens.is_stationary": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.ensemble",
+   "module_short": "quends",
+   "name": "Ensemble.is_stationary"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "Ensemble.is_stationary"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Ensemble.is_stationary"
+  }
+ ],
+ "ens.members": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.ensemble",
+   "module_short": "quends",
+   "name": "Ensemble.members"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "Ensemble.members"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Ensemble.members"
+  }
+ ],
+ "ens.trim": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.ensemble",
+   "module_short": "quends",
+   "name": "Ensemble.trim"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "Ensemble.trim"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Ensemble.trim"
+  }
+ ],
+ "ens_trimmed": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.ensemble",
+   "module_short": "quends",
+   "name": "Ensemble"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "Ensemble"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Ensemble"
+  }
+ ],
+ "ens_trimmed.compute_uncertainty": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.ensemble",
+   "module_short": "quends",
+   "name": "Ensemble.compute_uncertainty"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "Ensemble.compute_uncertainty"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Ensemble.compute_uncertainty"
+  }
+ ],
+ "ens_trimmed.effective_sample_size": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.ensemble",
+   "module_short": "quends",
+   "name": "Ensemble.effective_sample_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "Ensemble.effective_sample_size"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Ensemble.effective_sample_size"
+  }
+ ],
+ "example_data_dir": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  }
+ ],
+ "glob.glob": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "glob",
+   "module_short": "glob",
+   "name": "glob"
+  }
+ ],
+ "gx_files": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list"
+  }
+ ],
+ "ivw_stats": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "name": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "str"
+  }
+ ],
+ "plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "tuple"
+  }
+ ],
+ "plotter": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing.plotter",
+   "module_short": "quends",
+   "name": "Plotter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends",
+   "name": "Plotter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Plotter"
+  }
+ ],
+ "plotter.plot_ensemble_with_average": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing.plotter",
+   "module_short": "quends",
+   "name": "Plotter.plot_ensemble_with_average"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends",
+   "name": "Plotter.plot_ensemble_with_average"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Plotter.plot_ensemble_with_average"
+  }
+ ],
+ "qnds.Ensemble.from_files": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base.ensemble",
+   "module_short": "quends",
+   "name": "Ensemble.from_files"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "Ensemble.from_files"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Ensemble.from_files"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.Ensemble",
+   "module_short": "quends.Ensemble",
+   "name": "from_files"
+  }
+ ],
+ "qnds.Plotter": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.postprocessing.plotter",
+   "module_short": "quends",
+   "name": "Plotter"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.postprocessing",
+   "module_short": "quends",
+   "name": "Plotter"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Plotter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Plotter"
+  }
+ ],
+ "quends.Ensemble": [
+  {
+   "is_class": false,
+   "is_explicit": true,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "Ensemble"
+  }
+ ],
+ "r": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "r.get": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  }
+ ],
+ "ser_stats": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ]
+}

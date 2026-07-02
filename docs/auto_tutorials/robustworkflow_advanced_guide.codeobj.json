@@ -1,0 +1,902 @@
+{
+ "DATA_DIR": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "PosixPath"
+  }
+ ],
+ "Path": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "Path"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "PurePath"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "Path"
+  }
+ ],
+ "Path.cwd": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "Path.cwd"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "PurePath.cwd"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pathlib.Path",
+   "module_short": "pathlib.Path",
+   "name": "cwd"
+  }
+ ],
+ "ax": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes"
+  }
+ ],
+ "ax.errorbar": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.errorbar"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.errorbar"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.errorbar"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.errorbar"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.errorbar"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.errorbar"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.errorbar"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.errorbar"
+  }
+ ],
+ "ax.grid": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.grid"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.grid"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.grid"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.grid"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.grid"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.grid"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.grid"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.grid"
+  }
+ ],
+ "ax.legend": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.legend"
+  }
+ ],
+ "ax.set_xlabel": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.set_xlabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.set_xlabel"
+  }
+ ],
+ "ax.set_ylabel": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.set_ylabel"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.set_ylabel"
+  }
+ ],
+ "col": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "str"
+  }
+ ],
+ "column": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "contextlib.contextmanager": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "contextlib",
+   "module_short": "contextlib",
+   "name": "contextmanager"
+  }
+ ],
+ "data_path": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "PosixPath"
+  }
+ ],
+ "data_paths": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list"
+  }
+ ],
+ "data_stream": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream"
+  }
+ ],
+ "data_stream.variables": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends",
+   "name": "DataStream.variables"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "DataStream.variables"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream.variables"
+  }
+ ],
+ "ds0": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.data_stream",
+   "module_short": "quends",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends",
+   "name": "DataStream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "DataStream"
+  }
+ ],
+ "example_data_dir": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  }
+ ],
+ "fig": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.figure",
+   "module_short": "matplotlib.figure",
+   "name": "Figure"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Figure"
+  }
+ ],
+ "flux_means": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "flux_unc": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "i_data": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "keep_figures": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  }
+ ],
+ "match": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "re",
+   "module_short": "re",
+   "name": "Match"
+  }
+ ],
+ "match.group": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  }
+ ],
+ "my_stats": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base.utils",
+   "module_short": "quends.base.utils",
+   "name": "StatsResult"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.base",
+   "module_short": "quends.base",
+   "name": "StatsResult"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "StatsResult"
+  }
+ ],
+ "my_stats0": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "dict"
+  }
+ ],
+ "my_wrkflw": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.workflow.robust_workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "RobustWorkflow"
+  }
+ ],
+ "my_wrkflw.plot_signal_basic_stats": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.workflow.robust_workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow.plot_signal_basic_stats"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow.plot_signal_basic_stats"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "RobustWorkflow.plot_signal_basic_stats"
+  }
+ ],
+ "my_wrkflw.process_data_stream": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.workflow.robust_workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow.process_data_stream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow.process_data_stream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "RobustWorkflow.process_data_stream"
+  }
+ ],
+ "my_wrkflw0": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.workflow.robust_workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "RobustWorkflow"
+  }
+ ],
+ "my_wrkflw0.plot_signal_basic_stats": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.workflow.robust_workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow.plot_signal_basic_stats"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow.plot_signal_basic_stats"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "RobustWorkflow.plot_signal_basic_stats"
+  }
+ ],
+ "my_wrkflw0.process_data_stream": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.workflow.robust_workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow.process_data_stream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends.workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow.process_data_stream"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "RobustWorkflow.process_data_stream"
+  }
+ ],
+ "name": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "str"
+  }
+ ],
+ "np.empty": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "empty"
+  }
+ ],
+ "nu_values": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list"
+  }
+ ],
+ "nu_values.append": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  }
+ ],
+ "path": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pathlib",
+   "module_short": "pathlib",
+   "name": "PosixPath"
+  }
+ ],
+ "pd.read_csv": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pandas",
+   "module_short": "pandas",
+   "name": "read_csv"
+  }
+ ],
+ "plt.close": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "close"
+  }
+ ],
+ "plt.subplots": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "subplots"
+  }
+ ],
+ "qnds.RobustWorkflow": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.workflow.robust_workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends.workflow",
+   "module_short": "quends",
+   "name": "RobustWorkflow"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "RobustWorkflow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "RobustWorkflow"
+  }
+ ],
+ "qnds.from_csv": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "quends",
+   "module_short": "quends",
+   "name": "from_csv"
+  }
+ ],
+ "re.search": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "re",
+   "module_short": "re",
+   "name": "search"
+  }
+ ]
+}

@@ -1,7 +1,7 @@
 {
   "baseline": {
     "source_revision": "d2ffab1",
-    "notebook": "examples/notebooks/tutorial.ipynb",
+    "notebook": "examples/tutorial/notebooks/tutorial.ipynb",
     "description": "Observable numerical output from the original tutorial before refactoring."
   },
   "single_stream_standard_deviation": {

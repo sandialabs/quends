@@ -19,26 +19,65 @@
 
 
 DataStream Class
-----------------
-This tutorial demonstrates the usage of the DataStream class,
-which provides methods for analyzing time-series data.
+================
+This tutorial covers single-trace analysis with the :class:`~quends.DataStream`
+object on real gyrokinetic turbulence data (one GX run and one CGYRO run).
 
-The following features are:
-    - **Trimming**: Identifies steady-state regions in data.
-    - **Statistical Analysis**: Computes mean, standard deviation, confidence intervals, and cumulative statistics.
-    - **Stationarity Testing**: Uses the Augmented Dickey-Fuller test.
-    - **Effective Sample Size (ESS)**: Estimates the independent sample size.
-    - **Optimal Window Size**: Determines the best window for data smoothing.
+It demonstrates the core single-trace features:
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-17
+* **Loading & plotting** a raw time-series,
+* **Stationarity testing** (Augmented Dickey-Fuller),
+* **Trimming** to the steady-state portion (two equivalent calling styles),
+* **Effective Sample Size (ESS)** and autocorrelation-aware **statistics**,
+* **saving / re-loading** a trimmed stream and handling
+  **non-stationary** inputs.
 
-Import DataStream
+For analysing **multiple runs together**, see the *Ensemble Analysis* guide; for
+noisy signals where stationarity is hard to assess, see the *RobustWorkflow*
+guide.
 
-.. GENERATED FROM PYTHON SOURCE LINES 17-19
+The GX trim/statistics parameters (``method="threshold"``, ``window_size=50``,
+``start_time=100``, ``threshold=0.1``, ``method="non-overlapping"``) and the
+CGYRO parameters (``method="threshold"``, ``window_size=100``,
+``threshold=0.1``) follow the QUENDS analysis notebooks.
+
+.. GENERATED FROM PYTHON SOURCE LINES 27-28
+
+Import QUENDS
+
+.. GENERATED FROM PYTHON SOURCE LINES 28-58
 
 .. code-block:: Python
 
+    import glob
+    import os
+    import tempfile
+    from pathlib import Path
+
     import quends as qnds
+    from quends.base.trim import TrimDataStreamOperation, build_trim_strategy
+    from quends.postprocessing.loader import JsonLoader
+    from quends.postprocessing.writer import JsonWriter
+
+
+    def example_data_dir() -> Path:
+        """Find the shared example data directory during script or gallery runs."""
+        starts = []
+        if "__file__" in globals():
+            starts.append(Path(__file__).resolve())
+        starts.append(Path.cwd().resolve())
+
+        for start in starts:
+            for parent in [start, *start.parents]:
+                for candidate in (parent / "examples" / "data", parent / "data"):
+                    if candidate.is_dir():
+                        return candidate
+        raise FileNotFoundError("Could not locate examples/data")
+
+
+    COL = "HeatFlux_st"  # the heat-flux observable carried by the GX files
+    DATA_DIR = example_data_dir()
+    plotter = qnds.Plotter()
 
 
 
@@ -47,31 +86,43 @@ Import DataStream
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-23
+.. GENERATED FROM PYTHON SOURCE LINES 59-63
 
 GX Data Analysis
 ----------------
-Analysis on GX Data
+The GX data ships in ``examples/data/gx`` and the CGYRO data in
+``examples/data/cgyro``.
 
-.. GENERATED FROM PYTHON SOURCE LINES 23-35
+.. GENERATED FROM PYTHON SOURCE LINES 65-68
+
+Single Trace
+~~~~~~~~~~~~
+**Input case: a single simulation output.** We analyse one GX run.
+
+.. GENERATED FROM PYTHON SOURCE LINES 70-72
+
+Data Loading
+^^^^^^^^^^^^
+
+.. GENERATED FROM PYTHON SOURCE LINES 72-78
 
 .. code-block:: Python
 
-
-    # Specify the file paths
-    csv_file_path = "gx/tprim_2_0.out.csv"
-    csv2_file_path = "gx/ensemble/tprim_2_5_a.out.csv"
-
-    # Load the data from CSV files
-    data_stream_csv = qnds.from_csv(csv_file_path, "HeatFlux_st")
-    data_stream_gx = qnds.from_csv(csv2_file_path, "HeatFlux_st")
-
-    # Display the first few rows of the GX data
-    data_stream_gx.head()
+    gx_files = sorted(glob.glob(str(DATA_DIR / "gx" / "ensemble" / "tprim_2_5_*.out.csv")))
+    single_path = gx_files[0]
+    ds = qnds.from_csv(single_path, COL)
+    print("loaded:", single_path, "| variables:", ds.variables(), "| rows:", len(ds))
+    ds.head()
 
 
 
 
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    loaded: /Users/adcalpa/quends/examples/data/gx/ensemble/tprim_2_5_a.out.csv | variables: Index(['time', 'HeatFlux_st'], dtype='object') | rows: 201
 
 
 .. raw:: html
@@ -132,70 +183,42 @@ Analysis on GX Data
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-37
+.. GENERATED FROM PYTHON SOURCE LINES 79-82
 
-Get available variables
+Plotting the raw trace
+^^^^^^^^^^^^^^^^^^^^^^
+The raw trace shows the initial transient followed by a noisy steady state.
 
-.. GENERATED FROM PYTHON SOURCE LINES 37-39
-
-.. code-block:: Python
-
-    data_stream_gx.variables()
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-
-    Index(['time', 'HeatFlux_st'], dtype='object')
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 40-41
-
-Get number of rows from the following data in GX
-
-.. GENERATED FROM PYTHON SOURCE LINES 41-43
+.. GENERATED FROM PYTHON SOURCE LINES 82-84
 
 .. code-block:: Python
 
-    len(data_stream_gx)
+    plot = plotter.trace_plot(ds, [COL], show=True)
+
+
+
+
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_001.png
+   :alt: Time Series — Datastream, HeatFlux_st
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_001.png
+   :class: sphx-glr-single-img
 
 
 
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-
-    201
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 44-47
+.. GENERATED FROM PYTHON SOURCE LINES 85-89
 
 Stationary Check
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
+The Augmented Dickey-Fuller test reports whether the (raw) signal already
+looks stationary.
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 47-56
+.. GENERATED FROM PYTHON SOURCE LINES 89-91
 
 .. code-block:: Python
 
-
-    # Check if a single column is stationary
-    data_stream_gx.is_stationary("HeatFlux_st")
-
-    # Check stationarity for several variables. With the single-variable API,
-    # each column is loaded into its own DataStream.
-    for _var in ["HeatFlux_st", "Wg_st", "Phi2_t"]:
-        print(_var, qnds.from_csv(csv2_file_path, _var).is_stationary(_var))
+    print("is_stationary (raw):", ds.is_stationary(COL))
 
 
 
@@ -205,41 +228,65 @@ Stationary Check
 
  .. code-block:: none
 
-    HeatFlux_st {'HeatFlux_st': True}
-    Wg_st {'Wg_st': True}
-    Phi2_t {'Phi2_t': False}
+    is_stationary (raw): {'HeatFlux_st': True}
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 57-60
+.. GENERATED FROM PYTHON SOURCE LINES 92-97
 
-Trimming data based to obtain steady-state portion
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Trimming data to obtain the steady-state portion
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+QUENDS offers **two equivalent ways** to trim. First, the explicit
+strategy/operation pattern from :mod:`quends.base.trim` -- useful when you
+want to build a strategy once and reuse it:
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 62-64
-
-Trim the data based on standard deviation method (Quantile strategy)
-Use the strategy-operation pattern from quends.base.trim directly.
-
-.. GENERATED FROM PYTHON SOURCE LINES 64-74
+.. GENERATED FROM PYTHON SOURCE LINES 97-103
 
 .. code-block:: Python
 
+    strat = build_trim_strategy(
+        method="threshold", window_size=50, start_time=100, threshold=0.1
+    )
+    trimmed = TrimDataStreamOperation(strategy=strat)(ds, column_name=COL)
+    print("strategy/operation -> sss_start:", trimmed.trim_metadata.get("sss_start"))
 
-    from quends.base.trim import QuantileTrimStrategy, TrimDataStreamOperation
 
-    strategy = QuantileTrimStrategy(window_size=50, robust=True)
-    op = TrimDataStreamOperation(strategy=strategy)
-    trimmed = op(data_stream_gx, column_name="HeatFlux_st")
 
-    # Print first 5 rows of dataframe
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    strategy/operation -> sss_start: 240.88999613866895
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 104-106
+
+Second, the convenience wrapper ``DataStream.trim`` -- the same canonical path
+in one call. Both produce the identical steady-state start:
+
+.. GENERATED FROM PYTHON SOURCE LINES 106-111
+
+.. code-block:: Python
+
+    trimmed = ds.trim(method="threshold", threshold=0.1, window_size=50, start_time=100)
+    ss_start = trimmed.trim_metadata.get("sss_start")
+    print("ds.trim            -> sss_start:", ss_start)
     trimmed.head()
 
 
 
 
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    ds.trim            -> sss_start: 240.88999613866895
 
 
 .. raw:: html
@@ -270,28 +317,28 @@ Use the strategy-operation pattern from quends.base.trim directly.
       <tbody>
         <tr>
           <th>0</th>
-          <td>60.237553</td>
-          <td>26.427590</td>
+          <td>240.889996</td>
+          <td>7.962383</td>
         </tr>
         <tr>
           <th>1</th>
-          <td>62.244803</td>
-          <td>10.724146</td>
+          <td>242.897246</td>
+          <td>7.946047</td>
         </tr>
         <tr>
           <th>2</th>
-          <td>64.252052</td>
-          <td>7.917920</td>
+          <td>244.904495</td>
+          <td>7.989000</td>
         </tr>
         <tr>
           <th>3</th>
-          <td>66.259301</td>
-          <td>7.051886</td>
+          <td>246.911744</td>
+          <td>8.078041</td>
         </tr>
         <tr>
           <th>4</th>
-          <td>68.266551</td>
-          <td>6.507493</td>
+          <td>248.918994</td>
+          <td>8.056113</td>
         </tr>
       </tbody>
     </table>
@@ -300,155 +347,186 @@ Use the strategy-operation pattern from quends.base.trim directly.
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 75-76
+.. GENERATED FROM PYTHON SOURCE LINES 112-120
 
-Trim the data based on rolling variance method
+Plot of the trace with the detected steady-state start
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Plot using **the exact steady-state start that the trim found**
+(``trimmed.trim_metadata["sss_start"]``) via ``steady_state_plot`` -- so the
+annotation matches the trim instead of re-detecting with other parameters.
+The post-steady-state mean is drawn over the steady region. (For a
+``std`` / ``QuantileTrimStrategy`` trim you can pass ``show_std_bands=True`` to
+add the ±1/2/3 std bands; threshold-based trims are shown without them.)
 
-.. GENERATED FROM PYTHON SOURCE LINES 76-85
+.. GENERATED FROM PYTHON SOURCE LINES 120-122
 
 .. code-block:: Python
 
-    from quends.base.trim import RollingVarianceThresholdTrimStrategy, TrimDataStreamOperation
-
-    strategy = RollingVarianceThresholdTrimStrategy(window_size=50, threshold=0.10)
-    op = TrimDataStreamOperation(strategy=strategy)
-    trimmed = op(data_stream_gx, column_name="HeatFlux_st")
-
-    # Gather results
-    trimmed.head()
+    plot = plotter.steady_state_plot(ds, [COL], steady_state_start=ss_start, show=True)
 
 
 
 
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_002.png
+   :alt: Steady-State (Manual) — Datastream, HeatFlux_st
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_002.png
+   :class: sphx-glr-single-img
 
 
-.. raw:: html
 
-    <div class="output_subarea output_html rendered_html output_result">
-    <div>
-    <style scoped>
-        .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
-        }
 
-        .dataframe tbody tr th {
-            vertical-align: top;
-        }
 
-        .dataframe thead th {
-            text-align: right;
-        }
-    </style>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-          <th>time</th>
-          <th>HeatFlux_st</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    </div>
-    </div>
-    <br />
-    <br />
+.. GENERATED FROM PYTHON SOURCE LINES 123-125
 
-.. GENERATED FROM PYTHON SOURCE LINES 86-87
+Equivalently, ``steady_state_automatic_plot`` re-detects the start, but it must
+be given **the same trim parameters** to match:
 
-Trim the data based on noise threshold method
-
-.. GENERATED FROM PYTHON SOURCE LINES 87-96
+.. GENERATED FROM PYTHON SOURCE LINES 125-135
 
 .. code-block:: Python
 
-    from quends.base.trim import NoiseThresholdTrimStrategy, TrimDataStreamOperation
-
-    strategy = NoiseThresholdTrimStrategy(window_size=50, threshold=0.1)
-    op = TrimDataStreamOperation(strategy=strategy)
-    trimmed = op(data_stream_gx, column_name="HeatFlux_st")
-
-    # View trimmed data
-    trimmed.head()
-
-
-
+    plot = plotter.steady_state_automatic_plot(
+        ds,
+        [COL],
+        method="threshold",
+        threshold=0.1,
+        batch_size=50,
+        start_time=100,
+        show=True,
+    )
 
 
 
-.. raw:: html
 
-    <div class="output_subarea output_html rendered_html output_result">
-    <div>
-    <style scoped>
-        .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
-        }
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_003.png
+   :alt: Steady-State Detection — Datastream, HeatFlux_st
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_003.png
+   :class: sphx-glr-single-img
 
-        .dataframe tbody tr th {
-            vertical-align: top;
-        }
 
-        .dataframe thead th {
-            text-align: right;
-        }
-    </style>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-          <th>time</th>
-          <th>HeatFlux_st</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>0</th>
-          <td>158.592772</td>
-          <td>8.508736</td>
-        </tr>
-        <tr>
-          <th>1</th>
-          <td>160.600022</td>
-          <td>8.699987</td>
-        </tr>
-        <tr>
-          <th>2</th>
-          <td>162.607271</td>
-          <td>8.852156</td>
-        </tr>
-        <tr>
-          <th>3</th>
-          <td>164.614520</td>
-          <td>8.883341</td>
-        </tr>
-        <tr>
-          <th>4</th>
-          <td>166.621770</td>
-          <td>8.713289</td>
-        </tr>
-      </tbody>
-    </table>
-    </div>
-    </div>
-    <br />
-    <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 97-102
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 136-140
 
 Effective Sample Size
+^^^^^^^^^^^^^^^^^^^^^
+Autocorrelation means the trimmed series holds fewer *independent* samples
+than rows; ESS quantifies that.
+
+.. GENERATED FROM PYTHON SOURCE LINES 140-142
+
+.. code-block:: Python
+
+    print("ESS (trimmed):", trimmed.effective_sample_size())
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    ESS (trimmed): {'results': {'HeatFlux_st': 6}}
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 143-147
+
+Statistical Analysis
+^^^^^^^^^^^^^^^^^^^^
+``compute_statistics`` returns the mean, an autocorrelation-corrected
+uncertainty, a confidence interval, and the block/window diagnostics.
+
+.. GENERATED FROM PYTHON SOURCE LINES 147-151
+
+.. code-block:: Python
+
+    stats = trimmed.compute_statistics(method="non-overlapping")
+    print(stats)
+    qnds.Exporter().display_dataframe(stats)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    StatsResult({'HeatFlux_st': {'mean': 7.72589417051282, 'mean_uncertainty': 0.08566767204022449, 'variance': 0.09540635042628899, 'confidence_interval': (7.55798553331398, 7.89380280771166), 'pm_std': (7.640226498472596, 7.811561842553044), 'effective_sample_size': 6, 'window_size': 6, 'n_short_averages': 13, 'ess_blocks': 4.701371580734518, 'se_effective_n': 13.0, 'se_method': 'iid_blocks', 'independence_status': 'independent', 'independent': True, 'ljungbox_lags': [5, 10], 'ljungbox_pvalues': [0.058791089981722944, 0.11743440293822421], 'ljungbox_pvalue': 0.058791089981722944, 'ci_method': 'normal', 'confidence_level': 0.95}}, metadata={'estimator': 'single', 'columns': ['HeatFlux_st'], 'total_samples': 81, 'schema_version': '1.0'})
+                                                           HeatFlux_st
+    mean                                                      7.725894
+    mean_uncertainty                                          0.085668
+    variance                                                  0.095406
+    confidence_interval           (7.55798553331398, 7.89380280771166)
+    pm_std                      (7.640226498472596, 7.811561842553044)
+    effective_sample_size                                            6
+    window_size                                                      6
+    n_short_averages                                                13
+    ess_blocks                                                4.701372
+    se_effective_n                                                13.0
+    se_method                                               iid_blocks
+    independence_status                                    independent
+    independent                                                   True
+    ljungbox_lags                                              [5, 10]
+    ljungbox_pvalues       [0.058791089981722944, 0.11743440293822421]
+    ljungbox_pvalue                                           0.058791
+    ci_method                                                   normal
+    confidence_level                                              0.95
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 152-157
+
+Save the trimmed stream
+^^^^^^^^^^^^^^^^^^^^^^^
+The postprocessing layer can serialise a ``DataStream`` (data + operation
+history) to JSON with :class:`~quends.postprocessing.writer.JsonWriter`, and
+read it back with :class:`~quends.postprocessing.loader.JsonLoader`.
+
+.. GENERATED FROM PYTHON SOURCE LINES 157-160
+
+.. code-block:: Python
+
+    trimmed_path = os.path.join(tempfile.mkdtemp(), "trimmed_gx.json")
+    JsonWriter(trimmed_path).save(trimmed)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    [JsonWriter] saved -> /var/folders/0j/9ysw61853qq7spt3fsvqjhnh004dcw/T/tmpbs3f3nit/trimmed_gx.json
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 161-163
+
+Other input scenarios
+----------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 165-170
+
+Already-trimmed data
 ~~~~~~~~~~~~~~~~~~~~~
+Load the trimmed stream we just saved and re-run the pipeline on it. Because
+the data is already in steady state, re-trimming doubles as a check on how the
+different steady-state criteria behave.
 
-Compute Effective Sample Size for specific columns in GX. With the
-single-variable API, each column is loaded into its own DataStream.
-
-.. GENERATED FROM PYTHON SOURCE LINES 102-105
+.. GENERATED FROM PYTHON SOURCE LINES 170-173
 
 .. code-block:: Python
 
-    for _var in ["HeatFlux_st", "Wg_st"]:
-        print(_var, qnds.from_csv(csv2_file_path, _var).effective_sample_size())
+    reloaded = JsonLoader(trimmed_path).load()
+    print("reloaded rows:", len(reloaded), "| variables:", list(reloaded.data.columns))
 
 
 
@@ -458,22 +536,20 @@ single-variable API, each column is loaded into its own DataStream.
 
  .. code-block:: none
 
-    HeatFlux_st {'results': {'HeatFlux_st': 23}}
-    Wg_st {'results': {'Wg_st': 10}}
+    reloaded rows: 81 | variables: ['time', 'HeatFlux_st']
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 106-107
+.. GENERATED FROM PYTHON SOURCE LINES 174-175
 
-Compute Effective sample size for trimmed data
+It tests as stationary -- there is no transient left to remove.
 
-.. GENERATED FROM PYTHON SOURCE LINES 107-110
+.. GENERATED FROM PYTHON SOURCE LINES 175-177
 
 .. code-block:: Python
 
-    ess_df = trimmed.effective_sample_size()
-    print(ess_df)
+    print("reloaded is_stationary:", reloaded.is_stationary(COL))
 
 
 
@@ -483,154 +559,236 @@ Compute Effective sample size for trimmed data
 
  .. code-block:: none
 
-    {'results': {'HeatFlux_st': 5}}
+    reloaded is_stationary: {'HeatFlux_st': False}
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 111-115
+.. GENERATED FROM PYTHON SOURCE LINES 178-186
+
+Idempotent re-trim (std / Quantile)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The ``std`` / ``QuantileTrimStrategy`` criterion is **idempotent** here:
+re-trimming returns the *exact* same data, so it recognises the whole reloaded
+series as steady state. We annotate it with ``steady_state_automatic_plot``
+using the **same std parameters** as the re-trim -- the detected start sits at
+the very beginning, and because the method is ``std`` the ±1/2/3 std bands are
+drawn over the steady region.
+
+.. GENERATED FROM PYTHON SOURCE LINES 186-195
+
+.. code-block:: Python
+
+    re_std = reloaded.trim(method="std", window_size=50)
+    identical = re_std.data.reset_index(drop=True).equals(
+        reloaded.data.reset_index(drop=True)
+    )
+    print("std re-trim rows:", len(re_std), "| identical to reloaded:", identical)
+    plot = plotter.steady_state_automatic_plot(
+        reloaded, [COL], method="std", batch_size=50, show=True
+    )
+
+
+
+
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_004.png
+   :alt: Steady-State Detection — Datastream, HeatFlux_st
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_004.png
+   :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    std re-trim rows: 0 | identical to reloaded: False
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 196-202
+
+Non-idempotent re-trim (threshold)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The ``threshold`` criterion is **not** idempotent: re-scanning the
+already-steady series (now with ``start_time=0``) still shaves off some
+leading points, and how many depends on ``window_size`` and ``threshold`` -- a
+larger window or smaller threshold is stricter and removes more.
+
+.. GENERATED FROM PYTHON SOURCE LINES 202-219
+
+.. code-block:: Python
+
+    for w, th in [(20, 0.1), (50, 0.1), (100, 0.1), (50, 0.2)]:
+        rt = reloaded.trim(method="threshold", window_size=w, threshold=th, start_time=0)
+        start = rt.trim_metadata.get("sss_start")
+        start_text = f"{start:.1f}" if start is not None else "None"
+        print(
+            f"threshold w={w:3d} th={th}: rows={len(rt):4d} start={start_text}"
+        )
+    plot = plotter.steady_state_automatic_plot(
+        reloaded,
+        [COL],
+        method="threshold",
+        batch_size=50,
+        threshold=0.1,
+        start_time=0,
+        show=True,
+    )
+
+
+
+
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_005.png
+   :alt: Steady-State Detection — Datastream, HeatFlux_st
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_005.png
+   :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    threshold w= 20 th=0.1: rows=   0 start=None
+    threshold w= 50 th=0.1: rows=   0 start=None
+    threshold w=100 th=0.1: rows=   0 start=None
+    threshold w= 50 th=0.2: rows=   0 start=None
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 220-225
+
+Sensitive re-trim (rolling variance)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The ``rolling_variance`` criterion is even more sensitive: a small threshold
+rejects the *entire* series (0 rows), so it needs a larger threshold on this
+already-steady data.
+
+.. GENERATED FROM PYTHON SOURCE LINES 225-240
+
+.. code-block:: Python
+
+    for w, th in [(50, 0.1), (50, 0.5), (50, 1.0)]:
+        rt = reloaded.trim(
+            method="rolling_variance", window_size=w, threshold=th, start_time=0
+        )
+        print(f"rolling_variance w={w} th={th}: rows={len(rt):4d}")
+    plot = plotter.steady_state_automatic_plot(
+        reloaded,
+        [COL],
+        method="rolling_variance",
+        batch_size=50,
+        threshold=1.0,
+        start_time=0,
+        show=True,
+    )
+
+
+
+
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_006.png
+   :alt: Steady-State Detection — Datastream, HeatFlux_st
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_006.png
+   :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    rolling_variance w=50 th=0.1: rows=   0
+    rolling_variance w=50 th=0.5: rows=   0
+    rolling_variance w=50 th=1.0: rows=   0
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 241-242
+
+The statistics of the reloaded stream reproduce the original trim.
+
+.. GENERATED FROM PYTHON SOURCE LINES 242-245
+
+.. code-block:: Python
+
+    print("reloaded ESS  :", reloaded.effective_sample_size())
+    print("reloaded stats:", reloaded.compute_statistics(method="non-overlapping"))
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    reloaded ESS  : {'results': {'HeatFlux_st': 6}}
+    reloaded stats: StatsResult({'HeatFlux_st': {'mean': 7.72589417051282, 'mean_uncertainty': 0.08566767204022449, 'variance': 0.09540635042628899, 'confidence_interval': (7.55798553331398, 7.89380280771166), 'pm_std': (7.640226498472596, 7.811561842553044), 'effective_sample_size': 6, 'window_size': 6, 'n_short_averages': 13, 'ess_blocks': 4.701371580734518, 'se_effective_n': 13.0, 'se_method': 'iid_blocks', 'independence_status': 'independent', 'independent': True, 'ljungbox_lags': [5, 10], 'ljungbox_pvalues': [0.058791089981722944, 0.11743440293822421], 'ljungbox_pvalue': 0.058791089981722944, 'ci_method': 'normal', 'confidence_level': 0.95}}, metadata={'estimator': 'single', 'columns': ['HeatFlux_st'], 'total_samples': 81, 'schema_version': '1.0'})
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 246-254
+
+Non-stationary / failed steady-state detection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Not every channel reaches steady state. Several GX observables in
+``tprim_2_4`` are non-stationary -- here ``Phi2_t`` (the electrostatic
+potential energy), which keeps drifting. (``Wg_st`` was suggested but tests as
+stationary in this run, so we use a genuinely non-stationary column.) The
+Augmented Dickey-Fuller test flags it, and a plain trim cannot find a clean
+steady state. For signals like this, use the *RobustWorkflow* guide.
+
+.. GENERATED FROM PYTHON SOURCE LINES 254-260
+
+.. code-block:: Python
+
+    ds_ns = qnds.from_csv(DATA_DIR / "gx" / "tprim_2_4.out.csv", "Phi2_t")
+    print("Phi2_t is_stationary:", ds_ns.is_stationary("Phi2_t"))
+    plot = plotter.trace_plot(ds_ns, ["Phi2_t"], show=True)
+    ns_trim = ds_ns.trim(method="threshold", threshold=0.1, window_size=50, start_time=100)
+    print("Phi2_t trim_metadata:", ns_trim.trim_metadata)
+
+
+
+
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_007.png
+   :alt: Time Series — Datastream, Phi2_t
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_007.png
+   :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Phi2_t is_stationary: {'Phi2_t': False}
+    Phi2_t trim_metadata: {'message': "Column 'Phi2_t' is not stationary. Steady-state trimming requires stationary data."}
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 261-264
 
 UQ Analysis
 -----------
+Convenience accessors return just the piece you need from the trimmed data.
 
-Compute Statistics on trimmed dataframe
-
-.. GENERATED FROM PYTHON SOURCE LINES 115-121
-
-.. code-block:: Python
-
-
-    stats = trimmed.compute_statistics(method="sliding")
-    print(stats)
-
-    stats_df = stats["HeatFlux_st"]
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    StatsResult({'HeatFlux_st': {'mean': 8.048877922222223, 'mean_uncertainty': 0.20194506821435293, 'variance': 0.2446908634565979, 'confidence_interval': (7.653065588522091, 8.444690255922355), 'pm_std': (7.84693285400787, 8.250822990436577), 'effective_sample_size': 5, 'window_size': 18, 'n_short_averages': 6, 'ess_blocks': 6.0, 'se_effective_n': 6.0, 'se_method': 'iid_blocks', 'independence_status': 'independent', 'independent': True, 'ljungbox_lags': [5], 'ljungbox_pvalues': [0.08846737984880443], 'ljungbox_pvalue': 0.08846737984880443, 'ci_method': 'normal', 'confidence_level': 0.95}}, metadata={'estimator': 'single', 'columns': ['HeatFlux_st'], 'total_samples': 122, 'schema_version': '1.0'})
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 122-124
-
-Exporter
-Below Displays the information as a DataFrame
-
-.. GENERATED FROM PYTHON SOURCE LINES 124-127
-
-.. code-block:: Python
-
-    exporter = qnds.Exporter()
-    exporter.display_dataframe(stats)
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-                                                      HeatFlux_st
-    mean                                                 8.048878
-    mean_uncertainty                                     0.201945
-    variance                                             0.244691
-    confidence_interval    (7.653065588522091, 8.444690255922355)
-    pm_std                  (7.84693285400787, 8.250822990436577)
-    effective_sample_size                                       5
-    window_size                                                18
-    n_short_averages                                            6
-    ess_blocks                                                6.0
-    se_effective_n                                            6.0
-    se_method                                          iid_blocks
-    independence_status                               independent
-    independent                                              True
-    ljungbox_lags                                             [5]
-    ljungbox_pvalues                        [0.08846737984880443]
-    ljungbox_pvalue                                      0.088467
-    ci_method                                              normal
-    confidence_level                                         0.95
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 128-129
-
-Below Displays the information in JSON
-
-.. GENERATED FROM PYTHON SOURCE LINES 129-132
-
-.. code-block:: Python
-
-
-    exporter.display_json(stats)
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    {
-      "HeatFlux_st": {
-        "mean": 8.048877922222223,
-        "mean_uncertainty": 0.20194506821435293,
-        "variance": 0.2446908634565979,
-        "confidence_interval": [
-          7.653065588522091,
-          8.444690255922355
-        ],
-        "pm_std": [
-          7.84693285400787,
-          8.250822990436577
-        ],
-        "effective_sample_size": 5,
-        "window_size": 18,
-        "n_short_averages": 6,
-        "ess_blocks": 6.0,
-        "se_effective_n": 6.0,
-        "se_method": "iid_blocks",
-        "independence_status": "independent",
-        "independent": true,
-        "ljungbox_lags": [
-          5
-        ],
-        "ljungbox_pvalues": [
-          0.08846737984880443
-        ],
-        "ljungbox_pvalue": 0.08846737984880443,
-        "ci_method": "normal",
-        "confidence_level": 0.95
-      }
-    }
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 133-135
+.. GENERATED FROM PYTHON SOURCE LINES 266-268
 
 Other statistical methods
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 137-138
-
-Calculate the mean with a window size of 10
-
-.. GENERATED FROM PYTHON SOURCE LINES 138-141
+.. GENERATED FROM PYTHON SOURCE LINES 268-274
 
 .. code-block:: Python
 
-    mean_df = trimmed.mean(window_size=10)
-    print(mean_df)
+    stats = trimmed.compute_statistics(column_name=COL, method="sliding")
+    col_stats = stats[COL]
+    print("mean:", col_stats["mean"])
+    print("mean uncertainty:", col_stats["mean_uncertainty"])
+    print("confidence interval:", col_stats["confidence_interval"])
 
 
 
@@ -640,143 +798,24 @@ Calculate the mean with a window size of 10
 
  .. code-block:: none
 
-    {'HeatFlux_st': {'mean': 7.989677796666666, 'window_size': 10}}
+    mean: 7.72589417051282
+    mean uncertainty: 0.08566767204022449
+    confidence interval: (7.55798553331398, 7.89380280771166)
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 142-143
+.. GENERATED FROM PYTHON SOURCE LINES 275-277
 
-Calculate the mean with the method of sliding
+Cumulative statistics track how the estimate stabilises as more samples are
+included.
 
-.. GENERATED FROM PYTHON SOURCE LINES 143-146
-
-.. code-block:: Python
-
-    mean_df = trimmed.mean(method="sliding")
-    print(mean_df)
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    {'HeatFlux_st': {'mean': 8.048877922222223, 'window_size': 18}}
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 147-148
-
-Calculate the mean uncertainty
-
-.. GENERATED FROM PYTHON SOURCE LINES 148-151
-
-.. code-block:: Python
-
-    uq_df = trimmed.mean_uncertainty()
-    print(uq_df)
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    {'HeatFlux_st': {'mean_uncertainty': 0.20194506821435293, 'window_size': 18}}
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 152-153
-
-Calculate the mean uncertainty with the method of sliding
-
-.. GENERATED FROM PYTHON SOURCE LINES 153-156
-
-.. code-block:: Python
-
-    uq_df = trimmed.mean_uncertainty(method="sliding")
-    uq_df
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-
-    {'HeatFlux_st': {'mean_uncertainty': 0.20194506821435293, 'window_size': 18}}
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 157-158
-
-Calculate the confidence intervale with the trimmed dataframe
-
-.. GENERATED FROM PYTHON SOURCE LINES 158-162
-
-.. code-block:: Python
-
-    ci_df = trimmed.confidence_interval()
-    print(ci_df)
-
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    {'HeatFlux_st': {'confidence_interval': (7.653065588522091, 8.444690255922355), 'window_size': 18}}
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 163-164
-
-Cumlative Statistics
-
-.. GENERATED FROM PYTHON SOURCE LINES 164-169
+.. GENERATED FROM PYTHON SOURCE LINES 277-280
 
 .. code-block:: Python
 
     cumulative = trimmed.cumulative_statistics()
-    print(cumulative)
-
-    cumulative_df = cumulative["HeatFlux_st"]
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    {'HeatFlux_st': {'cumulative_mean': [8.830798111111111, 8.536632072222222, 8.387344327777777, 8.308147695833334, 8.126222617777778, 8.048877922222223], 'cumulative_uncertainty': [nan, 0.41601360178623836, 0.39165565278635833, 0.35686298904721675, 0.5108787183289056, 0.4946623731967065], 'standard_error': [nan, 0.29416603888888915, 0.2261224965658426, 0.17843149452360837, 0.22847190848828014, 0.20194506821435285], 'window_size': 18}}
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 170-171
-
-Display Cumulative Statistics as a DataFrame
-
-.. GENERATED FROM PYTHON SOURCE LINES 171-173
-
-.. code-block:: Python
-
-    exporter.display_dataframe(cumulative)
+    qnds.Exporter().display_dataframe(cumulative)
 
 
 
@@ -787,35 +826,63 @@ Display Cumulative Statistics as a DataFrame
  .. code-block:: none
 
                                                                   HeatFlux_st
-    cumulative_mean         [8.830798111111111, 8.536632072222222, 8.38734...
-    cumulative_uncertainty  [nan, 0.41601360178623836, 0.39165565278635833...
-    standard_error          [nan, 0.29416603888888915, 0.2261224965658426,...
-    window_size                                                            18
+    cumulative_mean         [8.0019601, 8.025555966666667, 8.0576797277777...
+    cumulative_uncertainty  [nan, 0.03336959465594852, 0.06043652047828679...
+    standard_error          [nan, 0.023595866666667575, 0.0348930413670232...
+    window_size                                                             6
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 174-177
+.. GENERATED FROM PYTHON SOURCE LINES 281-282
+
+``additional_data`` exposes the underlying block diagnostics.
+
+.. GENERATED FROM PYTHON SOURCE LINES 282-284
+
+.. code-block:: Python
+
+    print(trimmed.additional_data(method="sliding"))
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    {'HeatFlux_st': {'A_est': 0.0035859110315368584, 'p_est': 0.5983663767312609, 'n_current': 76, 'current_sem': 0.0002686481756902726, 'target_sem': 0.00024178335812124536, 'n_target': 90.63256761789893, 'additional_samples': 15, 'window_size': 6}}
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 285-290
 
 CGYRO Data Analysis
-~~~~~~~~~~~~~~~~~~~
+-------------------
+The same workflow applies to CGYRO output; here the observable is
+``Q_D/Q_GBD`` and the trim parameters follow the CGYRO notebook
+(``method="threshold"``, ``window_size=100``, ``threshold=0.1``).
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 179-180
-
-Specify the file paths
-
-.. GENERATED FROM PYTHON SOURCE LINES 180-184
+.. GENERATED FROM PYTHON SOURCE LINES 290-295
 
 .. code-block:: Python
 
-    csv_file_path = "cgyro/output_nu0_50.csv"
-    data_stream_cg = qnds.from_csv(csv_file_path, "Q_D/Q_GBD")
-    data_stream_cg.head()
+    CG = "Q_D/Q_GBD"
+    cg = qnds.from_csv(DATA_DIR / "cgyro" / "output_nu0_50.csv", CG)
+    print("cgyro rows:", len(cg))
+    cg.head()
 
 
 
 
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    cgyro rows: 1748
 
 
 .. raw:: html
@@ -876,16 +943,78 @@ Specify the file paths
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 185-186
+.. GENERATED FROM PYTHON SOURCE LINES 296-297
 
-Get the number of rows
+Raw trace and stationarity check.
 
-.. GENERATED FROM PYTHON SOURCE LINES 186-188
+.. GENERATED FROM PYTHON SOURCE LINES 297-300
 
 .. code-block:: Python
 
-    len(data_stream_cg)
+    plot = plotter.trace_plot(cg, [CG], show=True)
+    print("cgyro is_stationary (raw):", cg.is_stationary(CG))
 
+
+
+
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_008.png
+   :alt: Time Series — Datastream, Q_D/Q_GBD
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_008.png
+   :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    cgyro is_stationary (raw): {'Q_D/Q_GBD': True}
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 301-302
+
+Trim to the steady-state portion and plot it at the detected start.
+
+.. GENERATED FROM PYTHON SOURCE LINES 302-307
+
+.. code-block:: Python
+
+    cg_trimmed = cg.trim(method="threshold", window_size=100, start_time=0.0, threshold=0.1)
+    cg_ss = cg_trimmed.trim_metadata.get("sss_start")
+    print("cgyro sss_start:", cg_ss)
+    plot = plotter.steady_state_plot(cg, [CG], steady_state_start=cg_ss, show=True)
+
+
+
+
+.. image-sg:: /auto_tutorials/images/sphx_glr_datastream_guide_009.png
+   :alt: Steady-State (Manual) — Datastream, Q_D/Q_GBD
+   :srcset: /auto_tutorials/images/sphx_glr_datastream_guide_009.png
+   :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    cgyro sss_start: 85.5
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 308-309
+
+Effective sample size and statistics for the CGYRO run.
+
+.. GENERATED FROM PYTHON SOURCE LINES 309-313
+
+.. code-block:: Python
+
+    print("cgyro ESS:", cg_trimmed.effective_sample_size())
+    cg_stats = cg_trimmed.compute_statistics(method="non-overlapping")
+    print(cg_stats)
+    qnds.Exporter().display_dataframe(cg_stats)
 
 
 
@@ -894,221 +1023,27 @@ Get the number of rows
 
  .. code-block:: none
 
-
-    1748
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 189-190
-
-Trim the CGYRO data using the Quantile (std) strategy
-
-.. GENERATED FROM PYTHON SOURCE LINES 190-198
-
-.. code-block:: Python
-
-    from quends.base.trim import QuantileTrimStrategy, TrimDataStreamOperation
-    strategy = QuantileTrimStrategy(robust=True)
-    op = TrimDataStreamOperation(strategy=strategy)
-    trimmed_ = op(data_stream_cg, column_name="Q_D/Q_GBD")
-    # View trimmed data
-    print(trimmed_)
-
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    <quends.base.data_stream.DataStream object at 0x12c477ca0>
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 199-201
-
-.. code-block:: Python
-
-    trimmed_.head()
-
-
-
-
-
-
-.. raw:: html
-
-    <div class="output_subarea output_html rendered_html output_result">
-    <div>
-    <style scoped>
-        .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
-        }
-
-        .dataframe tbody tr th {
-            vertical-align: top;
-        }
-
-        .dataframe thead th {
-            text-align: right;
-        }
-    </style>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-          <th>time</th>
-          <th>Q_D/Q_GBD</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>0</th>
-          <td>0.5</td>
-          <td>0.003355</td>
-        </tr>
-        <tr>
-          <th>1</th>
-          <td>1.0</td>
-          <td>0.003314</td>
-        </tr>
-        <tr>
-          <th>2</th>
-          <td>1.5</td>
-          <td>0.003160</td>
-        </tr>
-        <tr>
-          <th>3</th>
-          <td>2.0</td>
-          <td>0.002480</td>
-        </tr>
-        <tr>
-          <th>4</th>
-          <td>2.5</td>
-          <td>0.002004</td>
-        </tr>
-      </tbody>
-    </table>
-    </div>
-    </div>
-    <br />
-    <br />
-
-.. GENERATED FROM PYTHON SOURCE LINES 202-203
-
-To check if data stream is stationary
-
-.. GENERATED FROM PYTHON SOURCE LINES 203-205
-
-.. code-block:: Python
-
-    data_stream_cg.is_stationary("Q_D/Q_GBD")
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-
-    {'Q_D/Q_GBD': True}
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 206-207
-
-To Plot for DataStream
-
-.. GENERATED FROM PYTHON SOURCE LINES 207-210
-
-.. code-block:: Python
-
-    plotter = qnds.Plotter()
-    plot = plotter.trace_plot(data_stream_cg, ["Q_D/Q_GBD"])
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 211-215
-
-.. code-block:: Python
-
-    plot = plotter.steady_state_automatic_plot(
-        data_stream_cg, variables_to_plot=["Q_D/Q_GBD"]
-    )
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 216-218
-
-.. code-block:: Python
-
-    plot = plotter.steady_state_plot(data_stream_cg, variables_to_plot=["Q_D/Q_GBD"])
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 219-220
-
-To show additional data use:
-
-.. GENERATED FROM PYTHON SOURCE LINES 220-223
-
-.. code-block:: Python
-
-    addition_info = trimmed.additional_data(method="sliding")
-    print(addition_info)
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    {'HeatFlux_st': {'A_est': 0.024194494008948783, 'p_est': 0.14227299799791995, 'n_current': 105, 'current_sem': 0.012478313223139024, 'target_sem': 0.011230481900825122, 'n_target': 220.1946848547204, 'additional_samples': 116, 'window_size': 18}}
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 224-225
-
-To add a reduction factor
-
-.. GENERATED FROM PYTHON SOURCE LINES 225-227
-
-.. code-block:: Python
-
-    addition_info = trimmed.additional_data(reduction_factor=0.2)
-    print(addition_info)
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    {'HeatFlux_st': {'A_est': 0.024194494008948783, 'p_est': 0.14227299799791995, 'n_current': 105, 'current_sem': 0.012478313223139024, 'target_sem': 0.00998265057851122, 'n_target': 503.900331282976, 'additional_samples': 399, 'window_size': 18}}
+    cgyro ESS: {'results': {'Q_D/Q_GBD': 55}}
+    StatsResult({'Q_D/Q_GBD': {'mean': 26.116732499321174, 'mean_uncertainty': 0.8166885382015654, 'variance': 18.008464547604863, 'confidence_interval': (24.516022964446105, 27.717442034196242), 'pm_std': (25.30004396111961, 26.933421037522738), 'effective_sample_size': 55, 'window_size': 58, 'n_short_averages': 27, 'ess_blocks': 27.0, 'se_effective_n': 27.0, 'se_method': 'iid_blocks', 'independence_status': 'independent', 'independent': True, 'ljungbox_lags': [5, 10], 'ljungbox_pvalues': [0.7626440459670634, 0.362596925854231], 'ljungbox_pvalue': 0.362596925854231, 'ci_method': 'normal', 'confidence_level': 0.95}}, metadata={'estimator': 'single', 'columns': ['Q_D/Q_GBD'], 'total_samples': 1578, 'schema_version': '1.0'})
+                                                          Q_D/Q_GBD
+    mean                                                  26.116732
+    mean_uncertainty                                       0.816689
+    variance                                              18.008465
+    confidence_interval    (24.516022964446105, 27.717442034196242)
+    pm_std                  (25.30004396111961, 26.933421037522738)
+    effective_sample_size                                        55
+    window_size                                                  58
+    n_short_averages                                             27
+    ess_blocks                                                 27.0
+    se_effective_n                                             27.0
+    se_method                                            iid_blocks
+    independence_status                                 independent
+    independent                                                True
+    ljungbox_lags                                           [5, 10]
+    ljungbox_pvalues        [0.7626440459670634, 0.362596925854231]
+    ljungbox_pvalue                                        0.362597
+    ci_method                                                normal
+    confidence_level                                           0.95
 
 
 
@@ -1116,7 +1051,7 @@ To add a reduction factor
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 2.512 seconds)
+   **Total running time of the script:** (0 minutes 3.594 seconds)
 
 
 .. _sphx_glr_download_auto_tutorials_datastream_guide.py:

@@ -11,7 +11,7 @@ import papermill as pm
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-NOTEBOOK_DIR = REPO_ROOT / "examples" / "notebooks"
+NOTEBOOK_DIR = REPO_ROOT / "examples" / "tutorial" / "notebooks"
 INPUT_NOTEBOOK = NOTEBOOK_DIR / "DataStream_Guide.ipynb"
 GUIDE_TEST_DIR = REPO_ROOT / "tests" / "guide"
 OUTPUT_DIR = GUIDE_TEST_DIR / "output"
