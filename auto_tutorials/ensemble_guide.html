@@ -1,0 +1,1158 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="">
+    
+    
+      
+        <title>Ensemble Analysis - QUENDS 0.1.1 documentation</title>
+      
+    
+    
+      
+        
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.98b57845f223ccb1d.min.css?v=cdd4f6f3" />
+        <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+        <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+        <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+        <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+        <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+        <link rel="stylesheet" type="text/css" href="../_static/sandia.css?v=744bfbfe" />
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="light-blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#data-loading" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="QUENDS 0.1.1 documentation" class="md-header__button md-logo" aria-label="QUENDS 0.1.1 documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            QUENDS-0.1.1
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Ensemble Analysis
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="cyan" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/sandialabs/quends/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    quends
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../index.html" class="md-tabs__link">
+      <span class="md-ellipsis">Home</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../readme.html" class="md-tabs__link">
+      <span class="md-ellipsis">Getting Started</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../user_guide/index.html" class="md-tabs__link">
+      <span class="md-ellipsis">User Guide</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  <li class="md-tabs__item">
+    <a href="index.html" class="md-tabs__link md-tabs__link--active">
+      <span class="md-ellipsis">Gallery of examples</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../autoapi/index.html" class="md-tabs__link">
+      <span class="md-ellipsis">API Reference</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../usage.html" class="md-tabs__link">
+      <span class="md-ellipsis">About</span>
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="QUENDS 0.1.1 documentation" class="md-nav__button md-logo" aria-label="QUENDS 0.1.1 documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+    </a>
+    QUENDS 0.1.1 documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/sandialabs/quends/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    quends
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          <span class="md-ellipsis">Home</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Home" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Home</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        <span class="md-ellipsis">Welcome to QUENDS</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          <span class="md-ellipsis">Getting Started</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Getting Started</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme.html" class="md-nav__link">
+        <span class="md-ellipsis">Overview</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation.html" class="md-nav__link">
+        <span class="md-ellipsis">Installation</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started.html" class="md-nav__link">
+        <span class="md-ellipsis">Getting started</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          <span class="md-ellipsis">User Guide</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="User Guide" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">User Guide</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user_guide/index.html" class="md-nav__link">
+        <span class="md-ellipsis">User guide</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          <span class="md-ellipsis">Gallery of examples</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Gallery of examples" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Gallery of examples</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" type="checkbox" id="__nav_4_1" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="index.html"><span class="md-ellipsis">Software Tutorial</span></a>
+          
+            <label for="__nav_4_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Software Tutorial" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Software Tutorial</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="datastream_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Data<wbr>Stream Class</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">Ensemble Analysis</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        <span class="md-ellipsis">Ensemble Analysis</span>
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#data-loading" class="md-nav__link">
+    <span class="md-ellipsis">Data Loading</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ensemble-average-approach" class="md-nav__link">
+    <span class="md-ellipsis">Ensemble Average Approach</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#serialization-pooled-block-means-approach" class="md-nav__link">
+    <span class="md-ellipsis">Serialization <wbr>(Pooled Block Means) Approach</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inverse-variance-weighted-ivw-approach" class="md-nav__link">
+    <span class="md-ellipsis">Inverse-<wbr>Variance-<wbr>Weighted <wbr>(IVW) Approach</span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="robustworkflow_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Robust<wbr>Workflow</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="robustworkflow_advanced_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Robust<wbr>Workflow:<wbr> Difficult Cases &amp; Batch Processing</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          <span class="md-ellipsis">API Reference</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">API Reference</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../autoapi/index.html" class="md-nav__link">
+        <span class="md-ellipsis">API Reference</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          <span class="md-ellipsis">About</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">About</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage.html" class="md-nav__link">
+        <span class="md-ellipsis">Usage</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing.html" class="md-nav__link">
+        <span class="md-ellipsis">Contributing</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authors.html" class="md-nav__link">
+        <span class="md-ellipsis">Authors</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog.html" class="md-nav__link">
+        <span class="md-ellipsis">Changelog</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#data-loading" class="md-nav__link">
+    <span class="md-ellipsis">Data Loading</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ensemble-average-approach" class="md-nav__link">
+    <span class="md-ellipsis">Ensemble Average Approach</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#serialization-pooled-block-means-approach" class="md-nav__link">
+    <span class="md-ellipsis">Serialization <wbr>(Pooled Block Means) Approach</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inverse-variance-weighted-ivw-approach" class="md-nav__link">
+    <span class="md-ellipsis">Inverse-<wbr>Variance-<wbr>Weighted <wbr>(IVW) Approach</span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                  
+
+
+<div class="sphx-glr-download-link-note note admonition">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-tutorials-ensemble-guide-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<h1 id="ensemble-analysis"><span id="sphx-glr-auto-tutorials-ensemble-guide-py"></span>Ensemble Analysis<a class="headerlink" href="#ensemble-analysis" title="Link to this heading">¶</a></h1>
+<p>This tutorial analyses <strong>multiple simulation runs together</strong> with the
+<a class="reference internal" href="../autoapi/quends/index.html#quends.Ensemble" title="quends.Ensemble (Python class) — Manages an ensemble of DataStream instances for multi-stream analysis."><code class="xref py py-class docutils literal notranslate"><span class="pre">Ensemble</span></code></a> object, using the eight GX members in <code class="docutils literal notranslate"><span class="pre">data/gx</span></code>.</p>
+<p>Instead of one long trace, an ensemble combines several shorter runs. QUENDS
+provides three ways to turn an ensemble into a mean with an honest uncertainty:</p>
+<ul class="simple">
+<li><p><strong>Ensemble Average</strong> – average the members onto a common grid, then analyse
+that single averaged trace,</p></li>
+<li><p><strong>Serialization (pooled block means)</strong> – pool the per-member block means,</p></li>
+<li><p><strong>Inverse-Variance-Weighted (IVW)</strong> – weight each member’s mean by its
+inverse variance.</p></li>
+</ul>
+<p>For single-trace analysis, see the <em>DataStream Class</em> guide. Trim/statistics
+parameters follow the QUENDS paper analysis notebooks for the stellarator GX
+ensemble (<code class="docutils literal notranslate"><span class="pre">method=&quot;threshold&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">window_size=50</span></code>, <code class="docutils literal notranslate"><span class="pre">start_time=100</span></code>,
+<code class="docutils literal notranslate"><span class="pre">threshold=0.19</span></code>).</p>
+<p>Import QUENDS</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">quends</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">qnds</span>
+
+<span class="n">COL</span> <span class="o">=</span> <span class="s2">&quot;HeatFlux_st&quot;</span>
+<span class="n">plotter</span> <span class="o">=</span> <span class="n">qnds</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+</code></pre></div>
+</div>
+<h2 id="data-loading">Data Loading<a class="headerlink" href="#data-loading" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Ensemble.from_files</span></code> loads each CSV into a member <code class="docutils literal notranslate"><span class="pre">DataStream</span></code>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><code><span class="n">gx_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;data/gx/ens_run_*.csv&quot;</span><span class="p">))</span>
+<span class="n">ens</span> <span class="o">=</span> <span class="n">qnds</span><span class="o">.</span><span class="n">Ensemble</span><span class="o">.</span><span class="n">from_files</span><span class="p">(</span><span class="n">gx_files</span><span class="p">,</span> <span class="n">COL</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ensemble members:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ens</span><span class="o">.</span><span class="n">members</span><span class="p">()))</span>
+</code></pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><code>ensemble members: 8
+</code></pre></div>
+</div>
+<p>Plotting all members together with the ensemble average.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><code><span class="n">plot</span> <span class="o">=</span> <span class="n">plotter</span><span class="o">.</span><span class="n">plot_ensemble_with_average</span><span class="p">(</span>
+    <span class="n">ens</span><span class="p">,</span> <span class="n">variables_to_plot</span><span class="o">=</span><span class="p">[</span><span class="n">COL</span><span class="p">],</span> <span class="n">condensed_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</code></pre></div>
+</div>
+<img src="../_images/sphx_glr_ensemble_guide_001.png" srcset="../_images/sphx_glr_ensemble_guide_001.png" alt="HeatFlux_st" class = "sphx-glr-single-img"/><h2 id="ensemble-average-approach">Ensemble Average Approach<a class="headerlink" href="#ensemble-average-approach" title="Link to this heading">¶</a></h2>
+<p>Average the members onto a common time grid, then analyse that single
+averaged trace exactly like a single run.</p>
+<p>Build the averaged DataStream and check stationarity.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><code><span class="n">avg</span> <span class="o">=</span> <span class="n">ens</span><span class="o">.</span><span class="n">compute_average_ensemble</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;averaged trace rows:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">avg</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;avg is_stationary:&quot;</span><span class="p">,</span> <span class="n">avg</span><span class="o">.</span><span class="n">is_stationary</span><span class="p">(</span><span class="n">COL</span><span class="p">))</span>
+</code></pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><code>averaged trace rows: 1536
+avg is_stationary: {&#39;HeatFlux_st&#39;: True}
+</code></pre></div>
+</div>
+<p>Trim the averaged trace, then read off its ESS.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><code><span class="n">avg_trimmed</span> <span class="o">=</span> <span class="n">avg</span><span class="o">.</span><span class="n">trim</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.19</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;avg sss_start:&quot;</span><span class="p">,</span> <span class="n">avg_trimmed</span><span class="o">.</span><span class="n">trim_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sss_start&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;avg ESS:&quot;</span><span class="p">,</span> <span class="n">avg_trimmed</span><span class="o">.</span><span class="n">effective_sample_size</span><span class="p">())</span>
+</code></pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><code>avg sss_start: 138.414657
+avg ESS: {&#39;results&#39;: {&#39;HeatFlux_st&#39;: 30}}
+</code></pre></div>
+</div>
+<p>The Ensemble Average estimate of the mean and its uncertainty. We analyse the
+<strong>trimmed</strong> averaged trace (average -&gt; trim -&gt; statistics), so the transient is
+removed before the mean and its standard error are computed. NB: the
+<code class="docutils literal notranslate"><span class="pre">ensemble_average</span></code> estimator does <strong>not</strong> trim internally – running it on a
+raw, un-trimmed average folds the transient into the variance and greatly
+inflates the uncertainty.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><code><span class="n">ea_stats</span> <span class="o">=</span> <span class="n">avg_trimmed</span><span class="o">.</span><span class="n">compute_statistics</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">)[</span><span class="n">COL</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ensemble Average -&gt;&quot;</span><span class="p">,</span> <span class="n">ea_stats</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><code>Ensemble Average -&gt; {&#39;mean&#39;: 5.5510209219323, &#39;mean_uncertainty&#39;: 0.01575656347414312, &#39;variance&#39;: 0.003724039387720516, &#39;confidence_interval&#39;: (5.5201380575229795, 5.58190378634162), &#39;pm_std&#39;: (5.535264358458156, 5.566777485406443), &#39;effective_sample_size&#39;: 30, &#39;window_size&#39;: 90, &#39;n_short_averages&#39;: 15, &#39;ess_blocks&#39;: 14.477125553918892, &#39;se_effective_n&#39;: 15.0, &#39;se_method&#39;: &#39;iid_blocks&#39;, &#39;independence_status&#39;: &#39;independent&#39;, &#39;independent&#39;: True, &#39;ljungbox_lags&#39;: [5, 10], &#39;ljungbox_pvalues&#39;: [0.9656617927811396, 0.7704831644157795], &#39;ljungbox_pvalue&#39;: 0.7704831644157795, &#39;ci_method&#39;: &#39;normal&#39;, &#39;confidence_level&#39;: 0.95}
+</code></pre></div>
+</div>
+<h2 id="serialization-pooled-block-means-approach">Serialization (Pooled Block Means) Approach<a class="headerlink" href="#serialization-pooled-block-means-approach" title="Link to this heading">¶</a></h2>
+<p>Rather than averaging the traces, pool the per-member block means. Trim every
+member first, then aggregate across members.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><code><span class="n">ens_trimmed</span> <span class="o">=</span> <span class="n">ens</span><span class="o">.</span><span class="n">trim</span><span class="p">(</span>
+    <span class="n">column_name</span><span class="o">=</span><span class="n">COL</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.19</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;members stationary:&quot;</span><span class="p">,</span> <span class="n">ens</span><span class="o">.</span><span class="n">is_stationary</span><span class="p">(</span><span class="n">COL</span><span class="p">)[</span><span class="s2">&quot;results&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ESS (pooled_block_means):&quot;</span><span class="p">,</span> <span class="n">ens_trimmed</span><span class="o">.</span><span class="n">effective_sample_size</span><span class="p">(</span><span class="n">COL</span><span class="p">)[</span><span class="s2">&quot;results&quot;</span><span class="p">])</span>
+</code></pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><code>members stationary: {&#39;Member 0&#39;: {&#39;HeatFlux_st&#39;: True}, &#39;Member 1&#39;: {&#39;HeatFlux_st&#39;: True}, &#39;Member 2&#39;: {&#39;HeatFlux_st&#39;: True}, &#39;Member 3&#39;: {&#39;HeatFlux_st&#39;: True}, &#39;Member 4&#39;: {&#39;HeatFlux_st&#39;: True}, &#39;Member 5&#39;: {&#39;HeatFlux_st&#39;: True}, &#39;Member 6&#39;: {&#39;HeatFlux_st&#39;: True}, &#39;Member 7&#39;: {&#39;HeatFlux_st&#39;: True}}
+ESS (pooled_block_means): {&#39;HeatFlux_st&#39;: 94.5327798342771}
+</code></pre></div>
+</div>
+<p>The serialization estimate of the mean and its uncertainty, on the trimmed
+members.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><code><span class="n">ser_stats</span> <span class="o">=</span> <span class="n">ens_trimmed</span><span class="o">.</span><span class="n">compute_uncertainty</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;pooled_block_means&quot;</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="n">COL</span>
+<span class="p">)[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">COL</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Serialization -&gt;&quot;</span><span class="p">,</span> <span class="n">ser_stats</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><code>Serialization -&gt; {&#39;mean&#39;: 5.557640702919049, &#39;variance&#39;: 0.03425679861075724, &#39;ess_blocks&#39;: 94.5327798342771, &#39;n_short_averages&#39;: 106, &#39;mean_uncertainty&#39;: 0.01903628388744325, &#39;mean_uncertainty_sem_n&#39;: 0.01797713395912992, &#39;mean_uncertainty_sem_ess&#39;: 0.01903628388744325, &#39;se_method&#39;: &#39;sem_ess (members_not_all_independent)&#39;, &#39;warning&#39;: &#39;Some members used best_p window. Not all members passed independence; using ESS-based SEM.&#39;, &#39;confidence_interval&#39;: (5.520329586499661, 5.594951819338438), &#39;pm_std&#39;: (5.538604419031606, 5.5766769868064925), &#39;window_size&#39;: 142, &#39;member_window_sizes&#39;: [94, 63, 148, 159, 183, 61, 136, 153], &#39;window_size_summary&#39;: 142, &#39;window_size_summary_method&#39;: &#39;median&#39;, &#39;window_size_min&#39;: 61, &#39;window_size_max&#39;: 183, &#39;independent&#39;: False, &#39;independence_status&#39;: &#39;some_independent&#39;, &#39;ljungbox_pvalue&#39;: 0.04358017934862203, &#39;ljungbox_pvalues&#39;: [0.25911370840667075, 0.39832409156593546, 0.8504579481952937, 0.5180172131388829, 0.04358017934862203, 0.17796031273257243, 0.3944473931033883, 0.5533989750903026], &#39;ljungbox_lags&#39;: [5, 5, 5, 5, 5, 5, 5, 5], &#39;ci_method&#39;: &#39;normal&#39;, &#39;confidence_level&#39;: 0.95, &#39;member_all_independent&#39;: False, &#39;member_some_best_p&#39;: True}
+</code></pre></div>
+</div>
+<h2 id="inverse-variance-weighted-ivw-approach">Inverse-Variance-Weighted (IVW) Approach<a class="headerlink" href="#inverse-variance-weighted-ivw-approach" title="Link to this heading">¶</a></h2>
+<p>Combine the per-member means weighting each by its inverse variance, so
+better-resolved members count more. Trimming/stationarity are as above.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ESS (ivw):&quot;</span><span class="p">,</span> <span class="n">ens_trimmed</span><span class="o">.</span><span class="n">effective_sample_size</span><span class="p">(</span><span class="n">COL</span><span class="p">,</span> <span class="n">technique</span><span class="o">=</span><span class="s2">&quot;ivw&quot;</span><span class="p">)[</span><span class="s2">&quot;results&quot;</span><span class="p">])</span>
+<span class="n">ivw_stats</span> <span class="o">=</span> <span class="n">ens_trimmed</span><span class="o">.</span><span class="n">compute_uncertainty</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ivw&quot;</span><span class="p">,</span> <span class="n">column_name</span><span class="o">=</span><span class="n">COL</span><span class="p">)[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="n">COL</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;IVW -&gt;&quot;</span><span class="p">,</span> <span class="n">ivw_stats</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><code>ESS (ivw): {&#39;HeatFlux_st&#39;: 105.54692307933976}
+IVW -&gt; {&#39;mean&#39;: 5.559406165790554, &#39;mean_uncertainty&#39;: 0.016522267850964212, &#39;confidence_interval&#39;: (5.527022520802664, 5.591789810778444), &#39;pm_std&#39;: (5.54288389793959, 5.575928433641518), &#39;variance&#39;: 0.0407394787551331, &#39;ess_blocks&#39;: 105.54692307933976, &#39;n_short_averages&#39;: 134.0, &#39;se_method&#39;: &#39;ivw_member_means&#39;, &#39;warning&#39;: None, &#39;window_size&#39;: 96, &#39;member_window_sizes&#39;: [94, 63, 96, 97, 112, 61, 97, 97], &#39;window_size_summary&#39;: 96, &#39;window_size_summary_method&#39;: &#39;median&#39;, &#39;window_size_min&#39;: 61, &#39;window_size_max&#39;: 112, &#39;independence_status&#39;: &#39;some_independent&#39;, &#39;independent&#39;: False, &#39;ljungbox_pvalue&#39;: 0.3175166299288299, &#39;ljungbox_pvalues&#39;: [0.25911370840667075, 0.39832409156593546, 0.558906032577861, 0.24488043587906716, 0.025300415087136468, 0.17796031273257243, 0.651464279497223, 0.2241837636841732], &#39;ljungbox_lags&#39;: [5, 10], &#39;ci_method&#39;: &#39;normal&#39;, &#39;confidence_level&#39;: 0.95, &#39;individual&#39;: None}
+</code></pre></div>
+</div>
+<p>Computed on the trimmed steady-state data, the three approaches give
+consistent means with comparable uncertainties – a useful cross-check on an
+ensemble.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;Ensemble Average&quot;</span><span class="p">,</span> <span class="n">ea_stats</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;Serialization&quot;</span><span class="p">,</span> <span class="n">ser_stats</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;IVW&quot;</span><span class="p">,</span> <span class="n">ivw_stats</span><span class="p">),</span>
+<span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">18s</span><span class="si">}</span><span class="s2"> mean=</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  uncertainty=</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uncertainty&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mean_uncertainty&#39;</span><span class="p">))</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><code>Ensemble Average   mean=5.5510  uncertainty=0.0158
+Serialization      mean=5.5576  uncertainty=0.0190
+IVW                mean=5.5594  uncertainty=0.0165
+</code></pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.912 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-tutorials-ensemble-guide-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/95623ba04092d1e140510be22b737811/ensemble_guide.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">ensemble_guide.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/3c01c77060336f735c489744d8c8c3e6/ensemble_guide.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">ensemble_guide.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/5d44eef1c30b2925926dc301da0547da/ensemble_guide.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">ensemble_guide.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      Last update:
+      Jul 02, 2026
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="datastream_guide.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: DataStream Class" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              DataStream Class
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="robustworkflow_guide.html" class="md-footer__link md-footer__link--next" aria-label="Next: RobustWorkflow" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              RobustWorkflow
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2024, Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura.
+        
+    </div>
+  
+    Created using
+    <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
+    7.4.7.
+     and
+    <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.sections", "toc.follow", "search.highlight", "search.share", "content.code.copy"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+      
+        <script src="../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=8ec58cb5"></script>
+        <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+  </body>
+</html>
