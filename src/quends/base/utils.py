@@ -269,7 +269,7 @@ def _estimate_tau_int_from_series(x: np.ndarray) -> float:
     Estimate the integrated autocorrelation time (tau_int) from a raw 1-D array.
 
     ``tau_int`` is used as the signal decorrelation length. It is measured in
-    numbers of samples / array points, not physical time units. For example,
+    numbers of samples / array points, not physical time units.
 
     Uses Geyer positive-pair truncation of the sample ACF. Always returns a
     value >= 1.0. If the estimated decorrelation length is large compared to
