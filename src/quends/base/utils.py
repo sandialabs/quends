@@ -1,11 +1,11 @@
 import math
+import warnings
 from typing import Optional
 
 import numpy as np
 import pandas as pd
-from statsmodels.tsa.stattools import acf
 from statsmodels.stats.diagnostic import acorr_ljungbox
-
+from statsmodels.tsa.stattools import acf
 
 SCHEMA_VERSION = "1.0"
 
@@ -35,6 +35,7 @@ def power_law_model(n, A, p):
 # ---------------------------------------------------------------------------
 # Confidence-interval multiplier
 # ---------------------------------------------------------------------------
+
 
 def confidence_multiplier(
     confidence_level: float = 0.95,
@@ -73,20 +74,19 @@ def confidence_multiplier(
         if confidence_level == 0.95:
             return 1.96
         from scipy.stats import norm  # local import — avoid eager scipy load
+
         return float(norm.ppf((1.0 + float(confidence_level)) / 2.0))
 
     if method == "t":
         if dof is None or int(dof) < 1:
             raise ValueError(
-                "ci_method='t' requires a positive integer dof; "
-                f"got dof={dof!r}."
+                "ci_method='t' requires a positive integer dof; " f"got dof={dof!r}."
             )
         from scipy.stats import t as _t  # local import
+
         return float(_t.ppf((1.0 + float(confidence_level)) / 2.0, df=int(dof)))
 
-    raise ValueError(
-        f"Unknown ci_method {method!r}; choose 'normal' or 't'."
-    )
+    raise ValueError(f"Unknown ci_method {method!r}; choose 'normal' or 't'.")
 
 
 def to_native_types(obj):
@@ -226,7 +226,10 @@ def _ljung_box_pass(
 # Shared block-averaging and autotune helpers
 # ---------------------------------------------------------------------------
 
-def _compute_block_means(x: np.ndarray, w: int, method: str = "non-overlapping") -> np.ndarray:
+
+def _compute_block_means(
+    x: np.ndarray, w: int, method: str = "non-overlapping"
+) -> np.ndarray:
     """
     Compute block means from a raw array without DataStream overhead.
 
@@ -256,15 +259,22 @@ def _compute_block_means(x: np.ndarray, w: int, method: str = "non-overlapping")
         s = pd.Series(x).rolling(window=int(w)).mean().dropna()
         return s.values.astype(float)
     else:
-        raise ValueError(f"method must be 'non-overlapping' or 'sliding'; got {method!r}")
+        raise ValueError(
+            f"method must be 'non-overlapping' or 'sliding'; got {method!r}"
+        )
 
 
 def _estimate_tau_int_from_series(x: np.ndarray) -> float:
     """
     Estimate the integrated autocorrelation time (tau_int) from a raw 1-D array.
 
-    Uses Geyer positive-pair truncation of the sample ACF.
-    Always returns a value >= 1.0.
+    ``tau_int`` is used as the signal decorrelation length. It is measured in
+    numbers of samples / array points, not physical time units. For example,
+
+    Uses Geyer positive-pair truncation of the sample ACF. Always returns a
+    value >= 1.0. If the estimated decorrelation length is large compared to
+    the maximum lag used to compute the ACF, a warning is emitted because the
+    estimate may be under-resolved.
 
     Parameters
     ----------
@@ -274,6 +284,7 @@ def _estimate_tau_int_from_series(x: np.ndarray) -> float:
     Returns
     -------
     float
+        Estimated decorrelation length, in number of samples / points.
     """
     x = np.asarray(x, dtype=float)
     n = x.size
@@ -281,7 +292,18 @@ def _estimate_tau_int_from_series(x: np.ndarray) -> float:
         return 1.0
     nlags = max(1, min(n // 4, 2000))
     r = acf(x, nlags=nlags, fft=False)
-    return _tau_int_geyer_from_acf(r)
+    # decorrelation length
+    tau_int = _tau_int_geyer_from_acf(r)
+
+    # warn when decorrelation length is about same size as lag cutoff in autocorrelation function
+    if tau_int >= 0.5 * nlags:
+        warnings.warn(
+            "The computed signal decorrelation time is large compared to the "
+            "max lag in the computation of the autocorrelation. Results may "
+            f"be inaccurate. Estimated tau_int={tau_int:.2f}, nlags={nlags}."
+        )
+
+    return tau_int
 
 
 def autotune_blocks(
@@ -542,7 +564,9 @@ def autotune_blocks(
             "independent": False,
             "ljungbox_lags": lb.get("lags", []),
             "ljungbox_pvalues": lb.get("pvalues", []),
-            "best_pvalue": float(p_score) if np.isfinite(float(p_score)) else float("nan"),
+            "best_pvalue": (
+                float(p_score) if np.isfinite(float(p_score)) else float("nan")
+            ),
             "tau_int": float(tau_int),
             "initial_window": initial_window,
             "iterations": iteration_count,

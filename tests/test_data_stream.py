@@ -601,6 +601,25 @@ def test_estimate_tau_int_delegates_and_returns_float(long_data: pd.DataFrame):
     assert result >= 1.0
 
 
+def test_tau_int_lag_cutoff_warning_is_returned_in_metadata():
+    ds = DataStream(pd.DataFrame({"time": np.arange(50), "A": np.arange(50.0)}))
+
+    with pytest.warns(UserWarning, match="decorrelation time"):
+        result = ds.compute_statistics("A")
+
+    column_warnings = result["A"]["metadata"]["warnings"]
+    assert any(
+        "decorrelation time" in warning and "Results may be inaccurate" in warning
+        for warning in column_warnings
+    )
+    assert any(
+        warning["column"] == "A"
+        and "decorrelation time" in warning["message"]
+        and "Results may be inaccurate" in warning["message"]
+        for warning in result.metadata["warnings"]
+    )
+
+
 def test_effective_sample_size_empty(empty_data: pd.DataFrame):
     ds = DataStream(empty_data)
     assert ds.effective_sample_size() == {"results": {}}

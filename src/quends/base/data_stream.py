@@ -31,8 +31,23 @@ Usage signature for the new trimming workflow::
     trimmed_data_stream = trim_operation(data_stream, column_name)
 """
 
+TAU_INT_LAG_CUTOFF_WARNING_RATIO = 0.5
 
-# Goes into datastream
+
+def _tau_int_metadata_warning(tau_int: float, n_samples: int) -> Optional[str]:
+    """Mirror the tau_int lag-cutoff warning as result metadata."""
+    if not np.isfinite(tau_int) or n_samples < 3:
+        return None
+    nlags = max(1, min(n_samples // 4, 2000))
+    if tau_int < TAU_INT_LAG_CUTOFF_WARNING_RATIO * nlags:
+        return None
+    return (
+        "The computed signal decorrelation time is large compared to the "
+        "max lag in the computation of the autocorrelation. Results may "
+        f"be inaccurate. Estimated tau_int={tau_int:.2f}, nlags={nlags}."
+    )
+
+
 def _coerce_history(history: Optional[Any] = None) -> DataStreamHistory:
     """Return an independent typed history object from typed or legacy input."""
 
@@ -242,6 +257,7 @@ class DataStream:
         stats = {}
         cols = self._get_columns(column_name)
         ess_res = self.effective_sample_size(column_names=column_name)
+        result_warnings = []
 
         for col in cols:
             series = self.data[col].dropna()
@@ -264,6 +280,11 @@ class DataStream:
             block_means = ab["blocks"]
             lb = {"lags": ab["ljungbox_lags"], "pvalues": ab["ljungbox_pvalues"]}
             n_blocks = ab["n_blocks"]
+            tau_int_warning = _tau_int_metadata_warning(
+                ab.get("tau_int", float("nan")),
+                len(series),
+            )
+            column_warnings = [tau_int_warning] if tau_int_warning else []
 
             if n_blocks < 1:
                 stats[col] = {
@@ -345,6 +366,12 @@ class DataStream:
             }
             if warning:
                 entry["warning"] = warning
+                column_warnings.append(warning)
+            if column_warnings:
+                entry["metadata"] = {"warnings": column_warnings}
+                result_warnings.extend(
+                    {"column": col, "message": message} for message in column_warnings
+                )
             stats[col] = entry
 
         # Return a StatsResult: behaves exactly like the historical
@@ -355,6 +382,7 @@ class DataStream:
             "columns": list(stats.keys()),
             "total_samples": int(len(self.data)),
             "schema_version": SCHEMA_VERSION,
+            "warnings": result_warnings,
         }
         return StatsResult(to_native_types(stats), metadata=to_native_types(metadata))
 
