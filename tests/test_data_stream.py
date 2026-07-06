@@ -218,6 +218,7 @@ def test_compute_stats_simple(simple_data: pd.DataFrame):
     col = result["A"]
     assert col["mean"] == pytest.approx(2.0)
     assert col["mean_uncertainty"] == pytest.approx(0.5773502691896258)
+    assert col["standard_deviation"] == pytest.approx(1.0)
     assert col["confidence_interval"] == pytest.approx(
         (0.8683934723883333, 3.131606527611667)
     )
@@ -234,6 +235,7 @@ def test_compute_stats_long(long_data: pd.DataFrame):
     col = result["A"]
     assert col["mean"] == pytest.approx(3.0)
     assert col["mean_uncertainty"] == pytest.approx(0.7071067811865476)
+    assert col["standard_deviation"] == pytest.approx(1.5811388300841898)
     assert col["confidence_interval"] == pytest.approx(
         (1.6140707088743669, 4.385929291125633)
     )
@@ -253,6 +255,7 @@ def test_compute_stats_ci_not_computed(long_data: pd.DataFrame):
         "mean",
         "mean_uncertainty",
         "confidence_interval",
+        "standard_deviation",
         "pm_std",
         "effective_sample_size",
         "window_size",

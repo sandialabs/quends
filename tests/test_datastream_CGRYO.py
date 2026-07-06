@@ -135,6 +135,7 @@ def test_compute_statistics_contains_expected_keys(cgyro_streams):
             continue
         assert "mean" in entry
         assert "mean_uncertainty" in entry
+        assert "standard_deviation" in entry
         assert "confidence_interval" in entry
         assert "effective_sample_size" in entry
         assert "window_size" in entry

@@ -31,6 +31,7 @@ Usage signature for the new trimming workflow::
     trimmed_data_stream = trim_operation(data_stream, column_name)
 """
 
+
 TAU_INT_LAG_CUTOFF_WARNING_RATIO = 0.5
 
 
@@ -243,10 +244,11 @@ class DataStream:
             ``{col: {…statistics…}}`` with the following canonical keys per column:
 
             ``mean``, ``mean_uncertainty`` (SEM), ``variance``, ``confidence_interval``,
-            ``pm_std``, ``effective_sample_size`` (Geyer ESS on raw series),
-            ``window_size``, ``n_short_averages`` (number of block means),
-            ``ess_blocks`` (Geyer ESS on block means), ``se_effective_n``,
-            ``se_method``, ``independence_status``, ``independent``,
+            ``standard_deviation`` (standard deviation of the independent samples in the data stream), ``pm_std``,
+            ``effective_sample_size`` (Geyer ESS on raw series), ``window_size``,
+            ``n_short_averages`` (number of block means), ``ess_blocks``
+            (Geyer ESS on block means), ``se_effective_n``, ``se_method``,
+            ``independence_status``, ``independent``,
             ``ljungbox_lags`` (list), ``ljungbox_pvalues`` (list),
             ``ljungbox_pvalue`` (scalar min — convenience alias matching ensemble output),
             ``ci_method``, ``confidence_level``,
@@ -346,6 +348,7 @@ class DataStream:
                 "mean_uncertainty": se,
                 "variance": var_val,
                 "confidence_interval": ci,
+                "standard_deviation": sd,
                 "pm_std": (mu - se, mu + se) if np.isfinite(se) else (np.nan, np.nan),
                 "effective_sample_size": int(ess_val) if ess_val is not None else None,
                 "window_size": int(w),
