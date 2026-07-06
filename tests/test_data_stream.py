@@ -7,6 +7,7 @@ import pytest
 
 from quends import DataStream
 from quends.base.history import DataStreamHistoryEntry
+from quends.base.utils import _estimate_tau_int_from_series
 
 pytest_plugins = ("tests._shared",)
 
@@ -599,6 +600,15 @@ def test_estimate_tau_int_delegates_and_returns_float(long_data: pd.DataFrame):
 
     assert isinstance(result, float)
     assert result >= 1.0
+
+
+def test_estimate_tau_int_warns_when_acf_lag_cutoff_is_tiny():
+    # Four samples gives nlags = max(1, min(n // 4, 2000)) = 1.
+    # That deliberately tiny ACF horizon should trigger the under-resolution warning.
+    with pytest.warns(UserWarning, match="decorrelation time"):
+        tau_int = _estimate_tau_int_from_series(np.array([1.0, 2.0, 3.0, 4.0]))
+
+    assert tau_int >= 1.0
 
 
 def test_tau_int_lag_cutoff_warning_is_returned_in_metadata():
