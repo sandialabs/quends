@@ -2,12 +2,23 @@
 # from_netcdf still extracts/reshapes all _t/_st diagnostics internally, then
 # returns exactly [time, variable]; these tests request one variable per call.
 import tempfile
+from pathlib import Path
 
 import netCDF4 as nc
 import numpy as np
 import pytest
 
 from quends import DataStream, from_netcdf
+
+SMALL_NETCDF_FILE = (
+    Path(__file__).resolve().parents[1] / "examples" / "data" / "test" / "small.nc"
+)
+
+
+@pytest.fixture
+def small_netcdf_file():
+    assert SMALL_NETCDF_FILE.exists(), f"Missing test fixture: {SMALL_NETCDF_FILE}"
+    return SMALL_NETCDF_FILE
 
 
 @pytest.fixture
@@ -57,6 +68,28 @@ def test_from_netcdf_other_variable(create_netcdf_file):
     df = from_netcdf(test_file, "Wg_st").data
     assert list(df.columns) == ["time", "Wg_st"]
     np.testing.assert_array_equal(df["Wg_st"].values, wg_values)
+
+
+def test_from_netcdf_reads_persistent_small_fixture(small_netcdf_file):
+    ds = from_netcdf(small_netcdf_file, "HeatFlux_st")
+
+    assert isinstance(ds, DataStream)
+    assert list(ds.data.columns) == ["time", "HeatFlux_st"]
+    np.testing.assert_array_equal(ds.data["time"].values, np.arange(10))
+    np.testing.assert_array_equal(
+        ds.data["HeatFlux_st"].values,
+        np.array([15.0, 16.5, 18.0, 19.5, 21.0, 22.5, 24.0, 25.5, 27.0, 28.5]),
+    )
+
+
+def test_from_netcdf_persistent_small_fixture_other_variable(small_netcdf_file):
+    ds = from_netcdf(small_netcdf_file, "Wphi_st")
+
+    assert list(ds.data.columns) == ["time", "Wphi_st"]
+    np.testing.assert_array_equal(
+        ds.data["Wphi_st"].values,
+        np.array([0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0, 360.0, 360.0]),
+    )
 
 
 def test_from_netcdf_missing_variable_raises(create_netcdf_file):
@@ -127,7 +160,9 @@ def create_netcdf_file_for_diagnostic_shape_cases():
             )[:, :] = np.arange(1.0, 11.0, dtype=np.float32).reshape(2, 5)
             diagnostics_group.createVariable(
                 "PaddedMatrix_st", np.float32, ("rows", "cols_short")
-            )[:, :] = np.array([[10.0, 20.0, 30.0], [40.0, 50.0, 60.0]], dtype=np.float32)
+            )[:, :] = np.array(
+                [[10.0, 20.0, 30.0], [40.0, 50.0, 60.0]], dtype=np.float32
+            )
             diagnostics_group.createVariable(
                 "UnsupportedCube_t", np.float32, ("depth", "rows", "cols_short")
             )[:, :, :] = np.ones((2, 2, 3), dtype=np.float32)
