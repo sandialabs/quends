@@ -92,6 +92,32 @@ def test_from_netcdf_persistent_small_fixture_other_variable(small_netcdf_file):
     )
 
 
+def test_small_netcdf_loaded_stream_can_be_normalized(small_netcdf_file):
+    ds = from_netcdf(small_netcdf_file, "HeatFlux_st")
+
+    normalized = DataStream.normalize_data(ds.data)
+
+    assert list(normalized.columns) == ["time", "HeatFlux_st"]
+    np.testing.assert_array_equal(normalized["time"].values, np.arange(10))
+    np.testing.assert_allclose(
+        normalized["HeatFlux_st"].values,
+        np.linspace(0.0, 1.0, 10),
+    )
+
+
+def test_small_netcdf_loaded_stream_can_compute_statistics(small_netcdf_file):
+    ds = from_netcdf(small_netcdf_file, "HeatFlux_st")
+
+    stats = ds.compute_statistics("HeatFlux_st", window_size=2)["HeatFlux_st"]
+
+    assert stats["mean"] == pytest.approx(21.75)
+    assert stats["variance"] == pytest.approx(22.5)
+    assert stats["standard_deviation"] == pytest.approx(np.sqrt(22.5))
+    assert stats["window_size"] == 2
+    assert stats["n_short_averages"] == 5
+    assert stats["se_method"] == "ess_blocks"
+
+
 def test_from_netcdf_missing_variable_raises(create_netcdf_file):
     test_file, *_ = create_netcdf_file
     with pytest.raises(ValueError, match="does not exist"):
