@@ -23,28 +23,16 @@ This project focuses on uncertainty quantification in plasma turbulent simulatio
 
 ## Installation
 
-1. **Clone the repository**:
-    - Using SSH:
-    ```bash
-    git clone git@github.com:sandialabs/quends.git
-    cd quends
-    ```
-    - Using HTTPS:
-    ```bash
-    git clone https://github.com/sandialabs/quends.git
-    cd quends
-    ```
-
-2. **Install the package and dependencies**:
+1. **Install the package and dependencies**:
     You can install the package along with its dependencies using pip:
     ```bash
-    pip install .
+    pip install quends
     ```
 
-3. **Verify the installation**:
+2. **Verify the installation**:
     To ensure that the installation was successful, you can run a simple test:
     ```bash
-    python -c "import quends"
+    python -c "import quends; print('quends installed successfully')"
     ```
 
 
