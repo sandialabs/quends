@@ -1,0 +1,2155 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="">
+    
+    
+      
+        <title>quends.workflow.batch_ensemble_workflow - QUENDS 0.1.2 documentation</title>
+      
+    
+    
+      
+        
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx_immaterial_theme.98b57845f223ccb1d.min.css?v=cdd4f6f3" />
+        <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=fd3f3429" />
+        <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+        <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+        <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+        <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+        <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+        <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx_immaterial_local.css?v=a581cf26" />
+        <link rel="stylesheet" type="text/css" href="../../../../_static/sandia.css?v=744bfbfe" />
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="light-blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#typical-usage" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../index.html" title="QUENDS 0.1.2 documentation" class="md-header__button md-logo" aria-label="QUENDS 0.1.2 documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            QUENDS-0.1.2
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              quends.workflow.batch_ensemble_workflow
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="cyan" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/sandialabs/quends/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    quends
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../../index.html" class="md-tabs__link">
+      <span class="md-ellipsis">Home</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../../readme.html" class="md-tabs__link">
+      <span class="md-ellipsis">Getting Started</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../../user_guide/index.html" class="md-tabs__link">
+      <span class="md-ellipsis">User Guide</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../../auto_tutorials/datastream_guide.html" class="md-tabs__link">
+      <span class="md-ellipsis">Gallery of examples</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../index.html" class="md-tabs__link md-tabs__link--active">
+      <span class="md-ellipsis">API Reference</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../../usage.html" class="md-tabs__link">
+      <span class="md-ellipsis">About</span>
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../index.html" title="QUENDS 0.1.2 documentation" class="md-nav__button md-logo" aria-label="QUENDS 0.1.2 documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+    </a>
+    QUENDS 0.1.2 documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/sandialabs/quends/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    quends
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          <span class="md-ellipsis">Home</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Home" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Home</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.html" class="md-nav__link">
+        <span class="md-ellipsis">Welcome to QUENDS</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          <span class="md-ellipsis">Getting Started</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Getting Started</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../readme.html" class="md-nav__link">
+        <span class="md-ellipsis">Overview</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../installation.html" class="md-nav__link">
+        <span class="md-ellipsis">Installation</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../getting_started.html" class="md-nav__link">
+        <span class="md-ellipsis">Getting started</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          <span class="md-ellipsis">User Guide</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="User Guide" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">User Guide</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user_guide/index.html" class="md-nav__link">
+        <span class="md-ellipsis">User guide</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          <span class="md-ellipsis">Gallery of examples</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Gallery of examples" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Gallery of examples</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../auto_tutorials/datastream_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Data<wbr>Stream Class</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../auto_tutorials/ensemble_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Ensemble Analysis</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../auto_tutorials/robustworkflow_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Robust<wbr>Workflow</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../auto_tutorials/robustworkflow_advanced_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Robust<wbr>Workflow:<wbr> Difficult Cases &amp; Batch Processing</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          <span class="md-ellipsis">API Reference</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">API Reference</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_1" type="checkbox" id="__nav_5_1" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../index.html"><span class="md-ellipsis">API Reference</span></a>
+          
+            <label for="__nav_5_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="API Reference" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">API Reference</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_1_1" type="checkbox" id="__nav_5_1_1" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../index.html"><span class="md-ellipsis">quends</span></a>
+          
+            <label for="__nav_5_1_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="quends" data-md-level="3">
+        <label class="md-nav__title" for="__nav_5_1_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">quends</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_1_1_1" type="checkbox" id="__nav_5_1_1_1" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../index.html#submodules"><span class="md-ellipsis">Submodules</span></a>
+          
+            <label for="__nav_5_1_1_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Submodules" data-md-level="4">
+        <label class="md-nav__title" for="__nav_5_1_1_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Submodules</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../base/index.html" class="md-nav__link">
+        <span class="md-ellipsis">quends.<wbr>base</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/index.html" class="md-nav__link">
+        <span class="md-ellipsis">quends.<wbr>cli</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../postprocessing/index.html" class="md-nav__link">
+        <span class="md-ellipsis">quends.<wbr>postprocessing</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../preprocessing/index.html" class="md-nav__link">
+        <span class="md-ellipsis">quends.<wbr>preprocessing</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_1_1_1_5" type="checkbox" id="__nav_5_1_1_1_5" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../index.html"><span class="md-ellipsis">quends.<wbr>workflow</span></a>
+          
+            <label for="__nav_5_1_1_1_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="quends.workflow" data-md-level="5">
+        <label class="md-nav__title" for="__nav_5_1_1_1_5">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">quends.<wbr>workflow</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_1_1_1_5_1" type="checkbox" id="__nav_5_1_1_1_5_1" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../index.html#submodules"><span class="md-ellipsis">Submodules</span></a>
+          
+            <label for="__nav_5_1_1_1_5_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Submodules" data-md-level="6">
+        <label class="md-nav__title" for="__nav_5_1_1_1_5_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Submodules</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">quends.<wbr>workflow.<wbr>batch_<wbr>ensemble_<wbr>workflow</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        <span class="md-ellipsis">quends.<wbr>workflow.<wbr>batch_<wbr>ensemble_<wbr>workflow</span>
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#typical-usage" class="md-nav__link">
+    <span class="md-ellipsis">Typical usage</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#classes" class="md-nav__link">
+    <span class="md-ellipsis">Classes</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-contents" class="md-nav__link">
+    <span class="md-ellipsis">Module Contents</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Module Contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow" class="md-nav__link">
+    <span aria-label="Python class" class="objinfo-icon objinfo-icon__data" title="Python class">C</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow (Python class) — Batch Ensemble workflow — apply a sub-workflow to each ensemble group." class="md-ellipsis">quends.<wbr>workflow.<wbr>batch_<wbr>ensemble_<wbr>workflow.<wbr>Batch<wbr>Ensemble<wbr>Workflow</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow-parameters" class="md-nav__link">
+    <span class="md-ellipsis">Parameters</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow-parameters" class="md-nav__link">
+    <span class="md-ellipsis">Parameters</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.ensemble_groups" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.ensemble_groups (Python parameter)" class="md-ellipsis">ensemble_<wbr>groups</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.column_name" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.column_name (Python parameter)" class="md-ellipsis">column_<wbr>name</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.sub_workflow_type" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.sub_workflow_type (Python parameter)" class="md-ellipsis">sub_<wbr>workflow_<wbr>type</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.technique" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.technique (Python parameter)" class="md-ellipsis">technique</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.batch_config" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.batch_config (Python parameter)" class="md-ellipsis">batch_<wbr>config</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.verbosity" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.verbosity (Python parameter)" class="md-ellipsis">verbosity</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._ensemble_groups" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._ensemble_groups (Python attribute) — list or None" class="md-ellipsis">_<wbr>ensemble_<wbr>groups</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="_ensemble_groups">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._ensemble_groups-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._column_name" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._column_name (Python attribute) — str or None" class="md-ellipsis">_<wbr>column_<wbr>name</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="_column_name">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._column_name-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._sub_workflow_type" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._sub_workflow_type (Python attribute) — str" class="md-ellipsis">_<wbr>sub_<wbr>workflow_<wbr>type</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="_sub_workflow_type">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._sub_workflow_type-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._technique" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._technique (Python attribute) — str" class="md-ellipsis">_<wbr>technique</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="_technique">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._technique-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._batch_config" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._batch_config (Python attribute) — dict" class="md-ellipsis">_<wbr>batch_<wbr>config</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="_batch_config">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._batch_config-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._verbosity" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._verbosity (Python attribute) — int" class="md-ellipsis">_<wbr>verbosity</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="_verbosity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._verbosity-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.n_groups" class="md-nav__link">
+    <span aria-label="Python property" class="objinfo-icon objinfo-icon__alias" title="Python property">P</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.n_groups (Python property) — Number of ensemble groups, or None if not yet provided." class="md-ellipsis">n_<wbr>groups</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="n_groups">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.n_groups-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.sub_workflow_type" class="md-nav__link">
+    <span aria-label="Python property" class="objinfo-icon objinfo-icon__alias" title="Python property">P</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.sub_workflow_type (Python property) — str" class="md-ellipsis">sub_<wbr>workflow_<wbr>type</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sub_workflow_type">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.sub_workflow_type-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.technique" class="md-nav__link">
+    <span aria-label="Python property" class="objinfo-icon objinfo-icon__alias" title="Python property">P</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.technique (Python property) — str" class="md-ellipsis">technique</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="technique">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.technique-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run" class="md-nav__link">
+    <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run (Python method) — Execute the batch workflow over all ensemble groups." class="md-ellipsis">run</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="run">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-parameters" class="md-nav__link">
+    <span class="md-ellipsis">Parameters</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-returns" class="md-nav__link">
+    <span class="md-ellipsis">Returns</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-raises" class="md-nav__link">
+    <span class="md-ellipsis">Raises</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-parameters" class="md-nav__link">
+    <span class="md-ellipsis">Parameters</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.ensemble_groups" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.ensemble_groups (Python parameter)" class="md-ellipsis">ensemble_<wbr>groups</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.continue_on_error" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.continue_on_error (Python parameter)" class="md-ellipsis">continue_<wbr>on_<wbr>error</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ensemble_average_workflow/index.html" class="md-nav__link">
+        <span class="md-ellipsis">quends.<wbr>workflow.<wbr>ensemble_<wbr>average_<wbr>workflow</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ensemble_statistics_workflow/index.html" class="md-nav__link">
+        <span class="md-ellipsis">quends.<wbr>workflow.<wbr>ensemble_<wbr>statistics_<wbr>workflow</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../robust_workflow/index.html" class="md-nav__link">
+        <span class="md-ellipsis">quends.<wbr>workflow.<wbr>robust_<wbr>workflow</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          <span class="md-ellipsis">About</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">About</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../usage.html" class="md-nav__link">
+        <span class="md-ellipsis">Usage</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../contributing.html" class="md-nav__link">
+        <span class="md-ellipsis">Contributing</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../authors.html" class="md-nav__link">
+        <span class="md-ellipsis">Authors</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../changelog.html" class="md-nav__link">
+        <span class="md-ellipsis">Changelog</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#typical-usage" class="md-nav__link">
+    <span class="md-ellipsis">Typical usage</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#classes" class="md-nav__link">
+    <span class="md-ellipsis">Classes</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#module-contents" class="md-nav__link">
+    <span class="md-ellipsis">Module Contents</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Module Contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow" class="md-nav__link">
+    <span aria-label="Python class" class="objinfo-icon objinfo-icon__data" title="Python class">C</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow (Python class) — Batch Ensemble workflow — apply a sub-workflow to each ensemble group." class="md-ellipsis">quends.<wbr>workflow.<wbr>batch_<wbr>ensemble_<wbr>workflow.<wbr>Batch<wbr>Ensemble<wbr>Workflow</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow-parameters" class="md-nav__link">
+    <span class="md-ellipsis">Parameters</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow-parameters" class="md-nav__link">
+    <span class="md-ellipsis">Parameters</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.ensemble_groups" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.ensemble_groups (Python parameter)" class="md-ellipsis">ensemble_<wbr>groups</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.column_name" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.column_name (Python parameter)" class="md-ellipsis">column_<wbr>name</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.sub_workflow_type" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.sub_workflow_type (Python parameter)" class="md-ellipsis">sub_<wbr>workflow_<wbr>type</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.technique" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.technique (Python parameter)" class="md-ellipsis">technique</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.batch_config" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.batch_config (Python parameter)" class="md-ellipsis">batch_<wbr>config</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.verbosity" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.verbosity (Python parameter)" class="md-ellipsis">verbosity</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._ensemble_groups" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._ensemble_groups (Python attribute) — list or None" class="md-ellipsis">_<wbr>ensemble_<wbr>groups</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="_ensemble_groups">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._ensemble_groups-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._column_name" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._column_name (Python attribute) — str or None" class="md-ellipsis">_<wbr>column_<wbr>name</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="_column_name">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._column_name-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._sub_workflow_type" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._sub_workflow_type (Python attribute) — str" class="md-ellipsis">_<wbr>sub_<wbr>workflow_<wbr>type</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="_sub_workflow_type">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._sub_workflow_type-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._technique" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._technique (Python attribute) — str" class="md-ellipsis">_<wbr>technique</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="_technique">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._technique-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._batch_config" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._batch_config (Python attribute) — dict" class="md-ellipsis">_<wbr>batch_<wbr>config</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="_batch_config">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._batch_config-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._verbosity" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._verbosity (Python attribute) — int" class="md-ellipsis">_<wbr>verbosity</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="_verbosity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._verbosity-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.n_groups" class="md-nav__link">
+    <span aria-label="Python property" class="objinfo-icon objinfo-icon__alias" title="Python property">P</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.n_groups (Python property) — Number of ensemble groups, or None if not yet provided." class="md-ellipsis">n_<wbr>groups</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="n_groups">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.n_groups-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.sub_workflow_type" class="md-nav__link">
+    <span aria-label="Python property" class="objinfo-icon objinfo-icon__alias" title="Python property">P</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.sub_workflow_type (Python property) — str" class="md-ellipsis">sub_<wbr>workflow_<wbr>type</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sub_workflow_type">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.sub_workflow_type-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.technique" class="md-nav__link">
+    <span aria-label="Python property" class="objinfo-icon objinfo-icon__alias" title="Python property">P</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.technique (Python property) — str" class="md-ellipsis">technique</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="technique">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.technique-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run" class="md-nav__link">
+    <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run (Python method) — Execute the batch workflow over all ensemble groups." class="md-ellipsis">run</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="run">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-parameters" class="md-nav__link">
+    <span class="md-ellipsis">Parameters</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-returns" class="md-nav__link">
+    <span class="md-ellipsis">Returns</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-raises" class="md-nav__link">
+    <span class="md-ellipsis">Raises</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-parameters" class="md-nav__link">
+    <span class="md-ellipsis">Parameters</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.ensemble_groups" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.ensemble_groups (Python parameter)" class="md-ellipsis">ensemble_<wbr>groups</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.continue_on_error" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.continue_on_error (Python parameter)" class="md-ellipsis">continue_<wbr>on_<wbr>error</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                  
+
+
+<h1 id="module-quends.workflow.batch_ensemble_workflow"><span id="quends-workflow-batch-ensemble-workflow"></span>quends.workflow.batch_ensemble_workflow<a class="headerlink" href="#module-quends.workflow.batch_ensemble_workflow" title="Link to this heading">¶</a></h1>
+<p>Batch Ensemble Workflow — run a sub-workflow over many ensemble groups.</p>
+<p>Processes a list of ensemble groups (e.g. multiple parameter configurations,
+scan points, or output directories), dispatching each to a configurable
+sub-workflow (<a class="reference internal" href="../index.html#quends.workflow.EnsembleAverageWorkflow" title="quends.workflow.EnsembleAverageWorkflow (Python class) — Ensemble Average workflow."><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsembleAverageWorkflow</span></code></a> or
+<a class="reference internal" href="../index.html#quends.workflow.EnsembleStatisticsWorkflow" title="quends.workflow.EnsembleStatisticsWorkflow (Python class) — Ensemble Statistics workflow supporting Technique 1 and/or Technique 2."><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsembleStatisticsWorkflow</span></code></a>) and collecting the
+per-group results. <code class="docutils literal notranslate"><span class="pre">run()</span></code> is implemented and returns a structured dict of
+results and per-group errors; with <code class="docutils literal notranslate"><span class="pre">continue_on_error=True</span></code> a failing group
+is logged and skipped rather than aborting the batch.</p>
+<p>Not yet implemented: cross-group aggregation (<code class="xref py py-meth docutils literal notranslate"><span class="pre">_aggregate_results()</span></code>),
+parallel execution, and file-discovery of groups.</p>
+<h2 id="typical-usage">Typical usage<a class="headerlink" href="#typical-usage" title="Link to this heading">¶</a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">quends.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">BatchEnsembleWorkflow</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">ensemble_a</span><span class="p">,</span> <span class="n">ensemble_b</span><span class="p">,</span> <span class="n">ensemble_c</span><span class="p">]</span>   <span class="c1"># list of Ensemble objects</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">workflow</span> <span class="o">=</span> <span class="n">BatchEnsembleWorkflow</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">column_name</span><span class="o">=</span><span class="s2">&quot;HeatFlux_st&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">sub_workflow_type</span><span class="o">=</span><span class="s2">&quot;statistics&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">technique</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">verbosity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;n_success&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;n_items&quot;</span><span class="p">]</span>
+</code></pre></div>
+</div>
+<h2 id="classes">Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils data align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow" title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow (Python class) — Batch Ensemble workflow — apply a sub-workflow to each ensemble group."><code class="xref py py-obj docutils literal notranslate"><span class="pre">BatchEnsembleWorkflow</span></code></a></p></td>
+<td><p>Batch Ensemble workflow — apply a sub-workflow to each ensemble group.</p></td>
+</tr>
+</tbody>
+</table>
+<h2 id="module-contents">Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class objdesc">
+<dt class="sig sig-object highlight sig-wrap py" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">quends.workflow.batch_ensemble_workflow.</span></span><span class="sig-name descname"><span class="pre">BatchEnsembleWorkflow</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.ensemble_groups" title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.ensemble_groups (Python parameter)"><span class="n"><span class="pre">ensemble_groups</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.column_name" title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.column_name (Python parameter)"><span class="n"><span class="pre">column_name</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.sub_workflow_type" title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.sub_workflow_type (Python parameter)"><span class="n"><span class="pre">sub_workflow_type</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;statistics&#39;</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.technique" title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.technique (Python parameter)"><span class="n"><span class="pre">technique</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="s1">&#39;both&#39;</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.batch_config" title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.batch_config (Python parameter)"><span class="n"><span class="pre">batch_config</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.verbosity" title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.verbosity (Python parameter)"><span class="n"><span class="pre">verbosity</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="mi">0</span></code></em></span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quends/workflow/batch_ensemble_workflow.html#BatchEnsembleWorkflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow" title="Link to this definition">¶</a></dt>
+<dd><p>Batch Ensemble workflow — apply a sub-workflow to each ensemble group.</p>
+<p><code class="docutils literal notranslate"><span class="pre">run(groups)</span></code> dispatches every group to the configured sub-workflow and
+returns a structured dict <code class="docutils literal notranslate"><span class="pre">{n_items,</span> <span class="pre">n_success,</span> <span class="pre">results,</span> <span class="pre">errors,</span> <span class="pre">metadata}</span></code>.
+(Cross-group aggregation via <code class="xref py py-meth docutils literal notranslate"><span class="pre">_aggregate_results()</span></code> is not yet implemented.)</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ensemble_groups</strong> (<em>list or None</em>) – A list of ensemble groups to process.  Each group should be an
+<a class="reference internal" href="../../base/ensemble/index.html#quends.base.ensemble.Ensemble" title="quends.base.ensemble.Ensemble (Python class) — Manages an ensemble of DataStream instances for multi-stream analysis."><code class="xref py py-class docutils literal notranslate"><span class="pre">Ensemble</span></code></a> object or a list of
+<a class="reference internal" href="../../base/data_stream/index.html#quends.base.data_stream.DataStream" title="quends.base.data_stream.DataStream (Python class)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataStream</span></code></a> objects.
+Validated at construction time; <code class="docutils literal notranslate"><span class="pre">None</span></code> is accepted (groups can be
+passed later to <a class="reference internal" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run" title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run (Python method) — Execute the batch workflow over all ensemble groups."><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a>).</p></li>
+<li><p><strong>column_name</strong> (<em>str or None</em>) – Column to analyse in each ensemble group.</p></li>
+<li><p><strong>sub_workflow_type</strong> (<em>{“average”, “statistics”}</em>) – Which sub-workflow to apply to each ensemble group.
+<code class="docutils literal notranslate"><span class="pre">&quot;average&quot;</span></code> → <a class="reference internal" href="../index.html#quends.workflow.EnsembleAverageWorkflow" title="quends.workflow.EnsembleAverageWorkflow (Python class) — Ensemble Average workflow."><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsembleAverageWorkflow</span></code></a>;
+<code class="docutils literal notranslate"><span class="pre">&quot;statistics&quot;</span></code> → <a class="reference internal" href="../index.html#quends.workflow.EnsembleStatisticsWorkflow" title="quends.workflow.EnsembleStatisticsWorkflow (Python class) — Ensemble Statistics workflow supporting Technique 1 and/or Technique 2."><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsembleStatisticsWorkflow</span></code></a>.</p></li>
+<li><p><strong>technique</strong> (<em>{“technique1”, “technique2”, “both”}</em>) – Technique to use when <em>sub_workflow_type</em> is <code class="docutils literal notranslate"><span class="pre">&quot;statistics&quot;</span></code>.</p></li>
+<li><p><strong>batch_config</strong> (<em>dict or None</em>) – Arbitrary configuration dict forwarded to the sub-workflow constructor.
+See the sub-workflow class docs for valid keys.</p></li>
+<li><p><strong>verbosity</strong> (<em>int</em>) – <code class="docutils literal notranslate"><span class="pre">0</span></code> — silent; <code class="docutils literal notranslate"><span class="pre">&gt;0</span></code> — print progress.</p></li>
+</ul>
+</dd>
+<dt class="field-even" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><dl class="simple api-field highlight">
+<dt id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.ensemble_groups"><span class="sig-name descname">ensemble_groups</span><span class="p"> : </span><span class="desctype"><span class="desctype">Optional[List[Any]]</span></span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.ensemble_groups" title="Permalink to this definition">¶</a></dt><dd><p></p>
+</dd>
+<dt id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.column_name"><span class="sig-name descname">column_name</span><span class="p"> : </span><span class="desctype"><span class="desctype">Optional[str]</span></span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.column_name" title="Permalink to this definition">¶</a></dt><dd><p></p>
+</dd>
+<dt id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.sub_workflow_type"><span class="sig-name descname">sub_workflow_type</span><span class="p"> : </span><span class="desctype"><span class="desctype">str</span></span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.sub_workflow_type" title="Permalink to this definition">¶</a></dt><dd><p></p>
+</dd>
+<dt id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.technique"><span class="sig-name descname">technique</span><span class="p"> : </span><span class="desctype"><span class="desctype">str</span></span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.technique" title="Permalink to this definition">¶</a></dt><dd><p></p>
+</dd>
+<dt id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.batch_config"><span class="sig-name descname">batch_config</span><span class="p"> : </span><span class="desctype"><span class="desctype">Optional[Dict[str, Any]]</span></span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.batch_config" title="Permalink to this definition">¶</a></dt><dd><p></p>
+</dd>
+<dt id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.verbosity"><span class="sig-name descname">verbosity</span><span class="p"> : </span><span class="desctype"><span class="desctype">int</span></span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.__init__.verbosity" title="Permalink to this definition">¶</a></dt><dd><p></p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._ensemble_groups">
+<span class="sig-name descname"><span class="pre">_ensemble_groups</span></span><a class="reference internal" href="../../../../_modules/quends/workflow/batch_ensemble_workflow.html#BatchEnsembleWorkflow._ensemble_groups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._ensemble_groups" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._ensemble_groups-type">Type<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._ensemble_groups-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>list or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._column_name">
+<span class="sig-name descname"><span class="pre">_column_name</span></span><a class="reference internal" href="../../../../_modules/quends/workflow/batch_ensemble_workflow.html#BatchEnsembleWorkflow._column_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._column_name" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._column_name-type">Type<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._column_name-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._sub_workflow_type">
+<span class="sig-name descname"><span class="pre">_sub_workflow_type</span></span><a class="reference internal" href="../../../../_modules/quends/workflow/batch_ensemble_workflow.html#BatchEnsembleWorkflow._sub_workflow_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._sub_workflow_type" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._sub_workflow_type-type">Type<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._sub_workflow_type-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._technique">
+<span class="sig-name descname"><span class="pre">_technique</span></span><a class="reference internal" href="../../../../_modules/quends/workflow/batch_ensemble_workflow.html#BatchEnsembleWorkflow._technique"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._technique" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._technique-type">Type<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._technique-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._batch_config">
+<span class="sig-name descname"><span class="pre">_batch_config</span></span><a class="reference internal" href="../../../../_modules/quends/workflow/batch_ensemble_workflow.html#BatchEnsembleWorkflow._batch_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._batch_config" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._batch_config-type">Type<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._batch_config-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._verbosity">
+<span class="sig-name descname"><span class="pre">_verbosity</span></span><a class="reference internal" href="../../../../_modules/quends/workflow/batch_ensemble_workflow.html#BatchEnsembleWorkflow._verbosity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._verbosity" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._verbosity-type">Type<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow._verbosity-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property objdesc">
+<dt class="sig sig-object highlight py" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.n_groups">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_groups</span></span><span class="p"> <span class="pre">:</span> </span><span class="desctype"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference internal" href="../../../../_modules/quends/workflow/batch_ensemble_workflow.html#BatchEnsembleWorkflow.n_groups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.n_groups" title="Link to this definition">¶</a></dt>
+<dd><p>Number of ensemble groups, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if not yet provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.n_groups-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.n_groups-return-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>Optional[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property objdesc">
+<dt class="sig sig-object highlight py" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.sub_workflow_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sub_workflow_type</span></span><span class="p"> <span class="pre">:</span> </span><span class="desctype"><span class="pre">str</span></span><a class="reference internal" href="../../../../_modules/quends/workflow/batch_ensemble_workflow.html#BatchEnsembleWorkflow.sub_workflow_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.sub_workflow_type" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.sub_workflow_type-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.sub_workflow_type-return-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property objdesc">
+<dt class="sig sig-object highlight py" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.technique">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">technique</span></span><span class="p"> <span class="pre">:</span> </span><span class="desctype"><span class="pre">str</span></span><a class="reference internal" href="../../../../_modules/quends/workflow/batch_ensemble_workflow.html#BatchEnsembleWorkflow.technique"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.technique" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.technique-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.technique-return-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method objdesc">
+<dt class="sig sig-object highlight py" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.ensemble_groups" title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.ensemble_groups (Python parameter)"><span class="n"><span class="pre">ensemble_groups</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">None</span></code></em>, </span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.continue_on_error" title="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.continue_on_error (Python parameter)"><span class="n"><span class="pre">continue_on_error</span></span></a><span class="o"><span class="pre">=</span></span><code class="code python default_value docutils literal highlight highlight-python"><span class="kc">True</span></code></em></span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/quends/workflow/batch_ensemble_workflow.html#BatchEnsembleWorkflow.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the batch workflow over all ensemble groups.</p>
+<p>Each group is dispatched to the appropriate sub-workflow
+(<a class="reference internal" href="../index.html#quends.workflow.EnsembleAverageWorkflow" title="quends.workflow.EnsembleAverageWorkflow (Python class) — Ensemble Average workflow."><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsembleAverageWorkflow</span></code></a> for <code class="docutils literal notranslate"><span class="pre">&quot;average&quot;</span></code>,
+<a class="reference internal" href="../index.html#quends.workflow.EnsembleStatisticsWorkflow" title="quends.workflow.EnsembleStatisticsWorkflow (Python class) — Ensemble Statistics workflow supporting Technique 1 and/or Technique 2."><code class="xref py py-class docutils literal notranslate"><span class="pre">EnsembleStatisticsWorkflow</span></code></a> for
+<code class="docutils literal notranslate"><span class="pre">&quot;statistics&quot;</span></code>).  This is an in-process, object-level orchestrator —
+file discovery and CSV/NetCDF loading are explicitly out of scope and
+remain future work.</p>
+<p>Each batch item may be:</p>
+<ul class="simple">
+<li><p>an <a class="reference internal" href="../../base/ensemble/index.html#quends.base.ensemble.Ensemble" title="quends.base.ensemble.Ensemble (Python class) — Manages an ensemble of DataStream instances for multi-stream analysis."><code class="xref py py-class docutils literal notranslate"><span class="pre">Ensemble</span></code></a> instance,</p></li>
+<li><p>a list of <a class="reference internal" href="../../base/data_stream/index.html#quends.base.data_stream.DataStream" title="quends.base.data_stream.DataStream (Python class)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataStream</span></code></a> members,</p></li>
+<li><p>a <code class="docutils literal notranslate"><span class="pre">dict</span></code> with keys:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;members&quot;</span></code> <em>or</em> <code class="docutils literal notranslate"><span class="pre">&quot;ensemble&quot;</span></code> — required, an Ensemble or list of
+DataStreams,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;name&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;id&quot;</span></code> — optional human-readable identifier,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;workflow_type&quot;</span></code> — optional per-item override (<code class="docutils literal notranslate"><span class="pre">&quot;average&quot;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&quot;statistics&quot;</span></code>),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;workflow_config&quot;</span></code> — optional per-item config dict merged on top
+of <code class="docutils literal notranslate"><span class="pre">self._batch_config</span></code>.</p></li>
+</ul>
+</li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ensemble_groups</strong> (<em>list or None</em>) – Override the groups provided at construction time.</p></li>
+<li><p><strong>continue_on_error</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> (default), catch per-item exceptions and record them
+in the <code class="docutils literal notranslate"><span class="pre">&quot;errors&quot;</span></code> map; if <code class="docutils literal notranslate"><span class="pre">False</span></code>, re-raise the first failure.</p></li>
+</ul>
+</dd>
+<dt class="field-even" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-returns">Returns<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-returns" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><p><p><em>dict</em> –</p>
+<p>Mapping with the structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="p">{</span><span class="s2">&quot;workflow&quot;</span><span class="p">:</span> <span class="s2">&quot;batch_ensemble&quot;</span><span class="p">,</span> <span class="s2">&quot;n_items&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;n_success&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+ <span class="s2">&quot;n_failed&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="n">per</span><span class="o">-</span><span class="n">item</span> <span class="n">result</span><span class="p">},</span> <span class="s2">&quot;errors&quot;</span><span class="p">:</span>
+ <span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="n">error</span> <span class="n">message</span><span class="p">},</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span><span class="o">...</span><span class="p">}}</span>
+</code></pre></div>
+</div>
+</p>
+</dd>
+<dt class="field-odd" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-raises">Raises<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-raises" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError</strong> – If no groups are available, or if a per-item dict is malformed.</p></li>
+<li><p><strong>TypeError</strong> – If a batch item is not an Ensemble, list, or dict.</p></li>
+</ul>
+</dd>
+<dt class="field-even" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><dl class="simple api-field highlight">
+<dt id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.ensemble_groups"><span class="sig-name descname">ensemble_groups</span><span class="p"> : </span><span class="desctype"><span class="desctype">Optional[List[Any]]</span></span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.ensemble_groups" title="Permalink to this definition">¶</a></dt><dd><p></p>
+</dd>
+<dt id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.continue_on_error"><span class="sig-name descname">continue_on_error</span><span class="p"> : </span><span class="desctype"><span class="desctype">bool</span></span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run.continue_on_error" title="Permalink to this definition">¶</a></dt><dd><p></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd" id="quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#quends.workflow.batch_ensemble_workflow.BatchEnsembleWorkflow.run-return-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>File-based batch loading (CSV directories, NetCDF globs, …) is future
+work; this method only orchestrates already-constructed objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      Last update:
+      Jul 08, 2026
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../index.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: quends.workflow" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              quends.workflow
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../ensemble_average_workflow/index.html" class="md-footer__link md-footer__link--next" aria-label="Next: quends.workflow.ensemble_average_workflow" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              quends.workflow.ensemble_average_workflow
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2024, Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura.
+        
+    </div>
+  
+    Created using
+    <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
+    7.4.7.
+     and
+    <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.sections", "toc.follow", "search.highlight", "search.share", "content.code.copy"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+      
+        <script src="../../../../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=8ec58cb5"></script>
+        <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+        <script src="../../../../_static/sphinx_immaterial_local.js?v=265f0858"></script>
+    
+  </body>
+</html>

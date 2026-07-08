@@ -1,0 +1,1714 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="">
+    
+    
+      
+        <title>quends.base.ensemble_statistics - QUENDS 0.1.2 documentation</title>
+      
+    
+    
+      
+        
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.98b57845f223ccb1d.min.css?v=cdd4f6f3" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_local.css?v=a581cf26" />
+        <link rel="stylesheet" type="text/css" href="../../../_static/sandia.css?v=744bfbfe" />
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="light-blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../index.html" title="QUENDS 0.1.2 documentation" class="md-header__button md-logo" aria-label="QUENDS 0.1.2 documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            QUENDS-0.1.2
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              quends.base.ensemble_statistics
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="cyan" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/sandialabs/quends/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    quends
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../index.html" class="md-tabs__link">
+      <span class="md-ellipsis">Home</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../readme.html" class="md-tabs__link">
+      <span class="md-ellipsis">Getting Started</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../user_guide/index.html" class="md-tabs__link">
+      <span class="md-ellipsis">User Guide</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../auto_tutorials/datastream_guide.html" class="md-tabs__link">
+      <span class="md-ellipsis">Gallery of examples</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../autoapi/index.html" class="md-tabs__link">
+      <span class="md-ellipsis">API Reference</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../usage.html" class="md-tabs__link">
+      <span class="md-ellipsis">About</span>
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../index.html" title="QUENDS 0.1.2 documentation" class="md-nav__button md-logo" aria-label="QUENDS 0.1.2 documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+    </a>
+    QUENDS 0.1.2 documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/sandialabs/quends/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    quends
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          <span class="md-ellipsis">Home</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Home" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Home</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../index.html" class="md-nav__link">
+        <span class="md-ellipsis">Welcome to QUENDS</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          <span class="md-ellipsis">Getting Started</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Getting Started</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../readme.html" class="md-nav__link">
+        <span class="md-ellipsis">Overview</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../installation.html" class="md-nav__link">
+        <span class="md-ellipsis">Installation</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting_started.html" class="md-nav__link">
+        <span class="md-ellipsis">Getting started</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          <span class="md-ellipsis">User Guide</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="User Guide" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">User Guide</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/index.html" class="md-nav__link">
+        <span class="md-ellipsis">User guide</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          <span class="md-ellipsis">Gallery of examples</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Gallery of examples" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Gallery of examples</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../auto_tutorials/datastream_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Data<wbr>Stream Class</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../auto_tutorials/ensemble_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Ensemble Analysis</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../auto_tutorials/robustworkflow_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Robust<wbr>Workflow</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../auto_tutorials/robustworkflow_advanced_guide.html" class="md-nav__link">
+        <span class="md-ellipsis">Robust<wbr>Workflow:<wbr> Difficult Cases &amp; Batch Processing</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          <span class="md-ellipsis">API Reference</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">API Reference</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autoapi/index.html" class="md-nav__link">
+        <span class="md-ellipsis">API Reference</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          <span class="md-ellipsis">About</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">About</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../usage.html" class="md-nav__link">
+        <span class="md-ellipsis">Usage</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing.html" class="md-nav__link">
+        <span class="md-ellipsis">Contributing</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../authors.html" class="md-nav__link">
+        <span class="md-ellipsis">Authors</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../changelog.html" class="md-nav__link">
+        <span class="md-ellipsis">Changelog</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                  
+
+
+<h1>Source code for quends.base.ensemble_statistics</h1><div class="highlight"><pre>
+<span></span><code><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">ensemble_statistics.py</span>
+<span class="sd">----------------------</span>
+<span class="sd">Module-level statistical functions for ensemble analysis.</span>
+
+<span class="sd">These functions implement the three ensemble-statistics techniques and operate</span>
+<span class="sd">on plain lists of :class:`~quends.base.data_stream.DataStream` objects so that</span>
+<span class="sd">workflow classes and the :class:`~quends.base.ensemble.Ensemble` class share</span>
+<span class="sd">the same computation path without code duplication.</span>
+
+<span class="sd">Technique names</span>
+<span class="sd">---------------</span>
+<span class="sd">The three techniques are addressed by descriptive canonical names; legacy</span>
+<span class="sd">``technique=0|1|2`` and ``&quot;technique0&quot;|&quot;technique1&quot;|&quot;technique2&quot;`` strings</span>
+<span class="sd">are accepted for backward compatibility but normalised internally.</span>
+
+<span class="sd">* ``&quot;ensemble_average&quot;`` — average traces element-wise into a single trace and</span>
+<span class="sd">  run DataStream statistics on it (technique 0).</span>
+<span class="sd">* ``&quot;pooled_block_means&quot;`` — autotune block window per member until block means</span>
+<span class="sd">  pass Ljung-Box independence, pool blocks across members, compute statistics</span>
+<span class="sd">  on the pooled series (technique 1; preferred for trimmed ensembles).</span>
+<span class="sd">* ``&quot;ivw_member_means&quot;`` — call ``DataStream.compute_statistics()`` on each</span>
+<span class="sd">  member, combine the per-member ``(mean, SE)`` pairs using inverse-variance</span>
+<span class="sd">  weighting (technique 2; fallback to simple mean when SEs are unusable).</span>
+
+<span class="sd">Public API</span>
+<span class="sd">----------</span>
+<span class="sd">pool_block_means</span>
+<span class="sd">ensemble_average_stats_for_col</span>
+<span class="sd">pooled_block_means_stats_for_col</span>
+<span class="sd">ivw_member_means_stats_for_col</span>
+<span class="sd">compute_ensemble_statistics</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.data_stream</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataStream</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">_geyer_ess_on_blocks</span><span class="p">,</span> <span class="n">confidence_multiplier</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Technique-name normalisation</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="c1">#: Canonical technique name strings.</span>
+<div class="viewcode-block" id="ENSEMBLE_AVERAGE">
+<a class="viewcode-back" href="../../../autoapi/quends/base/ensemble_statistics/index.html#quends.base.ensemble_statistics.ENSEMBLE_AVERAGE">[docs]</a>
+<span class="n">ENSEMBLE_AVERAGE</span> <span class="o">=</span> <span class="s2">&quot;ensemble_average&quot;</span></div>
+
+<div class="viewcode-block" id="POOLED_BLOCK_MEANS">
+<a class="viewcode-back" href="../../../autoapi/quends/base/ensemble_statistics/index.html#quends.base.ensemble_statistics.POOLED_BLOCK_MEANS">[docs]</a>
+<span class="n">POOLED_BLOCK_MEANS</span> <span class="o">=</span> <span class="s2">&quot;pooled_block_means&quot;</span></div>
+
+<div class="viewcode-block" id="IVW_MEMBER_MEANS">
+<a class="viewcode-back" href="../../../autoapi/quends/base/ensemble_statistics/index.html#quends.base.ensemble_statistics.IVW_MEMBER_MEANS">[docs]</a>
+<span class="n">IVW_MEMBER_MEANS</span> <span class="o">=</span> <span class="s2">&quot;ivw_member_means&quot;</span></div>
+
+
+<span class="c1">#: Mapping of every accepted alias → canonical name.  Legacy integers and</span>
+<span class="c1">#: ``&quot;technique0&quot;|&quot;technique1&quot;|&quot;technique2&quot;`` strings remain valid inputs;</span>
+<span class="c1">#: internal code always uses the canonical strings above.</span>
+<span class="n">_TECHNIQUE_ALIASES</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># Technique 0</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="n">ENSEMBLE_AVERAGE</span><span class="p">,</span>
+    <span class="s2">&quot;0&quot;</span><span class="p">:</span> <span class="n">ENSEMBLE_AVERAGE</span><span class="p">,</span>
+    <span class="s2">&quot;technique0&quot;</span><span class="p">:</span> <span class="n">ENSEMBLE_AVERAGE</span><span class="p">,</span>
+    <span class="s2">&quot;t0&quot;</span><span class="p">:</span> <span class="n">ENSEMBLE_AVERAGE</span><span class="p">,</span>
+    <span class="s2">&quot;average&quot;</span><span class="p">:</span> <span class="n">ENSEMBLE_AVERAGE</span><span class="p">,</span>
+    <span class="s2">&quot;ensemble_average&quot;</span><span class="p">:</span> <span class="n">ENSEMBLE_AVERAGE</span><span class="p">,</span>
+    <span class="c1"># Technique 1</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">POOLED_BLOCK_MEANS</span><span class="p">,</span>
+    <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="n">POOLED_BLOCK_MEANS</span><span class="p">,</span>
+    <span class="s2">&quot;technique1&quot;</span><span class="p">:</span> <span class="n">POOLED_BLOCK_MEANS</span><span class="p">,</span>
+    <span class="s2">&quot;t1&quot;</span><span class="p">:</span> <span class="n">POOLED_BLOCK_MEANS</span><span class="p">,</span>
+    <span class="s2">&quot;pooled_block_means&quot;</span><span class="p">:</span> <span class="n">POOLED_BLOCK_MEANS</span><span class="p">,</span>
+    <span class="s2">&quot;pool&quot;</span><span class="p">:</span> <span class="n">POOLED_BLOCK_MEANS</span><span class="p">,</span>
+    <span class="c1"># Technique 2</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">IVW_MEMBER_MEANS</span><span class="p">,</span>
+    <span class="s2">&quot;2&quot;</span><span class="p">:</span> <span class="n">IVW_MEMBER_MEANS</span><span class="p">,</span>
+    <span class="s2">&quot;technique2&quot;</span><span class="p">:</span> <span class="n">IVW_MEMBER_MEANS</span><span class="p">,</span>
+    <span class="s2">&quot;t2&quot;</span><span class="p">:</span> <span class="n">IVW_MEMBER_MEANS</span><span class="p">,</span>
+    <span class="s2">&quot;ivw_member_means&quot;</span><span class="p">:</span> <span class="n">IVW_MEMBER_MEANS</span><span class="p">,</span>
+    <span class="s2">&quot;ivw&quot;</span><span class="p">:</span> <span class="n">IVW_MEMBER_MEANS</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_technique</span><span class="p">(</span><span class="n">technique</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalise any accepted technique alias to its canonical string name.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If *technique* is not a recognised alias.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">technique</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_TECHNIQUE_ALIASES</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_TECHNIQUE_ALIASES</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Invalid technique </span><span class="si">{</span><span class="n">technique</span><span class="si">!r}</span><span class="s2">. Use one of &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">_TECHNIQUE_ALIASES</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span><span class="si">!r}</span><span class="s2"> &quot;</span>
+        <span class="s2">&quot;(or legacy 0/1/2, &#39;technique0&#39;/&#39;technique1&#39;/&#39;technique2&#39;).&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Technique 1 — helpers</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="pool_block_means">
+<a class="viewcode-back" href="../../../autoapi/quends/base/ensemble_statistics/index.html#quends.base.ensemble_statistics.pool_block_means">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pool_block_means</span><span class="p">(</span>
+    <span class="n">data_streams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DataStream</span><span class="p">],</span>
+    <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">window_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span>
+    <span class="n">lb_alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">lb_lags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_tries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">25</span><span class="p">,</span>
+    <span class="n">min_blocks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For all members: autotune per-member window size, then pool block means.</span>
+
+<span class="sd">    Calls ``DataStream._process_column`` directly for each member — the single</span>
+<span class="sd">    autotune entry point — so there is exactly **one** autotune loop per member.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_streams : list of DataStream</span>
+<span class="sd">    col : str</span>
+<span class="sd">    window_size : int or None</span>
+<span class="sd">        Starting window hint; auto-estimated via tau_int when ``None``.</span>
+<span class="sd">    method : str</span>
+<span class="sd">    lb_alpha : float</span>
+<span class="sd">    lb_lags : int or None</span>
+<span class="sd">        Single-lag override for Ljung-Box (backward compat).</span>
+<span class="sd">        When ``None``, the canonical ``lag_set=(5, 10)`` is used.</span>
+<span class="sd">    max_tries : int</span>
+<span class="sd">        Maximum autotune iterations forwarded to ``autotune_blocks``.</span>
+<span class="sd">    min_blocks : int</span>
+<span class="sd">        Hard stop forwarded to ``autotune_blocks``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (pooled_blocks, meta)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pooled</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">meta</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;members_used&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;member_windows&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;member_blocks&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;member_ess&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;member_status&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;member_pvalues&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;member_lags&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;member_warnings&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">}</span>
+
+    <span class="n">lag_set</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">lb_lags</span><span class="p">),)</span> <span class="k">if</span> <span class="n">lb_lags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">data_streams</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">series</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Single autotune per member via the canonical helper.</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">ab</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">_process_column</span><span class="p">(</span>
+            <span class="n">series</span><span class="p">,</span>
+            <span class="n">estimated_window</span><span class="o">=</span><span class="n">window_size</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="n">lb_alpha</span><span class="p">,</span>
+            <span class="n">lag_set</span><span class="o">=</span><span class="n">lag_set</span><span class="p">,</span>
+            <span class="n">B_min</span><span class="o">=</span><span class="n">min_blocks</span><span class="p">,</span>
+            <span class="n">min_blocks</span><span class="o">=</span><span class="n">min_blocks</span><span class="p">,</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="n">max_tries</span><span class="p">,</span>
+            <span class="n">w_min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">c0</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">blocks</span> <span class="o">=</span> <span class="n">ab</span><span class="p">[</span><span class="s2">&quot;blocks&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">blocks</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">pvals</span> <span class="o">=</span> <span class="n">ab</span><span class="p">[</span><span class="s2">&quot;ljungbox_pvalues&quot;</span><span class="p">]</span>
+        <span class="n">lags_used</span> <span class="o">=</span> <span class="n">ab</span><span class="p">[</span><span class="s2">&quot;ljungbox_lags&quot;</span><span class="p">]</span>
+
+        <span class="n">pooled</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">blocks</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;members_used&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;member_windows&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ab</span><span class="p">[</span><span class="s2">&quot;window_size&quot;</span><span class="p">]))</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;member_blocks&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ab</span><span class="p">[</span><span class="s2">&quot;n_blocks&quot;</span><span class="p">]))</span>
+        <span class="c1"># Per-member effective sample size on that member&#39;s OWN block means</span>
+        <span class="c1"># (no cross-member boundary — see AUDIT_REPORT H3).</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;member_ess&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">_geyer_ess_on_blocks</span><span class="p">(</span><span class="n">blocks</span><span class="p">))))</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;member_status&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ab</span><span class="p">[</span><span class="s2">&quot;independence_status&quot;</span><span class="p">])</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;member_pvalues&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">pvals</span><span class="p">))</span> <span class="k">if</span> <span class="n">pvals</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">))</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;member_lags&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">lags_used</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">lags_used</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;member_warnings&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">ab</span><span class="p">[</span><span class="s2">&quot;warning&quot;</span><span class="p">]]</span> <span class="k">if</span> <span class="n">ab</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;warning&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[])</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pooled</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">meta</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">pooled</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">meta</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Technique 0 — average-ensemble statistics</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="ensemble_average_stats_for_col">
+<a class="viewcode-back" href="../../../autoapi/quends/base/ensemble_statistics/index.html#quends.base.ensemble_statistics.ensemble_average_stats_for_col">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensemble_average_stats_for_col</span><span class="p">(</span>
+    <span class="n">data_streams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DataStream</span><span class="p">],</span>
+    <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">ddof</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span>
+    <span class="n">window_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">avg_ds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataStream</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">confidence_level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="n">ci_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute *ensemble_average* (T0) statistics for one column.</span>
+
+<span class="sd">    Uses a pre-computed average-ensemble DataStream (or builds it from</span>
+<span class="sd">    *data_streams* if *avg_ds* is ``None``). Runs</span>
+<span class="sd">    :meth:`DataStream.compute_statistics` on the single averaged trace.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_streams : list of DataStream</span>
+<span class="sd">        Used to build the average when *avg_ds* is ``None``.</span>
+<span class="sd">    col : str</span>
+<span class="sd">    ddof : int</span>
+<span class="sd">    method : str</span>
+<span class="sd">    window_size : int or None</span>
+<span class="sd">    avg_ds : DataStream or None</span>
+<span class="sd">        Pre-computed ensemble average.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (stat_dict, meta_dict)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">quends.base.ensemble_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_average_ensemble</span>  <span class="c1"># noqa: PLC0415</span>
+
+    <span class="k">if</span> <span class="n">avg_ds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">avg_ds</span> <span class="o">=</span> <span class="n">compute_average_ensemble</span><span class="p">(</span><span class="n">data_streams</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">avg_ds</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="s2">&quot;confidence_interval&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span>
+            <span class="s2">&quot;pm_std&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span>
+            <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39; missing from average ensemble.&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="p">{}</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">avg_ds</span><span class="o">.</span><span class="n">compute_statistics</span><span class="p">(</span>
+        <span class="n">column_name</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+        <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">,</span>
+        <span class="n">confidence_level</span><span class="o">=</span><span class="n">confidence_level</span><span class="p">,</span>
+        <span class="n">ci_method</span><span class="o">=</span><span class="n">ci_method</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">stat</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="p">{})</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+    <span class="k">return</span> <span class="n">stat</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;n_members_averaged&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_streams</span><span class="p">)}</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Technique 1 — pooled-block statistics</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="pooled_block_means_stats_for_col">
+<a class="viewcode-back" href="../../../autoapi/quends/base/ensemble_statistics/index.html#quends.base.ensemble_statistics.pooled_block_means_stats_for_col">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pooled_block_means_stats_for_col</span><span class="p">(</span>
+    <span class="n">data_streams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DataStream</span><span class="p">],</span>
+    <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">ddof</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">window_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span>
+    <span class="n">lb_lags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lb_alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">pooled_lb_alpha_bad</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">confidence_level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="n">ci_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute *pooled_block_means* (T1) statistics for one column.</span>
+
+<span class="sd">    Pipeline:</span>
+
+<span class="sd">    1. :func:`pool_block_means` calls ``DataStream._process_column`` directly for</span>
+<span class="sd">       each member → :func:`~quends.base.utils.autotune_blocks` (one autotune per</span>
+<span class="sd">       member, the single canonical helper). Per-member block ESS and independence</span>
+<span class="sd">       are recorded there.</span>
+<span class="sd">    2. ESS and independence are combined **per member** (independent members&#39;</span>
+<span class="sd">       effective counts add; the ensemble status is all/some/none-independent from</span>
+<span class="sd">       the per-member verdicts). No test is run on the cross-member concatenation,</span>
+<span class="sd">       which would inject spurious boundary autocorrelation (AUDIT_REPORT H3).</span>
+<span class="sd">    3. SEM policy: ``sem_n`` (sd/√n_blocks) when every member is independent;</span>
+<span class="sd">       otherwise ``sem_ess`` (sd/√ESS_blocks). ``lb_lags`` and</span>
+<span class="sd">       ``pooled_lb_alpha_bad`` are retained for backward compatibility but no</span>
+<span class="sd">       longer drive a pooled test.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_streams : list of DataStream</span>
+<span class="sd">    col : str</span>
+<span class="sd">    ddof : int</span>
+<span class="sd">    window_size : int or None</span>
+<span class="sd">    method : str</span>
+<span class="sd">    lb_lags : int or None</span>
+<span class="sd">        Single-lag override for the pooled Ljung-Box test (backward compat).</span>
+<span class="sd">        When ``None``, the canonical ``lag_set=(5, 10)`` is used.</span>
+<span class="sd">    lb_alpha : float</span>
+<span class="sd">    pooled_lb_alpha_bad : float</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (stat_dict, meta_dict)</span>
+<span class="sd">        ``stat_dict`` canonical keys:</span>
+
+<span class="sd">        ``mean``, ``variance``, ``ess_blocks``, ``n_short_averages``,</span>
+<span class="sd">        ``mean_uncertainty``, ``mean_uncertainty_sem_n``, ``mean_uncertainty_sem_ess``,</span>
+<span class="sd">        ``se_method``, ``warning``, ``confidence_interval``, ``pm_std``,</span>
+<span class="sd">        ``window_size`` (median member window, or ``None`` if no members),</span>
+<span class="sd">        ``independent``, ``independence_status``,</span>
+<span class="sd">        ``ljungbox_pvalue`` (scalar min, backward-compat),</span>
+<span class="sd">        ``ljungbox_pvalues`` (list, normalised schema),</span>
+<span class="sd">        ``ljungbox_lags`` (list, normalised schema),</span>
+<span class="sd">        ``member_all_independent``, ``member_some_best_p``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pooled</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">pool_block_means</span><span class="p">(</span>
+        <span class="n">data_streams</span><span class="o">=</span><span class="n">data_streams</span><span class="p">,</span>
+        <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span>
+        <span class="n">lb_alpha</span><span class="o">=</span><span class="n">lb_alpha</span><span class="p">,</span>
+        <span class="n">lb_lags</span><span class="o">=</span><span class="n">lb_lags</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">member_status</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;member_status&quot;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">all_independent</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">member_status</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+        <span class="n">s</span> <span class="o">==</span> <span class="s2">&quot;independent&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">member_status</span>
+    <span class="p">)</span>
+    <span class="n">some_best_p</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span> <span class="o">==</span> <span class="s2">&quot;best_p&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">member_status</span><span class="p">)</span>
+
+    <span class="c1"># Aggregate member windows for a representative window_size in the output.</span>
+    <span class="n">mw_raw</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;member_windows&quot;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">mw</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">mw_raw</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="n">w</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">member_window_sizes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mw</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mw</span><span class="p">:</span>
+        <span class="n">window_size_agg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">mw</span><span class="p">))))</span>
+        <span class="n">window_size_min</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">mw</span><span class="p">))</span>
+        <span class="n">window_size_max</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">mw</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">window_size_agg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">window_size_min</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">window_size_max</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">out</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">pooled</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                <span class="s2">&quot;variance&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                <span class="s2">&quot;ess_blocks&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                <span class="s2">&quot;n_short_averages&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                <span class="s2">&quot;mean_uncertainty_sem_n&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                <span class="s2">&quot;mean_uncertainty_sem_ess&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                <span class="s2">&quot;se_method&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="s2">&quot;No pooled block means available.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;confidence_interval&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span>
+                <span class="s2">&quot;pm_std&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span>
+                <span class="c1"># Window-size schema (B2)</span>
+                <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="n">window_size_agg</span><span class="p">,</span>
+                <span class="s2">&quot;member_window_sizes&quot;</span><span class="p">:</span> <span class="n">member_window_sizes</span><span class="p">,</span>
+                <span class="s2">&quot;window_size_summary&quot;</span><span class="p">:</span> <span class="n">window_size_agg</span><span class="p">,</span>
+                <span class="s2">&quot;window_size_summary_method&quot;</span><span class="p">:</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;window_size_min&quot;</span><span class="p">:</span> <span class="n">window_size_min</span><span class="p">,</span>
+                <span class="s2">&quot;window_size_max&quot;</span><span class="p">:</span> <span class="n">window_size_max</span><span class="p">,</span>
+                <span class="s2">&quot;independent&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;independence_status&quot;</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ljungbox_pvalue&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                <span class="s2">&quot;ljungbox_pvalues&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;ljungbox_lags&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;ci_method&quot;</span><span class="p">:</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;confidence_level&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">,</span>
+                <span class="s2">&quot;member_all_independent&quot;</span><span class="p">:</span> <span class="n">all_independent</span><span class="p">,</span>
+                <span class="s2">&quot;member_some_best_p&quot;</span><span class="p">:</span> <span class="n">some_best_p</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;pooled_blocks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">meta</span>
+
+    <span class="n">n_blocks</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pooled</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pooled</span><span class="p">))</span>
+    <span class="n">var_blocks</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">pooled</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">))</span> <span class="k">if</span> <span class="n">n_blocks</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="n">sem_n</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_blocks</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">))))</span>
+
+    <span class="c1"># ESS and independence are derived PER MEMBER and then combined — never from</span>
+    <span class="c1"># the cross-member concatenation. Joining independent members end-to-end would</span>
+    <span class="c1"># inject spurious autocorrelation at the boundaries, corrupting both a Geyer</span>
+    <span class="c1"># ESS and a Ljung-Box test on the pooled array. See AUDIT_REPORT H3.</span>
+    <span class="c1"># Independent members&#39; effective sample counts add, so the pooled effective</span>
+    <span class="c1"># block count is the sum of per-member block ESS.</span>
+    <span class="n">member_ess</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;member_ess&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">e</span><span class="p">)]</span>
+    <span class="n">ess_blocks</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">member_ess</span><span class="p">)))</span> <span class="k">if</span> <span class="n">member_ess</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">n_blocks</span><span class="p">))</span>
+    <span class="n">sem_ess</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_blocks</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ess_blocks</span><span class="p">))</span>
+
+    <span class="c1"># Ensemble independence verdict from per-member statuses (consistent vocabulary</span>
+    <span class="c1"># with ivw_member_means — see H5). lb_lags / pooled_lb_alpha_bad are retained in</span>
+    <span class="c1"># the signature for backward compatibility but no longer drive a pooled test.</span>
+    <span class="n">member_pvals</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;member_pvalues&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">n_members_t1</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">member_status</span><span class="p">)</span>
+    <span class="n">n_indep_t1</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">member_status</span> <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="s2">&quot;independent&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_members_t1</span> <span class="ow">and</span> <span class="n">n_indep_t1</span> <span class="o">==</span> <span class="n">n_members_t1</span><span class="p">:</span>
+        <span class="n">pooled_status</span> <span class="o">=</span> <span class="s2">&quot;all_independent&quot;</span>
+    <span class="k">elif</span> <span class="n">n_indep_t1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">pooled_status</span> <span class="o">=</span> <span class="s2">&quot;some_independent&quot;</span>
+    <span class="k">elif</span> <span class="n">n_members_t1</span><span class="p">:</span>
+        <span class="n">pooled_status</span> <span class="o">=</span> <span class="s2">&quot;none_independent&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pooled_status</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+    <span class="n">pooled_independent</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">n_members_t1</span> <span class="ow">and</span> <span class="n">n_indep_t1</span> <span class="o">==</span> <span class="n">n_members_t1</span><span class="p">)</span>
+    <span class="n">pooled_pval</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">member_pvals</span><span class="p">))</span> <span class="k">if</span> <span class="n">member_pvals</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">pooled_pvals</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">member_pvals</span>
+    <span class="n">pooled_tested_lags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;member_lags&quot;</span><span class="p">,</span> <span class="p">[]))</span>
+
+    <span class="c1"># SEM policy: block-count SEM when every member is independent; otherwise the</span>
+    <span class="c1"># (more conservative) ESS-corrected SEM that accounts for residual</span>
+    <span class="c1"># within-member autocorrelation.</span>
+    <span class="n">warning</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Some members used best_p window.&quot;</span> <span class="k">if</span> <span class="n">some_best_p</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">pooled_independent</span><span class="p">:</span>
+        <span class="n">sem_reported</span> <span class="o">=</span> <span class="n">sem_n</span>
+        <span class="n">se_method</span> <span class="o">=</span> <span class="s2">&quot;sem_n&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sem_reported</span> <span class="o">=</span> <span class="n">sem_ess</span>
+        <span class="n">se_method</span> <span class="o">=</span> <span class="s2">&quot;sem_ess (members_not_all_independent)&quot;</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="s2">&quot;Not all members passed independence; using ESS-based SEM.&quot;</span>
+        <span class="n">warning</span> <span class="o">=</span> <span class="n">extra</span> <span class="k">if</span> <span class="n">warning</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="n">warning</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">extra</span><span class="p">)</span>
+
+    <span class="c1"># Confidence-interval multiplier — preserves historical 1.96 for the</span>
+    <span class="c1"># default (normal, 0.95) case; t-quantile when ci_method=&#39;t&#39; with dof set</span>
+    <span class="c1"># by which SEM was reported (sem_n → n_blocks-1; sem_ess → ess_blocks-1).</span>
+    <span class="k">if</span> <span class="n">ci_method</span> <span class="o">==</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;sem_ess&quot;</span> <span class="ow">in</span> <span class="n">se_method</span><span class="p">:</span>
+            <span class="n">ci_dof</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">ess_blocks</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ci_dof</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_blocks</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ci_dof</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ci_mult</span> <span class="o">=</span> <span class="n">confidence_multiplier</span><span class="p">(</span>
+        <span class="n">confidence_level</span><span class="o">=</span><span class="n">confidence_level</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">ci_method</span><span class="p">,</span> <span class="n">dof</span><span class="o">=</span><span class="n">ci_dof</span>
+    <span class="p">)</span>
+
+    <span class="n">ci</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">mu</span> <span class="o">-</span> <span class="n">ci_mult</span> <span class="o">*</span> <span class="n">sem_reported</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">mu</span> <span class="o">+</span> <span class="n">ci_mult</span> <span class="o">*</span> <span class="n">sem_reported</span><span class="p">))</span>
+    <span class="n">pm_std</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">mu</span> <span class="o">-</span> <span class="n">sem_reported</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">mu</span> <span class="o">+</span> <span class="n">sem_reported</span><span class="p">))</span>
+
+    <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">mu</span><span class="p">,</span>
+            <span class="s2">&quot;variance&quot;</span><span class="p">:</span> <span class="n">var_blocks</span><span class="p">,</span>
+            <span class="s2">&quot;ess_blocks&quot;</span><span class="p">:</span> <span class="n">ess_blocks</span><span class="p">,</span>
+            <span class="s2">&quot;n_short_averages&quot;</span><span class="p">:</span> <span class="n">n_blocks</span><span class="p">,</span>
+            <span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">:</span> <span class="n">sem_reported</span><span class="p">,</span>
+            <span class="s2">&quot;mean_uncertainty_sem_n&quot;</span><span class="p">:</span> <span class="n">sem_n</span><span class="p">,</span>
+            <span class="s2">&quot;mean_uncertainty_sem_ess&quot;</span><span class="p">:</span> <span class="n">sem_ess</span><span class="p">,</span>
+            <span class="s2">&quot;se_method&quot;</span><span class="p">:</span> <span class="n">se_method</span><span class="p">,</span>
+            <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="n">warning</span><span class="p">,</span>
+            <span class="s2">&quot;confidence_interval&quot;</span><span class="p">:</span> <span class="n">ci</span><span class="p">,</span>
+            <span class="s2">&quot;pm_std&quot;</span><span class="p">:</span> <span class="n">pm_std</span><span class="p">,</span>
+            <span class="c1"># Window-size schema (B2)</span>
+            <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="n">window_size_agg</span><span class="p">,</span>     <span class="c1"># median member window; None if no members</span>
+            <span class="s2">&quot;member_window_sizes&quot;</span><span class="p">:</span> <span class="n">member_window_sizes</span><span class="p">,</span>
+            <span class="s2">&quot;window_size_summary&quot;</span><span class="p">:</span> <span class="n">window_size_agg</span><span class="p">,</span>
+            <span class="s2">&quot;window_size_summary_method&quot;</span><span class="p">:</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;window_size_min&quot;</span><span class="p">:</span> <span class="n">window_size_min</span><span class="p">,</span>
+            <span class="s2">&quot;window_size_max&quot;</span><span class="p">:</span> <span class="n">window_size_max</span><span class="p">,</span>
+            <span class="c1"># Independence diagnostics — normalised schema</span>
+            <span class="s2">&quot;independent&quot;</span><span class="p">:</span> <span class="n">pooled_independent</span><span class="p">,</span>
+            <span class="s2">&quot;independence_status&quot;</span><span class="p">:</span> <span class="n">pooled_status</span><span class="p">,</span>
+            <span class="s2">&quot;ljungbox_pvalue&quot;</span><span class="p">:</span> <span class="n">pooled_pval</span><span class="p">,</span>     <span class="c1"># scalar (min over lags) — backward-compat</span>
+            <span class="s2">&quot;ljungbox_pvalues&quot;</span><span class="p">:</span> <span class="n">pooled_pvals</span><span class="p">,</span>   <span class="c1"># list — normalised schema</span>
+            <span class="s2">&quot;ljungbox_lags&quot;</span><span class="p">:</span> <span class="n">pooled_tested_lags</span><span class="p">,</span>  <span class="c1"># list — normalised schema</span>
+            <span class="c1"># CI provenance</span>
+            <span class="s2">&quot;ci_method&quot;</span><span class="p">:</span> <span class="n">ci_method</span><span class="p">,</span>
+            <span class="s2">&quot;confidence_level&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">confidence_level</span><span class="p">),</span>
+            <span class="s2">&quot;member_all_independent&quot;</span><span class="p">:</span> <span class="n">all_independent</span><span class="p">,</span>
+            <span class="s2">&quot;member_some_best_p&quot;</span><span class="p">:</span> <span class="n">some_best_p</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;pooled_blocks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_blocks</span>
+    <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;schema_version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1.0&quot;</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">meta</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Technique 2 — member-wise then inverse-variance aggregate</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="ivw_member_means_stats_for_col">
+<a class="viewcode-back" href="../../../autoapi/quends/base/ensemble_statistics/index.html#quends.base.ensemble_statistics.ivw_member_means_stats_for_col">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ivw_member_means_stats_for_col</span><span class="p">(</span>
+    <span class="n">data_streams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DataStream</span><span class="p">],</span>
+    <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">ddof</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span>
+    <span class="n">window_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">diagnostics</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;compact&quot;</span><span class="p">,</span>
+    <span class="n">confidence_level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="n">ci_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute *ivw_member_means* (T2) statistics for one column.</span>
+
+<span class="sd">    Calls :meth:`DataStream.compute_statistics` on each member (which uses the</span>
+<span class="sd">    canonical :func:`~quends.base.utils.autotune_blocks` helper) and aggregates</span>
+<span class="sd">    via inverse-variance weighting (fallback: simple mean when no variances are</span>
+<span class="sd">    available).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_streams : list of DataStream</span>
+<span class="sd">    col : str</span>
+<span class="sd">    ddof : int</span>
+<span class="sd">    method : str</span>
+<span class="sd">    window_size : int or None</span>
+<span class="sd">    diagnostics : {&quot;compact&quot;, &quot;full&quot;}</span>
+<span class="sd">        ``&quot;full&quot;`` includes per-member statistics (including per-member window</span>
+<span class="sd">        and independence diagnostics) in ``stat_dict[&quot;individual&quot;]``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (stat_dict, meta_dict)</span>
+<span class="sd">        ``stat_dict`` canonical keys:</span>
+
+<span class="sd">        ``mean``, ``mean_uncertainty``, ``confidence_interval``, ``pm_std``,</span>
+<span class="sd">        ``variance``, ``ess_blocks``, ``n_short_averages``, ``se_method``,</span>
+<span class="sd">        ``warning``,</span>
+<span class="sd">        ``window_size`` (mean of per-member windows, or ``None``),</span>
+<span class="sd">        ``independence_status`` (``&quot;all_independent&quot;``, ``&quot;some_independent&quot;``,</span>
+<span class="sd">        ``&quot;none_independent&quot;``, or ``&quot;unknown&quot;``),</span>
+<span class="sd">        ``independent`` (``True`` iff all members are independent),</span>
+<span class="sd">        ``ljungbox_pvalue`` (mean of per-member min p-values),</span>
+<span class="sd">        ``ljungbox_pvalues`` (list of per-member min p-values),</span>
+<span class="sd">        ``individual`` (per-member dicts when *diagnostics* == ``&quot;full&quot;``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">indiv</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">means</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">w_means</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">weights</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">var_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ess_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">nsa_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Diagnostic aggregation</span>
+    <span class="n">window_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">independent_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">pvalue_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># First non-empty per-member ljungbox_lags list, captured to expose at top</span>
+    <span class="c1"># level (all members use the same canonical lag_set, so any one is fine).</span>
+    <span class="n">lags_repr</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_streams</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Member </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">compute_statistics</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span>
+        <span class="p">)</span>
+        <span class="n">stat</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="p">{})</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">se</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">ci</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;confidence_interval&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
+        <span class="n">pm</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pm_std&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
+        <span class="n">ess_i</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ess_blocks&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">nsa_i</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;n_short_averages&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">var_i</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;variance&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="c1"># Diagnostics from compute_statistics</span>
+        <span class="n">ws_i</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;window_size&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">indep_i</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;independent&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">indep_status_i</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;independence_status&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
+        <span class="n">lb_pval_i</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ljungbox_pvalue&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">lb_pvals_i</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ljungbox_pvalues&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">lb_lags_i</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ljungbox_lags&quot;</span><span class="p">,</span> <span class="p">[])</span>
+
+        <span class="n">indiv</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">mu</span><span class="p">,</span>
+            <span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">:</span> <span class="n">se</span><span class="p">,</span>
+            <span class="s2">&quot;variance&quot;</span><span class="p">:</span> <span class="n">var_i</span><span class="p">,</span>
+            <span class="s2">&quot;confidence_interval&quot;</span><span class="p">:</span> <span class="n">ci</span><span class="p">,</span>
+            <span class="s2">&quot;pm_std&quot;</span><span class="p">:</span> <span class="n">pm</span><span class="p">,</span>
+            <span class="s2">&quot;ess_blocks&quot;</span><span class="p">:</span> <span class="n">ess_i</span><span class="p">,</span>
+            <span class="s2">&quot;n_short_averages&quot;</span><span class="p">:</span> <span class="n">nsa_i</span><span class="p">,</span>
+            <span class="c1"># Per-member diagnostic keys (always populated)</span>
+            <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="n">ws_i</span><span class="p">,</span>
+            <span class="s2">&quot;independence_status&quot;</span><span class="p">:</span> <span class="n">indep_status_i</span><span class="p">,</span>
+            <span class="s2">&quot;independent&quot;</span><span class="p">:</span> <span class="n">indep_i</span><span class="p">,</span>
+            <span class="s2">&quot;ljungbox_pvalue&quot;</span><span class="p">:</span> <span class="n">lb_pval_i</span><span class="p">,</span>
+            <span class="s2">&quot;ljungbox_pvalues&quot;</span><span class="p">:</span> <span class="n">lb_pvals_i</span><span class="p">,</span>
+            <span class="s2">&quot;ljungbox_lags&quot;</span><span class="p">:</span> <span class="n">lb_lags_i</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">mu</span><span class="p">):</span>
+            <span class="n">means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">mu</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">se</span><span class="p">):</span>
+            <span class="n">ses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">se</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">se</span><span class="p">)</span> <span class="ow">and</span> <span class="n">se</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">w_means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">mu</span><span class="p">))</span>
+            <span class="n">weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">se</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">var_i</span><span class="p">):</span>
+            <span class="n">var_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">var_i</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ess_i</span><span class="p">):</span>
+            <span class="n">ess_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ess_i</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">nsa_i</span><span class="p">):</span>
+            <span class="n">nsa_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">nsa_i</span><span class="p">))</span>
+        <span class="c1"># Diagnostic aggregation</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ws_i</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ws_i</span><span class="p">)):</span>
+            <span class="n">window_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ws_i</span><span class="p">))</span>
+        <span class="n">independent_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indep_i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lb_pval_i</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">lb_pval_i</span><span class="p">):</span>
+            <span class="n">pvalue_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lb_pval_i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">lags_repr</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lb_lags_i</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lb_lags_i</span><span class="p">:</span>
+            <span class="n">lags_repr</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">lb_lags_i</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">weights</span> <span class="ow">and</span> <span class="n">w_means</span><span class="p">:</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">w_means</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">w_sum</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+        <span class="n">mu_ens</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">m</span><span class="p">)</span> <span class="o">/</span> <span class="n">w_sum</span><span class="p">)</span> <span class="k">if</span> <span class="n">w_sum</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">se_ens</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">w_sum</span><span class="p">))</span> <span class="k">if</span> <span class="n">w_sum</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">se_method_ens</span> <span class="o">=</span> <span class="s2">&quot;ivw_member_means&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># No usable inverse-variance weights. Fall back to an equal-weight mean</span>
+        <span class="c1"># of the member means. For independent members the SE of that mean is the</span>
+        <span class="c1"># valid combination SE — NOT the average of the member SEMs (which would</span>
+        <span class="c1"># not shrink with N). Var(mean of means) = (1/N^2) Σ se_i^2, so</span>
+        <span class="c1"># se = sqrt(Σ se_i^2) / N.  See AUDIT_REPORT H4.</span>
+        <span class="n">mu_ens</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">means</span><span class="p">))</span> <span class="k">if</span> <span class="n">means</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">if</span> <span class="n">ses</span><span class="p">:</span>
+            <span class="n">se_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ses</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">n_se</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">se_arr</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+            <span class="n">se_ens</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">se_arr</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="n">n_se</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">se_ens</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">se_method_ens</span> <span class="o">=</span> <span class="s2">&quot;equal_weight_combined&quot;</span>
+
+    <span class="n">var_ens</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">var_list</span><span class="p">))</span> <span class="k">if</span> <span class="n">var_list</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="c1"># ess_blocks / n_short_averages are reported as ensemble TOTALS (sum across</span>
+    <span class="c1"># members), so the same keys mean the same thing here as in pooled_block_means</span>
+    <span class="c1"># (T1) — total effective / total block count across the ensemble. See H5.</span>
+    <span class="n">ess_ens</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">ess_list</span><span class="p">))</span> <span class="k">if</span> <span class="n">ess_list</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">nsa_ens</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">nsa_list</span><span class="p">))</span> <span class="k">if</span> <span class="n">nsa_list</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="c1"># Aggregate window diagnostics — switched to median for robustness and</span>
+    <span class="c1"># consistency with T1 (B2).  The mean-based summary previously reported</span>
+    <span class="c1"># was sensitive to outlier member windows.</span>
+    <span class="k">if</span> <span class="n">window_list</span><span class="p">:</span>
+        <span class="n">window_size_ens</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">window_list</span><span class="p">))))</span>
+        <span class="n">window_size_min</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">window_list</span><span class="p">))</span>
+        <span class="n">window_size_max</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">window_list</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">window_size_ens</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">window_size_min</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">window_size_max</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">member_window_sizes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">window_list</span><span class="p">)</span>
+
+    <span class="n">has_indep_info</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">independent_list</span><span class="p">)</span>
+    <span class="n">all_indep</span> <span class="o">=</span> <span class="n">has_indep_info</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">b</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">independent_list</span><span class="p">)</span>
+    <span class="n">some_indep</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">b</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">independent_list</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">all_indep</span><span class="p">:</span>
+        <span class="n">indep_status_ens</span> <span class="o">=</span> <span class="s2">&quot;all_independent&quot;</span>
+    <span class="k">elif</span> <span class="n">some_indep</span><span class="p">:</span>
+        <span class="n">indep_status_ens</span> <span class="o">=</span> <span class="s2">&quot;some_independent&quot;</span>
+    <span class="k">elif</span> <span class="n">has_indep_info</span><span class="p">:</span>
+        <span class="n">indep_status_ens</span> <span class="o">=</span> <span class="s2">&quot;none_independent&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">indep_status_ens</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+    <span class="n">avg_pvalue</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pvalue_list</span><span class="p">))</span> <span class="k">if</span> <span class="n">pvalue_list</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="c1"># CI multiplier — ivw_member_means uses normal by default.  The &#39;t&#39; method</span>
+    <span class="c1"># requires a well-defined dof, which is awkward for an inverse-variance</span>
+    <span class="c1"># weighted estimator combining members of differing dof.  We currently</span>
+    <span class="c1"># support only ci_method=&#39;normal&#39; here and raise for &#39;t&#39; to avoid silently</span>
+    <span class="c1"># using a statistically questionable formula.</span>
+    <span class="k">if</span> <span class="n">ci_method</span> <span class="o">==</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;ci_method=&#39;t&#39; is not supported for the &#39;ivw_member_means&#39; &quot;</span>
+            <span class="s2">&quot;technique because the inverse-variance-weighted estimator &quot;</span>
+            <span class="s2">&quot;combines per-member estimates with different degrees of freedom; &quot;</span>
+            <span class="s2">&quot;use &#39;normal&#39; or switch to &#39;pooled_block_means&#39;.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">ci_mult</span> <span class="o">=</span> <span class="n">confidence_multiplier</span><span class="p">(</span>
+        <span class="n">confidence_level</span><span class="o">=</span><span class="n">confidence_level</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">ci_method</span><span class="p">,</span> <span class="n">dof</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+
+    <span class="n">ci_ens</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">mu_ens</span> <span class="o">-</span> <span class="n">ci_mult</span> <span class="o">*</span> <span class="n">se_ens</span><span class="p">)</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">se_ens</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">mu_ens</span> <span class="o">+</span> <span class="n">ci_mult</span> <span class="o">*</span> <span class="n">se_ens</span><span class="p">)</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">se_ens</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">out</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">mu_ens</span><span class="p">,</span>
+        <span class="s2">&quot;mean_uncertainty&quot;</span><span class="p">:</span> <span class="n">se_ens</span><span class="p">,</span>
+        <span class="s2">&quot;confidence_interval&quot;</span><span class="p">:</span> <span class="n">ci_ens</span><span class="p">,</span>
+        <span class="s2">&quot;pm_std&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">mu_ens</span> <span class="o">-</span> <span class="n">se_ens</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">mu_ens</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">se_ens</span><span class="p">)</span>
+            <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">mu_ens</span> <span class="o">+</span> <span class="n">se_ens</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">mu_ens</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">se_ens</span><span class="p">)</span>
+            <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;variance&quot;</span><span class="p">:</span> <span class="n">var_ens</span><span class="p">,</span>
+        <span class="s2">&quot;ess_blocks&quot;</span><span class="p">:</span> <span class="n">ess_ens</span><span class="p">,</span>
+        <span class="s2">&quot;n_short_averages&quot;</span><span class="p">:</span> <span class="n">nsa_ens</span><span class="p">,</span>
+        <span class="s2">&quot;se_method&quot;</span><span class="p">:</span> <span class="n">se_method_ens</span><span class="p">,</span>
+        <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># Window-size schema (B2)</span>
+        <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="n">window_size_ens</span><span class="p">,</span>
+        <span class="s2">&quot;member_window_sizes&quot;</span><span class="p">:</span> <span class="n">member_window_sizes</span><span class="p">,</span>
+        <span class="s2">&quot;window_size_summary&quot;</span><span class="p">:</span> <span class="n">window_size_ens</span><span class="p">,</span>
+        <span class="s2">&quot;window_size_summary_method&quot;</span><span class="p">:</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;window_size_min&quot;</span><span class="p">:</span> <span class="n">window_size_min</span><span class="p">,</span>
+        <span class="s2">&quot;window_size_max&quot;</span><span class="p">:</span> <span class="n">window_size_max</span><span class="p">,</span>
+        <span class="c1"># Independence diagnostics</span>
+        <span class="s2">&quot;independence_status&quot;</span><span class="p">:</span> <span class="n">indep_status_ens</span><span class="p">,</span>
+        <span class="s2">&quot;independent&quot;</span><span class="p">:</span> <span class="n">all_indep</span><span class="p">,</span>
+        <span class="s2">&quot;ljungbox_pvalue&quot;</span><span class="p">:</span> <span class="n">avg_pvalue</span><span class="p">,</span>       <span class="c1"># mean of per-member min p-values</span>
+        <span class="s2">&quot;ljungbox_pvalues&quot;</span><span class="p">:</span> <span class="n">pvalue_list</span><span class="p">,</span>     <span class="c1"># list of per-member min p-values</span>
+        <span class="s2">&quot;ljungbox_lags&quot;</span><span class="p">:</span> <span class="n">lags_repr</span><span class="p">,</span>          <span class="c1"># list — first non-empty member&#39;s lags (B1)</span>
+        <span class="c1"># CI provenance</span>
+        <span class="s2">&quot;ci_method&quot;</span><span class="p">:</span> <span class="n">ci_method</span><span class="p">,</span>
+        <span class="s2">&quot;confidence_level&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">confidence_level</span><span class="p">),</span>
+        <span class="s2">&quot;individual&quot;</span><span class="p">:</span> <span class="n">indiv</span> <span class="k">if</span> <span class="n">diagnostics</span> <span class="o">==</span> <span class="s2">&quot;full&quot;</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">meta</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;n_members_used&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">indiv</span><span class="p">),</span> <span class="s2">&quot;schema_version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">meta</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># High-level dispatcher</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="compute_ensemble_statistics">
+<a class="viewcode-back" href="../../../autoapi/quends/base/ensemble_statistics/index.html#quends.base.ensemble_statistics.compute_ensemble_statistics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_ensemble_statistics</span><span class="p">(</span>
+    <span class="n">data_streams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DataStream</span><span class="p">],</span>
+    <span class="n">column_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">ddof</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;non-overlapping&quot;</span><span class="p">,</span>
+    <span class="n">window_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">technique</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">POOLED_BLOCK_MEANS</span><span class="p">,</span>
+    <span class="n">diagnostics</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;compact&quot;</span><span class="p">,</span>
+    <span class="n">confidence_level</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="n">ci_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Aggregate mean, SEM, CI, ±SEM, variance, and ESS across an ensemble.</span>
+
+<span class="sd">    Dispatches to the appropriate technique helper.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_streams : list of DataStream</span>
+<span class="sd">    column_name : str, list of str, or None</span>
+<span class="sd">        ``None`` → all common variables.</span>
+<span class="sd">    ddof : int</span>
+<span class="sd">    method : {&quot;non-overlapping&quot;, &quot;sliding&quot;}</span>
+<span class="sd">    window_size : int or None</span>
+<span class="sd">    technique : {&quot;ensemble_average&quot;, &quot;pooled_block_means&quot;, &quot;ivw_member_means&quot;}</span>
+<span class="sd">        Canonical technique name.  Legacy values ``0``/``1``/``2`` and</span>
+<span class="sd">        ``&quot;technique0&quot;``/``&quot;technique1&quot;``/``&quot;technique2&quot;`` are accepted as</span>
+<span class="sd">        backward-compatible aliases.  Default ``&quot;pooled_block_means&quot;``.</span>
+<span class="sd">    diagnostics : {&quot;compact&quot;, &quot;full&quot;}</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        ``{&quot;results&quot;: {col: {stats}}, &quot;metadata&quot;: {...}}``</span>
+
+<span class="sd">        Metadata key for each technique:</span>
+
+<span class="sd">        * ``&quot;technique_0_ensemble_average&quot;``</span>
+<span class="sd">        * ``&quot;technique_1_pooled_block_means&quot;``</span>
+<span class="sd">        * ``&quot;technique_2_ivw_member_means&quot;``</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If *technique* is not a recognised alias.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">quends.base.ensemble_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa: PLC0415</span>
+        <span class="n">compute_average_ensemble</span><span class="p">,</span>
+        <span class="n">resolve_cols</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">canonical</span> <span class="o">=</span> <span class="n">_normalize_technique</span><span class="p">(</span><span class="n">technique</span><span class="p">)</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">resolve_cols</span><span class="p">(</span><span class="n">data_streams</span><span class="p">,</span> <span class="n">column_name</span><span class="p">)</span>
+    <span class="n">stats</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># Common run-level metadata (read directly by budget/wall-clock studies).</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;estimator&quot;</span><span class="p">:</span> <span class="n">canonical</span><span class="p">,</span>
+        <span class="s2">&quot;n_members&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_streams</span><span class="p">),</span>
+        <span class="s2">&quot;total_samples&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">data_streams</span><span class="p">)),</span>
+        <span class="s2">&quot;schema_version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">canonical</span> <span class="o">==</span> <span class="n">ENSEMBLE_AVERAGE</span><span class="p">:</span>
+        <span class="n">avg_ds</span> <span class="o">=</span> <span class="n">compute_average_ensemble</span><span class="p">(</span><span class="n">data_streams</span><span class="p">)</span>
+        <span class="n">meta_cols</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+            <span class="n">col_stats</span><span class="p">,</span> <span class="n">col_meta</span> <span class="o">=</span> <span class="n">ensemble_average_stats_for_col</span><span class="p">(</span>
+                <span class="n">data_streams</span><span class="o">=</span><span class="n">data_streams</span><span class="p">,</span>
+                <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+                <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">,</span>
+                <span class="n">avg_ds</span><span class="o">=</span><span class="n">avg_ds</span><span class="p">,</span>
+                <span class="n">confidence_level</span><span class="o">=</span><span class="n">confidence_level</span><span class="p">,</span>
+                <span class="n">ci_method</span><span class="o">=</span><span class="n">ci_method</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">stats</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">col_stats</span>
+            <span class="n">meta_cols</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">col_meta</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;technique_0_ensemble_average&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta_cols</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">stats</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">canonical</span> <span class="o">==</span> <span class="n">POOLED_BLOCK_MEANS</span><span class="p">:</span>
+        <span class="n">meta_cols</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+            <span class="n">col_stats</span><span class="p">,</span> <span class="n">col_meta</span> <span class="o">=</span> <span class="n">pooled_block_means_stats_for_col</span><span class="p">(</span>
+                <span class="n">data_streams</span><span class="o">=</span><span class="n">data_streams</span><span class="p">,</span>
+                <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span>
+                <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+                <span class="n">confidence_level</span><span class="o">=</span><span class="n">confidence_level</span><span class="p">,</span>
+                <span class="n">ci_method</span><span class="o">=</span><span class="n">ci_method</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">stats</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">col_stats</span>
+            <span class="n">meta_cols</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">col_meta</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;technique_1_pooled_block_means&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta_cols</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">stats</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span>
+
+    <span class="c1"># IVW_MEMBER_MEANS</span>
+    <span class="n">meta_cols</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+        <span class="n">col_stats</span><span class="p">,</span> <span class="n">col_meta</span> <span class="o">=</span> <span class="n">ivw_member_means_stats_for_col</span><span class="p">(</span>
+            <span class="n">data_streams</span><span class="o">=</span><span class="n">data_streams</span><span class="p">,</span>
+            <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+            <span class="n">ddof</span><span class="o">=</span><span class="n">ddof</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+            <span class="n">window_size</span><span class="o">=</span><span class="n">window_size</span><span class="p">,</span>
+            <span class="n">diagnostics</span><span class="o">=</span><span class="n">diagnostics</span><span class="p">,</span>
+            <span class="n">confidence_level</span><span class="o">=</span><span class="n">confidence_level</span><span class="p">,</span>
+            <span class="n">ci_method</span><span class="o">=</span><span class="n">ci_method</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># Full pass-through so any new diagnostic keys added to</span>
+        <span class="c1"># ivw_member_means_stats_for_col automatically appear here;</span>
+        <span class="c1"># individual is suppressed when diagnostics != &quot;full&quot;.</span>
+        <span class="n">stats</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">col_stats</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">diagnostics</span> <span class="o">!=</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span>
+            <span class="n">stats</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;individual&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">meta_cols</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">col_meta</span>
+    <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;technique_2_ivw_member_means&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta_cols</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">stats</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">}</span></div>
+
+</code></pre></div>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      Last update:
+      Jul 08, 2026
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2024, Bert Debusschere, Pieterjan Robbe, Evans Etrue Howard, Abeyah Calpatura.
+        
+    </div>
+  
+    Created using
+    <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
+    7.4.7.
+     and
+    <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.sections", "toc.follow", "search.highlight", "search.share", "content.code.copy"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+      
+        <script src="../../../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=8ec58cb5"></script>
+        <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+        <script src="../../../_static/sphinx_immaterial_local.js?v=265f0858"></script>
+    
+  </body>
+</html>
