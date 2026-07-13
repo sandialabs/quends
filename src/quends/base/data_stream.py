@@ -819,6 +819,35 @@ class DataStream:
             "results": to_native_types(results),
         }
 
+    def estimate_tau_int(self, column_name=None):
+        """
+        Estimate the integrated autocorrelation time (tau_int) for specified columns.
+
+        Parameters
+
+        column_name : str or list or None
+            Column(s) to compute tau_int for; defaults to all non-time columns.
+
+        Returns
+        -------
+        dict
+            {'results': {col: tau_int}}
+        """
+        columns = _resolve_columns(self.data, column_name)
+        results = {}
+        for col in columns:
+            series = self.data[col].dropna()
+            if series.empty:
+                results[col] = {"error": f"No data available for column '{col}'"}
+                continue
+
+            tau_int = _estimate_tau_int_from_series(
+                np.asarray(series.values, dtype=float)
+            )
+            results[col] = tau_int
+
+        return {"results": to_native_types(results)}
+
     @staticmethod
     def robust_effective_sample_size(
         x,
