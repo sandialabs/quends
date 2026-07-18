@@ -1,2 +1,2 @@
 column,confidence_interval.lower,confidence_interval.upper,window_size
-HeatFlux_st,7.628179275186925,8.122862643494397,13
+HeatFlux_st,7.565785274880089,8.122866685119911,20

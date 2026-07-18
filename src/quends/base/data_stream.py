@@ -18,7 +18,9 @@ from .utils import (
     _resolve_columns,
     autotune_blocks,
     confidence_multiplier,
+    pooled_tau_int,
     power_law_model,
+    tau_window_blocks,
     to_native_types,
 )
 
@@ -300,22 +302,26 @@ class DataStream:
             sd = float(np.std(block_means, ddof=ddof)) if n_blocks >= 2 else np.nan
             ess_blocks = _geyer_ess_on_blocks(block_means)
 
-            # SE rule based on independence status
-            warning = None
+            # SE rule: ALWAYS credit residual block-to-block correlation via the
+            # Geyer ESS on the block means (se = sd / sqrt(ess_blocks)).  The
+            # window rule and independence_status are unchanged and still
+            # reported; only the SE denominator no longer trusts the Ljung-Box
+            # "independent" verdict.  That test has low power on ~100 blocks, so
+            # the old iid_blocks path (dividing by the full n_blocks) left the SE
+            # optimistic by exactly sqrt(T_B) whenever ess_blocks < n_blocks --
+            # measured at 1.39x on real data.  Dividing by ess_blocks instead
+            # lands the between-member variance at its honest floor and keeps
+            # sqrt(UQ_avg^2 + sigma2_between) calibrated against the observed
+            # spread of member means.
+            eff_n_for_se = float(max(1.0, ess_blocks))
+            se_method = "ess_blocks"
             if status == "independent":
-                eff_n_for_se = float(n_blocks)
-                se_method = "iid_blocks"
+                warning = None
             elif status == "best_p":
-                eff_n_for_se = float(max(1.0, n_blocks))
-                se_method = "iid_blocks_best_p"
-                warning = "Block means did not pass Ljung-Box; using best-p window."
+                warning = "Block means did not pass Ljung-Box; using best-p window (SE via Geyer ESS)."
             elif status == "user_window":
-                eff_n_for_se = float(max(1.0, ess_blocks))
-                se_method = "ess_blocks"
                 warning = "User window; SE via Geyer ESS on block means."
             else:
-                eff_n_for_se = float(max(1.0, ess_blocks))
-                se_method = "ess_blocks_fallback"
                 warning = "Too few blocks for independence test; SE via Geyer ESS."
 
             se = (
@@ -571,6 +577,10 @@ class DataStream:
         max_iter: int = 25,
         w_min: int = 5,
         c0: float = 2.0,
+        # --- tau-window rule (default) ---
+        window_rule: str = "tau",
+        tau: Optional[float] = None,
+        B_min_hard: int = 4,
     ) -> Tuple[pd.Series, dict]:
         """
         Autotune block window and transform a 1D series into block means.
@@ -612,19 +622,46 @@ class DataStream:
 
         x = np.asarray(column_data.values, dtype=float)
 
-        # Independence autotune always on non-overlapping blocks.
-        ab = autotune_blocks(
-            x,
-            window_size=estimated_window,
-            method="non-overlapping",
-            alpha=alpha,
-            lag_set=lag_set,
-            B_min=B_min,
-            min_blocks=min_blocks,
-            max_iter=max_iter,
-            w_min=w_min,
-            c0=c0,
-        )
+        # Window selection.  Default rule is the tau-window (w = round(tau));
+        # the legacy Ljung-Box autotune remains available via window_rule.
+        # An explicit estimated_window always wins over either rule.
+        if estimated_window is not None:
+            ab = autotune_blocks(
+                x,
+                window_size=estimated_window,
+                method="non-overlapping",
+                alpha=alpha,
+                lag_set=lag_set,
+                B_min=B_min,
+                min_blocks=min_blocks,
+                max_iter=max_iter,
+                w_min=w_min,
+                c0=c0,
+            )
+        elif window_rule == "tau":
+            ab = tau_window_blocks(
+                x,
+                tau=tau,
+                method="non-overlapping",
+                B_min_hard=B_min_hard,
+                alpha=alpha,
+                lag_set=lag_set,
+            )
+        elif window_rule == "autotune":
+            ab = autotune_blocks(
+                x,
+                window_size=None,
+                method="non-overlapping",
+                alpha=alpha,
+                lag_set=lag_set,
+                B_min=B_min,
+                min_blocks=min_blocks,
+                max_iter=max_iter,
+                w_min=w_min,
+                c0=c0,
+            )
+        else:
+            raise ValueError("window_rule must be 'tau' or 'autotune'")
         w = ab["window_size"]
 
         if method == "sliding":

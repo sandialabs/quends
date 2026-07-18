@@ -37,7 +37,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 
 from .data_stream import DataStream
-from .utils import _geyer_ess_on_blocks, confidence_multiplier
+from .utils import _geyer_ess_on_blocks, confidence_multiplier, pooled_tau_int
 
 
 # ---------------------------------------------------------------------------
@@ -210,9 +210,22 @@ def ensemble_average_stats_for_col(
     avg_ds: Optional[DataStream] = None,
     confidence_level: float = 0.95,
     ci_method: str = "normal",
+    tau_mode: str = "pooled",
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """
     Compute *ensemble_average* (T0) statistics for one column.
+
+    ``tau_mode`` (default ``"pooled"``) sets the block window for the averaged
+    trace:
+
+    * ``"pooled"``     - ``w = round(tau*)`` with ``tau*`` pooled across the member
+      traces.  Averaging N independent members scales the autocovariance by 1/N
+      but leaves the *normalised* ACF unchanged (``rho_ea = rho``), so the member
+      correlation time IS the correct time-scale for the EA trace — and pooling M
+      member ACFs resolves it far better than the single averaged trace can.
+    * ``"per_member"`` - use the EA trace's own tau (the plain tau-window rule).
+
+    An explicit *window_size* overrides both.
 
     Uses a pre-computed average-ensemble DataStream (or builds it from
     *data_streams* if *avg_ds* is ``None``). Runs
@@ -248,16 +261,35 @@ def ensemble_average_stats_for_col(
         }
         return out, {}
 
+    # Window for the EA trace: pooled tau* by default (see docstring).
+    w_eff, tau_star = window_size, None
+    if w_eff is None and tau_mode == "pooled":
+        traces = [
+            ds.data[col].dropna().to_numpy(dtype=float)
+            for ds in data_streams
+            if col in ds.data.columns
+        ]
+        traces = [t for t in traces if t.size > 3]
+        if len(traces) >= 2:
+            tau_star = pooled_tau_int(traces)
+            w_eff = max(1, int(round(tau_star)))
+    elif tau_mode not in ("pooled", "per_member"):
+        raise ValueError("tau_mode must be 'pooled' or 'per_member'")
+
     s = avg_ds.compute_statistics(
         column_name=col,
         ddof=ddof,
         method=method,
-        window_size=window_size,
+        window_size=w_eff,
         confidence_level=confidence_level,
         ci_method=ci_method,
     )
     stat = s.get(col, {}) if isinstance(s, dict) else {}
-    return stat, {"n_members_averaged": len(data_streams)}
+    return stat, {
+        "n_members_averaged": len(data_streams),
+        "tau_mode": tau_mode,
+        "tau_star": tau_star,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -275,6 +307,7 @@ def pooled_block_means_stats_for_col(
     pooled_lb_alpha_bad: float = 0.01,
     confidence_level: float = 0.95,
     ci_method: str = "normal",
+    pooled_ess_method: str = "concat",
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """
     Compute *pooled_block_means* (T1) statistics for one column.
@@ -397,8 +430,22 @@ def pooled_block_means_stats_for_col(
     # ESS and a Ljung-Box test on the pooled array. See AUDIT_REPORT H3.
     # Independent members' effective sample counts add, so the pooled effective
     # block count is the sum of per-member block ESS.
+    # Pooled effective block count.  Two supported rules:
+    #   "concat" (default) - Geyer ESS on the concatenated pooled block means.
+    #   "sum"              - add the per-member ESS (members are independent, so
+    #                        their effective counts add; avoids the cross-member
+    #                        boundary in the concatenated array, see AUDIT_REPORT H3).
+    # On an AR(1) benchmark (M=16, w=tau) "concat" ran ~+2% conservative on the
+    # SE while "sum" was unbiased; "concat" is the default by request.
     member_ess = [float(e) for e in meta.get("member_ess", []) if np.isfinite(e)]
-    ess_blocks = float(max(1.0, sum(member_ess))) if member_ess else float(max(1.0, n_blocks))
+    ess_sum = float(max(1.0, sum(member_ess))) if member_ess else float(max(1.0, n_blocks))
+    ess_concat = float(max(1.0, _geyer_ess_on_blocks(pooled))) if n_blocks >= 2 else 1.0
+    if pooled_ess_method == "concat":
+        ess_blocks = ess_concat
+    elif pooled_ess_method == "sum":
+        ess_blocks = ess_sum
+    else:
+        raise ValueError("pooled_ess_method must be 'concat' or 'sum'")
     sem_ess = float(np.sqrt(var_blocks) / np.sqrt(ess_blocks))
 
     # Ensemble independence verdict from per-member statuses (consistent vocabulary
@@ -423,16 +470,15 @@ def pooled_block_means_stats_for_col(
     pooled_pvals: List[float] = member_pvals
     pooled_tested_lags: List[int] = list(meta.get("member_lags", []))
 
-    # SEM policy: block-count SEM when every member is independent; otherwise the
-    # (more conservative) ESS-corrected SEM that accounts for residual
-    # within-member autocorrelation.
+    # SEM policy: ALWAYS the ESS-corrected SEM (sum of per-member block ESS),
+    # which credits residual within-member autocorrelation.  Formerly the
+    # block-count SEM (sem_n) was used when every member passed Ljung-Box, but
+    # that gate has low power and left the pooled SE optimistic; this mirrors the
+    # DataStream ess_blocks change so per-member, EA, and SR tell one story.
     warning: Optional[str] = "Some members used best_p window." if some_best_p else None
-    if pooled_independent:
-        sem_reported = sem_n
-        se_method = "sem_n"
-    else:
-        sem_reported = sem_ess
-        se_method = "sem_ess (members_not_all_independent)"
+    sem_reported = sem_ess
+    se_method = "sem_ess"
+    if not pooled_independent:
         extra = "Not all members passed independence; using ESS-based SEM."
         warning = extra if warning is None else (warning + " " + extra)
 
@@ -504,6 +550,7 @@ def ivw_member_means_stats_for_col(
     diagnostics: str = "compact",
     confidence_level: float = 0.95,
     ci_method: str = "normal",
+    tau_mode: str = "pooled",
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """
     Compute *ivw_member_means* (T2) statistics for one column.
@@ -556,12 +603,33 @@ def ivw_member_means_stats_for_col(
     # level (all members use the same canonical lag_set, so any one is fine).
     lags_repr: List[int] = []
 
+    # Per-member block window.  Default "pooled": borrow tau* from the whole
+    # ensemble.  A single short member resolves its own tau poorly (on the t1200
+    # runs the per-member tau spans 22-156 where the truth is ~50, and a member
+    # drawing tau=124 is left with only ~11 blocks / ESS~5), so pooling M member
+    # ACFs gives a far more stable window.  "per_member" uses each member's OWN
+    # tau instead - required for a parameter scan, where members genuinely differ
+    # and pooling would force one wrong tau on all of them.
+    if tau_mode not in ("pooled", "per_member"):
+        raise ValueError("tau_mode must be 'pooled' or 'per_member'")
+    w_member, tau_star = window_size, None
+    if w_member is None and tau_mode == "pooled":
+        _tr = [
+            d.data[col].dropna().to_numpy(dtype=float)
+            for d in data_streams
+            if col in d.data.columns
+        ]
+        _tr = [t for t in _tr if t.size > 3]
+        if len(_tr) >= 2:
+            tau_star = pooled_tau_int(_tr)
+            w_member = max(1, int(round(tau_star)))
+
     for i, ds in enumerate(data_streams):
         key = f"Member {i}"
         if col not in ds.data.columns:
             continue
         s = ds.compute_statistics(
-            column_name=col, ddof=ddof, method=method, window_size=window_size
+            column_name=col, ddof=ddof, method=method, window_size=w_member
         )
         stat = s.get(col, {}) if isinstance(s, dict) else {}
         if not isinstance(stat, dict):

@@ -595,6 +595,149 @@ def autotune_blocks(
     }
 
 
+# ---------------------------------------------------------------------------
+# tau-based window selection (replaces the Ljung-Box autotune)
+# ---------------------------------------------------------------------------
+def pooled_tau_int(traces, maxlag: Optional[int] = None) -> float:
+    """
+    Ensemble-pooled integrated autocorrelation time.
+
+    Averages the *normalised* ACFs of the member traces and integrates the result
+    with Geyer positive-pair truncation.  A single short trace estimates tau very
+    noisily; averaging M of them is far better resolved (the same reason emcee
+    pools the ACF across chains before integrating).
+
+    ONLY valid for a HOMOGENEOUS ensemble (same case, different seeds/ICs).  For a
+    parameter scan, where members genuinely differ, use per-member tau instead --
+    pooling would impose one wrong correlation time on every member.
+
+    Parameters
+    ----------
+    traces : sequence of 1-D array-like
+        Member traces (internally truncated to their common length).
+    maxlag : int, optional
+        Defaults to ``nmin // 4``.
+
+    Returns
+    -------
+    float
+        Pooled tau_int (>= 1.0).
+    """
+    arrs = [np.asarray(t, dtype=float) for t in traces]
+    arrs = [a[np.isfinite(a)] for a in arrs if np.size(a) > 3]
+    if not arrs:
+        return 1.0
+    nmin = min(a.size for a in arrs)
+    ml = int(maxlag or max(1, nmin // 4))
+
+    def _nacf(x):
+        x = x[:nmin] - x[:nmin].mean()
+        m = x.size
+        f = np.fft.rfft(x, 2 * m)
+        ac = np.fft.irfft(f * np.conj(f))[:ml]
+        return ac / ac[0] if ac[0] > 0 else ac
+
+    rho = np.mean([_nacf(a) for a in arrs], axis=0)
+    tau = 1.0
+    for k in range(1, ml):
+        if rho[k] <= 0:
+            break
+        tau += 2.0 * rho[k]
+    return float(max(1.0, tau))
+
+
+def tau_window_blocks(
+    x,
+    tau: Optional[float] = None,
+    method: str = "non-overlapping",
+    B_min_hard: int = 4,
+    alpha: float = 0.05,
+    lag_set=(5, 10),
+) -> dict:
+    """
+    Block a series with ``w = round(tau)`` -- the tau-window rule.
+
+    This replaces the Ljung-Box autotune as the default window rule.  Rationale:
+    the SE is ``sd(block_means) / sqrt(ess_blocks)``, and that Geyer ESS already
+    credits any residual between-block correlation.  Because the correction is
+    applied, the blocks do **not** need to be independent, so there is no reason
+    to keep widening the window until a low-power Ljung-Box test happens to pass.
+    Keeping ``w`` small also leaves more blocks, which resolves both
+    ``sd(block_means)`` and the block-level ESS better.
+
+    The exact identity ``T_n = T_w * T_B`` (raw-series variance inflation factors
+    into within-block x between-block) guarantees the resulting SE is invariant to
+    ``w`` in expectation: widening the window moves correlation out of the
+    between-block factor and into the within-block factor, leaving the product --
+    and hence the SE -- unchanged.  So ``w`` is a precision knob, not a bias knob.
+
+    ``tau`` may be supplied (e.g. an ensemble-pooled tau*); otherwise it is
+    estimated from this series via Geyer positive-pair truncation.
+
+    A hard floor keeps at least *B_min_hard* blocks.  It is a pathology guard for
+    very short series / very large tau, not a tuning knob, and it is reported via
+    ``warning`` when it binds.
+
+    Returns a dict with the same keys as :func:`autotune_blocks`.
+    """
+    x = np.asarray(x, dtype=float)
+    x = x[np.isfinite(x)]
+    n = int(x.size)
+    if n < 2:
+        return {
+            "blocks": np.array([], dtype=float),
+            "window_size": 1,
+            "n_blocks": 0,
+            "independence_status": "too_few_blocks",
+            "independent": False,
+            "ljungbox_lags": [],
+            "ljungbox_pvalues": [],
+            "best_pvalue": float("nan"),
+            "tau_int": 1.0,
+            "initial_window": 1,
+            "iterations": 0,
+            "autotuned": False,
+            "warning": "Too few samples for block averaging.",
+        }
+
+    tau_val = float(tau) if tau is not None else _estimate_tau_int_from_series(x)
+    w_tau = max(1, int(round(tau_val)))
+    w_cap = max(1, n // max(2, int(B_min_hard)))  # pathology guard only
+    w = min(w_tau, w_cap)
+    clamped = w < w_tau
+
+    blocks = _compute_block_means(x, w, method)
+    n_blocks = int(blocks.size)
+
+    lb = {"lags": [], "pvalues": []}
+    passed = False
+    if n_blocks >= 2:  # diagnostic only; does NOT select w
+        passed, lb = _ljung_box_pass(blocks, alpha=alpha, lag_set=lag_set)
+    pvals = lb.get("pvalues", [])
+
+    warn = None
+    if clamped:
+        warn = (
+            f"tau-window clamped: w={w_tau} (tau={tau_val:.1f}) would leave "
+            f"< {B_min_hard} blocks; using w={w}."
+        )
+    return {
+        "blocks": blocks,
+        "window_size": int(w),
+        "n_blocks": n_blocks,
+        "independence_status": "tau_window",
+        "independent": bool(passed),
+        "ljungbox_lags": lb.get("lags", []),
+        "ljungbox_pvalues": pvals,
+        "best_pvalue": float(min(pvals)) if pvals else float("nan"),
+        "tau_int": float(tau_val),
+        "initial_window": int(w_tau),
+        "iterations": 0,
+        "autotuned": False,
+        "warning": warn,
+    }
+
+
 def _compute_ess(data, col, alpha=0.05):
     """
     Estimate the effective sample size (ESS) for one column of a DataFrame.

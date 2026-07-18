@@ -84,19 +84,31 @@ def test_mean_no_data(nan_data: pd.DataFrame):
 def test_mean_long(long_data: pd.DataFrame):
     ds = DataStream(long_data)
     result = ds.compute_statistics()
+    # tau-window rule: with only 5 samples there is no resolvable correlation
+    # structure (nlags = min(n//4, 2000) = 1), so w = round(tau) = 1 and every
+    # sample is its own block.  The mean is 3.0 either way; only the window
+    # differs.  The old value of 5 came from the autotune w_min floor, which
+    # forced a single block spanning the whole series -- a window from which no
+    # standard error is computable.
     assert result["A"]["mean"] == 3.0
-    assert result["A"]["window_size"] == 5
+    assert result["A"]["window_size"] == 1
     assert result["B"]["mean"] == 3.0
-    assert result["B"]["window_size"] == 5
+    assert result["B"]["window_size"] == 1
 
 
 def test_mean_long_overlapping_window(long_data: pd.DataFrame):
     ds = DataStream(long_data)
     result = ds.compute_statistics()
+    # tau-window rule: with only 5 samples there is no resolvable correlation
+    # structure (nlags = min(n//4, 2000) = 1), so w = round(tau) = 1 and every
+    # sample is its own block.  The mean is 3.0 either way; only the window
+    # differs.  The old value of 5 came from the autotune w_min floor, which
+    # forced a single block spanning the whole series -- a window from which no
+    # standard error is computable.
     assert result["A"]["mean"] == 3.0
-    assert result["A"]["window_size"] == 5
+    assert result["A"]["window_size"] == 1
     assert result["B"]["mean"] == 3.0
-    assert result["B"]["window_size"] == 5
+    assert result["B"]["window_size"] == 1
 
 
 def test_mean_long_non_overlapping_window(long_data: pd.DataFrame):
@@ -317,10 +329,12 @@ def test_compute_statistics_best_p_status_adds_warning(simple_data: pd.DataFrame
 
     result = ds.compute_statistics(column_name="A", window_size=1)
 
-    assert result["A"]["se_method"] == "iid_blocks_best_p"
+    # The SE no longer trusts the Ljung-Box verdict: even on the best_p path it
+    # divides by the Geyer ESS of the block means, so se_method is "ess_blocks".
+    assert result["A"]["se_method"] == "ess_blocks"
     assert result["A"]["se_effective_n"] == 3.0
     assert result["A"]["warning"] == (
-        "Block means did not pass Ljung-Box; using best-p window."
+        "Block means did not pass Ljung-Box; using best-p window (SE via Geyer ESS)."
     )
 
 
