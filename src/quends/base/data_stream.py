@@ -87,10 +87,9 @@ class DataStream:
         one — a dict/array/Series is coerced); anything else raises ``TypeError``
         early with a clear message rather than failing cryptically later.
 
-        A ``time`` column is **not** required at construction — column-wise
-        statistics work without it — but steady-state trimming and ensemble
-        averaging do require one and will raise a clear error if it is missing
-        (see :meth:`trim` / :mod:`quends.base.trim`).
+        A ``time`` column is optional. If it is absent, the DataFrame index is
+        added as ``time`` so trimming, plotting, and ensemble operations remain
+        well-defined.
         """
         if isinstance(data, pd.DataFrame):
             df = data
@@ -106,6 +105,12 @@ class DataStream:
                     "DataStream(data): data must be a pandas DataFrame (or something "
                     f"convertible to one); got {type(data).__name__} ({exc})."
                 )
+        if "time" not in df.columns:
+            # Copy before adding the derived column so construction does not mutate
+            # a caller-owned DataFrame.
+            df = df.copy()
+            df.insert(0, "time", df.index)
+
         self._data = df
         self._history = _coerce_history(history)
 
