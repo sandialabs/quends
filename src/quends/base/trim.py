@@ -12,7 +12,16 @@ from .history import DataStreamHistoryEntry
 from .operations import DataStreamOperation
 from .utils import stationarity_value, to_native_types
 
-
+# def in_jupyter():
+#     try:
+#         from IPython import get_ipython
+#         shell = get_ipython()
+#         if shell is None:
+#             return False
+#         return shell.__class__.__name__ in {"ZMQInteractiveShell"}
+#     except Exception:
+#         return False
+    
 class TrimStrategy(ABC):
     """
     Abstract base class describing a trim strategy.
@@ -515,9 +524,18 @@ class MeanVariationTrimStrategy(TrimStrategy):
         # Lazy import: matplotlib is only needed when verbosity > 1 (plotting mode).
         if self.verbosity > 1:
             import matplotlib
-
-            matplotlib.use("Agg", force=True)
             from matplotlib import pyplot as plt
+
+            def _show_plot_if_interactive():
+                """Show a figure unless the current backend is non-interactive."""
+                backend = matplotlib.get_backend().lower()
+                if "agg" in backend:
+                    show_plot = False
+                else:
+                    show_plot = True
+                if show_plot:
+                    plt.show()
+                
 
         # Get the decorrelation length (in number of points)
         # Note: this approach assumes signal points are spaced equally in time
@@ -536,7 +554,7 @@ class MeanVariationTrimStrategy(TrimStrategy):
             plt.ylabel("Autocorrelation")
             plt.title("Autocorrelation Function")
             plt.grid()
-            plt.show()
+            _show_plot_if_interactive()
             plt.close()
 
         # Use rigorous statistical measure for decorrelation length
@@ -624,7 +642,7 @@ class MeanVariationTrimStrategy(TrimStrategy):
             plt.title("Original and Smoothed Signal")
             plt.legend()
             plt.grid()
-            plt.show()
+            _show_plot_if_interactive()
             plt.close()
 
         if self.verbosity > 0:
@@ -746,7 +764,7 @@ class MeanVariationTrimStrategy(TrimStrategy):
                 plt.title("Deviation and Tolerance vs. Time")
                 plt.legend()
                 plt.grid()
-                plt.show()
+                _show_plot_if_interactive()
                 plt.close()
 
             # Trim the original data frame to start at this location minus the smoothing window
@@ -791,7 +809,7 @@ class MeanVariationTrimStrategy(TrimStrategy):
                 plt.title("Deviation and Tolerance vs. Time")
                 plt.legend()
                 plt.grid()
-                plt.show()
+                _show_plot_if_interactive()
                 plt.close()
 
         return trimmed_stream

@@ -9,11 +9,6 @@ from ..base.data_stream import DataStream
 from ..base.stationary import MakeDataStreamStationaryOperation
 from ..base.trim import MeanVariationTrimStrategy, TrimDataStreamOperation
 
-# --- ad-hoc fallback conventions (used only when no SSS segment is found) ---
-# The "ball-park" mean is taken over the final fraction (numerator/denominator)
-# of the trace; integer floor division preserves the historical index exactly.
-_IRREGULAR_TAIL_NUM = 2
-
 
 def _show_plot_if_interactive():
     """Show a figure unless the current backend is non-interactive."""
@@ -22,7 +17,10 @@ def _show_plot_if_interactive():
         return
     plt.show()
 
-
+# --- ad-hoc fallback conventions (used only when no SSS segment is found) ---
+# The "ball-park" mean is taken over the final fraction (numerator/denominator)
+# of the trace; integer floor division preserves the historical index exactly.
+_IRREGULAR_TAIL_NUM = 2
 _IRREGULAR_TAIL_DEN = 3
 # Relative uncertainty assigned to that ball-park mean: 1.0 == 100% (the CI then
 # spans roughly [0, 2*mean]). Deliberately conservative for un-trimmable data.
