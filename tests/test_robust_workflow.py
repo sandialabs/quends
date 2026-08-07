@@ -23,7 +23,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 NOTEBOOK_DIR = REPO_ROOT / "examples" / "tutorial" / "notebooks"
 INPUT_NOTEBOOK = NOTEBOOK_DIR / "robust_workflow.ipynb"
 ROBUST_WORKFLOW_TEST_DIR = REPO_ROOT / "tests" / "robust_workflow"
-OUTPUT_DIR = ROBUST_WORKFLOW_TEST_DIR / "output"
+# OUTPUT_DIR = ROBUST_WORKFLOW_TEST_DIR / "output"
+OUTPUT_DIR = ROBUST_WORKFLOW_TEST_DIR / "expected"
 EXPECTED_DIR = ROBUST_WORKFLOW_TEST_DIR / "expected"
 
 
