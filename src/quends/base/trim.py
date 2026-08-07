@@ -542,12 +542,11 @@ class MeanVariationTrimStrategy(TrimStrategy):
         n_pts = len(data_stream.data)
         max_lag = int(self.max_lag_frac * n_pts)  # max lag for autocorrelation
 
-        acf_vals = ststls.acf(
-            data_stream.data[column_name].dropna().values, nlags=max_lag
-        )
-
         # plot the autocorrelation function
         if self.verbosity > 1:
+            acf_vals = ststls.acf(
+                data_stream.data[column_name].dropna().values, nlags=max_lag
+            )
             plt.figure(figsize=(10, 6))
             plt.stem(range(len(acf_vals)), acf_vals)
             plt.xlabel("Lag")
@@ -558,18 +557,23 @@ class MeanVariationTrimStrategy(TrimStrategy):
             plt.close()
 
         # Use rigorous statistical measure for decorrelation length
-        z_critical = sts.norm.ppf(1 - self.autocorr_sig_level / 2)
-        conf_interval = z_critical / np.sqrt(n_pts)
-        significant_lags = np.where(np.abs(acf_vals[1:]) > conf_interval)[0]
-        acf_sum = np.sum(np.abs(acf_vals[1:][significant_lags]))
-        decor_length = int(np.ceil(1 + 2 * acf_sum))
+        # z_critical = sts.norm.ppf(1 - self.autocorr_sig_level / 2)
+        # conf_interval = z_critical / np.sqrt(n_pts)
+        # significant_lags = np.where(np.abs(acf_vals[1:]) > conf_interval)[0]
+        # acf_sum = np.sum(np.abs(acf_vals[1:][significant_lags]))
+        # decor_time = int(np.ceil(1 + 2 * acf_sum))
+
+        # Use DataStream function to compute decorrelation time (in number of points)
+        decor_time = data_stream.estimate_tau_int(column_name)['results'][column_name]
+        # print(decor_time)
 
         # Set smoothing window as multiple of decorrelation length, but not more than max_lag
-        decor_index = min(int(self.decor_multiplier * decor_length), max_lag)
+        decor_index = min(int(self.decor_multiplier * decor_time), max_lag)
 
         if self.verbosity > 0:
             print(
-                f"stats decorrelation length {decor_length} gives smoothing window of {decor_index} points."
+                # TODO: adjust format to fixed format
+                f"stats decorrelation time {decor_time} gives smoothing window of {decor_index} points."
             )
 
         # Smooth signal with rolling mean over window size based on decorrelation length
