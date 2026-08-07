@@ -540,6 +540,9 @@ class MeanVariationTrimStrategy(TrimStrategy):
         # Get the decorrelation length (in number of points)
         # Note: this approach assumes signal points are spaced equally in time
         n_pts = len(data_stream.data)
+        # TODO: either pass max_lag to the decorrelation length function or take it out
+        # as it is currently set in the decorrelation length function and is here
+        # only used for plotting
         max_lag = int(self.max_lag_frac * n_pts)  # max lag for autocorrelation
 
         # plot the autocorrelation function
