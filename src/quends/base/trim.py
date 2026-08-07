@@ -572,8 +572,7 @@ class MeanVariationTrimStrategy(TrimStrategy):
 
         if self.verbosity > 0:
             print(
-                # TODO: adjust format to fixed format
-                f"stats decorrelation time {decor_time} gives smoothing window of {decor_index} points."
+                f"stats decorrelation time {decor_time:.2f} gives smoothing window of {decor_index} points."
             )
 
         # Smooth signal with rolling mean over window size based on decorrelation length
@@ -731,9 +730,9 @@ class MeanVariationTrimStrategy(TrimStrategy):
             if self.verbosity > 0:
                 print(f"Index where criterion is met: {crit_met_index}")
                 print(f"Rolling window: {rolling_window}")
-                print(f"time where criterion is met: {criterion_time}")
+                print(f"time where criterion is met: {criterion_time:.2f}")
                 print(
-                    f"time at start of SSS (adjusted for rolling window): {sss_start_time}"
+                    f"time at start of SSS (adjusted for rolling window): {sss_start_time:.2f}"
                 )
 
             # Plot deviation and tolerance vs. time

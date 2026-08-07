@@ -39,6 +39,8 @@ def _tau_int_metadata_warning(tau_int: float, n_samples: int) -> Optional[str]:
     """Mirror the tau_int lag-cutoff warning as result metadata."""
     if not np.isfinite(tau_int) or n_samples < 3:
         return None
+    # TODO: Can we fix this so it is always the same as what is used
+    # in the actual decorrelation time computation?
     nlags = max(1, min(n_samples // 4, 2000))
     if tau_int < TAU_INT_LAG_CUTOFF_WARNING_RATIO * nlags:
         return None
