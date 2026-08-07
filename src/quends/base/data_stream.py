@@ -80,7 +80,12 @@ def _coerce_history(history: Optional[Any] = None) -> DataStreamHistory:
 
 class DataStream:
 
-    def __init__(self, data: Any, history: Optional[DataStreamHistory] = None) -> None:
+    def __init__(
+        self,
+        data: Any,
+        history: Optional[DataStreamHistory] = None,
+        label: str = "data_stream",
+    ) -> None:
         """Wrap a pandas DataFrame of time-series data.
 
         ``data`` must be a :class:`pandas.DataFrame` (or something convertible to
@@ -113,11 +118,21 @@ class DataStream:
 
         self._data = df
         self._history = _coerce_history(history)
+        self._label = label
 
     @property
     def data(self) -> Any:
         """The underlying pandas DataFrame."""
         return self._data
+
+    @property
+    def label(self) -> str:
+        """The label for the data stream."""
+        return self._label
+
+    @label.setter
+    def label(self, value: str) -> None:
+        self._label = value
 
     @property
     def df(self) -> Any:
