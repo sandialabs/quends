@@ -43,6 +43,26 @@ def test_init_preserves_existing_time_column():
     assert ds.data["time"].tolist() == [0.5, 1.5]
 
 
+def test_init_uses_default_label(simple_data: pd.DataFrame):
+    ds = DataStream(simple_data)
+
+    assert ds.label == "data_stream"
+
+
+def test_init_accepts_custom_label(simple_data: pd.DataFrame):
+    ds = DataStream(simple_data, label="experiment_1")
+
+    assert ds.label == "experiment_1"
+
+
+def test_label_can_be_updated(simple_data: pd.DataFrame):
+    ds = DataStream(simple_data)
+
+    ds.label = "experiment_2"
+
+    assert ds.label == "experiment_2"
+
+
 def test_init_coerces_legacy_history_entries(simple_data: pd.DataFrame):
     typed_entry = DataStreamHistoryEntry("typed", {"a": 1})
 
