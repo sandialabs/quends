@@ -84,10 +84,10 @@ class RobustWorkflow:
         n_pts_frac_min=0.2,
         max_lag_frac=0.5,
         autocorr_sig_level=0.05,
-        decor_multiplier=4.0,
+        decor_multiplier=6.0,
         std_dev_frac=0.1,
         fudge_fac=0.1,
-        smoothing_window_correction=0.8,
+        smoothing_window_correction=0.5,
         final_smoothing_window=10,
     ):
         """
