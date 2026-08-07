@@ -284,6 +284,8 @@ class DataStream:
             block_means = ab["blocks"]
             lb = {"lags": ab["ljungbox_lags"], "pvalues": ab["ljungbox_pvalues"]}
             n_blocks = ab["n_blocks"]
+            # TODO Do we need this check here? Does this not already happen inside the
+            # function that computes the decorrelation time?
             tau_int_warning = _tau_int_metadata_warning(
                 ab.get("tau_int", float("nan")),
                 len(series),
@@ -821,19 +823,20 @@ class DataStream:
             "results": to_native_types(results),
         }
 
-    def estimate_tau_int(self, column_name=None):
+    def compute_decorrelation_time(self, column_name=None):
         """
-        Estimate the integrated autocorrelation time (tau_int) for specified columns.
+        Estimate the decorrelation time (in terms of the number of samples) 
+        using the integrated sample autocorrelation (tau_int) for specified columns.
 
         Parameters
 
         column_name : str or list or None
-            Column(s) to compute tau_int for; defaults to all non-time columns.
+            Column(s) to compute decorrelation time for; defaults to all non-time columns.
 
         Returns
         -------
         dict
-            {'results': {col: tau_int}}
+            {'results': {col: tau_int}} (with decorrelation time in number of samples for each column)
         """
         columns = _resolve_columns(self.data, column_name)
         results = {}

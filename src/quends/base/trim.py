@@ -567,7 +567,7 @@ class MeanVariationTrimStrategy(TrimStrategy):
         # decor_time = int(np.ceil(1 + 2 * acf_sum))
 
         # Use DataStream function to compute decorrelation time (in number of points)
-        decor_time = data_stream.estimate_tau_int(column_name)['results'][column_name]
+        decor_time = data_stream.compute_decorrelation_time(column_name)['results'][column_name]
         # print(decor_time)
 
         # Set smoothing window as multiple of decorrelation length, but not more than max_lag
