@@ -33,6 +33,8 @@ import pandas as pd
 
 import quends as qnds
 
+plotter = qnds.Plotter()
+
 
 def example_data_dir() -> Path:
     """Find the shared example data directory during script or gallery runs."""
@@ -78,10 +80,10 @@ for column, name in enumerate(data_stream.variables()):
 
 my_wrkflw = qnds.RobustWorkflow(operate_safe=False, verbosity=2)
 with keep_figures():
-    my_wrkflw.plot_signal_basic_stats(data_stream, col, label=data_paths[0])
+    plotter.plot_signal_basic_stats(data_stream, col, label=data_paths[0])
     my_stats = my_wrkflw.process_data_stream(data_stream, col)
     if not my_stats[col]["metadata"]["mitigation"] == "Drop":
-        my_wrkflw.plot_signal_basic_stats(
+        plotter.plot_signal_basic_stats(
             data_stream, col, stats=my_stats, label=data_paths[0]
         )
 
@@ -98,10 +100,10 @@ print("metadata:", my_stats[col]["metadata"])
 # the signal, rather than failing.
 my_wrkflw = qnds.RobustWorkflow(operate_safe=False, verbosity=2, n_pts_min=1000)
 with keep_figures():
-    my_wrkflw.plot_signal_basic_stats(data_stream, col, label=data_paths[0])
+    plotter.plot_signal_basic_stats(data_stream, col, label=data_paths[0])
     my_stats = my_wrkflw.process_data_stream(data_stream, col)
     if not my_stats[col]["metadata"]["mitigation"] == "Drop":
-        my_wrkflw.plot_signal_basic_stats(
+        plotter.plot_signal_basic_stats(
             data_stream, col, stats=my_stats, label=data_paths[0]
         )
 
@@ -130,7 +132,7 @@ my_wrkflw0 = qnds.RobustWorkflow(
 with keep_figures():
     my_stats0 = my_wrkflw0.process_data_stream(ds0, col)
     if not my_stats0[col]["metadata"]["mitigation"] == "Drop":
-        my_wrkflw0.plot_signal_basic_stats(ds0, col, my_stats0, label=data_path)
+        plotter.plot_signal_basic_stats(ds0, col, my_stats0, label=data_path)
 
 # %%
 print("metadata:", my_stats0[col]["metadata"])
@@ -159,7 +161,7 @@ with keep_figures():
         data_stream = qnds.from_csv(data_path, col)
         my_stats = my_wrkflw.process_data_stream(data_stream, col)
         if not my_stats[col]["metadata"]["mitigation"] == "Drop":
-            my_wrkflw.plot_signal_basic_stats(
+            plotter.plot_signal_basic_stats(
                 data_stream, col, stats=my_stats, label=data_path
             )
         flux_means[i_data] = my_stats[col]["mean"]

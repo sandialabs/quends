@@ -14,7 +14,7 @@ For each signal the procedure is the same as in the notebook:
 #. set up ``RobustWorkflow(operate_safe=False, verbosity=2)`` (high verbosity so
    the intermediate steps are plotted),
 #. plot the raw signal with
-   :meth:`~quends.RobustWorkflow.plot_signal_basic_stats`,
+   :meth:`~quends.Plotter.plot_signal_basic_stats`,
 #. call ``process_data_stream`` to get the statistics, and
 #. re-plot the signal with its mean, confidence interval, and SSS start.
 
@@ -38,6 +38,8 @@ import numpy as np
 import pandas as pd
 
 import quends as qnds
+
+plotter = qnds.Plotter()
 
 
 def example_data_dir() -> Path:
@@ -92,12 +94,12 @@ col = "flux"
 my_wrkflw = qnds.RobustWorkflow(operate_safe=False, verbosity=2)
 with keep_figures():
     # Plot raw signal
-    my_wrkflw.plot_signal_basic_stats(ds_flat, col, label=my_label)
+    plotter.plot_signal_basic_stats(ds_flat, col, label=my_label)
     # Get statistics
     my_stats = my_wrkflw.process_data_stream(ds_flat, col)
     # Plot trace with mean and start of steady state
     if not my_stats[col]["metadata"]["mitigation"] == "Drop":
-        my_wrkflw.plot_signal_basic_stats(ds_flat, col, stats=my_stats, label=my_label)
+        plotter.plot_signal_basic_stats(ds_flat, col, stats=my_stats, label=my_label)
 
 # %%
 # The dictionary ``my_stats`` holds the numerical results; ``metadata`` reveals
@@ -119,10 +121,10 @@ for column, name in enumerate(data_stream.variables()):
 
 my_wrkflw = qnds.RobustWorkflow(operate_safe=False, verbosity=2)
 with keep_figures():
-    my_wrkflw.plot_signal_basic_stats(data_stream, col, label=data_paths[0])
+    plotter.plot_signal_basic_stats(data_stream, col, label=data_paths[0])
     my_stats = my_wrkflw.process_data_stream(data_stream, col)
     if not my_stats[col]["metadata"]["mitigation"] == "Drop":
-        my_wrkflw.plot_signal_basic_stats(
+        plotter.plot_signal_basic_stats(
             data_stream, col, stats=my_stats, label=data_paths[0]
         )
 
@@ -144,10 +146,10 @@ col = "HeatFlux_st"
 
 my_wrkflw = qnds.RobustWorkflow(operate_safe=False, verbosity=2)
 with keep_figures():
-    my_wrkflw.plot_signal_basic_stats(data_stream, col, label=data_paths[0])
+    plotter.plot_signal_basic_stats(data_stream, col, label=data_paths[0])
     my_stats = my_wrkflw.process_data_stream(data_stream, col)
     if not my_stats[col]["metadata"]["mitigation"] == "Drop":
-        my_wrkflw.plot_signal_basic_stats(
+        plotter.plot_signal_basic_stats(
             data_stream, col, stats=my_stats, label=data_paths[0]
         )
 
