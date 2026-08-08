@@ -1,7 +1,9 @@
 import logging
 import math
 import os
+from typing import Optional
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import norm
@@ -11,6 +13,14 @@ from quends.base.data_stream import DataStream
 from quends.base.ensemble import Ensemble
 
 logger = logging.getLogger(__name__)
+
+
+def _show_plot_if_interactive():
+    """Show a figure unless the current backend is non-interactive."""
+    backend = matplotlib.get_backend().lower()
+    if "agg" in backend:
+        return
+    plt.show()
 
 
 class Plotter:
@@ -83,12 +93,29 @@ class Plotter:
     @staticmethod
     def _draw_std_bands(ax, x, mu, sigma):
         """Draw shared ±1/±2/±3 standard-deviation bands on *ax*."""
-        ax.fill_between(x, mu - sigma, mu + sigma, color="blue", alpha=0.3, label="±1 Std")
-        ax.fill_between(x, mu - 2 * sigma, mu + 2 * sigma, color="yellow", alpha=0.2, label="±2 Std")
-        ax.fill_between(x, mu - 3 * sigma, mu + 3 * sigma, color="red", alpha=0.1, label="±3 Std")
+        ax.fill_between(
+            x, mu - sigma, mu + sigma, color="blue", alpha=0.3, label="±1 Std"
+        )
+        ax.fill_between(
+            x, mu - 2 * sigma, mu + 2 * sigma, color="yellow", alpha=0.2, label="±2 Std"
+        )
+        ax.fill_between(
+            x, mu - 3 * sigma, mu + 3 * sigma, color="red", alpha=0.1, label="±3 Std"
+        )
 
-    def _finalize(self, fig, axes, *, default_name, save=False, show=False,
-                  filename=None, output_dir=None, overwrite=False, dpi=150):
+    def _finalize(
+        self,
+        fig,
+        axes,
+        *,
+        default_name,
+        save=False,
+        show=False,
+        filename=None,
+        output_dir=None,
+        overwrite=False,
+        dpi=150,
+    ):
         """Save (with overwrite guard), optionally show, always return (fig, axes)."""
         if save:
             out_dir = output_dir or self.output_dir
@@ -108,14 +135,24 @@ class Plotter:
         return fig, axes
 
     @staticmethod
-    def _trim_datastream(ds, column, method="std", batch_size=10,
-                         start_time=0.0, threshold=None, robust=True):
+    def _trim_datastream(
+        ds,
+        column,
+        method="std",
+        batch_size=10,
+        start_time=0.0,
+        threshold=None,
+        robust=True,
+    ):
         """Trim *ds* on *column* via the unified trim strategy system."""
-        from quends.base.trim import build_trim_strategy, TrimDataStreamOperation
+        from quends.base.trim import TrimDataStreamOperation, build_trim_strategy
 
         strategy = build_trim_strategy(
-            method=method, window_size=batch_size, start_time=start_time,
-            threshold=threshold, robust=robust,
+            method=method,
+            window_size=batch_size,
+            start_time=start_time,
+            threshold=threshold,
+            robust=robust,
         )
         op = TrimDataStreamOperation(strategy=strategy)
         return op(ds, column_name=column)
@@ -124,8 +161,18 @@ class Plotter:
     #  Single-DataStream trace plots                                        #
     # ------------------------------------------------------------------ #
 
-    def trace_plot(self, data, variables_to_plot=None, *, save=False, show=False,
-                   filename=None, output_dir=None, overwrite=False, dpi=150):
+    def trace_plot(
+        self,
+        data,
+        variables_to_plot=None,
+        *,
+        save=False,
+        show=False,
+        filename=None,
+        output_dir=None,
+        overwrite=False,
+        dpi=150,
+    ):
         """Plot raw time-series traces. Returns a list of (fig, axes)."""
         data_frames = self._prepare_data_frames(data)
         variables_to_plot = self._select_vars(
@@ -158,16 +205,34 @@ class Plotter:
                 f"Time Series — {self.format_dataset_name(dataset_name)}", fontsize=16
             )
             plt.tight_layout(rect=[0, 0, 1, 0.95])
-            results.append(self._finalize(
-                fig, axes,
-                default_name=f"time_series_{self.format_dataset_name(dataset_name)}.png",
-                save=save, show=show, output_dir=output_dir, overwrite=overwrite, dpi=dpi,
-            ))
+            results.append(
+                self._finalize(
+                    fig,
+                    axes,
+                    default_name=f"time_series_{self.format_dataset_name(dataset_name)}.png",
+                    save=save,
+                    show=show,
+                    output_dir=output_dir,
+                    overwrite=overwrite,
+                    dpi=dpi,
+                )
+            )
         return results
 
-    def trace_plot_with_mean(self, data, variables_to_plot=None, window_size=None,
-                             *, stats=None, save=False, show=False, filename=None,
-                             output_dir=None, overwrite=False, dpi=150):
+    def trace_plot_with_mean(
+        self,
+        data,
+        variables_to_plot=None,
+        window_size=None,
+        *,
+        stats=None,
+        save=False,
+        show=False,
+        filename=None,
+        output_dir=None,
+        overwrite=False,
+        dpi=150,
+    ):
         """Plot each trace with block-mean + 95% CI overlaid.
 
         Pass ``stats={column: {"mean": .., "confidence_interval": (lo, hi)}}`` to
@@ -201,10 +266,17 @@ class Plotter:
 
                 axes[j].plot(df["time"], df[column], label=column, alpha=0.7)
                 if mu is not None:
-                    axes[j].axhline(y=mu, color="red", linestyle="-", label=f"Mean={mu:.4g}")
+                    axes[j].axhline(
+                        y=mu, color="red", linestyle="-", label=f"Mean={mu:.4g}"
+                    )
                 if ci[0] is not None and ci[1] is not None:
                     axes[j].fill_between(
-                        df["time"], ci[0], ci[1], color="red", alpha=0.15, label="95 % CI"
+                        df["time"],
+                        ci[0],
+                        ci[1],
+                        color="red",
+                        alpha=0.15,
+                        label="95 % CI",
                     )
                 axes[j].set_xlabel("Time")
                 axes[j].set_ylabel(column)
@@ -216,22 +288,39 @@ class Plotter:
                 fig.delaxes(axes[k])
 
             plt.suptitle(
-                f"Trace with Mean — {self.format_dataset_name(dataset_name)}", fontsize=16
+                f"Trace with Mean — {self.format_dataset_name(dataset_name)}",
+                fontsize=16,
             )
             plt.tight_layout(rect=[0, 0, 1, 0.95])
-            results.append(self._finalize(
-                fig, axes,
-                default_name=f"trace_with_mean_{self.format_dataset_name(dataset_name)}.png",
-                save=save, show=show, output_dir=output_dir, overwrite=overwrite, dpi=dpi,
-            ))
+            results.append(
+                self._finalize(
+                    fig,
+                    axes,
+                    default_name=f"trace_with_mean_{self.format_dataset_name(dataset_name)}.png",
+                    save=save,
+                    show=show,
+                    output_dir=output_dir,
+                    overwrite=overwrite,
+                    dpi=dpi,
+                )
+            )
         return results
 
     # ------------------------------------------------------------------ #
     #  Ensemble trace plots                                                 #
     # ------------------------------------------------------------------ #
 
-    def ensemble_trace_plot(self, data, variables_to_plot=None, *, save=False,
-                            show=False, output_dir=None, overwrite=False, dpi=150):
+    def ensemble_trace_plot(
+        self,
+        data,
+        variables_to_plot=None,
+        *,
+        save=False,
+        show=False,
+        output_dir=None,
+        overwrite=False,
+        dpi=150,
+    ):
         """Overlay traces from all members, one figure per variable. Returns list of (fig, axes)."""
         data_frames = self._prepare_data_frames(data)
         variables_to_plot = self._select_vars(
@@ -249,15 +338,33 @@ class Plotter:
             ax.legend(fontsize="small")
             ax.grid(True)
             plt.tight_layout()
-            results.append(self._finalize(
-                fig, ax, default_name=f"ensemble_trace_{var}.png",
-                save=save, show=show, output_dir=output_dir, overwrite=overwrite, dpi=dpi,
-            ))
+            results.append(
+                self._finalize(
+                    fig,
+                    ax,
+                    default_name=f"ensemble_trace_{var}.png",
+                    save=save,
+                    show=show,
+                    output_dir=output_dir,
+                    overwrite=overwrite,
+                    dpi=dpi,
+                )
+            )
         return results
 
-    def ensemble_trace_plot_with_mean(self, data, variables_to_plot=None,
-                                      window_size=None, *, means=None, save=False,
-                                      show=False, output_dir=None, overwrite=False, dpi=150):
+    def ensemble_trace_plot_with_mean(
+        self,
+        data,
+        variables_to_plot=None,
+        window_size=None,
+        *,
+        means=None,
+        save=False,
+        show=False,
+        output_dir=None,
+        overwrite=False,
+        dpi=150,
+    ):
         """Overlay member traces with per-member block mean.
 
         Pass ``means={dataset_name: {var: mean}}`` to skip ``compute_statistics``.
@@ -275,33 +382,61 @@ class Plotter:
                 if means is not None:
                     mu = means.get(dataset_name, {}).get(var)
                 else:
-                    mu = DataStream(df).compute_statistics(
-                        column_name=var, window_size=window_size
-                    ).get(var, {}).get("mean")
+                    mu = (
+                        DataStream(df)
+                        .compute_statistics(column_name=var, window_size=window_size)
+                        .get(var, {})
+                        .get("mean")
+                    )
                 ax.plot(df["time"], df[var], label=dataset_name, alpha=0.6)
                 if mu is not None:
-                    ax.axhline(y=mu, linestyle="--", linewidth=1.0,
-                               label=f"{dataset_name} mean={mu:.4g}")
+                    ax.axhline(
+                        y=mu,
+                        linestyle="--",
+                        linewidth=1.0,
+                        label=f"{dataset_name} mean={mu:.4g}",
+                    )
             ax.set_xlabel("Time")
             ax.set_ylabel(var)
             ax.set_title(f"Ensemble Traces with Means — {var}")
             ax.legend(fontsize="small")
             ax.grid(True)
             plt.tight_layout()
-            results.append(self._finalize(
-                fig, ax, default_name=f"ensemble_trace_with_mean_{var}.png",
-                save=save, show=show, output_dir=output_dir, overwrite=overwrite, dpi=dpi,
-            ))
+            results.append(
+                self._finalize(
+                    fig,
+                    ax,
+                    default_name=f"ensemble_trace_with_mean_{var}.png",
+                    save=save,
+                    show=show,
+                    output_dir=output_dir,
+                    overwrite=overwrite,
+                    dpi=dpi,
+                )
+            )
         return results
 
     # ------------------------------------------------------------------ #
     #  Steady-state detection plots (single DataStream)                    #
     # ------------------------------------------------------------------ #
 
-    def steady_state_automatic_plot(self, data, variables_to_plot=None, batch_size=10,
-                                    start_time=0.0, method="std", threshold=None,
-                                    robust=True, *, ss_starts=None, save=False, show=False,
-                                    output_dir=None, overwrite=False, dpi=150):
+    def steady_state_automatic_plot(
+        self,
+        data,
+        variables_to_plot=None,
+        batch_size=10,
+        start_time=0.0,
+        method="std",
+        threshold=None,
+        robust=True,
+        *,
+        ss_starts=None,
+        save=False,
+        show=False,
+        output_dir=None,
+        overwrite=False,
+        dpi=150,
+    ):
         """Auto-detect steady-state start per variable and annotate.
 
         Pass ``ss_starts={column: ss_start_time}`` to skip trimming
@@ -331,8 +466,13 @@ class Plotter:
                     ss_start = ss_starts.get(column)
                 else:
                     trimmed_ds = self._trim_datastream(
-                        DataStream(df), column, method=method, batch_size=batch_size,
-                        start_time=start_time, threshold=threshold, robust=robust,
+                        DataStream(df),
+                        column,
+                        method=method,
+                        batch_size=batch_size,
+                        start_time=start_time,
+                        threshold=threshold,
+                        robust=robust,
                     )
                     ss_start = (
                         trimmed_ds.data["time"].iloc[0]
@@ -345,15 +485,28 @@ class Plotter:
                     mu, sigma = after_ss.mean(), after_ss.std()
                     t_end = time.max()
                     ax.plot(time, signal, label=column, alpha=0.7)
-                    ax.axvline(x=ss_start, color="r", linestyle="--", label="Steady-State Start")
-                    ax.plot([ss_start, t_end], [mu, mu], color="g", linewidth=2, label="Mean (Post-SS)")
+                    ax.axvline(
+                        x=ss_start,
+                        color="r",
+                        linestyle="--",
+                        label="Steady-State Start",
+                    )
+                    ax.plot(
+                        [ss_start, t_end],
+                        [mu, mu],
+                        color="g",
+                        linewidth=2,
+                        label="Mean (Post-SS)",
+                    )
                     # ±1/2/3 std bands only for the std / QuantileTrimStrategy criterion,
                     # drawn from the steady-state start to the end of the trace.
                     if method == "std":
                         self._draw_std_bands(ax, time[time >= ss_start], mu, sigma)
                 else:
                     ax.plot(time, signal, label=column, alpha=0.7)
-                    logger.info("%s: no steady state detected — plotting full signal.", column)
+                    logger.info(
+                        "%s: no steady state detected — plotting full signal.", column
+                    )
 
                 ax.set_title(column)
                 ax.set_xlabel("Time")
@@ -365,19 +518,37 @@ class Plotter:
                 fig.delaxes(axes[k])
 
             plt.suptitle(
-                f"Steady-State Detection — {self.format_dataset_name(dataset_name)}", fontsize=14
+                f"Steady-State Detection — {self.format_dataset_name(dataset_name)}",
+                fontsize=14,
             )
             plt.tight_layout(rect=[0, 0, 1, 0.95])
-            results.append(self._finalize(
-                fig, axes,
-                default_name=f"steady_state_auto_{self.format_dataset_name(dataset_name)}.png",
-                save=save, show=show, output_dir=output_dir, overwrite=overwrite, dpi=dpi,
-            ))
+            results.append(
+                self._finalize(
+                    fig,
+                    axes,
+                    default_name=f"steady_state_auto_{self.format_dataset_name(dataset_name)}.png",
+                    save=save,
+                    show=show,
+                    output_dir=output_dir,
+                    overwrite=overwrite,
+                    dpi=dpi,
+                )
+            )
         return results
 
-    def steady_state_plot(self, data, variables_to_plot=None, steady_state_start=None,
-                          *, show_std_bands=False, save=False, show=False,
-                          output_dir=None, overwrite=False, dpi=150):
+    def steady_state_plot(
+        self,
+        data,
+        variables_to_plot=None,
+        steady_state_start=None,
+        *,
+        show_std_bands=False,
+        save=False,
+        show=False,
+        output_dir=None,
+        overwrite=False,
+        dpi=150,
+    ):
         """Annotate steady state from a user-supplied start (float or {var: float}).
 
         Use this after :meth:`~quends.DataStream.trim` has identified the
@@ -395,7 +566,9 @@ class Plotter:
         results = []
         for dataset_name, df in data_frames.items():
             if "time" not in df.columns:
-                raise ValueError(f"DataFrame for '{dataset_name}' is missing a 'time' column.")
+                raise ValueError(
+                    f"DataFrame for '{dataset_name}' is missing a 'time' column."
+                )
 
             num_vars = len(variables_to_plot)
             num_cols = min(5, num_vars)
@@ -420,13 +593,27 @@ class Plotter:
                     mu, sigma = after_ss.mean(), after_ss.std()
                     t_end = time.max()
                     ax.plot(time, signal, label=column, alpha=0.7)
-                    ax.axvline(x=manual_ss, color="r", linestyle="--", label="Steady-State Start")
-                    ax.plot([manual_ss, t_end], [mu, mu], color="g", linewidth=2, label="Mean (Post-SS)")
+                    ax.axvline(
+                        x=manual_ss,
+                        color="r",
+                        linestyle="--",
+                        label="Steady-State Start",
+                    )
+                    ax.plot(
+                        [manual_ss, t_end],
+                        [mu, mu],
+                        color="g",
+                        linewidth=2,
+                        label="Mean (Post-SS)",
+                    )
                     if show_std_bands:
                         self._draw_std_bands(ax, time[time >= manual_ss], mu, sigma)
                 else:
                     ax.plot(time, signal, label=column, alpha=0.7)
-                    logger.info("%s: no steady state start provided — plotting raw signal.", column)
+                    logger.info(
+                        "%s: no steady state start provided — plotting raw signal.",
+                        column,
+                    )
 
                 ax.set_title(column)
                 ax.set_xlabel("Time")
@@ -438,23 +625,43 @@ class Plotter:
                 fig.delaxes(axes[k])
 
             plt.suptitle(
-                f"Steady-State (Manual) — {self.format_dataset_name(dataset_name)}", fontsize=14
+                f"Steady-State (Manual) — {self.format_dataset_name(dataset_name)}",
+                fontsize=14,
             )
             plt.tight_layout(rect=[0, 0, 1, 0.95])
-            results.append(self._finalize(
-                fig, axes,
-                default_name=f"steady_state_manual_{self.format_dataset_name(dataset_name)}.png",
-                save=save, show=show, output_dir=output_dir, overwrite=overwrite, dpi=dpi,
-            ))
+            results.append(
+                self._finalize(
+                    fig,
+                    axes,
+                    default_name=f"steady_state_manual_{self.format_dataset_name(dataset_name)}.png",
+                    save=save,
+                    show=show,
+                    output_dir=output_dir,
+                    overwrite=overwrite,
+                    dpi=dpi,
+                )
+            )
         return results
 
     # ------------------------------------------------------------------ #
     #  ACF plots                                                            #
     # ------------------------------------------------------------------ #
 
-    def plot_acf(self, data, alpha=0.05, column=None, ax=None, *, acf_values=None,
-                 save=False, show=False, filename=None, output_dir=None,
-                 overwrite=False, dpi=150):
+    def plot_acf(
+        self,
+        data,
+        alpha=0.05,
+        column=None,
+        ax=None,
+        *,
+        acf_values=None,
+        save=False,
+        show=False,
+        filename=None,
+        output_dir=None,
+        overwrite=False,
+        dpi=150,
+    ):
         """Plot the autocorrelation function.
 
         Pass ``acf_values`` (precomputed array) to skip ``acf()``. If ``ax`` is
@@ -488,8 +695,12 @@ class Plotter:
             fig, ax = plt.subplots(figsize=(12, 6))
 
         ax.stem(range(len(acf_values)), acf_values, basefmt=" ")
-        ax.axhline(conf, color="red", linestyle="--", label=f"95 % CI upper: {conf:.3f}")
-        ax.axhline(-conf, color="red", linestyle="--", label=f"95 % CI lower: {-conf:.3f}")
+        ax.axhline(
+            conf, color="red", linestyle="--", label=f"95 % CI upper: {conf:.3f}"
+        )
+        ax.axhline(
+            -conf, color="red", linestyle="--", label=f"95 % CI lower: {-conf:.3f}"
+        )
         ax.set_title(f"ACF — '{column}'")
         ax.set_xlabel("Lag")
         ax.set_ylabel("ACF")
@@ -499,13 +710,31 @@ class Plotter:
         if own_fig:
             plt.tight_layout()
             return self._finalize(
-                fig, ax, default_name=f"acf_{column}.png", save=save, show=show,
-                filename=filename, output_dir=output_dir, overwrite=overwrite, dpi=dpi,
+                fig,
+                ax,
+                default_name=f"acf_{column}.png",
+                save=save,
+                show=show,
+                filename=filename,
+                output_dir=output_dir,
+                overwrite=overwrite,
+                dpi=dpi,
             )
         return None, ax
 
-    def plot_acf_ensemble(self, ensemble_obj, alpha=0.05, column=None, *, save=False,
-                          show=False, filename=None, output_dir=None, overwrite=False, dpi=150):
+    def plot_acf_ensemble(
+        self,
+        ensemble_obj,
+        alpha=0.05,
+        column=None,
+        *,
+        save=False,
+        show=False,
+        filename=None,
+        output_dir=None,
+        overwrite=False,
+        dpi=150,
+    ):
         """ACF grid, one subplot per member. Returns (fig, axes)."""
         n_members = len(ensemble_obj.data_streams)
         ncols = min(3, n_members)
@@ -522,19 +751,39 @@ class Plotter:
 
         plt.tight_layout()
         return self._finalize(
-            fig, axes, default_name="ensemble_acf.png", save=save, show=show,
-            filename=filename, output_dir=output_dir, overwrite=overwrite, dpi=dpi,
+            fig,
+            axes,
+            default_name="ensemble_acf.png",
+            save=save,
+            show=show,
+            filename=filename,
+            output_dir=output_dir,
+            overwrite=overwrite,
+            dpi=dpi,
         )
 
     # ------------------------------------------------------------------ #
     #  Ensemble steady-state plots                                          #
     # ------------------------------------------------------------------ #
 
-    def ensemble_steady_state_automatic_plot(self, ensemble_obj, variables_to_plot=None,
-                                             batch_size=10, start_time=0.0, method="std",
-                                             threshold=None, robust=True, *, ss_starts=None,
-                                             save=False, show=False, filename=None,
-                                             output_dir=None, overwrite=False, dpi=150):
+    def ensemble_steady_state_automatic_plot(
+        self,
+        ensemble_obj,
+        variables_to_plot=None,
+        batch_size=10,
+        start_time=0.0,
+        method="std",
+        threshold=None,
+        robust=True,
+        *,
+        ss_starts=None,
+        save=False,
+        show=False,
+        filename=None,
+        output_dir=None,
+        overwrite=False,
+        dpi=150,
+    ):
         """Auto-detect steady state per member, one subplot each. Returns (fig, axes).
 
         Pass ``ss_starts={member_index: {var: ss_start}}`` to skip trimming.
@@ -557,8 +806,13 @@ class Plotter:
                     ss_start = ss_starts.get(i, {}).get(var)
                 else:
                     trimmed = self._trim_datastream(
-                        ds, var, method=method, batch_size=batch_size,
-                        start_time=start_time, threshold=threshold, robust=robust,
+                        ds,
+                        var,
+                        method=method,
+                        batch_size=batch_size,
+                        start_time=start_time,
+                        threshold=threshold,
+                        robust=robust,
                     )
                     ss_start = (
                         trimmed.data["time"].iloc[0]
@@ -587,13 +841,30 @@ class Plotter:
 
         plt.tight_layout(rect=[0, 0, 1, 0.95])
         return self._finalize(
-            fig, axes, default_name="ensemble_steady_state_auto.png", save=save, show=show,
-            filename=filename, output_dir=output_dir, overwrite=overwrite, dpi=dpi,
+            fig,
+            axes,
+            default_name="ensemble_steady_state_auto.png",
+            save=save,
+            show=show,
+            filename=filename,
+            output_dir=output_dir,
+            overwrite=overwrite,
+            dpi=dpi,
         )
 
-    def ensemble_steady_state_plot(self, ensemble_obj, variables_to_plot=None,
-                                   steady_state_start=None, *, save=False, show=False,
-                                   filename=None, output_dir=None, overwrite=False, dpi=150):
+    def ensemble_steady_state_plot(
+        self,
+        ensemble_obj,
+        variables_to_plot=None,
+        steady_state_start=None,
+        *,
+        save=False,
+        show=False,
+        filename=None,
+        output_dir=None,
+        overwrite=False,
+        dpi=150,
+    ):
         """Annotate each member with a user-supplied SS start. Returns (fig, axes)."""
         n_members = len(ensemble_obj.data_streams)
         ncols = min(3, n_members)
@@ -636,33 +907,68 @@ class Plotter:
 
         plt.tight_layout(rect=[0, 0, 1, 0.95])
         return self._finalize(
-            fig, axes, default_name="ensemble_steady_state_manual.png", save=save, show=show,
-            filename=filename, output_dir=output_dir, overwrite=overwrite, dpi=dpi,
+            fig,
+            axes,
+            default_name="ensemble_steady_state_manual.png",
+            save=save,
+            show=show,
+            filename=filename,
+            output_dir=output_dir,
+            overwrite=overwrite,
+            dpi=dpi,
         )
 
     # ------------------------------------------------------------------ #
     #  Ensemble member + average plots                                      #
     # ------------------------------------------------------------------ #
 
-    def plot_ensemble(self, ensemble_obj, variables_to_plot=None, *, avg_df=None,
-                      save=False, show=False, filename=None, output_dir=None,
-                      overwrite=False, dpi=150):
+    def plot_ensemble(
+        self,
+        ensemble_obj,
+        variables_to_plot=None,
+        *,
+        avg_df=None,
+        save=False,
+        show=False,
+        filename=None,
+        output_dir=None,
+        overwrite=False,
+        dpi=150,
+    ):
         """Members + ensemble average, 2-column grid. Returns (fig, axes).
 
         Pass ``avg_df`` (a precomputed average DataFrame) to skip
         ``compute_average_ensemble``.
         """
         return self.plot_ensemble_with_average(
-            ensemble_obj, variables_to_plot=variables_to_plot, avg_df=avg_df,
-            save=save, show=show, filename=filename or "ensemble_members_and_average.png",
-            output_dir=output_dir, overwrite=overwrite, dpi=dpi,
-            condensed_legend=False, y_range=None,
+            ensemble_obj,
+            variables_to_plot=variables_to_plot,
+            avg_df=avg_df,
+            save=save,
+            show=show,
+            filename=filename or "ensemble_members_and_average.png",
+            output_dir=output_dir,
+            overwrite=overwrite,
+            dpi=dpi,
+            condensed_legend=False,
+            y_range=None,
         )
 
-    def plot_ensemble_with_average(self, ensemble_obj, variables_to_plot=None, *,
-                                   avg_df=None, condensed_legend=False, y_range=None,
-                                   save=False, show=False, filename=None, output_dir=None,
-                                   overwrite=False, dpi=150):
+    def plot_ensemble_with_average(
+        self,
+        ensemble_obj,
+        variables_to_plot=None,
+        *,
+        avg_df=None,
+        condensed_legend=False,
+        y_range=None,
+        save=False,
+        show=False,
+        filename=None,
+        output_dir=None,
+        overwrite=False,
+        dpi=150,
+    ):
         """Members + ensemble average with optional condensed legend / y-range.
 
         Pass ``avg_df`` to skip ``compute_average_ensemble``. Returns (fig, axes).
@@ -686,7 +992,9 @@ class Plotter:
         n_vars = len(vars_to_plot)
         ncols = 2
         nrows = math.ceil(n_vars / ncols)
-        fig, axes = plt.subplots(nrows, ncols, figsize=(7 * ncols, 7 * nrows), squeeze=False)
+        fig, axes = plt.subplots(
+            nrows, ncols, figsize=(7 * ncols, 7 * nrows), squeeze=False
+        )
         axes = axes.flatten()
 
         for idx, var in enumerate(vars_to_plot):
@@ -694,8 +1002,14 @@ class Plotter:
             first_drawn = False
             for name, df in member_dfs.items():
                 if name == "Ensemble Average":
-                    ax.plot(df["time"], df[var], label="Ensemble Average",
-                            color="black", linewidth=2.5, zorder=5)
+                    ax.plot(
+                        df["time"],
+                        df[var],
+                        label="Ensemble Average",
+                        color="black",
+                        linewidth=2.5,
+                        zorder=5,
+                    )
                 else:
                     if condensed_legend:
                         label = "Individual Members" if not first_drawn else None
@@ -716,19 +1030,140 @@ class Plotter:
         handles, labels = axes[0].get_legend_handles_labels()
         if condensed_legend:
             seen, unique = set(), []
-            for h, l in zip(handles, labels):
-                if l is not None and l not in seen:
-                    seen.add(l)
-                    unique.append((h, l))
+            for h, label in zip(handles, labels):
+                if label is not None and label not in seen:
+                    seen.add(label)
+                    unique.append((h, label))
             handles, labels = zip(*unique) if unique else ([], [])
 
         legend_ncol = min(len(labels), 4) if labels else 1
         legend_y = -0.05 if n_vars == 1 else -0.08
-        fig.legend(handles, labels, loc="lower center", bbox_to_anchor=(0.5, legend_y),
-                   ncol=legend_ncol, fontsize="small", frameon=False)
+        fig.legend(
+            handles,
+            labels,
+            loc="lower center",
+            bbox_to_anchor=(0.5, legend_y),
+            ncol=legend_ncol,
+            fontsize="small",
+            frameon=False,
+        )
         plt.tight_layout(rect=[0, 0.05, 1, 1])
 
         return self._finalize(
-            fig, axes, default_name="ensemble_with_average.png", save=save, show=show,
-            filename=filename, output_dir=output_dir, overwrite=overwrite, dpi=dpi,
+            fig,
+            axes,
+            default_name="ensemble_with_average.png",
+            save=save,
+            show=show,
+            filename=filename,
+            output_dir=output_dir,
+            overwrite=overwrite,
+            dpi=dpi,
         )
+
+    def plot_signal_basic_stats(
+        self,
+        data_stream: DataStream,
+        col: str,
+        stats: Optional[dict] = None,
+        label: Optional[str] = None,
+    ):
+        """Plot a signal and optional statistics from ``RobustWorkflow``.
+
+        Parameters
+        ----------
+        data_stream: DataStream
+            The data stream to plot
+        col: str
+            The column name of the quantity to plot in the data stream.
+        stats: dict, optional
+            Dictionary with statistics returned by process_data_stream(). Default is None.
+        label: str, optional
+            Label to use in title of graph. Default is None.
+
+        The legacy display behaviour of this method is intentional: it shows
+        the figure when the active Matplotlib backend is interactive, closes
+        it afterwards, and returns ``None``.
+        """
+
+        if not isinstance(data_stream, DataStream):
+            raise TypeError("data_stream must be a DataStream instance.")
+
+        my_df = data_stream.data
+        if my_df.empty:
+            raise ValueError("data_stream must contain at least one row.")
+        if "time" not in my_df.columns:
+            raise ValueError("data_stream is missing the required 'time' column.")
+        if col not in my_df.columns:
+            raise ValueError(f"Column '{col}' was not found in data_stream.")
+
+        col_stats = None
+        if stats is not None:
+            if not isinstance(stats, dict):
+                raise TypeError("stats must be a dictionary or None.")
+            if col not in stats or not isinstance(stats[col], dict):
+                raise ValueError(f"stats must contain a dictionary for column '{col}'.")
+            col_stats = stats[col]
+            required = {"start_time", "mean", "confidence_interval", "sss_start"}
+            missing = sorted(required.difference(col_stats))
+            if missing:
+                raise ValueError(
+                    f"stats['{col}'] is missing required field(s): {', '.join(missing)}."
+                )
+            confidence_interval = col_stats["confidence_interval"]
+            if (
+                not isinstance(confidence_interval, (tuple, list, np.ndarray))
+                or len(confidence_interval) != 2
+            ):
+                raise ValueError(
+                    f"stats['{col}']['confidence_interval'] must contain exactly two bounds."
+                )
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        (signal_line,) = ax.plot(my_df["time"], my_df[col], label="Signal")
+        signal_color = signal_line.get_color()
+
+        ax.set_xlabel("time", size=12)
+        ax.set_ylabel(col, size=12)
+        if label:
+            ax.set_title(label, size=14)
+        # Set the font size for the axis tick labels
+        ax.tick_params(axis="both", labelsize=11)
+
+        # add the start of steady state and the mean (if provided)
+        if col_stats is not None:
+            # If start_time > 0, show it on graph
+            if col_stats["start_time"] > 0:
+                ax.axvline(
+                    x=col_stats["start_time"],
+                    color=signal_color,
+                    linestyle="--",
+                    label="Start Time",
+                )
+
+            # Add other statistics
+            my_mean = col_stats["mean"]
+            my_cl = col_stats["confidence_interval"]
+            my_sss_start = col_stats["sss_start"]
+            ax.axvline(x=my_sss_start, color="r", linestyle="--", label="Start SSS")
+
+            sss_time = [my_sss_start, my_df.iloc[-1]["time"]]
+            mean_level = [my_mean, my_mean]
+            upper_conf_level = [my_cl[1], my_cl[1]]
+            lower_conf_level = [my_cl[0], my_cl[0]]
+            ax.plot(sss_time, mean_level, color="green", linestyle="-", label="Mean")
+            ax.plot(
+                sss_time,
+                upper_conf_level,
+                color="green",
+                linestyle="--",
+                label="95% Conf. Int.",
+            )
+            ax.plot(sss_time, lower_conf_level, color="green", linestyle="--")
+
+        ax.legend(fontsize=12)
+
+        # show and close the figure
+        _show_plot_if_interactive()
+        plt.close(fig)
