@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from quends import DataStream, RobustWorkflow
+from quends import DataStream, Plotter, RobustWorkflow
 
 pytest_plugins = ("tests._shared",)
 
@@ -487,9 +487,9 @@ class TestPlotSignalBasicStats:
     @patch("matplotlib.pyplot.show")
     @patch("matplotlib.pyplot.close")
     def test_runs_without_error_no_stats(self, mock_close, mock_show):
-        wf = make_workflow()
+        plotter = Plotter()
         ds = make_datastream()
-        wf.plot_signal_basic_stats(ds, "A")
+        plotter.plot_signal_basic_stats(ds, "A")
         mock_show.assert_called_once()
         assert mock_close.call_count >= 1
 
@@ -498,17 +498,17 @@ class TestPlotSignalBasicStats:
     @patch("matplotlib.pyplot.show")
     @patch("matplotlib.pyplot.close")
     def test_runs_without_error_with_stats(self, mock_close, mock_show):
-        wf = make_workflow()
+        plotter = Plotter()
         ds = make_datastream()
         stats = self._make_stats(start_time=0.0)
-        wf.plot_signal_basic_stats(ds, "A", stats=stats)
+        plotter.plot_signal_basic_stats(ds, "A", stats=stats)
         mock_show.assert_called_once()
 
     @patch("matplotlib.pyplot.show")
     @patch("matplotlib.pyplot.close")
     def test_start_time_axvline_drawn_when_positive(self, mock_close, mock_show):
         """start_time > 0 should trigger an extra axvline for the start time."""
-        wf = make_workflow()
+        plotter = Plotter()
         ds = make_datastream()
         stats = self._make_stats(start_time=20.0)
 
@@ -517,7 +517,7 @@ class TestPlotSignalBasicStats:
             "matplotlib.axes.Axes.axvline",
             side_effect=lambda *a, **kw: axvline_calls.append(kw.get("x")),
         ):
-            wf.plot_signal_basic_stats(ds, "A", stats=stats)
+            plotter.plot_signal_basic_stats(ds, "A", stats=stats)
 
         # Should have both start_time and sss_start vlines
         assert 20.0 in axvline_calls
@@ -526,7 +526,7 @@ class TestPlotSignalBasicStats:
     @patch("matplotlib.pyplot.close")
     def test_start_time_axvline_not_drawn_when_zero(self, mock_close, mock_show):
         """start_time == 0 should NOT draw the start_time vline."""
-        wf = make_workflow()
+        plotter = Plotter()
         ds = make_datastream()
         stats = self._make_stats(start_time=0.0)
 
@@ -535,7 +535,7 @@ class TestPlotSignalBasicStats:
             "matplotlib.axes.Axes.axvline",
             side_effect=lambda *a, **kw: axvline_calls.append(kw.get("x")),
         ):
-            wf.plot_signal_basic_stats(ds, "A", stats=stats)
+            plotter.plot_signal_basic_stats(ds, "A", stats=stats)
 
         assert 0.0 not in axvline_calls
 
@@ -543,7 +543,7 @@ class TestPlotSignalBasicStats:
     @patch("matplotlib.pyplot.close")
     def test_label_applied_when_provided(self, mock_close, mock_show):
         """Providing a label should set the axes title."""
-        wf = make_workflow()
+        plotter = Plotter()
         ds = make_datastream()
 
         set_title_calls = []
@@ -551,7 +551,7 @@ class TestPlotSignalBasicStats:
             "matplotlib.axes.Axes.set_title",
             side_effect=lambda *a, **kw: set_title_calls.append(a[0]),
         ):
-            wf.plot_signal_basic_stats(ds, "A", label="My Signal")
+            plotter.plot_signal_basic_stats(ds, "A", label="My Signal")
 
         assert "My Signal" in set_title_calls
 
@@ -559,7 +559,7 @@ class TestPlotSignalBasicStats:
     @patch("matplotlib.pyplot.close")
     def test_no_title_when_label_is_none(self, mock_close, mock_show):
         """No label = no set_title call."""
-        wf = make_workflow()
+        plotter = Plotter()
         ds = make_datastream()
 
         set_title_calls = []
@@ -567,7 +567,7 @@ class TestPlotSignalBasicStats:
             "matplotlib.axes.Axes.set_title",
             side_effect=lambda *a, **kw: set_title_calls.append(a[0]),
         ):
-            wf.plot_signal_basic_stats(ds, "A", label=None)
+            plotter.plot_signal_basic_stats(ds, "A", label=None)
 
         assert set_title_calls == []
 
@@ -575,7 +575,7 @@ class TestPlotSignalBasicStats:
     @patch("matplotlib.pyplot.close")
     def test_three_stat_lines_drawn_with_stats(self, mock_close, mock_show):
         """Mean, upper CI, and lower CI lines should each produce an ax.plot call."""
-        wf = make_workflow()
+        plotter = Plotter()
         ds = make_datastream()
         stats = self._make_stats()
 
@@ -587,7 +587,7 @@ class TestPlotSignalBasicStats:
             return original_plot(self_ax, *args, **kwargs)
 
         with patch("matplotlib.axes.Axes.plot", capture_plot):
-            wf.plot_signal_basic_stats(ds, "A", stats=stats)
+            plotter.plot_signal_basic_stats(ds, "A", stats=stats)
 
         assert "Mean" in plot_labels
         assert "95% Conf. Int." in plot_labels

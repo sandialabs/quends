@@ -1,7 +1,3 @@
-from typing import Optional
-
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
 
 # QUENDS libraries
@@ -13,14 +9,6 @@ from ..base.trim import MeanVariationTrimStrategy, TrimDataStreamOperation
 # The "ball-park" mean is taken over the final fraction (numerator/denominator)
 # of the trace; integer floor division preserves the historical index exactly.
 _IRREGULAR_TAIL_NUM = 2
-
-
-def _show_plot_if_interactive():
-    """Show a figure unless the current backend is non-interactive."""
-    backend = matplotlib.get_backend().lower()
-    if "agg" in backend:
-        return
-    plt.show()
 
 
 _IRREGULAR_TAIL_DEN = 3
@@ -341,81 +329,3 @@ class RobustWorkflow:
     #: Backward-compatible alias — ``process_data_steam`` was a long-standing
     #: typo for :meth:`process_data_stream`.  Will be removed in a future release.
     process_data_steam = process_data_stream
-
-    # New function to plot signal with basic stats
-    def plot_signal_basic_stats(
-        self,
-        data_stream: DataStream,
-        col: str,
-        stats: Optional[dict] = None,
-        label: Optional[str] = None,
-    ):
-        """
-        NOTE: make this part of visualization class?
-
-        Parameters
-        ----------
-        data_stream: DataStream
-            The data stream to plot
-        col: str
-            The column name of the quantity to plot in the data stream.
-        stats: dict, optional
-            Dictionary with statistics returned by process_data_stream(). Default is None.
-        label: str, optional
-            Label to use in title of graph. Default is None.
-
-        Returns
-        -------
-        shows a plot of the signal with mean, confidence interval and start of SSS (if stats provided)
-        """
-
-        my_df = data_stream.data
-
-        fig, ax = plt.subplots(figsize=(10, 6))
-
-        (signal_line,) = ax.plot(my_df["time"], my_df[col], label="Signal")
-        signal_color = signal_line.get_color()
-
-        ax.set_xlabel("time", size=12)
-        ax.set_ylabel(col, size=12)
-        if label:
-            ax.set_title(label, size=14)
-        # Set the font size for the axis tick labels
-        ax.tick_params(axis="both", labelsize=11)
-
-        # add the start of steady state and the mean (if provided)
-        if stats:
-            # If start_time > 0, show it on graph
-            if stats[col]["start_time"] > 0:
-                ax.axvline(
-                    x=stats[col]["start_time"],
-                    color=signal_color,
-                    linestyle="--",
-                    label="Start Time",
-                )
-
-            # Add other statistics
-            my_mean = stats[col]["mean"]
-            my_cl = stats[col]["confidence_interval"]
-            my_sss_start = stats[col]["sss_start"]
-            plt.axvline(x=my_sss_start, color="r", linestyle="--", label="Start SSS")
-
-            sss_time = [my_sss_start, my_df.iloc[-1]["time"]]
-            mean_level = [my_mean, my_mean]
-            upper_conf_level = [my_cl[1], my_cl[1]]
-            lower_conf_level = [my_cl[0], my_cl[0]]
-            ax.plot(sss_time, mean_level, color="green", linestyle="-", label="Mean")
-            ax.plot(
-                sss_time,
-                upper_conf_level,
-                color="green",
-                linestyle="--",
-                label="95% Conf. Int.",
-            )
-            ax.plot(sss_time, lower_conf_level, color="green", linestyle="--")
-
-        ax.legend(fontsize=12)
-
-        # show and close the figure
-        _show_plot_if_interactive()
-        plt.close(fig)
