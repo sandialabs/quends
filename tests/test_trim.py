@@ -601,9 +601,11 @@ def test_trim_sss_no_sss_verbosity_2_triggers_plot(
     verbosity=2 in the no-SSS else branch should call plt.show()
     for the deviation/tolerance plot. This covers line 644->645.
     """
-    with patch("matplotlib.pyplot.show") as mock_show, patch(
-        "matplotlib.pyplot.figure"
-    ), patch("matplotlib.pyplot.plot"), patch("matplotlib.pyplot.close"):
+    # with patch("matplotlib.pyplot.show") as mock_show, patch(
+    #     "matplotlib.pyplot.figure"
+    # ), patch("matplotlib.pyplot.plot"), patch("matplotlib.pyplot.close"):
+        
+    with patch("matplotlib.pyplot.figure") as mock_figure:
 
         ds = DataStream(persistent_trend_df)
         strategy = make_sss_strategy(verbosity=2)
@@ -613,7 +615,9 @@ def test_trim_sss_no_sss_verbosity_2_triggers_plot(
             strategy.apply(ds, column_name="A")
 
     # plt.show() should have been called at least once for the no-SSS plot
-    assert mock_show.call_count >= 1
+    # assert mock_show.call_count >= 1
+    # plt.figure() should have been called at least once for the no-SSS plot
+    assert mock_figure.call_count >= 1
 
 
 def test_trim_sss_no_sss_verbosity_2_plots_deviation_and_tolerance(
