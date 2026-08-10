@@ -17,3 +17,6 @@ directory = docs/_build/html/coverage
 
 [xml]
 output = coverage.xml
+
+[tool.coverage.report]
+fail_under = 90
