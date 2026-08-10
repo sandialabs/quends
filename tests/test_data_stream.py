@@ -15,13 +15,52 @@ pytest_plugins = ("tests._shared",)
 def test_init_simple(simple_data: pd.DataFrame):
     ds = DataStream(simple_data)
     assert len(ds) == 3
-    assert ds.variables().tolist() == ["A"]
+    assert ds.variables().tolist() == ["time", "A"]
+    assert ds.data["time"].tolist() == [0, 1, 2]
+    assert "time" not in simple_data.columns
 
 
 def test_init_empty(empty_data: pd.DataFrame):
     ds = DataStream(empty_data)
     assert len(ds) == 0
-    assert ds.variables().tolist() == []
+    assert ds.variables().tolist() == ["time"]
+
+
+def test_init_missing_time_uses_dataframe_index():
+    data = pd.DataFrame({"A": [1, 2, 3]}, index=[10, 20, 30])
+
+    ds = DataStream(data)
+
+    assert ds.data["time"].tolist() == [10, 20, 30]
+
+
+def test_init_preserves_existing_time_column():
+    data = pd.DataFrame({"time": [0.5, 1.5], "A": [1, 2]})
+
+    ds = DataStream(data)
+
+    assert ds.data is data
+    assert ds.data["time"].tolist() == [0.5, 1.5]
+
+
+def test_init_uses_default_label(simple_data: pd.DataFrame):
+    ds = DataStream(simple_data)
+
+    assert ds.label == "data_stream"
+
+
+def test_init_accepts_custom_label(simple_data: pd.DataFrame):
+    ds = DataStream(simple_data, label="experiment_1")
+
+    assert ds.label == "experiment_1"
+
+
+def test_label_can_be_updated(simple_data: pd.DataFrame):
+    ds = DataStream(simple_data)
+
+    ds.label = "experiment_2"
+
+    assert ds.label == "experiment_2"
 
 
 def test_init_coerces_legacy_history_entries(simple_data: pd.DataFrame):

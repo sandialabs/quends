@@ -82,17 +82,21 @@ def _coerce_history(history: Optional[Any] = None) -> DataStreamHistory:
 
 class DataStream:
 
-    def __init__(self, data: Any, history: Optional[DataStreamHistory] = None) -> None:
+    def __init__(
+        self,
+        data: Any,
+        history: Optional[DataStreamHistory] = None,
+        label: str = "data_stream",
+    ) -> None:
         """Wrap a pandas DataFrame of time-series data.
 
         ``data`` must be a :class:`pandas.DataFrame` (or something convertible to
         one — a dict/array/Series is coerced); anything else raises ``TypeError``
         early with a clear message rather than failing cryptically later.
 
-        A ``time`` column is **not** required at construction — column-wise
-        statistics work without it — but steady-state trimming and ensemble
-        averaging do require one and will raise a clear error if it is missing
-        (see :meth:`trim` / :mod:`quends.base.trim`).
+        A ``time`` column is optional. If it is absent, the DataFrame index is
+        added as ``time`` so trimming, plotting, and ensemble operations remain
+        well-defined.
         """
         if isinstance(data, pd.DataFrame):
             df = data
@@ -108,13 +112,29 @@ class DataStream:
                     "DataStream(data): data must be a pandas DataFrame (or something "
                     f"convertible to one); got {type(data).__name__} ({exc})."
                 )
+        if "time" not in df.columns:
+            # Copy before adding the derived column so construction does not mutate
+            # a caller-owned DataFrame.
+            df = df.copy()
+            df.insert(0, "time", df.index)
+
         self._data = df
         self._history = _coerce_history(history)
+        self._label = label
 
     @property
     def data(self) -> Any:
         """The underlying pandas DataFrame."""
         return self._data
+
+    @property
+    def label(self) -> str:
+        """The label for the data stream."""
+        return self._label
+
+    @label.setter
+    def label(self, value: str) -> None:
+        self._label = value
 
     @property
     def df(self) -> Any:
