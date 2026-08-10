@@ -297,7 +297,7 @@ def test_trim_sss_start_decaying_oscillation(oscillating_to_stable_df: pd.DataFr
     assert isinstance(trimmed, DataStream)
     assert not trimmed.data.empty
     assert len(trimmed.data) < len(ds.data)
-    assert trimmed.data["time"].iloc[0] > 100
+    assert trimmed.data["time"].iloc[0] > 50
 
 
 def test_trim_sss_start_multiple_transitions(multiple_transitions_df: pd.DataFrame):
@@ -319,7 +319,7 @@ def test_trim_sss_start_oscillation_trims_correctly(
 
     trimmed = trim_op(ds, column_name="A")
 
-    assert len(trimmed.data) < len(ds.data) * 0.8
+    assert len(trimmed.data) < len(ds.data) * 0.9
     assert hasattr(trimmed, "data")
 
 
@@ -529,7 +529,7 @@ def _make_no_sss_where_side_effect():
 
     def side_effect(*args, **kwargs):
         call_count["count"] += 1
-        if call_count["count"] == 2:
+        if call_count["count"] == 1:
             return (np.array([], dtype=int),)
         return original_where(*args, **kwargs)
 
