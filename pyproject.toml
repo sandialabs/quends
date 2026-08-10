@@ -61,6 +61,7 @@ source = [
 omit = [
     "src/quends/postprocessing/*",
 ]
+fail_under = 90
 
 [tool.coverage.html]
 omit = [
