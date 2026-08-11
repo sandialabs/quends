@@ -11,6 +11,7 @@ omit =
     */tests/*
     */venv/*
     */__init__.py
+fail_under = 90
 
 [html]
 directory = docs/_build/html/coverage
