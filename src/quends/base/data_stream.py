@@ -39,6 +39,8 @@ def _tau_int_metadata_warning(tau_int: float, n_samples: int) -> Optional[str]:
     """Mirror the tau_int lag-cutoff warning as result metadata."""
     if not np.isfinite(tau_int) or n_samples < 3:
         return None
+    # TODO: Can we fix this so it is always the same as what is used
+    # in the actual decorrelation time computation?
     nlags = max(1, min(n_samples // 4, 2000))
     if tau_int < TAU_INT_LAG_CUTOFF_WARNING_RATIO * nlags:
         return None
@@ -302,6 +304,8 @@ class DataStream:
             block_means = ab["blocks"]
             lb = {"lags": ab["ljungbox_lags"], "pvalues": ab["ljungbox_pvalues"]}
             n_blocks = ab["n_blocks"]
+            # TODO Do we need this check here? Does this not already happen inside the
+            # function that computes the decorrelation time?
             tau_int_warning = _tau_int_metadata_warning(
                 ab.get("tau_int", float("nan")),
                 len(series),
@@ -838,6 +842,36 @@ class DataStream:
         return {
             "results": to_native_types(results),
         }
+
+    def compute_decorrelation_time(self, column_name=None):
+        """
+        Estimate the decorrelation time (in terms of the number of samples) 
+        using the integrated sample autocorrelation (tau_int) for specified columns.
+
+        Parameters
+
+        column_name : str or list or None
+            Column(s) to compute decorrelation time for; defaults to all non-time columns.
+
+        Returns
+        -------
+        dict
+            {'results': {col: tau_int}} (with decorrelation time in number of samples for each column)
+        """
+        columns = _resolve_columns(self.data, column_name)
+        results = {}
+        for col in columns:
+            series = self.data[col].dropna()
+            if series.empty:
+                results[col] = {"error": f"No data available for column '{col}'"}
+                continue
+
+            tau_int = _estimate_tau_int_from_series(
+                np.asarray(series.values, dtype=float)
+            )
+            results[col] = tau_int
+
+        return {"results": to_native_types(results)}
 
     @staticmethod
     def robust_effective_sample_size(

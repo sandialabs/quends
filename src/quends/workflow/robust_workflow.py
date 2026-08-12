@@ -9,8 +9,6 @@ from ..base.trim import MeanVariationTrimStrategy, TrimDataStreamOperation
 # The "ball-park" mean is taken over the final fraction (numerator/denominator)
 # of the trace; integer floor division preserves the historical index exactly.
 _IRREGULAR_TAIL_NUM = 2
-
-
 _IRREGULAR_TAIL_DEN = 3
 # Relative uncertainty assigned to that ball-park mean: 1.0 == 100% (the CI then
 # spans roughly [0, 2*mean]). Deliberately conservative for un-trimmable data.
@@ -74,10 +72,10 @@ class RobustWorkflow:
         n_pts_frac_min=0.2,
         max_lag_frac=0.5,
         autocorr_sig_level=0.05,
-        decor_multiplier=4.0,
+        decor_multiplier=6.0,
         std_dev_frac=0.1,
         fudge_fac=0.1,
-        smoothing_window_correction=0.8,
+        smoothing_window_correction=0.5,
         final_smoothing_window=10,
     ):
         """

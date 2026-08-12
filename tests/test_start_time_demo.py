@@ -86,3 +86,6 @@ def test_flat_signal_without_time_of_restart():
 
 def test_flat_signal_with_noise():
     compare_results("flat_signal_stats_with_noise.csv")
+
+def test_flat_signal_with_noise_and_restart_provided():
+    compare_results("flat_signal_stats_with_noise_and_restart_provided.csv")

@@ -12,7 +12,16 @@ from .history import DataStreamHistoryEntry
 from .operations import DataStreamOperation
 from .utils import stationarity_value, to_native_types
 
-
+# def in_jupyter():
+#     try:
+#         from IPython import get_ipython
+#         shell = get_ipython()
+#         if shell is None:
+#             return False
+#         return shell.__class__.__name__ in {"ZMQInteractiveShell"}
+#     except Exception:
+#         return False
+    
 class TrimStrategy(ABC):
     """
     Abstract base class describing a trim strategy.
@@ -515,43 +524,58 @@ class MeanVariationTrimStrategy(TrimStrategy):
         # Lazy import: matplotlib is only needed when verbosity > 1 (plotting mode).
         if self.verbosity > 1:
             import matplotlib
-
-            matplotlib.use("Agg", force=True)
             from matplotlib import pyplot as plt
+
+            def _show_plot_if_interactive():
+                """Show a figure unless the current backend is non-interactive."""
+                backend = matplotlib.get_backend().lower()
+                if "agg" in backend:
+                    show_plot = False
+                else:
+                    show_plot = True
+                if show_plot:
+                    plt.show()
+                
 
         # Get the decorrelation length (in number of points)
         # Note: this approach assumes signal points are spaced equally in time
         n_pts = len(data_stream.data)
+        # TODO: either pass max_lag to the decorrelation length function or take it out
+        # as it is currently set in the decorrelation length function and is here
+        # only used for plotting
         max_lag = int(self.max_lag_frac * n_pts)  # max lag for autocorrelation
-
-        acf_vals = ststls.acf(
-            data_stream.data[column_name].dropna().values, nlags=max_lag
-        )
 
         # plot the autocorrelation function
         if self.verbosity > 1:
+            acf_vals = ststls.acf(
+                data_stream.data[column_name].dropna().values, nlags=max_lag
+            )
             plt.figure(figsize=(10, 6))
             plt.stem(range(len(acf_vals)), acf_vals)
             plt.xlabel("Lag")
             plt.ylabel("Autocorrelation")
             plt.title("Autocorrelation Function")
             plt.grid()
-            plt.show()
+            _show_plot_if_interactive()
             plt.close()
 
         # Use rigorous statistical measure for decorrelation length
-        z_critical = sts.norm.ppf(1 - self.autocorr_sig_level / 2)
-        conf_interval = z_critical / np.sqrt(n_pts)
-        significant_lags = np.where(np.abs(acf_vals[1:]) > conf_interval)[0]
-        acf_sum = np.sum(np.abs(acf_vals[1:][significant_lags]))
-        decor_length = int(np.ceil(1 + 2 * acf_sum))
+        # z_critical = sts.norm.ppf(1 - self.autocorr_sig_level / 2)
+        # conf_interval = z_critical / np.sqrt(n_pts)
+        # significant_lags = np.where(np.abs(acf_vals[1:]) > conf_interval)[0]
+        # acf_sum = np.sum(np.abs(acf_vals[1:][significant_lags]))
+        # decor_time = int(np.ceil(1 + 2 * acf_sum))
+
+        # Use DataStream function to compute decorrelation time (in number of points)
+        decor_time = data_stream.compute_decorrelation_time(column_name)['results'][column_name]
+        # print(decor_time)
 
         # Set smoothing window as multiple of decorrelation length, but not more than max_lag
-        decor_index = min(int(self.decor_multiplier * decor_length), max_lag)
+        decor_index = min(int(self.decor_multiplier * decor_time), max_lag)
 
         if self.verbosity > 0:
             print(
-                f"stats decorrelation length {decor_length} gives smoothing window of {decor_index} points."
+                f"stats decorrelation time {decor_time:.2f} gives smoothing window of {decor_index} points."
             )
 
         # Smooth signal with rolling mean over window size based on decorrelation length
@@ -624,7 +648,7 @@ class MeanVariationTrimStrategy(TrimStrategy):
             plt.title("Original and Smoothed Signal")
             plt.legend()
             plt.grid()
-            plt.show()
+            _show_plot_if_interactive()
             plt.close()
 
         if self.verbosity > 0:
@@ -709,9 +733,9 @@ class MeanVariationTrimStrategy(TrimStrategy):
             if self.verbosity > 0:
                 print(f"Index where criterion is met: {crit_met_index}")
                 print(f"Rolling window: {rolling_window}")
-                print(f"time where criterion is met: {criterion_time}")
+                print(f"time where criterion is met: {criterion_time:.2f}")
                 print(
-                    f"time at start of SSS (adjusted for rolling window): {sss_start_time}"
+                    f"time at start of SSS (adjusted for rolling window): {sss_start_time:.2f}"
                 )
 
             # Plot deviation and tolerance vs. time
@@ -746,7 +770,7 @@ class MeanVariationTrimStrategy(TrimStrategy):
                 plt.title("Deviation and Tolerance vs. Time")
                 plt.legend()
                 plt.grid()
-                plt.show()
+                _show_plot_if_interactive()
                 plt.close()
 
             # Trim the original data frame to start at this location minus the smoothing window
@@ -791,7 +815,7 @@ class MeanVariationTrimStrategy(TrimStrategy):
                 plt.title("Deviation and Tolerance vs. Time")
                 plt.legend()
                 plt.grid()
-                plt.show()
+                _show_plot_if_interactive()
                 plt.close()
 
         return trimmed_stream
