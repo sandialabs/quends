@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Repository containing this script
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT"
+
+# Safe project name for Podman
+PROJECT="$(basename "$ROOT" \
+    | tr '[:upper:]' '[:lower:]' \
+    | sed 's/[^a-z0-9_.-]/-/g')"
+
+IMAGE="${PROJECT}-sandia-dev:latest"
+VENV_VOLUME="${PROJECT}-venv"
+DEV_CA_BUNDLE="${DEV_CA_BUNDLE:-}"
+
+# Require LiteLLM endpoint credentials
+if [[ -z "${OPENAI_API_KEY:-}" ]]; then
+    echo "Error: OPENAI_API_KEY is not set." >&2
+    exit 1
+fi
+if [[ -z "${OPENAI_BASE_URL:-}" ]]; then
+    echo "Error: OPENAI_BASE_URL is not set." >&2
+    exit 1
+fi
+GENERATED_CA_BUNDLE=""
+
+cleanup_ca_bundle() {
+    if [[ -n "$GENERATED_CA_BUNDLE" && -f "$GENERATED_CA_BUNDLE" ]]; then
+        rm -f -- "$GENERATED_CA_BUNDLE"
+    fi
+}
+trap cleanup_ca_bundle EXIT
+
+if [[ -z "$DEV_CA_BUNDLE" ]]; then
+    if [[ "$(uname -s)" != "Darwin" ]] || ! command -v security >/dev/null 2>&1; then
+        echo "Set DEV_CA_BUNDLE to an approved PEM certificate bundle." >&2
+        exit 1
+    fi
+    GENERATED_CA_BUNDLE="$(mktemp "${TMPDIR:-/tmp}/temporary-ca.XXXXXX")"
+    chmod 600 "$GENERATED_CA_BUNDLE"
+    if [[ -f /etc/ssl/cert.pem ]]; then
+        cat /etc/ssl/cert.pem > "$GENERATED_CA_BUNDLE"
+    fi
+    # Export public certificates only; private keys are never read or exported.
+    security find-certificate -a -p >> "$GENERATED_CA_BUNDLE"
+    DEV_CA_BUNDLE="$GENERATED_CA_BUNDLE"
+fi
+
+if [[ ! -f "$DEV_CA_BUNDLE" ]]; then
+    echo "CA bundle not found: $DEV_CA_BUNDLE" >&2
+    echo "Set DEV_CA_BUNDLE to an approved PEM certificate bundle." >&2
+    exit 1
+fi
+
+# Persistent host configuration
+mkdir -p \
+    "$HOME/.config/opencode" \
+    "$HOME/.local/share/opencode"
+
+echo "Building ${IMAGE}..."
+
+podman build \
+    --secret "id=host-ca,src=$DEV_CA_BUNDLE" \
+    -t "$IMAGE" \
+    -f Containerfile.sandia \
+    .
+
+RUN_ARGS=(
+    --rm
+    -w /workspace
+
+    # Repository
+    -v "$ROOT:/workspace"
+
+    # Persistent Linux Python environment
+    -v "$VENV_VOLUME:/workspace/.venv"
+
+    # Public host trust bundle for verified HTTPS from the container
+    -v "$DEV_CA_BUNDLE:/etc/ssl/certs/host-ca.pem:ro"
+    -e "SSL_CERT_FILE=/etc/ssl/certs/host-ca.pem"
+    -e "REQUESTS_CA_BUNDLE=/etc/ssl/certs/host-ca.pem"
+    -e "CURL_CA_BUNDLE=/etc/ssl/certs/host-ca.pem"
+
+    # OpenCode settings/history
+    -v "$HOME/.config/opencode:/root/.config/opencode"
+    -v "$HOME/.local/share/opencode:/root/.local/share/opencode"
+
+    # Sandia LiteLLM Endpoint Configuration
+    -e "OPENAI_API_KEY=${OPENAI_API_KEY}"
+    -e "OPENAI_BASE_URL=${OPENAI_BASE_URL}"
+)
+
+## Pass .env file to the container if present
+#if [[ -f "$ROOT/.env" ]]; then
+#    RUN_ARGS+=(--env-file "$ROOT/.env")
+#fi
+
+# Synchronize Python dependencies
+if [[ -f pyproject.toml ]]; then
+    echo "Syncing Python environment..."
+
+    if [[ -f uv.lock ]]; then
+        podman run "${RUN_ARGS[@]}" "$IMAGE" uv sync --locked --system-certs
+    else
+        podman run "${RUN_ARGS[@]}" "$IMAGE" uv sync --system-certs
+    fi
+fi
+
+# No command means "start OpenCode"
+if [[ $# -eq 0 ]]; then
+    set -- opencode
+fi
+
+podman run \
+    -it \
+    "${RUN_ARGS[@]}" \
+    "$IMAGE" \
+    "$@"

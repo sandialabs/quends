@@ -1,0 +1,52 @@
+FROM python:3.12-slim-bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# ----------------------------------------------------------------------
+# Development tools
+# ----------------------------------------------------------------------
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash \
+    build-essential \
+    ca-certificates \
+    curl \
+    git \
+    gnupg \
+    jq \
+    less \
+    openssh-client \
+    ripgrep \
+    && rm -rf /var/lib/apt/lists/*
+
+# ----------------------------------------------------------------------
+# uv
+# ----------------------------------------------------------------------
+
+COPY --from=ghcr.io/astral-sh/uv:latest \
+    /uv /uvx /usr/local/bin/
+
+# ----------------------------------------------------------------------
+# OpenCode
+# ----------------------------------------------------------------------
+
+# Set proxy environment variables to empty
+# to avoid proxy server issues
+ENV https_proxy=
+ENV http_proxy=
+
+# Install Opencode and make sure we catch errors
+RUN --mount=type=secret,id=host-ca,required=true \
+    bash -c 'set -euo pipefail \
+    && export CURL_CA_BUNDLE=/run/secrets/host-ca \
+    && curl -fsSL https://opencode.ai/install -o /tmp/install.sh \
+    && bash /tmp/install.sh \
+    && test -x /root/.opencode/bin/opencode \
+    && rm -f /tmp/install.sh'
+
+# The project's uv environment will live at /workspace/.venv.
+ENV PATH="/workspace/.venv/bin:/root/.opencode/bin:${PATH}"
+
+WORKDIR /workspace
+
+CMD ["bash"]
