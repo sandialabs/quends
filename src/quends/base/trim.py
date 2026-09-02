@@ -654,7 +654,7 @@ class MeanVariationTrimStrategy(TrimStrategy):
         if self.verbosity > 0:
             print("Getting start of SSS based on smoothed signal:")
 
-        # Get start of SSS based on where the value of the flux in the smoothed signal
+        # Get start of SSS based on where the value of the qoi in the smoothed signal
         # is close to the mean of the remaining signal.
 
         # At each location, compute the mean of the remaining smoothed signal
@@ -667,12 +667,11 @@ class MeanVariationTrimStrategy(TrimStrategy):
         # Check where the current value of the smoothed signal is within tol_fac of the mean of the remaining signal
         deviation_arr = np.abs(df_smoothed[column_name] - mean_vals)
 
-        # smooth this so the deviation does not go to zero at end of signal by construction
         # turn this into a pandas series with same index as col_smoothed
         deviation_series = pd.Series(
             deviation_arr, index=data_stream.data.index
         )
-        # Smooth this std dev to avoid it going to zero at end of signal
+        # smooth this so the deviation does not go to zero at end of signal by construction
         deviation_smoothed = deviation_series.rolling(
             window=self.final_smoothing_window
         ).mean()
@@ -694,7 +693,14 @@ class MeanVariationTrimStrategy(TrimStrategy):
             df_std_dev[column_name + "_std_till_end"]
             + self.fudge_fac * abs(mean_vals[0])
         )
-        tolerance = tol_fac * np.abs(mean_vals)
+
+        # Get tolerance as tol_fac * means, but only if mean magnitude of signal is not less than 1
+        overall_mean = np.mean(np.abs(mean_vals))
+        if overall_mean >= 1.0:
+            # Compute tolerance as tol_fac * means
+            tolerance = tol_fac * np.abs(mean_vals)
+        else:
+            tolerance = tol_fac
 
         within_tolerance_all = (
             deviation[column_name + "_deviation"] <= tolerance
