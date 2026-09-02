@@ -326,14 +326,14 @@ class TestProcessIrregularStreamAdHoc:
         assert ci[0] == pytest.approx(mean - mean)
         assert ci[1] == pytest.approx(mean + mean)
 
-    def test_sss_start_is_at_two_thirds_mark(self):
-        """sss_start should correspond to the 2/3 index of the data."""
+    def test_sss_start_is_at_tail_fraction_mark(self):
+        """sss_start should correspond to the default tail fraction index of the data."""
         wf = make_workflow(operate_safe=False)
         n = 200
         ds = make_datastream(n=n)
         result = wf.process_irregular_stream(ds, "A", start_time=0.0)
-        n_66pc = (n * 2) // 3
-        expected_time = ds.data.iloc[n_66pc]["time"]
+        n_tail = int(n * 0.66)
+        expected_time = ds.data.iloc[n_tail]["time"]
         assert result["A"]["sss_start"] == pytest.approx(expected_time)
 
     def test_status_is_no_stat_steady_state(self):
@@ -375,6 +375,44 @@ class TestProcessIrregularStreamAdHoc:
         ds = DataStream(df)
         result = wf.process_irregular_stream(ds, "A")
         assert np.isfinite(result["A"]["mean"])
+
+    def test_custom_tail_fraction_changes_sss_start(self):
+        """A custom no_sss_tail_fraction should shift sss_start."""
+        n = 200
+        ds = DataStream(
+            pd.DataFrame(
+                {
+                    "time": np.arange(n, dtype=float),
+                    "A": np.arange(n, dtype=float),
+                }
+            )
+        )
+        wf_half = RobustWorkflow(operate_safe=False, no_sss_tail_fraction=0.5)
+        result = wf_half.process_irregular_stream(ds, "A", start_time=0.0)
+        n_tail = int(n * 0.5)
+        assert result["A"]["sss_start"] == pytest.approx(ds.data.iloc[n_tail]["time"])
+
+    def test_custom_tail_fraction_changes_mean(self):
+        """Different tail fractions should produce different ad-hoc means."""
+        n = 200
+        ds = DataStream(
+            pd.DataFrame(
+                {
+                    "time": np.arange(n, dtype=float),
+                    "A": np.arange(n, dtype=float),
+                }
+            )
+        )
+        wf_small = RobustWorkflow(operate_safe=False, no_sss_tail_fraction=0.25)
+        wf_large = RobustWorkflow(operate_safe=False, no_sss_tail_fraction=0.75)
+        result_small = wf_small.process_irregular_stream(ds, "A")
+        result_large = wf_large.process_irregular_stream(ds, "A")
+        assert result_small["A"]["mean"] != result_large["A"]["mean"]
+
+    def test_default_tail_fraction_is_066(self):
+        """Default no_sss_tail_fraction should be 0.66."""
+        wf = RobustWorkflow()
+        assert wf._no_sss_tail_fraction == 0.66
 
 
 # process_data_steam: verbosity print paths

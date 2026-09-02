@@ -6,10 +6,12 @@ from ..base.stationary import MakeDataStreamStationaryOperation
 from ..base.trim import MeanVariationTrimStrategy, TrimDataStreamOperation
 
 # --- ad-hoc fallback conventions (used only when no SSS segment is found) ---
-# The "ball-park" mean is taken over the final fraction (numerator/denominator)
-# of the trace; integer floor division preserves the historical index exactly.
-_IRREGULAR_TAIL_NUM = 2
-_IRREGULAR_TAIL_DEN = 3
+# Default tail-start fraction: when no SSS segment is found the "ball-park"
+# mean is computed over ``data[n_tail:]`` where
+# ``n_tail = int(n_pts * no_sss_tail_fraction)``.  A value of 0.66 means
+# "skip the first 66% and average over the last 34%", matching the legacy
+# ``(n * 2) // 3`` index.
+_DEFAULT_NO_SSS_TAIL_FRACTION = 0.66
 # Relative uncertainty assigned to that ball-park mean: 1.0 == 100% (the CI then
 # spans roughly [0, 2*mean]). Deliberately conservative for un-trimmable data.
 _IRREGULAR_REL_UNCERTAINTY = 1.0
@@ -60,6 +62,7 @@ class RobustWorkflow:
         used to compute the tolerance for determining the start of SSS.
     _smoothing_window_correction: float, correction factor to apply to the smoothing window size when determining the start of SSS.
     _final_smoothing_window: int, smoothing window used to avoid quantities going to zero at end of signal.
+    _no_sss_tail_fraction: float, fraction of data to skip before computing ad-hoc mean when no SSS is found.
 
     """
 
@@ -77,6 +80,7 @@ class RobustWorkflow:
         fudge_fac=0.1,
         smoothing_window_correction=0.5,
         final_smoothing_window=10,
+        no_sss_tail_fraction=_DEFAULT_NO_SSS_TAIL_FRACTION,
     ):
         """
         Initialize a workflow and its hyperparameters
@@ -124,6 +128,11 @@ class RobustWorkflow:
             Default is 0.8 (80% of smoothing window size).
         final_smoothing_window: int, optional
             Smoothing window used to avoid quantities going to zero at end of signal. Default is 10 points.
+        no_sss_tail_fraction: float, optional
+            Fraction of the data to skip before computing the ad-hoc mean when
+            no steady-state segment is found and ``operate_safe`` is False.
+            The mean is taken over ``data[int(n * no_sss_tail_fraction):]``.
+            Must be in (0, 1). Default is 0.66 (average the last ~34% of the data).
         """
         self._operate_safe = operate_safe
         self._verbosity = verbosity
@@ -137,6 +146,7 @@ class RobustWorkflow:
         self._fudge_fac = fudge_fac
         self._smoothing_window_correction = smoothing_window_correction
         self._final_smoothing_window = final_smoothing_window
+        self._no_sss_tail_fraction = no_sss_tail_fraction
 
     def process_irregular_stream(
         self, data_stream: DataStream, col: str, start_time: float = 0.0
@@ -180,7 +190,7 @@ class RobustWorkflow:
 
         else:  # not stationary or no steady state, but we want to get some result back
 
-            # Return ad-hoc mean based on last 33% of data and arbitrarily large uncertainties/confidence interval
+            # Return ad-hoc mean based on the tail fraction of data and arbitrarily large uncertainties/confidence interval
             results_dict = {}
             results_dict[col] = {}
 
@@ -192,11 +202,11 @@ class RobustWorkflow:
 
             # Index marking the start of the final tail fraction of the data.
             n_pts = len(column_data)
-            n_66pc = (n_pts * _IRREGULAR_TAIL_NUM) // _IRREGULAR_TAIL_DEN
+            n_tail = int(n_pts * self._no_sss_tail_fraction)
 
             # Get ad hoc statistics: mean over the tail, with a conservative
             # 100% relative uncertainty (see _IRREGULAR_REL_UNCERTAINTY).
-            mean_val = np.mean(column_data[n_66pc:])
+            mean_val = np.mean(column_data[n_tail:])
             uncertainty_val = _IRREGULAR_REL_UNCERTAINTY * mean_val
             # For confidence interval, assume the true value is somewhere between 0 and twice the mean.
             ci_lower = mean_val - uncertainty_val
@@ -206,7 +216,7 @@ class RobustWorkflow:
             results_dict[col]["mean"] = mean_val
             results_dict[col]["mean_uncertainty"] = uncertainty_val
             results_dict[col]["confidence_interval"] = (ci_lower, ci_upper)
-            results_dict[col]["sss_start"] = df_past_start.iloc[n_66pc]["time"]
+            results_dict[col]["sss_start"] = df_past_start.iloc[n_tail]["time"]
             results_dict[col]["metadata"] = {}
             results_dict[col]["metadata"]["status"] = "NoStatSteadyState"
             results_dict[col]["metadata"]["mitigation"] = "AdHoc"
