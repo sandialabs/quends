@@ -7,6 +7,7 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 import pytest
+from matplotlib import pyplot as plt
 
 from quends import DataStream, Plotter, RobustWorkflow
 
@@ -482,27 +483,20 @@ class TestPlotSignalBasicStats:
             }
         }
 
-    # skip the test for now since Agg backend should not call plt.show() and this test is failing in CI
-    @pytest.mark.skip(reason="Agg backend should not call plt.show()")
-    @patch("matplotlib.pyplot.show")
-    @patch("matplotlib.pyplot.close")
-    def test_runs_without_error_no_stats(self, mock_close, mock_show):
+    @patch("matplotlib.pyplot.figure", wraps=plt.figure)
+    def test_runs_without_error_no_stats(self, mock_figure):
         plotter = Plotter()
         ds = make_datastream()
         plotter.plot_signal_basic_stats(ds, "A")
-        mock_show.assert_called_once()
-        assert mock_close.call_count >= 1
+        mock_figure.assert_called_once()
 
-    # skip the test for now since Agg backend should not call plt.show() and this test is failing in CI
-    @pytest.mark.skip(reason="Agg backend should not call plt.show()")
-    @patch("matplotlib.pyplot.show")
-    @patch("matplotlib.pyplot.close")
-    def test_runs_without_error_with_stats(self, mock_close, mock_show):
+    @patch("matplotlib.pyplot.figure", wraps=plt.figure)
+    def test_runs_without_error_with_stats(self, mock_figure):
         plotter = Plotter()
         ds = make_datastream()
         stats = self._make_stats(start_time=0.0)
         plotter.plot_signal_basic_stats(ds, "A", stats=stats)
-        mock_show.assert_called_once()
+        mock_figure.assert_called_once()
 
     @patch("matplotlib.pyplot.show")
     @patch("matplotlib.pyplot.close")
@@ -539,9 +533,8 @@ class TestPlotSignalBasicStats:
 
         assert 0.0 not in axvline_calls
 
-    @patch("matplotlib.pyplot.show")
-    @patch("matplotlib.pyplot.close")
-    def test_label_applied_when_provided(self, mock_close, mock_show):
+    @patch("matplotlib.pyplot.figure", wraps=plt.figure)
+    def test_label_applied_when_provided(self, mock_figure):
         """Providing a label should set the axes title."""
         plotter = Plotter()
         ds = make_datastream()
@@ -554,10 +547,10 @@ class TestPlotSignalBasicStats:
             plotter.plot_signal_basic_stats(ds, "A", label="My Signal")
 
         assert "My Signal" in set_title_calls
+        mock_figure.assert_called_once()
 
-    @patch("matplotlib.pyplot.show")
-    @patch("matplotlib.pyplot.close")
-    def test_no_title_when_label_is_none(self, mock_close, mock_show):
+    @patch("matplotlib.pyplot.figure", wraps=plt.figure)
+    def test_no_title_when_label_is_none(self, mock_figure):
         """No label = no set_title call."""
         plotter = Plotter()
         ds = make_datastream()
@@ -570,6 +563,7 @@ class TestPlotSignalBasicStats:
             plotter.plot_signal_basic_stats(ds, "A", label=None)
 
         assert set_title_calls == []
+        mock_figure.assert_called_once()
 
     @patch("matplotlib.pyplot.show")
     @patch("matplotlib.pyplot.close")
