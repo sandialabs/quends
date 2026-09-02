@@ -1,0 +1,51 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "litellm-sandia/aws-anthropic-claude-opus-4-6",
+  "provider": {
+    "litellm-sandia": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LiteLLM Sandia",
+      "options": {
+        "baseURL": "https://litellm-qual.apps.ecp.sandia.gov/v1",
+        "apiKey": "{env:OPENAI_API_KEY}"
+      },
+      "models": {
+        "aws-anthropic-claude-haiku-4-5": {
+          "name": "Claude Haiku 4.5",
+          "limit": {
+            "context": 200000,
+            "output": 64000
+          }
+        },
+        "aws-anthropic-claude-sonnet-4-5": {
+          "name": "Claude Sonnet 4.5",
+          "limit": {
+            "context": 200000,
+            "output": 64000
+          }
+        },
+        "aws-anthropic-claude-opus-4-6": {
+          "name": "Claude Opus 4.6",
+          "limit": {
+            "context": 1000000,
+            "output": 128000
+          }
+        },
+        "aws-anthropic-claude-opus-4-5": {
+          "name": "Claude Opus 4.5",
+          "limit": {
+            "context": 200000,
+            "output": 64000
+          }
+        },
+        "aws-anthropic-claude-sonnet-4-6": {
+          "name": "Claude Sonnet 4.6",
+          "limit": {
+            "context": 1000000,
+            "output": 64000
+          }
+        }
+      }
+    }
+  }
+}
