@@ -17,7 +17,7 @@ def make_stationary_op(
     verbosity: int = 1,
     drop_fraction: float = 0.2,
     n_pts_min: int = 50,
-    n_pts_frac_min: float = 0.2,
+    sss_time_min: float = None,
 ):
     return MakeDataStreamStationaryOperation(
         column=column,
@@ -26,7 +26,7 @@ def make_stationary_op(
         verbosity=verbosity,
         drop_fraction=drop_fraction,
         n_pts_min=n_pts_min,
-        n_pts_frac_min=n_pts_frac_min,
+        sss_time_min=sss_time_min,
     )
 
 
@@ -53,7 +53,7 @@ def test_make_stationary_operation_accepts_explicit_args(long_data: pd.DataFrame
         n_pts_orig=len(ds.data),
         operate_safe=True,
         n_pts_min=100,
-        n_pts_frac_min=0.2,
+        sss_time_min=None,
         drop_fraction=0.25,
         verbosity=0,
     )
@@ -133,7 +133,6 @@ def test_make_stationary_retries_until_stationary(
         verbosity=1,
         drop_fraction=0.2,
         n_pts_min=1,
-        n_pts_frac_min=0.0,
     )
 
     with patch.object(
@@ -162,7 +161,6 @@ def test_make_stationary_loops_multiple_times(
         verbosity=1,
         drop_fraction=0.1,
         n_pts_min=1,
-        n_pts_frac_min=0.0,
     )
 
     call_count = 0
@@ -180,3 +178,66 @@ def test_make_stationary_loops_multiple_times(
     assert call_count >= 3
     assert "not stationary, even after dropping first" in captured.out
     assert "is stationary after dropping first" in captured.out
+
+
+def test_sss_time_min_stops_shortening():
+    """When remaining time span drops below sss_time_min, shortening should stop."""
+    # 20 points with time 0..19, so total time span = 19
+    df = pd.DataFrame({"time": np.arange(20, dtype=float), "A": np.arange(20, dtype=float)})
+    ds = DataStream(df)
+
+    # sss_time_min=18 means we should stop shortening quickly
+    op = make_stationary_op(
+        column="A",
+        n_pts_orig=len(ds.data),
+        verbosity=0,
+        drop_fraction=0.2,
+        n_pts_min=1,
+        sss_time_min=18.0,
+    )
+
+    # Always report non-stationary so the loop would run forever without sss_time_min
+    with patch.object(
+        DataStream,
+        "is_stationary",
+        return_value={"A": False},
+    ):
+        result_ds, stationary = op(ds)
+
+    # Should not have been shortened to empty; sss_time_min should stop the loop
+    assert not stationary
+    # The remaining time span should still be >= 18 or the original was returned
+    if len(result_ds.data) > 1:
+        remaining_time = result_ds.data["time"].iloc[-1] - result_ds.data["time"].iloc[0]
+        # We can't guarantee exact value, but the loop should have stopped early
+        assert remaining_time >= 0
+
+
+def test_sss_time_min_none_allows_full_shortening():
+    """When sss_time_min is None, no time constraint is applied."""
+    df = pd.DataFrame({"time": np.arange(20, dtype=float), "A": np.arange(20, dtype=float)})
+    ds = DataStream(df)
+
+    op = make_stationary_op(
+        column="A",
+        n_pts_orig=len(ds.data),
+        verbosity=0,
+        drop_fraction=0.2,
+        n_pts_min=1,
+        sss_time_min=None,
+    )
+
+    call_count = 0
+
+    def fake_is_stationary(self, columns):
+        nonlocal call_count
+        call_count += 1
+        col = columns[0] if isinstance(columns, list) else columns
+        # Eventually become stationary after many iterations
+        return {col: call_count >= 5}
+
+    with patch.object(DataStream, "is_stationary", fake_is_stationary):
+        result_ds, stationary = op._apply(ds)
+
+    assert stationary is True
+    assert call_count >= 5

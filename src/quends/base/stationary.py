@@ -13,7 +13,7 @@ class MakeDataStreamStationaryOperation(DataStreamOperation):
         *,
         operate_safe=False,
         n_pts_min=50,
-        n_pts_frac_min=0.2,
+        sss_time_min=50,
         drop_fraction=0.2,
         verbosity=0,
     ):
@@ -23,7 +23,7 @@ class MakeDataStreamStationaryOperation(DataStreamOperation):
         self.is_stationary = None
         self.operate_safe = operate_safe
         self.n_pts_min = n_pts_min
-        self.n_pts_frac_min = n_pts_frac_min
+        self.sss_time_min = sss_time_min
         self.drop_fraction = drop_fraction
         self.verbosity = verbosity
 
@@ -65,7 +65,7 @@ class MakeDataStreamStationaryOperation(DataStreamOperation):
         fraction of data.
 
         Detection parameters (``column``, ``n_pts_orig``, ``n_pts_min``,
-        ``n_pts_frac_min``, ``operate_safe``, ``verbosity``) are taken from the
+        ``sss_time_min``, ``operate_safe``, ``verbosity``) are taken from the
         instance attributes set in ``__init__``. Extra ``**kwargs`` forwarded by
         ``__call__`` are accepted and ignored here so the signature stays
         compatible with the base ``DataStreamOperation`` contract.
@@ -94,8 +94,14 @@ class MakeDataStreamStationaryOperation(DataStreamOperation):
             not stationary
             and not self.operate_safe
             and n_pts > self.n_pts_min
-            and n_pts > self.n_pts_frac_min * n_pts_orig
         ):
+            # Check minimum time constraint: stop shortening if the remaining
+            # time span would drop below sss_time_min.
+            if self.sss_time_min is not None and "time" in ds.data.columns and len(ds.data) > 1:
+                remaining_time = ds.data["time"].iloc[-1] - ds.data["time"].iloc[0]
+                if remaining_time < self.sss_time_min:
+                    break
+
             # See if we get a stationary stream if we drop some initial fraction of the data
             n_drop = int(n_pts * self.drop_fraction)
             df_shortened = ds.data.iloc[n_drop:]

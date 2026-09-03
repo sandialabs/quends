@@ -216,7 +216,7 @@ def make_workflow(operate_safe=True, verbosity=0):
         verbosity=verbosity,
         drop_fraction=0.25,
         n_pts_min=10,
-        n_pts_frac_min=0.2,
+        sss_time_min=None,
         max_lag_frac=0.5,
         autocorr_sig_level=0.05,
         decor_multiplier=4.0,
@@ -503,6 +503,88 @@ class TestProcessDataSteamNoSSSAfterTrim:
             result = wf.process_data_steam(ds, "A")
 
         assert result["A"]["metadata"]["mitigation"] == "AdHoc"
+
+
+# sss_time_min
+
+
+class TestSssTimeMin:
+
+    def test_default_sss_time_min_is_50(self):
+        """Default sss_time_min should be 50."""
+        wf = RobustWorkflow()
+        assert wf._sss_time_min == 50
+
+    def test_sss_time_min_stored(self):
+        wf = RobustWorkflow(sss_time_min=50.0)
+        assert wf._sss_time_min == 50.0
+
+    def test_sss_segment_too_short_falls_back_to_irregular(self):
+        """When the SSS segment is shorter than sss_time_min, fall back to heuristics."""
+        rng = np.random.default_rng(42)
+        n = 200
+        ds = DataStream(
+            pd.DataFrame(
+                {
+                    "time": np.arange(n, dtype=float),
+                    "A": rng.normal(5.0, 0.3, n),
+                }
+            )
+        )
+        # Set sss_time_min very large so SSS segment will always be too short
+        wf = RobustWorkflow(
+            operate_safe=False,
+            sss_time_min=1e6,
+            n_pts_min=10,
+            drop_fraction=0.25,
+        )
+        result = wf.process_data_stream(ds, "A")
+        assert result["A"]["metadata"]["status"] == "NoStatSteadyState"
+        assert result["A"]["metadata"]["mitigation"] == "AdHoc"
+
+    def test_sss_segment_long_enough_returns_regular(self):
+        """When sss_time_min is small enough, normal processing should succeed."""
+        rng = np.random.default_rng(42)
+        n = 200
+        ds = DataStream(
+            pd.DataFrame(
+                {
+                    "time": np.arange(n, dtype=float),
+                    "A": rng.normal(5.0, 0.3, n),
+                }
+            )
+        )
+        wf = RobustWorkflow(
+            operate_safe=False,
+            sss_time_min=1.0,
+            n_pts_min=10,
+            drop_fraction=0.25,
+        )
+        result = wf.process_data_stream(ds, "A")
+        assert result["A"]["metadata"]["status"] == "Regular"
+
+    def test_sss_time_min_verbose_message(self, capsys):
+        """When SSS segment is too short with verbosity, should print message."""
+        rng = np.random.default_rng(42)
+        n = 200
+        ds = DataStream(
+            pd.DataFrame(
+                {
+                    "time": np.arange(n, dtype=float),
+                    "A": rng.normal(5.0, 0.3, n),
+                }
+            )
+        )
+        wf = RobustWorkflow(
+            operate_safe=False,
+            verbosity=1,
+            sss_time_min=1e6,
+            n_pts_min=10,
+            drop_fraction=0.25,
+        )
+        wf.process_data_stream(ds, "A")
+        captured = capsys.readouterr()
+        assert "SSS segment too short" in captured.out
 
 
 # plot_signal_basic_stats

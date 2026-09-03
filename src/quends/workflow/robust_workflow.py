@@ -49,8 +49,9 @@ class RobustWorkflow:
     _drop_fraction: float, fraction of data to drop from the start of the DataStream to see if the shortened
         DataStream is stationary.
     _n_pts_min: int, minimum number of points to keep in the DataStream when shortening it to check for stationarity.
-    _n_pts_frac_min: float, minimum fraction of the original number of points to keep in the DataStream when shortening it
-        to check for stationarity.
+    _sss_time_min: float or None, minimum time duration for a valid SSS segment. When shortening
+        a DataStream to find stationarity, segments shorter than this are rejected. After trimming
+        to the SSS start, segments shorter than this are also rejected. Default is 50.
     _max_lag_frac: float, maximum lag (as a fraction of the number of points in the DataStream) to use when computing
         the autocorrelation function to determine the decorrelation length.
     _autocorr_sig_level: float, significance level to use when determining the decorrelation length from the autocorrelation
@@ -72,7 +73,7 @@ class RobustWorkflow:
         verbosity=0,
         drop_fraction=0.25,
         n_pts_min=100,
-        n_pts_frac_min=0.2,
+        sss_time_min=50,
         max_lag_frac=0.5,
         autocorr_sig_level=0.05,
         decor_multiplier=6.0,
@@ -101,9 +102,13 @@ class RobustWorkflow:
         n_pts_min: int, optional
             Minimum number of points to keep in the DataStream when shortening it to check for stationarity.
             Default is 100 points.
-        n_pts_frac_min: float, optional
-            Minimum fraction of the original number of points to keep in the DataStream when shortening it
-            to check for stationarity. Default is 0.2 (20% of original number of points).
+        sss_time_min: float or None, optional
+            Minimum time duration for a valid statistical steady state (SSS)
+            segment. Used in two places: (1) when progressively shortening a
+            DataStream to find stationarity, stop if the remaining time span
+            drops below this value; (2) after trimming to the SSS start, reject
+            the segment if its time span is shorter than this value.
+            Default is 50 (minimum 50 time units).
         max_lag_frac: float, optional
             Maximum lag (as a fraction of the number of points in the DataStream) to use when computing
             the autocorrelation function to determine the decorrelation length. Default is 0.5.
@@ -138,7 +143,7 @@ class RobustWorkflow:
         self._verbosity = verbosity
         self._drop_fraction = drop_fraction
         self._n_pts_min = n_pts_min
-        self._n_pts_frac_min = n_pts_frac_min
+        self._sss_time_min = sss_time_min
         self._max_lag_frac = max_lag_frac
         self._autocorr_sig_level = autocorr_sig_level
         self._decor_multiplier = decor_multiplier
@@ -271,7 +276,7 @@ class RobustWorkflow:
             n_pts_orig=n_pts_orig,
             operate_safe=self._operate_safe,
             n_pts_min=self._n_pts_min,
-            n_pts_frac_min=self._n_pts_frac_min,
+            sss_time_min=self._sss_time_min,
             drop_fraction=self._drop_fraction,
             verbosity=self._verbosity,
         )
@@ -297,23 +302,39 @@ class RobustWorkflow:
             # Check that a steady state was found
             if len(trimmed_stream) > 1:
 
-                # if self._verbosity > 0:
-                #     print("Trimmed data frame:")
-                #     print(trimmed_stream.df.head())
-
                 # Start time of statistical steady state
-                sss_start = trimmed_stream.data["time"][0]
+                sss_start = trimmed_stream.data["time"].iloc[0]
+                sss_end = trimmed_stream.data["time"].iloc[-1]
+                sss_duration = sss_end - sss_start
 
-                # Get statistics (with window selected by decorrelation length)
-                trimmed_stats = trimmed_stream.compute_statistics(column_name=col)
+                # Check that SSS segment meets minimum time requirement
+                if (
+                    self._sss_time_min is not None
+                    and sss_duration < self._sss_time_min
+                ):
+                    if self._verbosity > 0:
+                        print(
+                            f"SSS segment too short: {sss_duration:.2f} < "
+                            f"sss_time_min={self._sss_time_min:.2f}."
+                        )
+                    trimmed_stats = self.process_irregular_stream(
+                        data_stream_orig, col, start_time=start_time
+                    )
 
-                # Add flag for the results for this qoi that all is normal
-                trimmed_stats[col]["sss_start"] = sss_start
-                trimmed_stats[col]["metadata"] = {}
-                trimmed_stats[col]["metadata"]["status"] = "Regular"
-                trimmed_stats[col]["metadata"]["mitigation"] = "None"
-                # Add the start time info used
-                trimmed_stats[col]["start_time"] = start_time
+                else:
+
+                    # Get statistics (with window selected by decorrelation length)
+                    trimmed_stats = trimmed_stream.compute_statistics(
+                        column_name=col
+                    )
+
+                    # Add flag for the results for this qoi that all is normal
+                    trimmed_stats[col]["sss_start"] = sss_start
+                    trimmed_stats[col]["metadata"] = {}
+                    trimmed_stats[col]["metadata"]["status"] = "Regular"
+                    trimmed_stats[col]["metadata"]["mitigation"] = "None"
+                    # Add the start time info used
+                    trimmed_stats[col]["start_time"] = start_time
 
             else:  # No statistical steady state
                 if self._verbosity > 0:
