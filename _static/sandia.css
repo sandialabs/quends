@@ -1,0 +1,58 @@
+/* Sandia National Laboratories brand colors.
+ *
+ * Works under whichever theme conf.py selects:
+ *   - sphinx-immaterial  -> Material variables (--md-*, [data-md-color-scheme])
+ *   - pydata-sphinx-theme / sphinx-book-theme -> pydata variables (--pst-*, html[data-theme])
+ *
+ * Only the two values below should normally need changing -- set them to your
+ * exact official brand hex codes and the whole theme follows.
+ */
+:root {
+  --sandia-cyan: #00a9e0; /* primary  -- bright "thunderbird" cyan */
+  --sandia-blue: #003b5c; /* secondary -- dark Sandia navy         */
+}
+
+/* =================================================================
+ * sphinx-immaterial (Material for MkDocs)
+ * ================================================================= */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color:        var(--sandia-cyan);
+  --md-primary-fg-color--light: #33bbe6;
+  --md-primary-fg-color--dark:  #0081b4;
+  --md-accent-fg-color:         var(--sandia-blue);
+  --md-typeset-a-color:         #0081b4;
+}
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color:        var(--sandia-cyan);
+  --md-primary-fg-color--light: #33bbe6;
+  --md-primary-fg-color--dark:  #0081b4;
+  --md-accent-fg-color:         #33bbe6;
+  --md-typeset-a-color:         #5fcdf0;
+}
+.md-typeset h1,
+.md-typeset h2 {
+  color: var(--sandia-blue);
+}
+
+/* =================================================================
+ * pydata-sphinx-theme / sphinx-book-theme
+ * ================================================================= */
+html[data-theme="light"] {
+  --pst-color-primary:    #0081b4;
+  --pst-color-secondary:  var(--sandia-cyan);
+  --pst-color-link:       #0081b4;
+  --pst-color-link-hover: var(--sandia-blue);
+}
+html[data-theme="dark"] {
+  --pst-color-primary:    #33bbe6;
+  --pst-color-secondary:  var(--sandia-cyan);
+  --pst-color-link:       #5fcdf0;
+  --pst-color-link-hover: #8fe0f6;
+}
+/* Sandia-blue article headings under pydata/book themes */
+article.bd-article h1,
+article.bd-article h2,
+.bd-content h1,
+.bd-content h2 {
+  color: var(--sandia-blue);
+}
