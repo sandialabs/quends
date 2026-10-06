@@ -3913,11 +3913,14 @@ wheels = [
 
 [[package]]
 name = "mistune"
-version = "0.8.4"
+version = "3.3.3"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/2d/a4/509f6e7783ddd35482feda27bc7f72e65b5e7dc910eca4ab2164daf9c577/mistune-0.8.4.tar.gz", hash = "sha256:59a3429db53c50b5c6bcc8a07f8848cb00d7dc8bdb431a4ab41920d201d4756e", size = 58322, upload-time = "2018-10-11T06:59:27.908Z" }
+dependencies = [
+    { name = "typing-extensions", version = "4.13.2", source = { registry = "https://pypi.org/simple" } },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7b/a5/2dab368d6950e6808904dec98f54c7e726ee7be4a0c6afe00e6e011bd52d/mistune-3.3.3.tar.gz", hash = "sha256:c4c6c0c840b8637a2e9b8b6d607eb7c8f00888bf14c754409bcd339e848c2477", size = 115363, upload-time = "2026-07-09T06:18:05.268Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/09/ec/4b43dae793655b7d8a25f76119624350b4d65eb663459eb9603d7f1f0345/mistune-0.8.4-py2.py3-none-any.whl", hash = "sha256:88a1051873018da288eee8538d476dffe1262495144b33ecb586c4ab266bb8d4", size = 16220, upload-time = "2018-10-11T06:59:26.044Z" },
+    { url = "https://files.pythonhosted.org/packages/89/70/b1e4737b84163db5bb1dfde6f216dbfbf32783330a9989c965e121172830/mistune-3.3.3-py3-none-any.whl", hash = "sha256:99de1585e42dcbd826faa9e11a202727a5e202e4e4722a4c69ac1ff615793dd7", size = 63569, upload-time = "2026-07-09T06:18:03.839Z" },
 ]
 
 [[package]]
@@ -4171,7 +4174,7 @@ wheels = [
 
 [[package]]
 name = "nbconvert"
-version = "5.6.1"
+version = "5.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bleach" },
@@ -4186,9 +4189,9 @@ dependencies = [
     { name = "testpath" },
     { name = "traitlets", version = "5.14.3", source = { registry = "https://pypi.org/simple" } },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/04/f2/299fa4b15155ecbe2aefe7412249f0dd91f953b7a9b37c336317d564a1ca/nbconvert-5.6.1.tar.gz", hash = "sha256:21fb48e700b43e82ba0e3142421a659d7739b65568cc832a13976a77be16b523", size = 703233, upload-time = "2019-10-25T00:37:32.644Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fb/83/28b80ccd628e96e613763facc0281ae8bae957a87673445db496de26dab7/nbconvert-5.5.0.tar.gz", hash = "sha256:138381baa41d83584459b5cfecfc38c800ccf1f37d9ddd0bd440783346a4c39c", size = 583216, upload-time = "2019-04-25T17:24:21.118Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/79/6c/05a569e9f703d18aacb89b7ad6075b404e8a4afde2c26b73ca77bb644b14/nbconvert-5.6.1-py2.py3-none-any.whl", hash = "sha256:f0d6ec03875f96df45aa13e21fd9b8450c42d7e1830418cccc008c0df725fcee", size = 455126, upload-time = "2019-10-25T00:37:29.206Z" },
+    { url = "https://files.pythonhosted.org/packages/35/e7/f46c9d65f149271e47fca6ab084ef5c6e4cb1870f4c5cce6690feac55231/nbconvert-5.5.0-py2.py3-none-any.whl", hash = "sha256:4a978548d8383f6b2cfca4a3b0543afb77bc7cb5a96e8b424337ab58c12da9bc", size = 447760, upload-time = "2019-04-25T17:24:17.027Z" },
 ]
 
 [[package]]
