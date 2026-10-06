@@ -6984,7 +6984,7 @@ requires-dist = [
     { name = "netcdf4", specifier = ">=1.7" },
     { name = "numpy", specifier = ">=1.21" },
     { name = "pandas", specifier = ">=1.3" },
-    { name = "papermill", marker = "extra == 'dev'" },
+    { name = "papermill", marker = "extra == 'dev'", specifier = ">=2.6.0" },
     { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=2.17.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },
     { name = "pytest-cov", marker = "extra == 'dev'" },
