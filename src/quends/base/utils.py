@@ -182,6 +182,15 @@ def _tau_int_geyer_from_acf(rho: np.ndarray) -> float:
             break
         s += pair_sum
         t += 2
+    else:
+        # Loop exhausted the ACF without finding a negative pair sum, so the
+        # truncation point was never reached.
+        warnings.warn(
+            "Geyer positive-pair truncation reached the end of the "
+            "autocorrelation function without the pair sums becoming negative. "
+            "The integrated autocorrelation time is potentially under-estimated; "
+            f"consider increasing the number of lags (current len(rho)={len(rho)})."
+        )
     return float(max(1.0, 1.0 + 2.0 * s))
 
 
@@ -294,14 +303,6 @@ def _estimate_tau_int_from_series(x: np.ndarray) -> float:
     r = acf(x, nlags=nlags, fft=False)
     # decorrelation length
     tau_int = _tau_int_geyer_from_acf(r)
-
-    # warn when decorrelation length is about same size as lag cutoff in autocorrelation function
-    if tau_int >= 0.5 * nlags:
-        warnings.warn(
-            "The computed signal decorrelation time is large compared to the "
-            "max lag in the computation of the autocorrelation. Results may "
-            f"be inaccurate. Estimated tau_int={tau_int:.2f}, nlags={nlags}."
-        )
 
     return tau_int
 

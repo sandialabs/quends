@@ -7,7 +7,7 @@ import pytest
 
 from quends import DataStream
 from quends.base.history import DataStreamHistoryEntry
-from quends.base.utils import _estimate_tau_int_from_series
+from quends.base.utils import _estimate_tau_int_from_series, _tau_int_geyer_from_acf
 
 pytest_plugins = ("tests._shared",)
 
@@ -651,6 +651,25 @@ def test_estimate_tau_int_warns_when_acf_lag_cutoff_is_tiny():
         tau_int = _estimate_tau_int_from_series(np.array([1.0, 2.0, 3.0, 4.0]))
 
     assert tau_int >= 1.0
+
+
+def test_tau_int_geyer_warns_when_acf_exhausted():
+    # All pair sums are positive, so truncation never happens.
+    rho = np.array([1.0, 0.9, 0.8, 0.7, 0.6])
+    with pytest.warns(UserWarning, match="potentially under-estimated"):
+        tau_int = _tau_int_geyer_from_acf(rho)
+
+    assert tau_int == pytest.approx(1.0 + 2.0 * (0.9 + 0.8 + 0.7 + 0.6))
+
+
+def test_tau_int_geyer_no_warning_when_truncated():
+    # Second pair sum is negative, so the loop exits via break.
+    rho = np.array([1.0, 0.5, 0.2, -0.4, -0.3, 0.1])
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        tau_int = _tau_int_geyer_from_acf(rho)
+
+    assert tau_int == pytest.approx(1.0 + 2.0 * 0.7)
 
 
 def test_tau_int_lag_cutoff_warning_is_returned_in_metadata():
