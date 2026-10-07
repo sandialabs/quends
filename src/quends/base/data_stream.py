@@ -32,22 +32,16 @@ Usage signature for the new trimming workflow::
 """
 
 
-TAU_INT_LAG_CUTOFF_WARNING_RATIO = 0.5
-
-
-def _tau_int_metadata_warning(tau_int: float, n_samples: int) -> Optional[str]:
-    """Mirror the tau_int lag-cutoff warning as result metadata."""
-    if not np.isfinite(tau_int) or n_samples < 3:
+def _tau_int_metadata_warning(autotune_result: dict) -> Optional[str]:
+    """Mirror the tau_int non-convergence warning as result metadata."""
+    if autotune_result.get("tau_int_converged", True):
         return None
-    # TODO: Can we fix this so it is always the same as what is used
-    # in the actual decorrelation time computation?
-    nlags = max(1, min(n_samples // 4, 2000))
-    if tau_int < TAU_INT_LAG_CUTOFF_WARNING_RATIO * nlags:
-        return None
+    tau_int = autotune_result.get("tau_int", float("nan"))
     return (
-        "The computed signal decorrelation time is large compared to the "
-        "max lag in the computation of the autocorrelation. Results may "
-        f"be inaccurate. Estimated tau_int={tau_int:.2f}, nlags={nlags}."
+        "Geyer positive-pair truncation reached the end of the full-length "
+        "autocorrelation function without the pair sums becoming negative. "
+        "The integrated autocorrelation time is potentially under-estimated "
+        f"(tau_int={tau_int:.2f})."
     )
 
 
@@ -304,12 +298,7 @@ class DataStream:
             block_means = ab["blocks"]
             lb = {"lags": ab["ljungbox_lags"], "pvalues": ab["ljungbox_pvalues"]}
             n_blocks = ab["n_blocks"]
-            # TODO Do we need this check here? Does this not already happen inside the
-            # function that computes the decorrelation time?
-            tau_int_warning = _tau_int_metadata_warning(
-                ab.get("tau_int", float("nan")),
-                len(series),
-            )
+            tau_int_warning = _tau_int_metadata_warning(ab)
             column_warnings = [tau_int_warning] if tau_int_warning else []
 
             if n_blocks < 1:
@@ -845,7 +834,7 @@ class DataStream:
 
     def compute_decorrelation_time(self, column_name=None):
         """
-        Estimate the decorrelation time (in terms of the number of samples) 
+        Estimate the decorrelation time (in terms of the number of samples)
         using the integrated sample autocorrelation (tau_int) for specified columns.
 
         Parameters
