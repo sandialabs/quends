@@ -3,7 +3,6 @@ from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
-import scipy.stats as sts
 import statsmodels.tsa.stattools as ststls
 from statsmodels.robust.scale import mad as _mad
 
@@ -445,14 +444,43 @@ class RollingVarianceThresholdTrimStrategy(TrimStrategy):
 
 
 class MeanVariationTrimStrategy(TrimStrategy):
-    """Trim using Statistical Steady State detection."""
+    """
+    Trim using Statistical Steady State (SSS) detection.
+
+    The signal is smoothed with a rolling mean whose window is a multiple of the
+    decorrelation time (``tau_int``, in number of samples). The start of SSS is
+    the first point after which the smoothed signal stays within a tolerance of
+    the mean of the remaining smoothed signal.
+
+    Parameters
+    ----------
+    verbosity : int, optional
+        Level of print/plot output. ``> 0`` prints diagnostics; ``> 1`` also
+        plots the autocorrelation function and intermediate signals.
+        Default is 0.
+    decor_multiplier : float, optional
+        Multiplier applied to the decorrelation time to get the smoothing
+        window size. The window is capped at the signal length and is at least
+        3 points. Default is 2.0.
+    std_dev_frac : float, optional
+        Fraction of the std dev of the remaining signal used as tolerance.
+        Default is 0.1.
+    fudge_fac : float, optional
+        Fraction of the initial mean of the smoothed signal added to the std
+        dev when computing the tolerance, to keep it from going to zero.
+        Default is 1e-6.
+    smoothing_window_correction : float, optional
+        Fraction of the smoothing window to move the SSS start back, to account
+        for the lag of the rolling mean. Default is 0.5.
+    final_smoothing_window : int, optional
+        Window used to smooth the std dev and deviation curves so they do not go
+        to zero at the end of the signal. Default is 5.
+    """
 
     def __init__(
         self,
         *,
-        max_lag_frac=None,
         verbosity=None,
-        autocorr_sig_level=None,
         decor_multiplier=None,
         std_dev_frac=None,
         fudge_fac=None,
@@ -460,11 +488,7 @@ class MeanVariationTrimStrategy(TrimStrategy):
         final_smoothing_window=None,
     ):
         super().__init__(window_size=0, start_time=0.0)
-        self.max_lag_frac = max_lag_frac if max_lag_frac is not None else 0.25
         self.verbosity = verbosity if verbosity is not None else 0
-        self.autocorr_sig_level = (
-            autocorr_sig_level if autocorr_sig_level is not None else 0.05
-        )
         self.decor_multiplier = (
             decor_multiplier if decor_multiplier is not None else 2.0
         )
@@ -502,18 +526,12 @@ class MeanVariationTrimStrategy(TrimStrategy):
 
         Parameters
         ----------
-        col : str
-            The name of the column in `data_stream.data` to analyze for steady state.
-        workflow : object
-            A configuration/workflow object containing parameters:
-            - `_max_lag_frac`: Fraction of data used for autocorrelation lag.
-            - `_verbosity`: Integer controlling plot and print output levels.
-            - `_autocorr_sig_level`: Significance level for the Z-test on lags.
-            - `_decor_multiplier`: Multiplier for the calculated decorrelation length.
-            - `_std_dev_frac`: Fraction of standard deviation used for tolerance.
-            - `_fudge_fac`: Constant to prevent zero-tolerance in noiseless signals.
-            - `_smoothing_window_correction`: Factor to adjust for rolling mean lag.
-            - `_final_smoothing_window`: Window size for smoothing the metric curves.
+        data_stream : DataStream
+            The data stream to analyze. Time points are assumed to be equally
+            spaced.
+        column_name : str
+            The name of the column in ``data_stream.data`` to analyze for
+            steady state.
 
         Returns
         -------
@@ -540,46 +558,48 @@ class MeanVariationTrimStrategy(TrimStrategy):
         # Get the decorrelation length (in number of points)
         # Note: this approach assumes signal points are spaced equally in time
         n_pts = len(data_stream.data)
-        # TODO: either pass max_lag to the decorrelation length function or take it out
-        # as it is currently set in the decorrelation length function and is here
-        # only used for plotting
-        max_lag = int(self.max_lag_frac * n_pts)  # max lag for autocorrelation
 
-        # plot the autocorrelation function
+        # Use DataStream function to compute decorrelation time (in number of points)
+        decor_time = data_stream.compute_decorrelation_time(column_name)["results"][
+            column_name
+        ]
+
+        # plot the autocorrelation function over 1.5 times the decorrelation time
         if self.verbosity > 1:
-            acf_vals = ststls.acf(
-                data_stream.data[column_name].dropna().values, nlags=max_lag
+            acf_signal = data_stream.data[column_name].dropna().values
+            # cap at the signal length (acf requires nlags <= n_valid - 1)
+            n_lags_plot = max(
+                1, min(int(np.ceil(1.5 * decor_time)), len(acf_signal) - 1)
             )
+            acf_vals = ststls.acf(acf_signal, nlags=n_lags_plot)
             plt.figure(figsize=(10, 6))
-            plt.stem(range(len(acf_vals)), acf_vals)
+            plt.stem(range(len(acf_vals)), acf_vals, label="Autocorrelation")
+            plt.axvline(
+                x=decor_time,
+                color="r",
+                linestyle="--",
+                label=f"Decorrelation time ({decor_time:.2f})",
+            )
             plt.xlabel("Lag")
             plt.ylabel("Autocorrelation")
             plt.title("Autocorrelation Function")
+            plt.legend()
             plt.grid()
             _show_plot_if_interactive()
             plt.close()
 
-        # Use rigorous statistical measure for decorrelation length
-        # z_critical = sts.norm.ppf(1 - self.autocorr_sig_level / 2)
-        # conf_interval = z_critical / np.sqrt(n_pts)
-        # significant_lags = np.where(np.abs(acf_vals[1:]) > conf_interval)[0]
-        # acf_sum = np.sum(np.abs(acf_vals[1:][significant_lags]))
-        # decor_time = int(np.ceil(1 + 2 * acf_sum))
-
-        # Use DataStream function to compute decorrelation time (in number of points)
-        decor_time = data_stream.compute_decorrelation_time(column_name)['results'][column_name]
-        # print(decor_time)
-
-        # Set smoothing window as multiple of decorrelation length, but not more than max_lag
-        decor_index = min(int(self.decor_multiplier * decor_time), max_lag)
+        # Set smoothing window as multiple of decorrelation length, but not more
+        # than the signal length
+        smoothing_index = min(int(self.decor_multiplier * decor_time), n_pts)
 
         if self.verbosity > 0:
             print(
-                f"stats decorrelation time {decor_time:.2f} gives smoothing window of {decor_index} points."
+                f"stats decorrelation time {decor_time:.2f} gives smoothing window of {smoothing_index} points."
             )
 
-        # Smooth signal with rolling mean over window size based on decorrelation length
-        rolling_window = max(3, decor_index)  # at least 3 points in window
+        # Smooth signal with rolling mean over window size based on decorrelation
+        # length: at least 3 points in window, but never more than the signal length
+        rolling_window = min(max(3, smoothing_index), n_pts)
         col_smoothed = (
             data_stream.data[column_name].rolling(window=rolling_window).mean()
         )  # get smoothed column as Series

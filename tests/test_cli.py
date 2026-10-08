@@ -1,5 +1,7 @@
 """Tests for the command-line interface (``quends.cli`` / ``python -m quends``)."""
 
+import sys
+
 import pandas as pd
 import pytest
 
@@ -31,7 +33,9 @@ def test_main_version_exits_zero():
 
 def test_main_summary_csv(tmp_path, capsys):
     csv = tmp_path / "data.csv"
-    pd.DataFrame({"time": [0.0, 1.0, 2.0], "Q": [1.0, 2.0, 3.0]}).to_csv(csv, index=False)
+    pd.DataFrame({"time": [0.0, 1.0, 2.0], "Q": [1.0, 2.0, 3.0]}).to_csv(
+        csv, index=False
+    )
 
     rc = cli.main(["summary", str(csv), "Q"])
     out = capsys.readouterr().out
@@ -45,3 +49,27 @@ def test_main_summary_csv(tmp_path, capsys):
 def test_main_module_is_importable():
     # Importing the module exercises ``python -m quends``'s entry module.
     import quends.__main__  # noqa: F401
+
+
+def test_main_summary_empty_csv_skips_time_range(tmp_path, capsys):
+    csv = tmp_path / "empty.csv"
+    pd.DataFrame({"time": [], "Q": []}).to_csv(csv, index=False)
+
+    rc = cli.main(["summary", str(csv), "Q"])
+    out = capsys.readouterr().out
+
+    assert rc == 0
+    assert "n_samples : 0" in out
+    assert "time range" not in out
+
+
+def test_python_dash_m_quends_runs_main(monkeypatch, capsys):
+    import runpy
+
+    monkeypatch.setattr("sys.argv", ["quends"])
+    # Avoid runpy's "found in sys.modules" warning if another test imported it.
+    monkeypatch.delitem(sys.modules, "quends.__main__", raising=False)
+    with pytest.raises(SystemExit) as excinfo:
+        runpy.run_module("quends", run_name="__main__", alter_sys=True)
+    assert excinfo.value.code == 0
+    assert "usage" in capsys.readouterr().out.lower()

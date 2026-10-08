@@ -26,9 +26,7 @@ def test_from_numpy_1d_with_explicit_time():
 def test_from_numpy_nx2_resolves_time_column():
     """Nx2 array is interpreted as [time, variable] (monotonic column = time)."""
     ds = from_numpy(np.array([[0.0, 5.0], [1.0, 6.0], [2.0, 7.0]]), "HeatFlux_st")
-    expected = pd.DataFrame(
-        {"time": [0.0, 1.0, 2.0], "HeatFlux_st": [5.0, 6.0, 7.0]}
-    )
+    expected = pd.DataFrame({"time": [0.0, 1.0, 2.0], "HeatFlux_st": [5.0, 6.0, 7.0]})
     pd.testing.assert_frame_equal(ds.data, expected)
 
 
@@ -50,3 +48,22 @@ def test_from_numpy_scalar_raises():
 def test_from_numpy_wide_2d_raises():
     with pytest.raises(ValueError, match="expects a 1D array"):
         from_numpy(np.ones((4, 3)), "q")
+
+
+def test_from_numpy_nx1_column_vector_treated_as_1d():
+    ds = from_numpy(np.array([[1.0], [2.0], [3.0]]), "q")
+    expected = pd.DataFrame({"time": [0.0, 1.0, 2.0], "q": [1.0, 2.0, 3.0]})
+    pd.testing.assert_frame_equal(ds.data, expected)
+
+
+def test_from_numpy_nx2_time_in_second_column():
+    """If only column 1 is strictly increasing, it is taken as time."""
+    ds = from_numpy(np.array([[5.0, 0.0], [7.0, 1.0], [6.0, 2.0]]), "q")
+    expected = pd.DataFrame({"time": [0.0, 1.0, 2.0], "q": [5.0, 7.0, 6.0]})
+    pd.testing.assert_frame_equal(ds.data, expected)
+
+
+def test_from_numpy_nx2_no_monotonic_column_defaults_to_first():
+    ds = from_numpy(np.array([[1.0, 5.0], [0.0, 7.0], [2.0, 6.0]]), "q")
+    expected = pd.DataFrame({"time": [1.0, 0.0, 2.0], "q": [5.0, 7.0, 6.0]})
+    pd.testing.assert_frame_equal(ds.data, expected)

@@ -114,7 +114,7 @@ print("metadata:", my_stats[col]["metadata"])
 # Stationary, but no steady state found
 # -------------------------------------
 # Here the data is stationary, but deliberately bad hyperparameters
-# (``max_lag_frac=0.05``, ``decor_multiplier=1.0``, ``std_dev_frac=0.001``,
+# (``decor_multiplier=1.0``, ``std_dev_frac=0.001``,
 # ``fudge_fac=0.0``) give a short averaging window and a tiny deviation
 # tolerance, so no SSS segment can be found. An ad-hoc result (based on the last
 # third of the signal) is returned instead.
@@ -124,7 +124,6 @@ col = "Q_D/Q_GBD"
 my_wrkflw0 = qnds.RobustWorkflow(
     operate_safe=False,
     verbosity=2,
-    max_lag_frac=0.05,
     decor_multiplier=1.0,
     std_dev_frac=0.001,
     fudge_fac=0.0,

@@ -52,11 +52,8 @@ class RobustWorkflow:
     _sss_time_min: float or None, minimum time duration for a valid SSS segment. When shortening
         a DataStream to find stationarity, segments shorter than this are rejected. After trimming
         to the SSS start, segments shorter than this are also rejected. Default is 50.
-    _max_lag_frac: float, maximum lag (as a fraction of the number of points in the DataStream) to use when computing
-        the autocorrelation function to determine the decorrelation length.
-    _autocorr_sig_level: float, significance level to use when determining the decorrelation length from the autocorrelation
-        function.
-    _decor_multiplier: float, multiplier to apply to the decorrelation length to get the smoothing window size.
+    _decor_multiplier: float, multiplier to apply to the decorrelation time (in number of samples)
+        to get the smoothing window size. The smoothing window is capped at the signal length.
     _std_dev_frac: float, fraction of the std dev of the stationary signal to use as tolerance when determining the start
         of SSS.
     _fudge_fac: float, fudge factor to multiply the initial mean of the smoothed signal with before adding it to the std dev
@@ -74,8 +71,6 @@ class RobustWorkflow:
         drop_fraction=0.25,
         n_pts_min=100,
         sss_time_min=50,
-        max_lag_frac=0.5,
-        autocorr_sig_level=0.05,
         decor_multiplier=6.0,
         std_dev_frac=0.1,
         fudge_fac=0.1,
@@ -109,14 +104,10 @@ class RobustWorkflow:
             drops below this value; (2) after trimming to the SSS start, reject
             the segment if its time span is shorter than this value.
             Default is 50 (minimum 50 time units).
-        max_lag_frac: float, optional
-            Maximum lag (as a fraction of the number of points in the DataStream) to use when computing
-            the autocorrelation function to determine the decorrelation length. Default is 0.5.
-        autocorr_sig_level: float, optional
-            Significance level to use when determining the decorrelation length from the autocorrelation
-            function. Default is 0.05 (5% significance level).
         decor_multiplier: float, optional
-            Multiplier to apply to the decorrelation length to get the smoothing window size. Default is 4.0
+            Multiplier to apply to the decorrelation time (in number of samples) to get the
+            smoothing window size used to detect the start of SSS. The smoothing window is
+            capped at the signal length (and is at least 3 points). Default is 6.0.
         std_dev_frac: float, optional
             Fraction of the std dev of the stationary signal to use as tolerance when determining the start
             of SSS. Default is 0.1 (10% of std dev).
@@ -130,7 +121,7 @@ class RobustWorkflow:
             This is to account for the fact that the smoothed signal at a given time point is
             the result of averaging over the smoothing window. So the SSS can be seen as starting
             before the point where the tolerance is met.
-            Default is 0.8 (80% of smoothing window size).
+            Default is 0.5 (50% of smoothing window size).
         final_smoothing_window: int, optional
             Smoothing window used to avoid quantities going to zero at end of signal. Default is 10 points.
         no_sss_tail_fraction: float, optional
@@ -144,8 +135,6 @@ class RobustWorkflow:
         self._drop_fraction = drop_fraction
         self._n_pts_min = n_pts_min
         self._sss_time_min = sss_time_min
-        self._max_lag_frac = max_lag_frac
-        self._autocorr_sig_level = autocorr_sig_level
         self._decor_multiplier = decor_multiplier
         self._std_dev_frac = std_dev_frac
         self._fudge_fac = fudge_fac
@@ -367,9 +356,7 @@ class RobustWorkflow:
 
             # detect and trim data stream to the start of statistcal steady state
             strategy = MeanVariationTrimStrategy(
-                max_lag_frac=self._max_lag_frac,
                 verbosity=self._verbosity,
-                autocorr_sig_level=self._autocorr_sig_level,
                 decor_multiplier=self._decor_multiplier,
                 std_dev_frac=self._std_dev_frac,
                 fudge_fac=self._fudge_fac,

@@ -18,9 +18,7 @@ pytest_plugins = ("tests._shared",)
 
 def make_sss_strategy(*, verbosity: int = 1):
     return MeanVariationTrimStrategy(
-        max_lag_frac=0.5,
         verbosity=verbosity,
-        autocorr_sig_level=0.05,
         decor_multiplier=4.0,
         std_dev_frac=0.1,
         fudge_fac=0.1,
@@ -114,21 +112,99 @@ def test_trim_rolling_variance(trim_data: pd.DataFrame):
 def test_sss_start_strategy_accepts_explicit_args(long_data: pd.DataFrame):
     ds = DataStream(long_data)
     strategy = MeanVariationTrimStrategy(
-        max_lag_frac=0.5,
         verbosity=0,
-        autocorr_sig_level=0.05,
         decor_multiplier=4.0,
         std_dev_frac=0.1,
         fudge_fac=0.1,
         smoothing_window_correction=0.8,
         final_smoothing_window=10,
     )
-    assert strategy.max_lag_frac == 0.5
     assert strategy.decor_multiplier == 4.0
     assert strategy.final_smoothing_window == 10
     trim_op = TrimDataStreamOperation(strategy=strategy)
     result = trim_op(ds, column_name="A")
     assert isinstance(result, (DataStream, pd.DataFrame))
+
+
+def test_sss_start_strategy_rejects_removed_args():
+    for removed in ("max_lag_frac", "autocorr_sig_level"):
+        with pytest.raises(TypeError):
+            MeanVariationTrimStrategy(**{removed: 0.5})
+
+
+def _sss_signal(n=300, seed=0):
+    rng = np.random.default_rng(seed)
+    t = np.arange(n, dtype=float)
+    a = 10.0 + rng.normal(0.0, 0.5, n)
+    a[:50] += np.linspace(5.0, 0.0, 50)  # initial transient
+    return DataStream(pd.DataFrame({"time": t, "A": a}))
+
+
+def test_sss_smoothing_window_capped_at_signal_length(capsys):
+    ds = _sss_signal(n=300)
+    tau = ds.compute_decorrelation_time("A")["results"]["A"]
+    # Multiplier large enough that multiplier * tau far exceeds the signal length
+    strategy = MeanVariationTrimStrategy(verbosity=1, decor_multiplier=1e6)
+    TrimDataStreamOperation(strategy=strategy)(ds, column_name="A")
+    out = capsys.readouterr().out
+    assert int(1e6 * tau) > 300
+    assert "smoothing window of 300 points" in out
+    assert "Rolling window: 300" in out or "No SSS found" in out
+
+
+def test_sss_acf_plot_lags_and_decorrelation_line():
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import statsmodels.tsa.stattools as ststls
+    from matplotlib import pyplot as plt
+
+    ds = _sss_signal(n=300)
+    tau = ds.compute_decorrelation_time("A")["results"]["A"]
+    strategy = MeanVariationTrimStrategy(verbosity=2)
+
+    with patch.object(ststls, "acf", wraps=ststls.acf) as mock_acf, patch.object(
+        plt, "axvline", wraps=plt.axvline
+    ) as mock_vline, patch.object(
+        plt, "legend", wraps=plt.legend
+    ) as mock_legend, patch.object(
+        plt, "close"
+    ):
+        TrimDataStreamOperation(strategy=strategy)(ds, column_name="A")
+
+    # ACF plotted over ceil(1.5 * tau) lags
+    plot_calls = [c for c in mock_acf.call_args_list if "nlags" in c.kwargs]
+    assert plot_calls[0].kwargs["nlags"] == int(np.ceil(1.5 * tau))
+    # Vertical line at the decorrelation time, labelled for the legend
+    vline_kwargs = mock_vline.call_args_list[0].kwargs
+    assert vline_kwargs["x"] == pytest.approx(tau)
+    assert "Decorrelation time" in vline_kwargs["label"]
+    assert mock_legend.called
+    plt.close("all")
+
+
+def test_sss_acf_plot_lags_capped_at_signal_length():
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import statsmodels.tsa.stattools as ststls
+    from matplotlib import pyplot as plt
+
+    ds = _sss_signal(n=300)
+    strategy = MeanVariationTrimStrategy(verbosity=2)
+
+    with patch.object(
+        DataStream,
+        "compute_decorrelation_time",
+        return_value={"results": {"A": 1000.0}},
+    ), patch.object(ststls, "acf", wraps=ststls.acf) as mock_acf, patch.object(
+        plt, "close"
+    ):
+        TrimDataStreamOperation(strategy=strategy)(ds, column_name="A")
+
+    plot_calls = [c for c in mock_acf.call_args_list if "nlags" in c.kwargs]
+    assert plot_calls[0].kwargs["nlags"] == 299  # n_valid - 1
+    plt.close("all")
 
 
 def test_trim_missing_threshold(long_data: pd.DataFrame):
@@ -604,7 +680,7 @@ def test_trim_sss_no_sss_verbosity_2_triggers_plot(
     # with patch("matplotlib.pyplot.show") as mock_show, patch(
     #     "matplotlib.pyplot.figure"
     # ), patch("matplotlib.pyplot.plot"), patch("matplotlib.pyplot.close"):
-        
+
     with patch("matplotlib.pyplot.figure") as mock_figure:
 
         ds = DataStream(persistent_trend_df)
@@ -643,3 +719,57 @@ def test_trim_sss_no_sss_verbosity_2_plots_deviation_and_tolerance(
     # The no-SSS plot draws Deviation and Tolerance
     assert "Deviation" in plot_calls
     assert "Tolerance" in plot_calls
+
+
+# ---------------------------------------------------------------------------
+# Direct tests of detection-method edge cases
+# ---------------------------------------------------------------------------
+
+
+def _df(x):
+    x = np.asarray(x, dtype=float)
+    return pd.DataFrame({"time": np.arange(x.size, dtype=float), "A": x})
+
+
+def test_quantile_detection_too_short_returns_none():
+    s = QuantileTrimStrategy(window_size=10)
+    assert s._detection_method(_df(np.ones(5)), "A") is None
+
+
+def test_quantile_detection_robust_constant_signal():
+    s = QuantileTrimStrategy(window_size=3, robust=True)
+    assert s._detection_method(_df(np.full(10, 2.0)), "A") == 0.0
+
+
+def test_quantile_detection_non_robust_constant_signal_returns_none():
+    s = QuantileTrimStrategy(window_size=3, robust=False)
+    assert s._detection_method(_df(np.full(10, 2.0)), "A") is None
+
+
+def test_noise_threshold_detection_too_short_returns_none():
+    s = NoiseThresholdTrimStrategy(window_size=10, threshold=0.1)
+    assert s._detection_method(_df(np.arange(5)), "A") is None
+
+
+def test_mean_variation_detection_method_not_used():
+    with pytest.raises(NotImplementedError):
+        MeanVariationTrimStrategy()._detection_method(_df(np.ones(5)), "A")
+
+
+def test_mean_variation_plots_shown_on_interactive_backend():
+    import matplotlib
+    from matplotlib import pyplot as plt
+
+    ds = _sss_signal(n=300)
+    strategy = MeanVariationTrimStrategy(verbosity=2)
+    with patch.object(matplotlib, "get_backend", return_value="MacOSX"), patch.object(
+        plt, "show"
+    ) as mock_show, patch.object(plt, "close"):
+        TrimDataStreamOperation(strategy=strategy)(ds, column_name="A")
+    assert mock_show.called
+    plt.close("all")
+
+
+def test_trim_operation_strategy_property():
+    strategy = QuantileTrimStrategy(window_size=3)
+    assert TrimDataStreamOperation(strategy=strategy).strategy is strategy
