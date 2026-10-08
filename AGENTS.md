@@ -64,8 +64,9 @@ Package uses `src` layout (`[tool.setuptools] package-dir = {"" = "src"}`). Impo
 - ~525 tests, all in `tests/`, flat file structure mirroring source modules.
 - Shared fixtures live in `tests/_shared.py`. There is no `conftest.py`; files that need the shared fixtures declare `pytest_plugins = ("tests._shared",)`.
 - `pyproject.toml` sets `filterwarnings = ["ignore"]`, so warnings are hidden by default. Use `-W error::<Category>` to surface them.
-- Test data directories (`tests/cgyro/`, `tests/guide/`, `tests/robust_workflow/`, `tests/tutorial/`) contain `expected/` CSV files for regression testing and `output/` for generated artifacts.
-- Running the tests rewrites the tracked files under `tests/*/output/`. Do not commit them unless you are intentionally updating them. If a numerical change is intended, regenerate the matching `expected/` CSVs.
+- Regression test data lives in `tests/cgyro/`, `tests/guide/`, `tests/robust_workflow/`, `tests/start_time_demo/` and `tests/tutorial/`. Each `expected/` directory holds tracked baseline CSVs.
+- Tests write their results to `tests/*/output/` and compare them against `expected/`. These output directories are generated on every run and are gitignored. Do not commit them. The tests create them as needed, so deleting them is safe.
+- If a numerical change is intended, run the tests, then copy the new files from `output/` over the matching `expected/` CSVs and commit those. Mention the change in the commit message.
 - Some tests execute the tutorial notebooks with papermill.
 
 ## Docs
