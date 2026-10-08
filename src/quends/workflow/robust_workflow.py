@@ -153,6 +153,72 @@ class RobustWorkflow:
         self._final_smoothing_window = final_smoothing_window
         self._no_sss_tail_fraction = no_sss_tail_fraction
 
+    @staticmethod
+    def _nan_results(col: str, status: str, start_time: float) -> dict:
+        """Return a results dictionary with NaN statistics and the given status."""
+        return {
+            col: {
+                "mean": np.nan,
+                "mean_uncertainty": np.nan,
+                "confidence_interval": (np.nan, np.nan),
+                "sss_start": np.nan,
+                "metadata": {"status": status, "mitigation": "Drop"},
+                "start_time": start_time,
+            }
+        }
+
+    def process_start_time_beyond_data(
+        self, data_stream: DataStream, col: str, start_time: float
+    ) -> dict:
+        """
+        Handle a ``start_time`` that leaves no valid data in the data stream.
+
+        This happens when ``start_time`` is later than the last time point that
+        has a valid (non-NaN) value of ``col``.
+
+        Parameters
+        ----------
+        data_stream: DataStream
+            The original (un-truncated) data stream.
+        col: str
+            The column name of the quantity of interest in the data stream.
+        start_time: float
+            The requested start time, which is beyond the end of the valid data.
+
+        Returns
+        -------
+        results_dict: dict
+            If ``operate_safe`` is True: NaN statistics, with mitigation ``"Drop"``.
+            If ``operate_safe`` is False: an ad-hoc estimate (see
+            :meth:`process_irregular_stream`), with mitigation ``"AdHoc"``.
+            Because no data remains after ``start_time``, ``start_time`` is
+            ignored and the ad-hoc mean is taken over the tail of the whole data
+            stream, i.e. ``data[int(n * no_sss_tail_fraction):]`` with ``n`` the
+            number of valid points. If the data stream has no valid data at all,
+            NaN statistics are returned.
+            In all cases the status is ``"StartTimeBeyondData"`` and the
+            requested ``start_time`` is recorded.
+        """
+        status = "StartTimeBeyondData"
+
+        if self._operate_safe:
+            return self._nan_results(col, status, start_time)
+
+        valid = data_stream.data.loc[data_stream.data[col].notna(), "time"]
+        if valid.empty:
+            # Nothing to base an ad-hoc estimate on, even ignoring start_time.
+            return self._nan_results(col, status, start_time)
+
+        # Ad-hoc estimate over the full data stream (start_time ignored).
+        results_dict = self.process_irregular_stream(
+            data_stream, col, start_time=float(valid.min())
+        )
+        results_dict[col]["metadata"]["status"] = status
+        # Record the start time that was requested.
+        results_dict[col]["start_time"] = start_time
+
+        return results_dict
+
     def process_irregular_stream(
         self, data_stream: DataStream, col: str, start_time: float = 0.0
     ) -> dict:
@@ -250,6 +316,10 @@ class RobustWorkflow:
             The column name of the quantity of interest in the data stream.
         start_time: float, optional
             The time after which to consider data for processing. Default is 0.0.
+            If no valid data remains after ``start_time``, the result is handled
+            by :meth:`process_start_time_beyond_data` (NaN statistics if
+            ``operate_safe`` is True, an ad-hoc estimate over the full data
+            stream otherwise).
 
         Returns
         -------
@@ -267,6 +337,17 @@ class RobustWorkflow:
         if self._verbosity > 0:
             print(f"Original size of data stream: {len(data_stream_orig.data)} points.")
             print(f"After enforcing start time there are {n_pts_orig} points left.")
+
+        # Guard: start_time is beyond the end of the (valid) data
+        if int(ds_wrk.data[col].notna().sum()) == 0:
+            if self._verbosity > 0:
+                print(
+                    f"start_time={start_time} is beyond the end of the valid data "
+                    f"for '{col}'; no points left to process."
+                )
+            return self.process_start_time_beyond_data(
+                data_stream_orig, col, start_time=start_time
+            )
 
         # Check if data stream is stationary
 
@@ -308,10 +389,7 @@ class RobustWorkflow:
                 sss_duration = sss_end - sss_start
 
                 # Check that SSS segment meets minimum time requirement
-                if (
-                    self._sss_time_min is not None
-                    and sss_duration < self._sss_time_min
-                ):
+                if self._sss_time_min is not None and sss_duration < self._sss_time_min:
                     if self._verbosity > 0:
                         print(
                             f"SSS segment too short: {sss_duration:.2f} < "
@@ -324,9 +402,7 @@ class RobustWorkflow:
                 else:
 
                     # Get statistics (with window selected by decorrelation length)
-                    trimmed_stats = trimmed_stream.compute_statistics(
-                        column_name=col
-                    )
+                    trimmed_stats = trimmed_stream.compute_statistics(column_name=col)
 
                     # Add flag for the results for this qoi that all is normal
                     trimmed_stats[col]["sss_start"] = sss_start

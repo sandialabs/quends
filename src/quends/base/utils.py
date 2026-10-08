@@ -168,21 +168,48 @@ def _geyer_ess_on_blocks(block_means: np.ndarray) -> float:
     return max(1.0, n / (1.0 + 2.0 * s))
 
 
-def _tau_int_geyer_from_acf(rho: np.ndarray) -> float:
+def _geyer_truncation_warning_message(n_rho: int) -> str:
+    """Warning text for a Geyer truncation that never reached its stopping criterion."""
+    return (
+        "Geyer positive-pair truncation reached the end of the "
+        "autocorrelation function without the pair sums becoming negative. "
+        "The integrated autocorrelation time is potentially under-estimated "
+        f"(len(rho)={n_rho})."
+    )
+
+
+def _tau_int_geyer_from_acf(rho: np.ndarray, warn: bool = True) -> tuple:
     """
     Estimate integrated autocorrelation time tau_int via Geyer positive-pair truncation.
-    rho[0] must equal 1 (standard ACF array).
+
+    Parameters
+    ----------
+    rho : array-like
+        Sample ACF; ``rho[0]`` must equal 1 (standard ACF array).
+    warn : bool, default True
+        Emit a ``UserWarning`` if the end of ``rho`` is reached before a negative
+        pair sum is found (i.e., the truncation criterion was not met).
+
+    Returns
+    -------
+    (tau_int : float, converged : bool)
+        ``tau_int`` is always >= 1.0. ``converged`` is True if the stopping
+        criterion (a negative pair sum) was reached within ``rho``.
     """
     if rho is None or len(rho) < 2:
-        return 1.0
+        return 1.0, False
     s, t = 0.0, 1
+    converged = False
     while t + 1 < len(rho):
         pair_sum = rho[t] + rho[t + 1]
         if pair_sum < 0:
+            converged = True
             break
         s += pair_sum
         t += 2
-    return float(max(1.0, 1.0 + 2.0 * s))
+    if not converged and warn:
+        warnings.warn(_geyer_truncation_warning_message(len(rho)))
+    return float(max(1.0, 1.0 + 2.0 * s)), converged
 
 
 def _ljung_box_pass(
@@ -264,6 +291,39 @@ def _compute_block_means(
         )
 
 
+def _estimate_tau_int_details(x: np.ndarray) -> tuple:
+    """
+    Estimate tau_int with progressive lag extension, without emitting warnings.
+
+    The ACF is first computed up to ``min(n // 4, 2000)`` lags. If the Geyer
+    stopping criterion (a negative pair sum) is not reached within those lags,
+    the number of lags is doubled repeatedly, up to the maximum ``n - 1``.
+
+    Returns
+    -------
+    (tau_int : float, converged : bool, nlags : int)
+        ``converged`` is False if the criterion was not reached even with the
+        longest ACF that was computed; ``nlags`` is the last lag count used.
+    """
+    x = np.asarray(x, dtype=float)
+    n = x.size
+    if n < 3:
+        return 1.0, True, 0
+    max_nlags = n - 1
+    nlags = max(1, min(n // 4, 2000))
+    # Initial pass: direct (non-FFT) ACF over the default lag window.
+    r = acf(x, nlags=nlags, fft=False)
+    tau_int, converged = _tau_int_geyer_from_acf(r, warn=False)
+    # Progressively extend the lag window until the criterion is met or the
+    # full series length is used. FFT keeps the long-lag ACF cost O(n log n).
+    # A non-finite ACF (e.g., constant series) will not improve with more lags.
+    while not converged and nlags < max_nlags and np.all(np.isfinite(r)):
+        nlags = min(2 * nlags, max_nlags)
+        r = acf(x, nlags=nlags, fft=True)
+        tau_int, converged = _tau_int_geyer_from_acf(r, warn=False)
+    return tau_int, converged, nlags
+
+
 def _estimate_tau_int_from_series(x: np.ndarray) -> float:
     """
     Estimate the integrated autocorrelation time (tau_int) from a raw 1-D array.
@@ -272,9 +332,12 @@ def _estimate_tau_int_from_series(x: np.ndarray) -> float:
     numbers of samples / array points, not physical time units.
 
     Uses Geyer positive-pair truncation of the sample ACF. Always returns a
-    value >= 1.0. If the estimated decorrelation length is large compared to
-    the maximum lag used to compute the ACF, a warning is emitted because the
-    estimate may be under-resolved.
+    value >= 1.0. The ACF is first computed up to ``min(n // 4, 2000)`` lags.
+    If the Geyer stopping criterion (a negative pair sum) is not reached within
+    those lags, the number of lags is progressively doubled up to the maximum
+    ``n - 1``. A warning is emitted only if the criterion is still not reached
+    with the full-length ACF, since the estimate may then be under-estimated.
+    See :func:`_estimate_tau_int_details`.
 
     Parameters
     ----------
@@ -286,23 +349,9 @@ def _estimate_tau_int_from_series(x: np.ndarray) -> float:
     float
         Estimated decorrelation length, in number of samples / points.
     """
-    x = np.asarray(x, dtype=float)
-    n = x.size
-    if n < 3:
-        return 1.0
-    nlags = max(1, min(n // 4, 2000))
-    r = acf(x, nlags=nlags, fft=False)
-    # decorrelation length
-    tau_int = _tau_int_geyer_from_acf(r)
-
-    # warn when decorrelation length is about same size as lag cutoff in autocorrelation function
-    if tau_int >= 0.5 * nlags:
-        warnings.warn(
-            "The computed signal decorrelation time is large compared to the "
-            "max lag in the computation of the autocorrelation. Results may "
-            f"be inaccurate. Estimated tau_int={tau_int:.2f}, nlags={nlags}."
-        )
-
+    tau_int, converged, nlags = _estimate_tau_int_details(x)
+    if not converged:
+        warnings.warn(_geyer_truncation_warning_message(nlags + 1))
     return tau_int
 
 
@@ -405,6 +454,10 @@ def autotune_blocks(
             Minimum p-value across lags at the chosen window, or NaN.
         ``tau_int`` : float
             Estimated tau_int (NaN for ``user_window`` path).
+        ``tau_int_converged`` : bool
+            Present on the autotune path only. ``False`` if the Geyer stopping
+            criterion was not reached even with the full-length ACF, in which
+            case ``tau_int`` is potentially under-estimated.
         ``initial_window`` : int
             Seed window before iteration starts.
         ``iterations`` : int
@@ -466,7 +519,9 @@ def autotune_blocks(
             "warning": "Too few samples for block averaging.",
         }
 
-    tau_int = _estimate_tau_int_from_series(x)
+    tau_int, tau_int_converged, tau_nlags = _estimate_tau_int_details(x)
+    if not tau_int_converged:
+        warnings.warn(_geyer_truncation_warning_message(tau_nlags + 1))
 
     # ---- Starting window ------------------------------------------------
     # Step 1: tau_int seed (no w_min floor here — handled below).
@@ -532,6 +587,7 @@ def autotune_blocks(
                 "ljungbox_pvalues": det.get("pvalues", []),
                 "best_pvalue": float(p_score),
                 "tau_int": float(tau_int),
+                "tau_int_converged": bool(tau_int_converged),
                 "initial_window": initial_window,
                 "iterations": iteration_count,
                 "autotuned": True,
@@ -568,6 +624,7 @@ def autotune_blocks(
                 float(p_score) if np.isfinite(float(p_score)) else float("nan")
             ),
             "tau_int": float(tau_int),
+            "tau_int_converged": bool(tau_int_converged),
             "initial_window": initial_window,
             "iterations": iteration_count,
             "autotuned": True,
@@ -588,6 +645,7 @@ def autotune_blocks(
         "ljungbox_pvalues": [],
         "best_pvalue": float("nan"),
         "tau_int": float(tau_int),
+        "tau_int_converged": bool(tau_int_converged),
         "initial_window": initial_window,
         "iterations": iteration_count,
         "autotuned": True,

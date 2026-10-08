@@ -505,6 +505,98 @@ class TestProcessDataSteamNoSSSAfterTrim:
         assert result["A"]["metadata"]["mitigation"] == "AdHoc"
 
 
+# process_data_stream: start_time beyond the end of the data
+
+
+class TestStartTimeBeyondData:
+
+    def test_safe_returns_nan(self):
+        wf = make_workflow(operate_safe=True)
+        ds = make_datastream()  # time 0..199
+        result = wf.process_data_stream(ds, "A", start_time=500.0)
+        res = result["A"]
+        assert np.isnan(res["mean"])
+        assert np.isnan(res["mean_uncertainty"])
+        assert all(np.isnan(v) for v in res["confidence_interval"])
+        assert np.isnan(res["sss_start"])
+        assert res["metadata"]["status"] == "StartTimeBeyondData"
+        assert res["metadata"]["mitigation"] == "Drop"
+        assert res["start_time"] == 500.0
+
+    def test_unsafe_returns_adhoc_over_full_stream(self):
+        wf = make_workflow(operate_safe=False)
+        ds = make_datastream()
+        result = wf.process_data_stream(ds, "A", start_time=500.0)
+        res = result["A"]
+
+        # Same ad-hoc estimate as processing the full stream from t=0.
+        expected = wf.process_irregular_stream(ds, "A", start_time=0.0)["A"]
+        assert res["mean"] == pytest.approx(expected["mean"])
+        assert res["mean_uncertainty"] == pytest.approx(expected["mean_uncertainty"])
+        assert res["confidence_interval"] == pytest.approx(
+            expected["confidence_interval"]
+        )
+        assert res["sss_start"] == expected["sss_start"]
+        assert np.isfinite(res["mean"])
+        assert res["metadata"]["status"] == "StartTimeBeyondData"
+        assert res["metadata"]["mitigation"] == "AdHoc"
+        # The requested start time is still recorded.
+        assert res["start_time"] == 500.0
+
+    @pytest.mark.parametrize("frac", [0.5, 0.66, 0.9])
+    def test_unsafe_adhoc_uses_tail_fraction(self, frac):
+        ds = make_datastream()  # 200 points, time 0..199
+        wf = RobustWorkflow(
+            operate_safe=False, sss_time_min=None, no_sss_tail_fraction=frac
+        )
+        res = wf.process_data_stream(ds, "A", start_time=500.0)["A"]
+
+        values = ds.data["A"].to_numpy()
+        n_tail = int(len(values) * frac)
+        assert res["mean"] == pytest.approx(values[n_tail:].mean())
+        assert res["sss_start"] == ds.data["time"].iloc[n_tail]
+        assert res["mean"] != pytest.approx(values.mean())
+
+    def test_start_time_past_last_valid_value(self):
+        # Time axis extends past start_time, but the column is all NaN there.
+        df = make_datastream().data.copy()
+        df.loc[df["time"] >= 150, "A"] = np.nan
+        ds = DataStream(df)
+
+        safe = make_workflow(operate_safe=True).process_data_stream(
+            ds, "A", start_time=160.0
+        )
+        assert np.isnan(safe["A"]["mean"])
+        assert safe["A"]["metadata"]["status"] == "StartTimeBeyondData"
+
+        unsafe = make_workflow(operate_safe=False).process_data_stream(
+            ds, "A", start_time=160.0
+        )
+        assert np.isfinite(unsafe["A"]["mean"])
+        assert unsafe["A"]["sss_start"] < 150.0
+        assert unsafe["A"]["metadata"]["mitigation"] == "AdHoc"
+
+    def test_unsafe_all_nan_column_returns_nan(self):
+        df = make_datastream().data.copy()
+        df["A"] = np.nan
+        result = make_workflow(operate_safe=False).process_data_stream(
+            DataStream(df), "A", start_time=0.0
+        )
+        assert np.isnan(result["A"]["mean"])
+        assert result["A"]["metadata"]["status"] == "StartTimeBeyondData"
+        assert result["A"]["metadata"]["mitigation"] == "Drop"
+
+    def test_start_time_equal_to_last_point_is_not_beyond_data(self):
+        wf = make_workflow(operate_safe=True)
+        result = wf.process_data_stream(make_datastream(), "A", start_time=199.0)
+        assert result["A"]["metadata"]["status"] != "StartTimeBeyondData"
+
+    def test_verbose_message(self, capsys):
+        wf = make_workflow(operate_safe=True, verbosity=1)
+        wf.process_data_stream(make_datastream(), "A", start_time=500.0)
+        assert "beyond the end of the valid data" in capsys.readouterr().out
+
+
 # sss_time_min
 
 

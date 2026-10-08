@@ -4,10 +4,15 @@ from unittest.mock import patch
 import numpy as np
 import pandas as pd
 import pytest
+from statsmodels.tsa.stattools import acf
 
 from quends import DataStream
 from quends.base.history import DataStreamHistoryEntry
-from quends.base.utils import _estimate_tau_int_from_series
+from quends.base.utils import (
+    _estimate_tau_int_details,
+    _estimate_tau_int_from_series,
+    _tau_int_geyer_from_acf,
+)
 
 pytest_plugins = ("tests._shared",)
 
@@ -279,7 +284,7 @@ def test_compute_stats_long(long_data: pd.DataFrame):
         (1.6140707088743669, 4.385929291125633)
     )
     assert col["pm_std"] == pytest.approx((2.2928932188134525, 3.7071067811865475))
-    assert col["effective_sample_size"] == 5
+    assert col["effective_sample_size"] == 4
     assert col["window_size"] == 1
 
 
@@ -644,31 +649,100 @@ def test_estimate_tau_int_delegates_and_returns_float(long_data: pd.DataFrame):
     assert result >= 1.0
 
 
-def test_estimate_tau_int_warns_when_acf_lag_cutoff_is_tiny():
-    # Four samples gives nlags = max(1, min(n // 4, 2000)) = 1.
-    # That deliberately tiny ACF horizon should trigger the under-resolution warning.
-    with pytest.warns(UserWarning, match="decorrelation time"):
-        tau_int = _estimate_tau_int_from_series(np.array([1.0, 2.0, 3.0, 4.0]))
+def test_estimate_tau_int_extends_lags_without_warning():
+    # Linear ramp: the n//4 = 12-lag ACF never yields a negative pair sum,
+    # but the extended (full-length) ACF does, so no warning is emitted and the
+    # estimate exceeds what the initial lag window alone would give.
+    x = np.arange(50.0)
+    r_short = acf(x, nlags=12, fft=False)
+    tau_short, converged_short = _tau_int_geyer_from_acf(r_short, warn=False)
+    assert not converged_short
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        tau_int = _estimate_tau_int_from_series(x)
+
+    tau_full, converged_full = _tau_int_geyer_from_acf(
+        acf(x, nlags=49, fft=True), warn=False
+    )
+    assert converged_full
+    assert tau_int == pytest.approx(tau_full)
+    assert tau_int > tau_short
+
+
+def test_estimate_tau_int_details_reports_convergence():
+    tau_int, converged, nlags = _estimate_tau_int_details(np.arange(50.0))
+    assert converged
+    assert 12 < nlags <= 49
+    assert tau_int >= 1.0
+
+    assert _estimate_tau_int_details(np.array([1.0, 2.0])) == (1.0, True, 0)
+
+
+def test_estimate_tau_int_warns_when_full_acf_exhausted():
+    # Four samples: even the full-length ACF (lags 0..3) never gives a
+    # negative pair sum, so the warning is emitted.
+    with pytest.warns(UserWarning, match="potentially under-estimated"):
+        tau_int = _estimate_tau_int_from_series(np.array([1.0, 0.0, 0.0, -1.0]))
 
     assert tau_int >= 1.0
 
 
-def test_tau_int_lag_cutoff_warning_is_returned_in_metadata():
+def test_tau_int_geyer_warns_when_acf_exhausted():
+    # All pair sums are positive, so truncation never happens.
+    rho = np.array([1.0, 0.9, 0.8, 0.7, 0.6])
+    with pytest.warns(UserWarning, match="potentially under-estimated"):
+        tau_int, converged = _tau_int_geyer_from_acf(rho)
+
+    assert not converged
+    assert tau_int == pytest.approx(1.0 + 2.0 * (0.9 + 0.8 + 0.7 + 0.6))
+
+
+def test_tau_int_geyer_warning_can_be_suppressed():
+    rho = np.array([1.0, 0.9, 0.8, 0.7, 0.6])
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        _, converged = _tau_int_geyer_from_acf(rho, warn=False)
+    assert not converged
+
+
+def test_tau_int_geyer_no_warning_when_truncated():
+    # Second pair sum is negative, so the loop exits via break.
+    rho = np.array([1.0, 0.5, 0.2, -0.4, -0.3, 0.1])
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        tau_int, converged = _tau_int_geyer_from_acf(rho)
+
+    assert converged
+    assert tau_int == pytest.approx(1.0 + 2.0 * 0.7)
+
+
+def test_tau_int_no_warning_when_extended_acf_converges():
+    # Previously warned (tau_int large vs. n//4 lag cutoff); with lag
+    # extension the Geyer criterion is reached, so no tau_int warning.
     ds = DataStream(pd.DataFrame({"time": np.arange(50), "A": np.arange(50.0)}))
 
-    with pytest.warns(UserWarning, match="decorrelation time"):
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        result = ds.compute_statistics("A")
+
+    assert not any(
+        "potentially under-estimated" in w["message"]
+        for w in result.metadata["warnings"]
+    )
+
+
+def test_tau_int_nonconvergence_warning_is_returned_in_metadata():
+    ds = DataStream(pd.DataFrame({"time": np.arange(4), "A": [1.0, 0.0, 0.0, -1.0]}))
+
+    with pytest.warns(UserWarning, match="potentially under-estimated"):
         result = ds.compute_statistics("A")
 
     column_warnings = result["A"]["metadata"]["warnings"]
+    assert any("potentially under-estimated" in w for w in column_warnings)
     assert any(
-        "decorrelation time" in warning and "Results may be inaccurate" in warning
-        for warning in column_warnings
-    )
-    assert any(
-        warning["column"] == "A"
-        and "decorrelation time" in warning["message"]
-        and "Results may be inaccurate" in warning["message"]
-        for warning in result.metadata["warnings"]
+        w["column"] == "A" and "potentially under-estimated" in w["message"]
+        for w in result.metadata["warnings"]
     )
 
 
@@ -698,7 +772,7 @@ def test_effective_sample_size_simple(simple_data: pd.DataFrame):
 def test_effective_sample_size_long_data(long_data: pd.DataFrame):
     ds = DataStream(long_data)
     assert ds.effective_sample_size(column_names=["A", "B"]) == {
-        "results": {"A": 5, "B": 5}
+        "results": {"A": 4, "B": 4}
     }
 
 
@@ -713,7 +787,7 @@ def test_effective_sample_size_trim_data(trim_data: pd.DataFrame):
     # giving tau_int ≈ 3.22 → ESS = ceil(10 / 3.22) = 4.
     # The old abs-threshold approach dropped rho_2 (below 1.96/√10 ≈ 0.62) and
     # returned 5 — Geyer is slightly more conservative and correct.
-    assert ds.effective_sample_size(column_names=["A"]) == {"results": {"A": 4}}
+    assert ds.effective_sample_size(column_names=["A"]) == {"results": {"A": 3}}
 
 
 def test_effective_sample_size_missing_col(long_data: pd.DataFrame):
