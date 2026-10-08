@@ -2,6 +2,38 @@
 Changelog
 =========
 
+0.1.4 (2026-10-08)
+------------------
+
+**Removed (breaking)**
+
+* The ``max_lag_frac`` and ``autocorr_sig_level`` arguments were removed from
+  ``RobustWorkflow`` and ``MeanVariationTrimStrategy``. They no longer had any
+  effect on the decorrelation time, which is computed by
+  ``DataStream.compute_decorrelation_time()``. Passing either argument now
+  raises a ``TypeError``. Remove them from existing calls.
+
+**Changed**
+
+* In ``MeanVariationTrimStrategy``, the smoothing window used to detect the
+  start of statistical steady state is now ``decor_multiplier * tau_int``,
+  capped at the signal length (and at least 3 points). Before, it was also
+  capped at ``max_lag_frac * n_pts``. With the default ``decor_multiplier``
+  this can give a wider smoothing window, and so a different (often later)
+  SSS start time and different statistics than in 0.1.3.
+* With ``verbosity > 1``, the autocorrelation plot now covers
+  ``1.5 * tau_int`` lags (capped at the signal length), with a dashed vertical
+  line at the decorrelation time and a legend.
+
+**Documentation**
+
+* Added a full parameter description to the ``MeanVariationTrimStrategy``
+  docstring, and fixed the ``trim()`` parameter docs.
+* Fixed the documented default of ``smoothing_window_correction`` in
+  ``RobustWorkflow`` (0.5, not 0.8) and clarified ``decor_multiplier``.
+* Removed the obsolete arguments from the tutorial notebooks and the
+  ``robustworkflow_advanced_guide.py`` example script.
+
 0.1.3 (2026-10-07)
 ------------------
 

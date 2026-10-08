@@ -122,7 +122,7 @@ uploads them to PyPI using [trusted publishing](https://docs.pypi.org/trusted-pu
 
 4. **Create a GitHub Release**
     On GitHub, go to **Releases → Draft a new release**, create a new tag
-    matching the version (e.g. `v0.1.3`) on `main`, add release notes, and click
+    matching the version (e.g. `v0.1.4`) on `main`, add release notes, and click
     **Publish release**. The `Publish Python Package` workflow will then build
     and upload the package to PyPI. Progress can be followed in the **Actions** tab.
 
