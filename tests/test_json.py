@@ -58,3 +58,21 @@ def test_from_json_invalid_file():
             from_json(invalid_json_file, "HeatFlux_st")
     finally:
         os.remove(invalid_json_file)
+
+
+@pytest.mark.parametrize("wrap_in_data_key", [False, True])
+def test_from_json_falls_back_to_manual_load(tmp_path, monkeypatch, wrap_in_data_key):
+    """Payloads pandas.read_json rejects are loaded via json.load instead."""
+    records = [{"time": 0, "q": 1.0}, {"time": 1, "q": 2.0}]
+    payload = {"data": records} if wrap_in_data_key else records
+    path = tmp_path / "data.json"
+    path.write_text(json.dumps(payload))
+
+    def _reject(*args, **kwargs):
+        raise ValueError("forced fallback")
+
+    monkeypatch.setattr("quends.preprocessing.json.pd.read_json", _reject)
+    ds = from_json(str(path), "q")
+
+    np.testing.assert_array_equal(ds.data["time"].values, [0, 1])
+    np.testing.assert_array_equal(ds.data["q"].values, [1.0, 2.0])

@@ -680,7 +680,7 @@ def test_trim_sss_no_sss_verbosity_2_triggers_plot(
     # with patch("matplotlib.pyplot.show") as mock_show, patch(
     #     "matplotlib.pyplot.figure"
     # ), patch("matplotlib.pyplot.plot"), patch("matplotlib.pyplot.close"):
-        
+
     with patch("matplotlib.pyplot.figure") as mock_figure:
 
         ds = DataStream(persistent_trend_df)
@@ -719,3 +719,57 @@ def test_trim_sss_no_sss_verbosity_2_plots_deviation_and_tolerance(
     # The no-SSS plot draws Deviation and Tolerance
     assert "Deviation" in plot_calls
     assert "Tolerance" in plot_calls
+
+
+# ---------------------------------------------------------------------------
+# Direct tests of detection-method edge cases
+# ---------------------------------------------------------------------------
+
+
+def _df(x):
+    x = np.asarray(x, dtype=float)
+    return pd.DataFrame({"time": np.arange(x.size, dtype=float), "A": x})
+
+
+def test_quantile_detection_too_short_returns_none():
+    s = QuantileTrimStrategy(window_size=10)
+    assert s._detection_method(_df(np.ones(5)), "A") is None
+
+
+def test_quantile_detection_robust_constant_signal():
+    s = QuantileTrimStrategy(window_size=3, robust=True)
+    assert s._detection_method(_df(np.full(10, 2.0)), "A") == 0.0
+
+
+def test_quantile_detection_non_robust_constant_signal_returns_none():
+    s = QuantileTrimStrategy(window_size=3, robust=False)
+    assert s._detection_method(_df(np.full(10, 2.0)), "A") is None
+
+
+def test_noise_threshold_detection_too_short_returns_none():
+    s = NoiseThresholdTrimStrategy(window_size=10, threshold=0.1)
+    assert s._detection_method(_df(np.arange(5)), "A") is None
+
+
+def test_mean_variation_detection_method_not_used():
+    with pytest.raises(NotImplementedError):
+        MeanVariationTrimStrategy()._detection_method(_df(np.ones(5)), "A")
+
+
+def test_mean_variation_plots_shown_on_interactive_backend():
+    import matplotlib
+    from matplotlib import pyplot as plt
+
+    ds = _sss_signal(n=300)
+    strategy = MeanVariationTrimStrategy(verbosity=2)
+    with patch.object(matplotlib, "get_backend", return_value="MacOSX"), patch.object(
+        plt, "show"
+    ) as mock_show, patch.object(plt, "close"):
+        TrimDataStreamOperation(strategy=strategy)(ds, column_name="A")
+    assert mock_show.called
+    plt.close("all")
+
+
+def test_trim_operation_strategy_property():
+    strategy = QuantileTrimStrategy(window_size=3)
+    assert TrimDataStreamOperation(strategy=strategy).strategy is strategy

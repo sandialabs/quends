@@ -44,3 +44,41 @@ def test_self_consistent_via_factory_handles_no_detection():
     )
     result = op(ds, column_name="signal")
     assert isinstance(result, DataStream)
+
+
+def _detect(strategy, df, col="signal"):
+    return strategy._detection_method(df, col)
+
+
+def test_self_consistent_detection_guards_return_none():
+    df = pd.DataFrame({"time": np.arange(10.0), "signal": np.ones(10)})
+    s = SelfConsistentTrimStrategy(window_size=4)
+    assert _detect(s, pd.DataFrame()) is None
+    assert _detect(s, None) is None
+    assert _detect(s, df.drop(columns="time")) is None
+    assert _detect(s, df, col="missing") is None
+    assert _detect(SelfConsistentTrimStrategy(window_size=0), df) is None
+    assert _detect(SelfConsistentTrimStrategy(window_size=6), df) is None  # n < 2W
+
+
+def test_self_consistent_non_robust_detects_steady_state():
+    ds = _transient_then_steady()
+    s = SelfConsistentTrimStrategy(window_size=40, robust=False)
+    t0 = _detect(s, ds.data)
+    assert t0 is not None
+    assert t0 >= 40
+
+
+def test_self_consistent_robust_falls_back_to_std_when_mad_is_zero():
+    # Most samples identical -> MAD == 0, so the std fallback is used.
+    x = np.full(40, 5.0)
+    x[::7] = 5.1
+    df = pd.DataFrame({"time": np.arange(40.0), "signal": x})
+    s = SelfConsistentTrimStrategy(window_size=10, rel_tol_mu=1.0, rel_tol_sigma=10.0)
+    assert _detect(s, df) is not None
+
+
+def test_self_consistent_non_finite_blocks_are_rejected():
+    x = np.full(40, np.nan)
+    df = pd.DataFrame({"time": np.arange(40.0), "signal": x})
+    assert _detect(SelfConsistentTrimStrategy(window_size=10), df) is None
