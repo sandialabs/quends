@@ -13,8 +13,6 @@ def test_process_data_stream_regular_case():
         drop_fraction=0.25,
         n_pts_min=10,
         sss_time_min=None,
-        max_lag_frac=0.5,
-        autocorr_sig_level=0.05,
         decor_multiplier=4.0,
         std_dev_frac=0.1,
         fudge_fac=0.1,
