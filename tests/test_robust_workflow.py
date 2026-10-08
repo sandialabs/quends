@@ -543,6 +543,20 @@ class TestStartTimeBeyondData:
         # The requested start time is still recorded.
         assert res["start_time"] == 500.0
 
+    @pytest.mark.parametrize("frac", [0.5, 0.66, 0.9])
+    def test_unsafe_adhoc_uses_tail_fraction(self, frac):
+        ds = make_datastream()  # 200 points, time 0..199
+        wf = RobustWorkflow(
+            operate_safe=False, sss_time_min=None, no_sss_tail_fraction=frac
+        )
+        res = wf.process_data_stream(ds, "A", start_time=500.0)["A"]
+
+        values = ds.data["A"].to_numpy()
+        n_tail = int(len(values) * frac)
+        assert res["mean"] == pytest.approx(values[n_tail:].mean())
+        assert res["sss_start"] == ds.data["time"].iloc[n_tail]
+        assert res["mean"] != pytest.approx(values.mean())
+
     def test_start_time_past_last_valid_value(self):
         # Time axis extends past start_time, but the column is all NaN there.
         df = make_datastream().data.copy()

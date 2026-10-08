@@ -190,9 +190,12 @@ class RobustWorkflow:
         results_dict: dict
             If ``operate_safe`` is True: NaN statistics, with mitigation ``"Drop"``.
             If ``operate_safe`` is False: an ad-hoc estimate (see
-            :meth:`process_irregular_stream`) computed over the full data stream,
-            ignoring ``start_time``, with mitigation ``"AdHoc"``. If the full data
-            stream has no valid data either, NaN statistics are returned.
+            :meth:`process_irregular_stream`), with mitigation ``"AdHoc"``.
+            Because no data remains after ``start_time``, ``start_time`` is
+            ignored and the ad-hoc mean is taken over the tail of the whole data
+            stream, i.e. ``data[int(n * no_sss_tail_fraction):]`` with ``n`` the
+            number of valid points. If the data stream has no valid data at all,
+            NaN statistics are returned.
             In all cases the status is ``"StartTimeBeyondData"`` and the
             requested ``start_time`` is recorded.
         """
