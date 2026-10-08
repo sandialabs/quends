@@ -1,6 +1,6 @@
 # quends/__init__.py
 
-__version__ = "0.1.0"
+__version__ = "0.1.3"
 
 # Importing classes and functions from base module
 from .base.data_stream import DataStream

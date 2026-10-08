@@ -94,24 +94,47 @@ Examples are shown in the `examples/notebooks` directories.
 ## Developers: Publishing `quends` to PyPI
 This section is for maintainers who publish new releases of `quends`.
 
+Publishing is automated by the GitHub Actions workflow
+[`.github/workflows/publish-to-pypi.yml`](.github/workflows/publish-to-pypi.yml).
+It runs when a GitHub Release is **published** (not on pushes, tags, or draft
+releases), builds the sdist and wheel, checks them with `twine check`, and
+uploads them to PyPI using [trusted publishing](https://docs.pypi.org/trusted-publishers/)
+(no API token is stored in the repository).
+
 1. **Update the version**
-    Update the version in `pyproject.oml` before each release.
+    Bump the version in **both** places (they must match, and PyPI rejects a
+    version that has already been uploaded):
+    - `version` in `pyproject.toml`
+    - `__version__` in `src/quends/__init__.py`
 
-2. **Build the package**
+    Then refresh the lockfile with `uv lock` and add an entry to `docs/changelog.rst`.
+
+2. **Check the build locally (optional)**
     ```bash
-    python3 -m build
+    uv run pytest tests/
+    uv build
+    uvx twine check dist/*
     ```
 
-3. **Test on TestPyPI**
-    ```bash
-    python3 -m twine upload --repository testpypi dist/*
-    pip install -i https://test.pypi.org/simple/ quends
-    ```
+3. **Merge to `main`**
+    Make sure the `Run Tests` workflow passes on the commit you want to release.
+    The publish workflow does not run the test suite itself.
 
-4. **Upload to PyPI**
-    ```bash
-    python3 -m twine upload dist/*
-    ```
+4. **Create a GitHub Release**
+    On GitHub, go to **Releases → Draft a new release**, create a new tag
+    matching the version (e.g. `v0.1.3`) on `main`, add release notes, and click
+    **Publish release**. The `Publish Python Package` workflow will then build
+    and upload the package to PyPI. Progress can be followed in the **Actions** tab.
+
+### Manual fallback
+If the automated workflow cannot be used, a release can be uploaded by hand
+(requires PyPI credentials for the `quends` project):
+```bash
+uv build
+uvx twine upload --repository testpypi dist/*   # optional: test on TestPyPI first
+pip install -i https://test.pypi.org/simple/ quends
+uvx twine upload dist/*
+```
 
 ## Documentation
 For comprehensive information on how to use the QUENDS package, please refer to our [official documentation](https://sandialabs.github.io/quends/). 
