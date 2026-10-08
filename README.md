@@ -14,9 +14,9 @@ This project focuses on uncertainty quantification in plasma turbulent simulatio
 
 - [Installation](#installation)
 - [Usage](#usage)
+- [Examples](#examples)
 - [For Developers](#for-developers)
 - [Documentation](#documentation)
-- [Examples](#examples)
 - [Summary](#summary)
 - [Contributing](#contributing)
 - [License](#license)
@@ -38,14 +38,38 @@ This project focuses on uncertainty quantification in plasma turbulent simulatio
 
 ## Usage
 
-Examples are shown in the `examples/notebooks` directories.
-- `cgyro`: Contains all CGYRO data
-- `gx`: Contains all gx data
-- `gx/ensemble`: Contains all ensemble data
-- `DataStream_Guide-CGRYO.ipynb`: DataStream guide for CGYRO data
-- `DataStream_Guide-GX.ipynb`: DataStream guide for GX data
-- `DataStream_Guide-Ensemble.ipynb`: DataStream guide for Ensembles
-- `DataStream_Guide.ipynb`: DataStream guide
+Analyze a single data stream with the robust workflow, which detects the start
+of statistical steady state (SSS) and computes statistics over it:
+
+```python
+import quends as qnds
+
+ds = qnds.from_csv("examples/data/cgyro/output_nu0_50.csv", "Q_D/Q_GBD")
+stats = qnds.RobustWorkflow().process_data_stream(ds, "Q_D/Q_GBD")
+
+result = stats["Q_D/Q_GBD"]
+print(result["mean"], result["mean_uncertainty"], result["sss_start"])
+```
+
+Loaders are available for CSV, NetCDF, JSON, NumPy arrays, dictionaries and GX
+output (`from_csv`, `from_netcdf`, `from_json`, `from_numpy`, `from_dict`,
+`from_gx`).
+
+A small command-line interface prints a summary of one variable in a file:
+
+```bash
+quends summary examples/data/cgyro/output_nu0_50.csv Q_D/Q_GBD
+```
+
+### Examples
+Tutorials are in [`examples/tutorial`](examples/tutorial), and use the shared
+datasets in [`examples/data`](examples/data):
+- `examples/tutorial/scripts/`: Python scripts that are also rendered in the
+  [documentation gallery](https://sandialabs.github.io/quends/).
+- `examples/tutorial/notebooks/`: Jupyter notebooks, including the DataStream
+  guides (`DataStream_Guide*.ipynb`), the ensemble techniques (`03`-`06`), the
+  robust workflow (`robust_workflow.ipynb`) and the stellarator analyses. Run
+  them with `examples/tutorial/notebooks` as the working directory.
 
 ## For Developers
 
@@ -62,34 +86,42 @@ Examples are shown in the `examples/notebooks` directories.
     ```
 
 2. **Install the package and dependencies**:
-    You can install the package along with its dependencies using pip:
+    The project uses [uv](https://docs.astral.sh/uv/) and a lockfile (`uv.lock`):
     ```bash
-    pip install -e .\[dev\]
+    uv sync --extra dev
+    ```
+    Alternatively, with pip: `pip install -e ".[dev]"`.
+
+3. **Install pre-commit hooks**:
+    The hooks run Black, isort and Ruff (in that order) on each commit:
+    ```bash
+    uv run pre-commit install
     ```
 
-3. **Install pre-commit hooks**
-    To ensure code quality and consistency, install:
+4. **Run the tests**:
     ```bash
-    pre-commit install
+    uv run pytest tests/
+    uv run coverage run -m pytest tests/ && uv run coverage report
     ```
+    Coverage must stay at or above 90%. Pull requests to `main` also fail if
+    coverage drops at all compared to `main` (checked by Coveralls), so add tests
+    for new code, and when removing code.
 
-4. **Run Ruff**:
-    For linting and fixing issues:
+5. **Format and lint the files you changed**:
     ```bash
-    ruff check --fix
+    uv run black <files>
+    uv run isort --profile black <files>
+    uv run ruff check --fix <files>
     ```
+    The existing code base is not fully formatted yet, so avoid running these
+    on the whole repository; that creates large unrelated diffs.
 
-5. **Run isort**:
-    To format your code with Black:
+6. **Build the documentation (optional)**:
     ```bash
-    isort .
+    uv run --with-requirements docs/requirements.txt sphinx-build -b html -W --keep-going docs docs/_build/html
     ```
-
-6. **Run Black**:
-    To format your code with Black:
-    ```bash
-    black .
-    ```
+    This regenerates tracked files under `docs/autoapi/` and
+    `docs/auto_tutorials/`. Revert them unless you mean to update them.
 
 ## Developers: Publishing `quends` to PyPI
 This section is for maintainers who publish new releases of `quends`.
@@ -108,6 +140,8 @@ uploads them to PyPI using [trusted publishing](https://docs.pypi.org/trusted-pu
     - `__version__` in `src/quends/__init__.py`
 
     Then refresh the lockfile with `uv lock` and add an entry to `docs/changelog.rst`.
+    List any breaking changes (removed or renamed arguments) there, and update
+    the tutorials under `examples/tutorial/` that use them.
 
 2. **Check the build locally (optional)**
     ```bash
@@ -137,12 +171,13 @@ uvx twine upload dist/*
 ```
 
 ## Documentation
-For comprehensive information on how to use the QUENDS package, please refer to our [official documentation](https://sandialabs.github.io/quends/). 
+For comprehensive information on how to use the QUENDS package, please refer to our [official documentation](https://sandialabs.github.io/quends/). The release history is in [`docs/changelog.rst`](docs/changelog.rst).
 
 ## Summary
 Key functionalities include:
-- **Data Handling**: Seamlessly load and preprocess data from various formats, including CSV, JSON, and NetCDF.
-- **Statistical Analysis**: Compute essential statistics and assess data quality with built-in methods for effective sample size estimation and confidence interval calculations.
+- **Data Handling**: Load and preprocess data from CSV, NetCDF, JSON, NumPy arrays, dictionaries and GX output.
+- **Steady-State Detection**: Find and trim to the start of statistical steady state with several trimming strategies, or the automated `RobustWorkflow`.
+- **Statistical Analysis**: Compute statistics, decorrelation times, effective sample sizes and confidence intervals, for single data streams and ensembles.
 - **Visualization**: Create informative plots to visualize trends, correlations, and patterns in time series data.
 
 ## Contributing
