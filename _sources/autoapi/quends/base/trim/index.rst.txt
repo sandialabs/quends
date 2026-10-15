@@ -1,0 +1,299 @@
+quends.base.trim
+================
+
+.. py:module:: quends.base.trim
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   quends.base.trim.StandardDeviationTrimStrategy
+   quends.base.trim.ThresholdTrimStrategy
+   quends.base.trim.RollingVarianceTrimStrategy
+   quends.base.trim.SSSStartTrimStrategy
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   quends.base.trim.TrimStrategy
+   quends.base.trim.QuantileTrimStrategy
+   quends.base.trim.NoiseThresholdTrimStrategy
+   quends.base.trim.RollingVarianceThresholdTrimStrategy
+   quends.base.trim.MeanVariationTrimStrategy
+   quends.base.trim.SelfConsistentTrimStrategy
+   quends.base.trim.IQRTrimStrategy
+   quends.base.trim.TrimDataStreamOperation
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   quends.base.trim.build_trim_strategy
+
+
+Module Contents
+---------------
+
+.. py:class:: TrimStrategy(window_size = 10, start_time = 0.0, **kwargs)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class describing a trim strategy.
+
+
+   .. py:attribute:: window_size
+      :value: 10
+
+
+
+   .. py:attribute:: start_time
+      :value: 0.0
+
+
+
+   .. py:property:: method_name
+      :type: str
+
+      :abstractmethod:
+
+
+      Return the method name for this strategy.
+
+
+   .. py:method:: apply(data_stream, column_name, _stationary_checked = False, **kwargs)
+
+      Template method that defines the trimming workflow.
+
+      ``_stationary_checked`` lets a subclass that has already verified
+      stationarity (e.g. :class:`NoiseThresholdTrimStrategy`) skip the
+      redundant re-check here without changing behavior.
+
+
+
+.. py:class:: QuantileTrimStrategy(window_size = 10, start_time = 0.0, robust = True)
+
+   Bases: :py:obj:`TrimStrategy`
+
+
+   Trim based on standard-deviation / robust MAD steady-state criteria.
+
+
+   .. py:property:: method_name
+      :type: str
+
+
+      Return the method name for this strategy.
+
+
+.. py:class:: NoiseThresholdTrimStrategy(window_size = 10, start_time = 0.0, threshold = None, robust = True)
+
+   Bases: :py:obj:`TrimStrategy`
+
+
+   Trim using rolling standard deviation on normalized data.
+
+
+   .. py:method:: apply(data_stream, column_name, **kwargs)
+
+      Template method that defines the trimming workflow.
+
+      ``_stationary_checked`` lets a subclass that has already verified
+      stationarity (e.g. :class:`NoiseThresholdTrimStrategy`) skip the
+      redundant re-check here without changing behavior.
+
+
+
+   .. py:property:: method_name
+      :type: str
+
+
+      Return the method name for this strategy.
+
+
+.. py:class:: RollingVarianceThresholdTrimStrategy(window_size = 50, start_time = 0.0, robust = True, threshold = 0.1)
+
+   Bases: :py:obj:`TrimStrategy`
+
+
+   Detect steady-state when the rolling spread falls below a threshold.
+
+   Note: despite the historical name ("variance"), the criterion uses the
+   rolling **standard deviation** (``.std()``) compared against
+   ``threshold * mean(rolling_std)``. The name is retained for backward
+   compatibility (``build_trim_strategy("rolling_variance")``).
+
+
+   .. py:property:: method_name
+      :type: str
+
+
+      Return the method name for this strategy.
+
+
+.. py:class:: MeanVariationTrimStrategy(*, verbosity=None, decor_multiplier=None, std_dev_frac=None, fudge_fac=None, smoothing_window_correction=None, final_smoothing_window=None)
+
+   Bases: :py:obj:`TrimStrategy`
+
+
+   Trim using Statistical Steady State (SSS) detection.
+
+   The signal is smoothed with a rolling mean whose window is a multiple of the
+   decorrelation time (``tau_int``, in number of samples). The start of SSS is
+   the first point after which the smoothed signal stays within a tolerance of
+   the mean of the remaining smoothed signal.
+
+   :Parameters: * **verbosity** (*int, optional*) -- Level of print/plot output. ``> 0`` prints diagnostics; ``> 1`` also
+                  plots the autocorrelation function and intermediate signals.
+                  Default is 0.
+                * **decor_multiplier** (*float, optional*) -- Multiplier applied to the decorrelation time to get the smoothing
+                  window size. The window is capped at the signal length and is at least
+                  3 points. Default is 2.0.
+                * **std_dev_frac** (*float, optional*) -- Fraction of the std dev of the remaining signal used as tolerance.
+                  Default is 0.1.
+                * **fudge_fac** (*float, optional*) -- Fraction of the initial mean of the smoothed signal added to the std
+                  dev when computing the tolerance, to keep it from going to zero.
+                  Default is 1e-6.
+                * **smoothing_window_correction** (*float, optional*) -- Fraction of the smoothing window to move the SSS start back, to account
+                  for the lag of the rolling mean. Default is 0.5.
+                * **final_smoothing_window** (*int, optional*) -- Window used to smooth the std dev and deviation curves so they do not go
+                  to zero at the end of the signal. Default is 5.
+
+
+   .. py:attribute:: verbosity
+
+
+   .. py:attribute:: decor_multiplier
+
+
+   .. py:attribute:: std_dev_frac
+
+
+   .. py:attribute:: fudge_fac
+
+
+   .. py:attribute:: smoothing_window_correction
+
+
+   .. py:attribute:: final_smoothing_window
+
+
+   .. py:property:: method_name
+      :type: str
+
+
+      Return the method name for this strategy.
+
+
+   .. py:method:: apply(data_stream, column_name, **kwargs)
+
+      Identify and trim the signal to the start of the Statistical Steady State (SSS)
+
+      :Parameters: * **data_stream** (*DataStream*) -- The data stream to analyze. Time points are assumed to be equally
+                     spaced.
+                   * **column_name** (*str*) -- The name of the column in ``data_stream.data`` to analyze for
+                     steady state.
+
+      :returns: *DataStream* -- A new DataStream object containing the DataFrame trimmed to the SSS start.
+                Returns an empty DataFrame if no SSS is identified.
+
+
+
+.. py:class:: SelfConsistentTrimStrategy(window_size = 10, start_time = 0.0, robust = True, rel_tol_mu = 0.1, rel_tol_sigma = 0.05)
+
+   Bases: :py:obj:`TrimStrategy`
+
+
+   Trim using self-consistent block comparison:
+   find the earliest time where consecutive non-overlapping blocks of size W
+   agree in both mean and spread (within relative tolerances).
+
+   :Parameters: * **window_size** (*int*) -- Block size W.
+                * **robust** (*bool*) -- Use median + MAD (scaled) vs mean + std.
+                * **rel_tol_mu** (*float*) -- Relative tolerance for mean comparison across blocks.
+                * **rel_tol_sigma** (*float*) -- Relative tolerance for spread comparison across blocks.
+
+
+   .. py:property:: method_name
+      :type: str
+
+
+      Return the method name for this strategy.
+
+
+.. py:class:: IQRTrimStrategy(window_size = 10, start_time = 0.0, threshold = 0.05)
+
+   Bases: :py:obj:`TrimStrategy`
+
+
+   Trim using IQR-based steady-state detection:
+   IQR(remaining) <= threshold * abs(median(remaining)).
+
+   :Parameters: * **window_size** (*int*) -- Minimum samples before evaluating (used for loop start only).
+                * **threshold** (*float*) -- Fraction of abs(median) that IQR must fall below.
+
+
+   .. py:property:: method_name
+      :type: str
+
+
+      Return the method name for this strategy.
+
+
+.. py:data:: StandardDeviationTrimStrategy
+
+.. py:data:: ThresholdTrimStrategy
+
+.. py:data:: RollingVarianceTrimStrategy
+
+.. py:data:: SSSStartTrimStrategy
+
+.. py:function:: build_trim_strategy(method = 'std', window_size = 10, start_time = 0.0, threshold = None, robust = True)
+
+   Factory: map a method string to a configured :class:`TrimStrategy` instance.
+
+   This is the **single canonical source of truth** for the method-string →
+   strategy-class mapping.  All convenience wrappers (``DataStream.trim``,
+   ``Ensemble.trim``, ``Plotter._trim_datastream``) delegate here so the
+   mapping never drifts apart.
+
+   :Parameters: * **method** (*str*) -- One of ``"std"``, ``"threshold"``, ``"rolling_variance"``,
+                  ``"self_consistent"``, ``"iqr"``.
+                * **window_size** (*int*) -- Block / window size passed to the strategy.
+                * **start_time** (*float*) -- Ignore data before this time.
+                * **threshold** (*float or None*) -- Required for ``"threshold"``; optional for ``"rolling_variance"``
+                  (default 0.1) and ``"iqr"`` (default 0.05).
+                * **robust** (*bool*) -- Use median/MAD instead of mean/std where applicable.
+
+   :returns: *TrimStrategy*
+
+   :raises ValueError: If *method* is not one of the recognised strings.
+
+   .. rubric:: Examples
+      :class: example
+
+   >>> strategy = build_trim_strategy("std", window_size=20)
+   >>> op = TrimDataStreamOperation(strategy)
+   >>> trimmed = op(ds, column_name="Q")
+
+
+.. py:class:: TrimDataStreamOperation(strategy, operation_name = 'trim')
+
+   Bases: :py:obj:`quends.base.operations.DataStreamOperation`
+
+
+   Operation that applies a TrimStrategy to a DataStream.
+
+
+   .. py:property:: strategy
+      :type: TrimStrategy
+
+
+
