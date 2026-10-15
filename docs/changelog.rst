@@ -2,6 +2,19 @@
 Changelog
 =========
 
+0.1.5 (2026-10-15)
+------------------
+
+**Changed (breaking)**
+
+* The minimum supported Python version is now 3.12 (previously 3.8).
+  Python 3.8 through 3.11 are no longer supported.
+
+**Development**
+
+* Updated the dependency lockfile for Python 3.12 and later.
+* Updated the test and documentation CI workflows to run on Python 3.12.
+
 0.1.4 (2026-10-08)
 ------------------
 
