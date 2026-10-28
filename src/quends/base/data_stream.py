@@ -18,7 +18,6 @@ from .utils import (
     _resolve_columns,
     autotune_blocks,
     confidence_multiplier,
-    pooled_tau_int,
     power_law_model,
     tau_window_blocks,
     to_native_types,
@@ -328,7 +327,7 @@ class DataStream:
             # spread of member means.
             eff_n_for_se = float(max(1.0, ess_blocks))
             se_method = "ess_blocks"
-            if status == "independent":
+            if status in ("independent", "tau_window"):
                 warning = None
             elif status == "best_p":
                 warning = "Block means did not pass Ljung-Box; using best-p window (SE via Geyer ESS)."
