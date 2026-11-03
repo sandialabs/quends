@@ -2,6 +2,15 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+**Security**
+
+* Updated locked dependencies to patched releases: Black 26.10.1,
+  certifi 2026.10.23, filelock 4.2.7, Pillow 13.0.0, Tornado 6.6,
+  and virtualenv 21.15.2.
+
 0.1.5 (2026-10-15)
 ------------------
 
