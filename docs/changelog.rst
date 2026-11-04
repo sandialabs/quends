@@ -2,8 +2,73 @@
 Changelog
 =========
 
-Unreleased
-----------
+0.1.6 (2026-11-03)
+------------------
+
+**Changed (breaking)**
+
+* ``DataStream.compute_statistics()`` now always computes the standard error
+  of the mean as ``sd(block_means) / sqrt(ess_blocks)``, where ``ess_blocks``
+  is the Geyer effective sample size of the block means. Before, it divided by
+  the raw number of blocks whenever a Ljung-Box test found the block means
+  independent. That test has low power for typical block counts, and often
+  passes while the block means are still correlated, so the standard error
+  could be too small. As a result, ``mean_uncertainty`` and the confidence
+  intervals are larger for almost every call. The means do not change.
+* ``se_method`` is now always ``"ess_blocks"``. The values ``"iid_blocks"``,
+  ``"iid_blocks_best_p"`` and ``"ess_blocks_fallback"`` are no longer
+  returned. Update code that checks for them.
+* The default block window is now the integrated autocorrelation time,
+  ``w = round(tau_int)`` (the "tau-window" rule), instead of the window found
+  by the Ljung-Box autotune search. Because the standard error now accounts
+  for correlation between blocks, the blocks no longer need to be independent.
+  This changes ``window_size``, ``n_short_averages`` and ``ess_blocks``, and
+  ``independence_status`` is now ``"tau_window"`` for the default rule. The
+  Ljung-Box diagnostics are still reported. An explicit ``window_size`` still
+  overrides the rule.
+* Ensemble statistics:
+
+  * ``pooled_block_means_stats_for_col`` (pooled block means, T1) now always
+    uses the ESS-corrected standard error (``se_method="sem_ess"``). Before,
+    it used the plain block-count standard error (``"sem_n"``) when all
+    members passed the independence test. The pooled ESS now comes from the
+    concatenated pooled block means by default (new argument
+    ``pooled_ess_method="concat"``). Use ``"sum"`` to add up the per-member
+    ESS, as before.
+  * ``ensemble_average_stats_for_col`` (ensemble average, T0) and
+    ``ivw_member_means_stats_for_col`` (inverse-variance weighted member means,
+    T2) have a new ``tau_mode`` argument. With the default ``"pooled"``, the
+    block window comes from a correlation time that is pooled over all
+    members, which is much more stable than one estimated from a single short
+    trace. Use ``tau_mode="per_member"`` for ensembles whose members really
+    differ, such as parameter scans. T0 metadata now also reports ``tau_mode``
+    and ``tau_star``.
+
+* The regression baselines in ``tests/*/expected/`` were regenerated for these
+  changes.
+
+**Added**
+
+* ``quends.base.utils.tau_window_blocks()`` blocks a series with the
+  tau-window rule.
+* ``quends.base.utils.pooled_tau_int()`` estimates one integrated
+  autocorrelation time for an ensemble from the mean of the members'
+  normalized autocorrelation functions. It is meant for homogeneous ensembles.
+
+**Fixed**
+
+* Results that use the default tau-window rule no longer get the misleading
+  warning "Too few blocks for independence test; SE via Geyer ESS.". The
+  warning for the ``best_p`` status now says that the standard error uses the
+  Geyer ESS.
+
+**Documentation**
+
+* Added a "Detecting the Start of Statistical Steady State" section to the
+  README. It covers when to use ``RobustWorkflow``, how the ``mean_variation``
+  heuristic works (including the ``smoothing_window_correction`` back
+  correction), the ``verbosity=2`` diagnostic plots, and how to tune
+  ``std_dev_frac``, ``decor_multiplier`` and ``smoothing_window_correction``.
 
 **Added**
 
@@ -29,6 +94,7 @@ Unreleased
 
 **Security**
 
+* Added ``pillow>=13.0.0`` as a dependency.
 * Updated locked dependencies to patched releases: Black 26.10.1,
   certifi 2026.10.23, filelock 4.2.7, Pillow 13.0.0, Tornado 6.6,
   and virtualenv 21.15.2.
