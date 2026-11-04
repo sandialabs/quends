@@ -382,6 +382,91 @@ def test_compute_statistics_best_p_status_adds_warning(simple_data: pd.DataFrame
     )
 
 
+# ------------ window_rule --------------
+
+
+def _ar1_stream(n=4000, phi=0.9, seed=1234):
+    """Seeded AR(1) DataStream; tau_int = (1 + phi) / (1 - phi) = 19 for phi = 0.9."""
+    rng = np.random.default_rng(seed)
+    noise = rng.normal(size=n)
+    x = np.empty(n)
+    x[0] = noise[0]
+    for t in range(1, n):
+        x[t] = phi * x[t - 1] + noise[t]
+    return DataStream(pd.DataFrame({"time": np.arange(n), "A": x}))
+
+
+def test_compute_statistics_default_window_rule_is_tau():
+    ds = _ar1_stream()
+
+    default = ds.compute_statistics("A")["A"]
+    explicit = ds.compute_statistics("A", window_rule="tau")["A"]
+
+    assert default["independence_status"] == "tau_window"
+    assert default["se_method"] == "ess_blocks"
+    assert "warning" not in default
+    assert explicit == default
+
+
+def test_compute_statistics_window_rule_autotune_uses_ljung_box_search():
+    ds = _ar1_stream()
+
+    tau = ds.compute_statistics("A", window_rule="tau")["A"]
+    auto = ds.compute_statistics("A", window_rule="autotune")["A"]
+
+    # The legacy search starts near 2 * tau_int and only widens the window, so
+    # it lands on a longer window than w = round(tau_int).
+    assert auto["independence_status"] in ("independent", "best_p")
+    assert auto["window_size"] > tau["window_size"]
+    assert auto["n_short_averages"] < tau["n_short_averages"]
+    # Same standard-error formula under either rule.
+    assert auto["se_method"] == "ess_blocks"
+    assert auto["se_effective_n"] == pytest.approx(max(1.0, auto["ess_blocks"]))
+    assert auto["ljungbox_pvalues"]
+
+
+def test_compute_statistics_window_rules_give_similar_standard_errors():
+    ds = _ar1_stream()
+
+    se_tau = ds.compute_statistics("A", window_rule="tau")["A"]["mean_uncertainty"]
+    se_auto = ds.compute_statistics("A", window_rule="autotune")["A"][
+        "mean_uncertainty"
+    ]
+
+    # The Geyer ESS of the block means credits whatever correlation the window
+    # leaves between blocks, so the window is a precision choice, not a bias
+    # choice: the two rules agree closely on a long AR(1) record.
+    assert 0.8 < se_auto / se_tau < 1.25
+
+
+def test_compute_statistics_window_size_overrides_window_rule():
+    ds = _ar1_stream()
+
+    for rule in ("tau", "autotune"):
+        result = ds.compute_statistics("A", window_size=50, window_rule=rule)["A"]
+        assert result["window_size"] == 50
+        assert result["independence_status"] == "user_window"
+
+
+def test_compute_statistics_rejects_unknown_window_rule():
+    ds = _ar1_stream()
+
+    with pytest.raises(ValueError, match="window_rule must be 'tau' or 'autotune'"):
+        ds.compute_statistics("A", window_rule="ljung-box")
+
+
+def test_process_column_rejects_unknown_window_rule_with_explicit_window():
+    ds = _ar1_stream()
+
+    with pytest.raises(ValueError, match="window_rule must be 'tau' or 'autotune'"):
+        ds._process_column(
+            ds.data["A"],
+            estimated_window=10,
+            method="non-overlapping",
+            window_rule="bogus",
+        )
+
+
 # ------------ cumulative stats --------------
 
 
@@ -978,10 +1063,13 @@ def test_datastream_trim_passes_extra_strategy_kwargs(simple_data: pd.DataFrame)
             assert self.strategy.custom_option == "set-by-trim"
             return DataStream(pd.DataFrame({"A": [42]}))
 
-    with patch(
-        "quends.base.trim.build_trim_strategy",
-        return_value=DummyStrategy(),
-    ), patch("quends.base.trim.TrimDataStreamOperation", DummyOperation):
+    with (
+        patch(
+            "quends.base.trim.build_trim_strategy",
+            return_value=DummyStrategy(),
+        ),
+        patch("quends.base.trim.TrimDataStreamOperation", DummyOperation),
+    ):
         result = ds.trim(column_name="A", custom_option="set-by-trim")
 
     assert result.data["A"].tolist() == [42]

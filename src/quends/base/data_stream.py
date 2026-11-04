@@ -231,29 +231,49 @@ class DataStream:
         window_size=None,
         confidence_level: float = 0.95,
         ci_method: str = "normal",
+        window_rule: str = "tau",
     ):
         """
-        Aggregate statistics for each column using autotuned independent block means.
+        Aggregate statistics for each column from block means.
 
-        Window selection and block-mean computation go through :meth:`_process_column`
-        → :func:`~quends.base.utils.autotune_blocks` (the single canonical helper
-        shared with the ensemble pipeline).
+        Each column is cut into non-overlapping blocks and the standard error of
+        the mean is ``sd(block_means) / sqrt(ess_blocks)``, where ``ess_blocks`` is
+        the Geyer effective sample size of the block means.  The blocks therefore
+        do not need to be independent: any correlation left between them is
+        credited by ``ess_blocks``.  Window selection and block-mean computation go
+        through :meth:`_process_column`, which is shared with the ensemble
+        pipeline.
 
         Parameters
         ----------
         column_name : str or list or None
         ddof : int
         method : {'non-overlapping', 'sliding'}
-            Block type.  Independence autotuning always uses non-overlapping blocks
+            Block type.  Window selection always uses non-overlapping blocks
             regardless of this setting.
         window_size : int or None
-            User-supplied window; triggers autotune when ``None``.
+            User-supplied block window.  When given, it overrides *window_rule*.
+            When ``None``, the window is chosen by *window_rule*.
         confidence_level : float
             Two-sided confidence level for the CI.  Default ``0.95``.
         ci_method : {'normal', 't'}
             CI quantile family.  Default ``'normal'`` (preserves the historical
             ``1.96`` multiplier exactly for backward compatibility).  When ``'t'``,
             uses Student's *t* with ``dof = max(1, se_effective_n - 1)``.
+        window_rule : {'tau', 'autotune'}
+            How the block window is chosen when *window_size* is ``None``.
+
+            * ``'tau'`` (default) -- the tau-window rule, ``w = round(tau_int)``,
+              with ``tau_int`` estimated from the series by Geyer positive-pair
+              truncation.  ``independence_status`` is ``"tau_window"``.
+            * ``'autotune'`` -- the legacy Ljung-Box search: start near
+              ``2 * tau_int`` and widen the window until the block means pass a
+              Ljung-Box test (``independence_status`` ``"independent"``), or keep
+              the window with the best p-value (``"best_p"``).
+
+            Both rules use the same standard error, so the choice changes the
+            window and the precision of the estimate, not the formula.  The
+            Ljung-Box diagnostics are reported under either rule.
 
         Returns
         -------
@@ -272,7 +292,14 @@ class DataStream:
             ``warning`` (if applicable).
 
             On error: ``{col: {"error": "…"}}``
+
+        Raises
+        ------
+        ValueError
+            If *window_rule* is not ``'tau'`` or ``'autotune'``.
         """
+        if window_rule not in ("tau", "autotune"):
+            raise ValueError("window_rule must be 'tau' or 'autotune'")
         stats = {}
         cols = self._get_columns(column_name)
         ess_res = self.effective_sample_size(column_names=column_name)
@@ -285,14 +312,15 @@ class DataStream:
                 continue
 
             # Window selection and block-mean computation via _process_column,
-            # which is the single autotune entry point for both DataStream and
+            # which is the single blocking entry point for both DataStream and
             # the ensemble pipeline.
             _, ab = self._process_column(
                 series,
                 estimated_window=window_size,
                 method=method,
-                min_blocks=2,  # continue until < 2 blocks (original behaviour)
+                min_blocks=2,  # autotune only: continue until < 2 blocks
                 max_iter=20,
+                window_rule=window_rule,
             )
             w = ab["window_size"]
             status = ab["independence_status"]
@@ -315,10 +343,10 @@ class DataStream:
             ess_blocks = _geyer_ess_on_blocks(block_means)
 
             # SE rule: ALWAYS credit residual block-to-block correlation via the
-            # Geyer ESS on the block means (se = sd / sqrt(ess_blocks)).  The
-            # window rule and independence_status are unchanged and still
-            # reported; only the SE denominator no longer trusts the Ljung-Box
-            # "independent" verdict.  That test has low power on ~100 blocks, so
+            # Geyer ESS on the block means (se = sd / sqrt(ess_blocks)), for
+            # every window rule.  independence_status and the Ljung-Box
+            # diagnostics are still reported, but the SE denominator no longer
+            # trusts the Ljung-Box "independent" verdict.  That test has low power on ~100 blocks, so
             # the old iid_blocks path (dividing by the full n_blocks) left the SE
             # optimistic by exactly sqrt(T_B) whenever ess_blocks < n_blocks --
             # measured at 1.39x on real data.  Dividing by ess_blocks instead
@@ -595,37 +623,59 @@ class DataStream:
         B_min_hard: int = 4,
     ) -> Tuple[pd.Series, dict]:
         """
-        Autotune block window and transform a 1D series into block means.
+        Choose a block window and transform a 1D series into block means.
 
-        Window determination always uses non-overlapping blocks + Ljung-Box
-        (LB on sliding means is unreliable for independence testing).  When
-        *estimated_window* is ``None`` the window is chosen by
-        :func:`~quends.base.utils.autotune_blocks`; when an integer is
-        supplied the autotune is skipped but the LB diagnostic is still run.
+        Window selection always uses non-overlapping blocks, whatever *method*
+        is.  The window comes from one of three sources, in order of priority:
+
+        1. an explicit *estimated_window*, used as given (the Ljung-Box
+           diagnostic is still computed);
+        2. ``window_rule="tau"`` (default): :func:`~quends.base.utils.tau_window_blocks`,
+           ``w = round(tau_int)``;
+        3. ``window_rule="autotune"``: the legacy Ljung-Box search in
+           :func:`~quends.base.utils.autotune_blocks`.
 
         Parameters
         ----------
         column_data : pandas.Series
             Raw series values (dropna'd before calling).
         estimated_window : int or None
-            Starting window hint.  ``None`` triggers full autotune.
+            Explicit block window.  ``None`` lets *window_rule* choose it.
         method : {'non-overlapping', 'sliding'}
-            Output format.  Independence autotune always uses
-            ``non-overlapping`` regardless of this setting.
+            Output format.  Window selection always uses ``non-overlapping``
+            blocks regardless of this setting.
         time_values : np.ndarray or None
             If provided, used as block-centre indices in the returned Series.
-        alpha, lag_set, B_min, min_blocks, max_iter, w_min, c0 :
-            Forwarded verbatim to :func:`~quends.base.utils.autotune_blocks`.
+        alpha, lag_set :
+            Ljung-Box settings, used by every rule for the reported diagnostic.
+        B_min, min_blocks, max_iter, w_min, c0 :
+            Forwarded to :func:`~quends.base.utils.autotune_blocks` and used by
+            ``window_rule="autotune"``.  With an explicit *estimated_window*,
+            only *min_blocks* applies (the minimum block count for running the
+            Ljung-Box diagnostic).
+        window_rule : {'tau', 'autotune'}
+            Window rule used when *estimated_window* is ``None``.
+        tau, B_min_hard :
+            Forwarded to :func:`~quends.base.utils.tau_window_blocks`; used only
+            by ``window_rule="tau"``.  *tau* overrides the per-series estimate
+            (for example an ensemble-pooled ``tau``).
 
         Returns
         -------
-        (block_means_series : pd.Series, autotune_result : dict)
-            *autotune_result* is the full dict returned by
-            :func:`~quends.base.utils.autotune_blocks`; it always describes
-            non-overlapping blocks regardless of *method*.
+        (block_means_series : pd.Series, blocking_result : dict)
+            *blocking_result* is the dict returned by the helper that chose the
+            window; it always describes non-overlapping blocks regardless of
+            *method*.
+
+        Raises
+        ------
+        ValueError
+            If *method* or *window_rule* is not one of the allowed values.
         """
         if method not in ("non-overlapping", "sliding"):
             raise ValueError("Invalid method. Choose 'sliding' or 'non-overlapping'.")
+        if window_rule not in ("tau", "autotune"):
+            raise ValueError("window_rule must be 'tau' or 'autotune'")
 
         if time_values is not None:
             time_values = np.asarray(time_values, dtype=float)
@@ -659,7 +709,7 @@ class DataStream:
                 alpha=alpha,
                 lag_set=lag_set,
             )
-        elif window_rule == "autotune":
+        else:  # window_rule == "autotune"
             ab = autotune_blocks(
                 x,
                 window_size=None,
@@ -672,8 +722,6 @@ class DataStream:
                 w_min=w_min,
                 c0=c0,
             )
-        else:
-            raise ValueError("window_rule must be 'tau' or 'autotune'")
         w = ab["window_size"]
 
         if method == "sliding":
@@ -683,7 +731,7 @@ class DataStream:
                 series = column_data
             return series.rolling(window=int(w)).mean().dropna(), ab
 
-        # non-overlapping — reuse the blocks already computed by autotune_blocks
+        # non-overlapping — reuse the blocks already computed by the window helper
         blocks = ab["blocks"]
         n_blocks = int(blocks.size)
         if n_blocks < 1:

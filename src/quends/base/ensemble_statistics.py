@@ -16,9 +16,10 @@ are accepted for backward compatibility but normalised internally.
 
 * ``"ensemble_average"`` — average traces element-wise into a single trace and
   run DataStream statistics on it (technique 0).
-* ``"pooled_block_means"`` — autotune block window per member until block means
-  pass Ljung-Box independence, pool blocks across members, compute statistics
-  on the pooled series (technique 1; preferred for trimmed ensembles).
+* ``"pooled_block_means"`` — block each member with its own tau-window
+  (``w = round(tau_int)`` of that member), pool the block means across members,
+  and compute the mean and an ESS-corrected standard error on the pooled
+  series (technique 1; preferred for trimmed ensembles).
 * ``"ivw_member_means"`` — call ``DataStream.compute_statistics()`` on each
   member, combine the per-member ``(mean, SE)`` pairs using inverse-variance
   weighting (technique 2; fallback to simple mean when SEs are unusable).
@@ -113,26 +114,36 @@ def pool_block_means(
     min_blocks: int = 8,
 ) -> Tuple[np.ndarray, Dict[str, Any]]:
     """
-    For all members: autotune per-member window size, then pool block means.
+    For all members: choose a per-member block window, then pool block means.
 
-    Calls ``DataStream._process_column`` directly for each member — the single
-    autotune entry point — so there is exactly **one** autotune loop per member.
+    Calls ``DataStream._process_column`` directly for each member, with its
+    default tau-window rule: each member is blocked with ``w = round(tau_int)``
+    estimated from that member's own series.  No Ljung-Box search is run; the
+    per-member Ljung-Box p-values are still recorded as diagnostics, along with
+    each member's window, block count, block ESS and ``independence_status``
+    (``"tau_window"`` under the default rule).
 
     Parameters
     ----------
     data_streams : list of DataStream
     col : str
     window_size : int or None
-        Starting window hint; auto-estimated via tau_int when ``None``.
+        Explicit block window used for every member.  When ``None``, each member
+        gets its own tau-window.
     method : str
     lb_alpha : float
+        Ljung-Box significance level for the recorded diagnostic.
     lb_lags : int or None
-        Single-lag override for Ljung-Box (backward compat).
+        Single-lag override for the Ljung-Box diagnostic (backward compat).
         When ``None``, the canonical ``lag_set=(5, 10)`` is used.
     max_tries : int
-        Maximum autotune iterations forwarded to ``autotune_blocks``.
+        Iteration cap of the legacy Ljung-Box search.  Retained for backward
+        compatibility; neither the default tau-window rule nor an explicit
+        *window_size* iterates, so it currently has no effect.
     min_blocks : int
-        Hard stop forwarded to ``autotune_blocks``.
+        With an explicit *window_size*, the minimum block count needed to run
+        the Ljung-Box diagnostic.  The tau-window rule keeps at least 4 blocks
+        regardless.
 
     Returns
     -------
@@ -159,7 +170,8 @@ def pool_block_means(
         if series.size < 4:
             continue
 
-        # Single autotune per member via the canonical helper.
+        # One blocking call per member via the canonical helper (tau-window
+        # rule by default; an explicit window_size overrides it).
         _, ab = ds._process_column(
             series,
             estimated_window=window_size,
@@ -314,18 +326,25 @@ def pooled_block_means_stats_for_col(
 
     Pipeline:
 
-    1. :func:`pool_block_means` calls ``DataStream._process_column`` directly for
-       each member → :func:`~quends.base.utils.autotune_blocks` (one autotune per
-       member, the single canonical helper). Per-member block ESS and independence
-       are recorded there.
-    2. ESS and independence are combined **per member** (independent members'
-       effective counts add; the ensemble status is all/some/none-independent from
-       the per-member verdicts). No test is run on the cross-member concatenation,
-       which would inject spurious boundary autocorrelation (AUDIT_REPORT H3).
-    3. SEM policy: ``sem_n`` (sd/√n_blocks) when every member is independent;
-       otherwise ``sem_ess`` (sd/√ESS_blocks). ``lb_lags`` and
-       ``pooled_lb_alpha_bad`` are retained for backward compatibility but no
-       longer drive a pooled test.
+    1. :func:`pool_block_means` blocks each member with its own tau-window
+       (``w = round(tau_int)`` of that member, unless *window_size* is given)
+       and pools the block means of all members into one series.  Per-member
+       windows, block ESS, Ljung-Box p-values and ``independence_status`` are
+       recorded as diagnostics.
+    2. The pooled effective block count ``ess_blocks`` is set by
+       *pooled_ess_method*: by default (``"concat"``) the Geyer ESS of the
+       concatenated pooled block means; with ``"sum"``, the sum of the
+       per-member block ESS.
+    3. The standard error is always ``sem_ess = sd(pooled_blocks) /
+       sqrt(ess_blocks)``.  The block-count SEM ``sem_n = sd / sqrt(n_blocks)``
+       is still returned as ``mean_uncertainty_sem_n`` for comparison but is
+       never reported as ``mean_uncertainty``.  The ensemble
+       ``independence_status`` (all/some/none-independent) summarises the
+       per-member verdicts; it does not change the standard error.  No
+       Ljung-Box test is run on the cross-member concatenation, which would
+       inject spurious boundary autocorrelation (AUDIT_REPORT H3).  ``lb_lags``
+       and ``pooled_lb_alpha_bad`` are retained for backward compatibility but
+       no longer drive a pooled test.
 
     Parameters
     ----------
@@ -333,12 +352,24 @@ def pooled_block_means_stats_for_col(
     col : str
     ddof : int
     window_size : int or None
+        Explicit block window for every member.  ``None`` gives each member its
+        own tau-window.
     method : str
     lb_lags : int or None
-        Single-lag override for the pooled Ljung-Box test (backward compat).
-        When ``None``, the canonical ``lag_set=(5, 10)`` is used.
+        Single-lag override for the per-member Ljung-Box diagnostic (backward
+        compat).  When ``None``, the canonical ``lag_set=(5, 10)`` is used.
     lb_alpha : float
+        Ljung-Box significance level for the per-member diagnostic.
     pooled_lb_alpha_bad : float
+        Retained for backward compatibility; unused.
+    confidence_level : float
+        Two-sided confidence level for the CI.  Default ``0.95``.
+    ci_method : {'normal', 't'}
+        CI quantile family.  With ``'t'``, ``dof = max(1, ess_blocks - 1)``.
+    pooled_ess_method : {'concat', 'sum'}
+        How the pooled effective block count is formed (step 2).  On an AR(1)
+        benchmark (16 members, ``w = tau``) ``"concat"`` ran about 2%
+        conservative on the standard error and ``"sum"`` was unbiased.
 
     Returns
     -------
@@ -470,8 +501,9 @@ def pooled_block_means_stats_for_col(
     pooled_pvals: List[float] = member_pvals
     pooled_tested_lags: List[int] = list(meta.get("member_lags", []))
 
-    # SEM policy: ALWAYS the ESS-corrected SEM (sum of per-member block ESS),
-    # which credits residual within-member autocorrelation.  Formerly the
+    # SEM policy: ALWAYS the ESS-corrected SEM, sd / sqrt(ess_blocks), with
+    # ess_blocks set by pooled_ess_method ("concat" by default, or "sum").  It
+    # credits residual within-member autocorrelation.  Formerly the
     # block-count SEM (sem_n) was used when every member passed Ljung-Box, but
     # that gate has low power and left the pooled SE optimistic; this mirrors the
     # DataStream ess_blocks change so per-member, EA, and SR tell one story.
@@ -555,10 +587,16 @@ def ivw_member_means_stats_for_col(
     """
     Compute *ivw_member_means* (T2) statistics for one column.
 
-    Calls :meth:`DataStream.compute_statistics` on each member (which uses the
-    canonical :func:`~quends.base.utils.autotune_blocks` helper) and aggregates
-    via inverse-variance weighting (fallback: simple mean when no variances are
-    available).
+    Calls :meth:`DataStream.compute_statistics` on each member and aggregates
+    the per-member ``(mean, SE)`` pairs via inverse-variance weighting
+    (fallback: simple mean when no variances are available).  Each member's SE
+    is ``sd(block_means) / sqrt(ess_blocks)``.
+
+    ``tau_mode`` (default ``"pooled"``) sets the members' block window:
+    ``"pooled"`` gives every member ``w = round(tau*)`` with ``tau*`` pooled
+    across the member traces (homogeneous ensembles only); ``"per_member"``
+    gives each member its own tau-window.  An explicit *window_size* overrides
+    both.
 
     Parameters
     ----------

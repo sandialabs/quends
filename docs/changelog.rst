@@ -5,6 +5,28 @@ Changelog
 Unreleased
 ----------
 
+**Added**
+
+* ``DataStream.compute_statistics()`` has a new ``window_rule`` argument that
+  chooses how the block window is picked when ``window_size`` is not given.
+  The default, ``"tau"``, is the tau-window rule, ``w = round(tau_int)``.
+  ``"autotune"`` selects the legacy Ljung-Box search. The standard error is
+  ``sd(block_means) / sqrt(ess_blocks)`` under both rules, so the choice changes
+  the window, not the formula. An explicit ``window_size`` still overrides the
+  rule. Any other value raises a ``ValueError``.
+
+**Documentation**
+
+* The docstrings of the pooled-block-means (serialization) and
+  inverse-variance-weighted ensemble statistics, of ``Ensemble``, of the
+  ensemble statistics workflow and of ``DataStream.compute_statistics()`` now
+  describe the current behaviour. Each member is blocked with its own
+  tau-window, the standard error always divides by the effective number of
+  blocks, and the pooled effective block count is set by
+  ``pooled_ess_method``. They previously described a Ljung-Box autotune per
+  member and a standard error that divided by the number of blocks when every
+  member passed the Ljung-Box test.
+
 **Security**
 
 * Updated locked dependencies to patched releases: Black 26.10.1,

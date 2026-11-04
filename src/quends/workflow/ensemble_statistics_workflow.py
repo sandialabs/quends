@@ -7,8 +7,8 @@ This workflow supports two member-wise ensemble analysis techniques:
 
 ``pooled_block_means`` (T1):
   1. Trim each ensemble member individually.
-  2. For each surviving member, autotune the block window size until block
-     means pass the Ljung-Box independence test.
+  2. Block each surviving member with its own tau-window
+     (``w = round(tau_int)`` of that member).
   3. Pool all per-member block means into a single series.
   4. Compute statistics (mean, SEM, CI, ESS) on the pooled series.
 
