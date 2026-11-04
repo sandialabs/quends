@@ -6,6 +6,7 @@ from .history import DataStreamHistory, DataStreamHistoryEntry
 from .operations import DataStreamOperation
 from .stationary import MakeDataStreamStationaryOperation
 from .trim import (
+    MEAN_VARIATION_DEFAULTS,
     IQRTrimStrategy,
     MeanVariationTrimStrategy,
     NoiseThresholdTrimStrategy,
@@ -31,6 +32,7 @@ __all__ = [
     "TrimStrategy",
     "TrimDataStreamOperation",
     "build_trim_strategy",
+    "MEAN_VARIATION_DEFAULTS",
     "QuantileTrimStrategy",
     "NoiseThresholdTrimStrategy",
     "RollingVarianceThresholdTrimStrategy",

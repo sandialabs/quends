@@ -46,6 +46,15 @@ Changelog
 
 * The regression baselines in ``tests/*/expected/`` were regenerated for these
   changes.
+* ``MeanVariationTrimStrategy`` now uses the same defaults as
+  ``RobustWorkflow``: ``decor_multiplier=6.0`` (was 2.0), ``fudge_fac=0.1``
+  (was 1e-6) and ``final_smoothing_window=10`` (was 5). ``verbosity=0``,
+  ``std_dev_frac=0.1`` and ``smoothing_window_correction=0.5`` are unchanged.
+  This changes the detected start of statistical steady state for code that
+  creates the strategy without these arguments, including
+  ``build_trim_strategy("mean_variation")`` and
+  ``DataStream.trim(method="mean_variation")``. ``RobustWorkflow`` results do
+  not change. Pass the old values explicitly to keep the old behavior.
 
 **Added**
 
@@ -79,6 +88,11 @@ Changelog
   ``sd(block_means) / sqrt(ess_blocks)`` under both rules, so the choice changes
   the window, not the formula. An explicit ``window_size`` still overrides the
   rule. Any other value raises a ``ValueError``.
+* ``MEAN_VARIATION_DEFAULTS`` (in ``quends.base.trim``, also exported as
+  ``quends.MEAN_VARIATION_DEFAULTS``) is a read-only mapping that holds the
+  default start-of-SSS detection hyperparameters. ``MeanVariationTrimStrategy``
+  and ``RobustWorkflow`` both take their defaults from it, so they can no
+  longer drift apart.
 
 **Documentation**
 

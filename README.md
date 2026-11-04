@@ -163,7 +163,10 @@ noise-based tolerance. It also marks the point where the criterion is met and
 the final SSS start after the back correction. (`verbosity=1` prints the same
 information as text, without plots.)
 
-Use these plots to adjust the hyperparameters of `RobustWorkflow`:
+Use these plots to adjust the hyperparameters of `RobustWorkflow`. The same
+parameters, with the same defaults, apply when you use
+`MeanVariationTrimStrategy` directly (`sss_time_min` is `RobustWorkflow`
+only). The shared defaults are in `quends.MEAN_VARIATION_DEFAULTS`.
 
 | Hyperparameter | Default | What it does / when to change it |
 |---|---|---|
