@@ -42,8 +42,8 @@ Three analysis techniques are available (passed as ``technique`` parameter):
     - This is the standard "average-then-analyze" workflow.
 
   technique=1  Pooled-block (preferred for trimmed ensembles):
-    - For each member and column, autotune window size until block means pass
-      Ljung-Box independence, or use the best achievable window.
+    - For each member and column, block the series with that member's
+      tau-window (``w = round(tau_int)``); the blocks need not be independent.
     - Concatenate per-member block means into one pooled series.
     - Compute statistics on pooled blocks: mean, SEM, CI, ESS.
 
