@@ -2,109 +2,77 @@
 Changelog
 =========
 
-0.1.6 (2026-11-03)
+0.1.6 (2026-11-04)
 ------------------
 
 **Changed (breaking)**
 
 * ``DataStream.compute_statistics()`` now always computes the standard error
   of the mean as ``sd(block_means) / sqrt(ess_blocks)``, where ``ess_blocks``
-  is the Geyer effective sample size of the block means. Before, it divided by
-  the raw number of blocks whenever a Ljung-Box test found the block means
-  independent. That test has low power for typical block counts, and often
-  passes while the block means are still correlated, so the standard error
-  could be too small. As a result, ``mean_uncertainty`` and the confidence
-  intervals are larger for almost every call. The means do not change.
-* ``se_method`` is now always ``"ess_blocks"``. The values ``"iid_blocks"``,
+  is the Geyer effective sample size of the block means. In 0.1.5 it divided
+  by the raw number of blocks whenever the window came from the Ljung-Box
+  search, whether or not the test passed. That test has low power for typical
+  block counts and often passes while the block means are still correlated,
+  so the standard error could be too small. ``mean_uncertainty`` and the
+  confidence intervals are therefore larger for almost every call. The means
+  do not change.
+* The default block window is now ``w = round(tau_int)`` (the "tau-window"
+  rule) instead of the Ljung-Box search. This changes ``window_size``,
+  ``n_short_averages`` and ``ess_blocks``. ``independence_status`` is now
+  ``"tau_window"``. The Ljung-Box results are still reported, but no longer
+  affect the window or the standard error.
+* ``se_method`` is now always ``"ess_blocks"``. ``"iid_blocks"``,
   ``"iid_blocks_best_p"`` and ``"ess_blocks_fallback"`` are no longer
-  returned. Update code that checks for them.
-* The default block window is now the integrated autocorrelation time,
-  ``w = round(tau_int)`` (the "tau-window" rule), instead of the window found
-  by the Ljung-Box autotune search. Because the standard error now accounts
-  for correlation between blocks, the blocks no longer need to be independent.
-  This changes ``window_size``, ``n_short_averages`` and ``ess_blocks``, and
-  ``independence_status`` is now ``"tau_window"`` for the default rule. The
-  Ljung-Box diagnostics are still reported. An explicit ``window_size`` still
-  overrides the rule.
-* Ensemble statistics:
+  returned.
+* Ensemble statistics follow the same approach:
 
-  * ``pooled_block_means_stats_for_col`` (pooled block means, T1) now always
-    uses the ESS-corrected standard error (``se_method="sem_ess"``). Before,
-    it used the plain block-count standard error (``"sem_n"``) when all
-    members passed the independence test. The pooled ESS now comes from the
-    concatenated pooled block means by default (new argument
-    ``pooled_ess_method="concat"``). Use ``"sum"`` to add up the per-member
-    ESS, as before.
-  * ``ensemble_average_stats_for_col`` (ensemble average, T0) and
-    ``ivw_member_means_stats_for_col`` (inverse-variance weighted member means,
-    T2) have a new ``tau_mode`` argument. With the default ``"pooled"``, the
-    block window comes from a correlation time that is pooled over all
-    members, which is much more stable than one estimated from a single short
-    trace. Use ``tau_mode="per_member"`` for ensembles whose members really
-    differ, such as parameter scans. T0 metadata now also reports ``tau_mode``
-    and ``tau_star``.
+  * Pooled block means (T1) always use the ESS-corrected standard error
+    (``se_method="sem_ess"``, previously ``"sem_n"`` when all members passed
+    Ljung-Box).
+  * The ensemble average (T0) and inverse-variance weighted member means (T2)
+    by default use a block window based on a correlation time pooled over all
+    members (``tau_mode="pooled"``).
 
-* The regression baselines in ``tests/*/expected/`` were regenerated for these
-  changes.
 * ``MeanVariationTrimStrategy`` now uses the same defaults as
   ``RobustWorkflow``: ``decor_multiplier=6.0`` (was 2.0), ``fudge_fac=0.1``
-  (was 1e-6) and ``final_smoothing_window=10`` (was 5). ``verbosity=0``,
-  ``std_dev_frac=0.1`` and ``smoothing_window_correction=0.5`` are unchanged.
-  This changes the detected start of statistical steady state for code that
-  creates the strategy without these arguments, including
-  ``build_trim_strategy("mean_variation")`` and
+  (was 1e-6) and ``final_smoothing_window=10`` (was 5). This changes the
+  detected SSS start when the strategy is created without these arguments,
+  including ``build_trim_strategy("mean_variation")`` and
   ``DataStream.trim(method="mean_variation")``. ``RobustWorkflow`` results do
-  not change. Pass the old values explicitly to keep the old behavior.
+  not change.
+* The regression baselines in ``tests/*/expected/`` were regenerated.
 
 **Added**
 
-* ``quends.base.utils.tau_window_blocks()`` blocks a series with the
-  tau-window rule.
-* ``quends.base.utils.pooled_tau_int()`` estimates one integrated
-  autocorrelation time for an ensemble from the mean of the members'
-  normalized autocorrelation functions. It is meant for homogeneous ensembles.
+* ``DataStream.compute_statistics(window_rule=...)``: ``"tau"`` (default) or
+  ``"autotune"`` for the legacy Ljung-Box window search. Both rules use the
+  ESS-based standard error. An explicit ``window_size`` overrides the rule.
+* Ensemble statistics: ``tau_mode="pooled"|"per_member"`` for T0 and T2 (use
+  ``"per_member"`` when members really differ, e.g. parameter scans), and
+  ``pooled_ess_method="concat"|"sum"`` for T1. T0 metadata also reports
+  ``tau_mode`` and ``tau_star``.
+* ``quends.base.utils.tau_window_blocks()`` and
+  ``quends.base.utils.pooled_tau_int()`` (pooled correlation time for
+  homogeneous ensembles).
+* ``quends.MEAN_VARIATION_DEFAULTS``: read-only mapping of the start-of-SSS
+  detection defaults, shared by ``MeanVariationTrimStrategy`` and
+  ``RobustWorkflow``.
 
 **Fixed**
 
-* Results that use the default tau-window rule no longer get the misleading
-  warning "Too few blocks for independence test; SE via Geyer ESS.". The
-  warning for the ``best_p`` status now says that the standard error uses the
-  Geyer ESS.
+* Tau-window results no longer get the misleading warning "Too few blocks for
+  independence test; SE via Geyer ESS.".
+* ``_process_column()`` now rejects an unknown ``window_rule`` even when an
+  explicit window is given.
 
 **Documentation**
 
-* Added a "Detecting the Start of Statistical Steady State" section to the
-  README. It covers when to use ``RobustWorkflow``, how the ``mean_variation``
-  heuristic works (including the ``smoothing_window_correction`` back
-  correction), the ``verbosity=2`` diagnostic plots, and how to tune
-  ``std_dev_frac``, ``decor_multiplier`` and ``smoothing_window_correction``.
-
-**Added**
-
-* ``DataStream.compute_statistics()`` has a new ``window_rule`` argument that
-  chooses how the block window is picked when ``window_size`` is not given.
-  The default, ``"tau"``, is the tau-window rule, ``w = round(tau_int)``.
-  ``"autotune"`` selects the legacy Ljung-Box search. The standard error is
-  ``sd(block_means) / sqrt(ess_blocks)`` under both rules, so the choice changes
-  the window, not the formula. An explicit ``window_size`` still overrides the
-  rule. Any other value raises a ``ValueError``.
-* ``MEAN_VARIATION_DEFAULTS`` (in ``quends.base.trim``, also exported as
-  ``quends.MEAN_VARIATION_DEFAULTS``) is a read-only mapping that holds the
-  default start-of-SSS detection hyperparameters. ``MeanVariationTrimStrategy``
-  and ``RobustWorkflow`` both take their defaults from it, so they can no
-  longer drift apart.
-
-**Documentation**
-
-* The docstrings of the pooled-block-means (serialization) and
-  inverse-variance-weighted ensemble statistics, of ``Ensemble``, of the
-  ensemble statistics workflow and of ``DataStream.compute_statistics()`` now
-  describe the current behaviour. Each member is blocked with its own
-  tau-window, the standard error always divides by the effective number of
-  blocks, and the pooled effective block count is set by
-  ``pooled_ess_method``. They previously described a Ljung-Box autotune per
-  member and a standard error that divided by the number of blocks when every
-  member passed the Ljung-Box test.
+* New README section "Detecting the Start of Statistical Steady State": when
+  to use ``RobustWorkflow``, how the ``mean_variation`` heuristic works, the
+  ``verbosity=2`` diagnostic plots, and how to tune its hyperparameters.
+* The ``DataStream.compute_statistics()``, ``Ensemble``, ensemble statistics
+  and ensemble statistics workflow docstrings now describe the tau-window
+  blocking and the ESS-based standard error.
 
 **Security**
 
