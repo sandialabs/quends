@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from types import MappingProxyType
 from typing import Any, Optional
 
 import numpy as np
@@ -443,6 +444,22 @@ class RollingVarianceThresholdTrimStrategy(TrimStrategy):
         return None
 
 
+#: Default hyperparameters of the ``mean_variation`` start-of-SSS detection.
+#: Single source of truth shared by :class:`MeanVariationTrimStrategy` and
+#: :class:`~quends.workflow.robust_workflow.RobustWorkflow`, so the two always
+#: use the same defaults. Read-only; pass keyword arguments to override.
+MEAN_VARIATION_DEFAULTS = MappingProxyType(
+    {
+        "verbosity": 0,
+        "decor_multiplier": 6.0,
+        "std_dev_frac": 0.1,
+        "fudge_fac": 0.1,
+        "smoothing_window_correction": 0.5,
+        "final_smoothing_window": 10,
+    }
+)
+
+
 class MeanVariationTrimStrategy(TrimStrategy):
     """
     Trim using Statistical Steady State (SSS) detection.
@@ -451,6 +468,10 @@ class MeanVariationTrimStrategy(TrimStrategy):
     decorrelation time (``tau_int``, in number of samples). The start of SSS is
     the first point after which the smoothed signal stays within a tolerance of
     the mean of the remaining smoothed signal.
+
+    The defaults are taken from :data:`MEAN_VARIATION_DEFAULTS`, which
+    :class:`~quends.workflow.robust_workflow.RobustWorkflow` also uses. Passing
+    ``None`` for a parameter selects its default.
 
     Parameters
     ----------
@@ -461,20 +482,20 @@ class MeanVariationTrimStrategy(TrimStrategy):
     decor_multiplier : float, optional
         Multiplier applied to the decorrelation time to get the smoothing
         window size. The window is capped at the signal length and is at least
-        3 points. Default is 2.0.
+        3 points. Default is 6.0.
     std_dev_frac : float, optional
         Fraction of the std dev of the remaining signal used as tolerance.
         Default is 0.1.
     fudge_fac : float, optional
         Fraction of the initial mean of the smoothed signal added to the std
         dev when computing the tolerance, to keep it from going to zero.
-        Default is 1e-6.
+        Default is 0.1.
     smoothing_window_correction : float, optional
         Fraction of the smoothing window to move the SSS start back, to account
         for the lag of the rolling mean. Default is 0.5.
     final_smoothing_window : int, optional
         Window used to smooth the std dev and deviation curves so they do not go
-        to zero at the end of the signal. Default is 5.
+        to zero at the end of the signal. Default is 10.
     """
 
     def __init__(
@@ -488,20 +509,20 @@ class MeanVariationTrimStrategy(TrimStrategy):
         final_smoothing_window=None,
     ):
         super().__init__(window_size=0, start_time=0.0)
-        self.verbosity = verbosity if verbosity is not None else 0
-        self.decor_multiplier = (
-            decor_multiplier if decor_multiplier is not None else 2.0
-        )
-        self.std_dev_frac = std_dev_frac if std_dev_frac is not None else 0.1
-        self.fudge_fac = fudge_fac if fudge_fac is not None else 1e-6
-        self.smoothing_window_correction = (
-            smoothing_window_correction
-            if smoothing_window_correction is not None
-            else 0.5
-        )
-        self.final_smoothing_window = (
-            final_smoothing_window if final_smoothing_window is not None else 5
-        )
+        given = {
+            "verbosity": verbosity,
+            "decor_multiplier": decor_multiplier,
+            "std_dev_frac": std_dev_frac,
+            "fudge_fac": fudge_fac,
+            "smoothing_window_correction": smoothing_window_correction,
+            "final_smoothing_window": final_smoothing_window,
+        }
+        for name, value in given.items():
+            setattr(
+                self,
+                name,
+                value if value is not None else MEAN_VARIATION_DEFAULTS[name],
+            )
 
     @property
     def method_name(self) -> str:

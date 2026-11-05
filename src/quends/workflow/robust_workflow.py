@@ -3,7 +3,11 @@ import numpy as np
 # QUENDS libraries
 from ..base.data_stream import DataStream
 from ..base.stationary import MakeDataStreamStationaryOperation
-from ..base.trim import MeanVariationTrimStrategy, TrimDataStreamOperation
+from ..base.trim import (
+    MEAN_VARIATION_DEFAULTS,
+    MeanVariationTrimStrategy,
+    TrimDataStreamOperation,
+)
 
 # --- ad-hoc fallback conventions (used only when no SSS segment is found) ---
 # Default tail-start fraction: when no SSS segment is found the "ball-park"
@@ -67,19 +71,27 @@ class RobustWorkflow:
     def __init__(
         self,
         operate_safe=True,
-        verbosity=0,
+        verbosity=MEAN_VARIATION_DEFAULTS["verbosity"],
         drop_fraction=0.25,
         n_pts_min=100,
         sss_time_min=50,
-        decor_multiplier=6.0,
-        std_dev_frac=0.1,
-        fudge_fac=0.1,
-        smoothing_window_correction=0.5,
-        final_smoothing_window=10,
+        decor_multiplier=MEAN_VARIATION_DEFAULTS["decor_multiplier"],
+        std_dev_frac=MEAN_VARIATION_DEFAULTS["std_dev_frac"],
+        fudge_fac=MEAN_VARIATION_DEFAULTS["fudge_fac"],
+        smoothing_window_correction=MEAN_VARIATION_DEFAULTS[
+            "smoothing_window_correction"
+        ],
+        final_smoothing_window=MEAN_VARIATION_DEFAULTS["final_smoothing_window"],
         no_sss_tail_fraction=_DEFAULT_NO_SSS_TAIL_FRACTION,
     ):
         """
         Initialize a workflow and its hyperparameters
+
+        The defaults of the start-of-SSS detection parameters (``verbosity``,
+        ``decor_multiplier``, ``std_dev_frac``, ``fudge_fac``,
+        ``smoothing_window_correction`` and ``final_smoothing_window``) come from
+        :data:`quends.base.trim.MEAN_VARIATION_DEFAULTS`, which
+        :class:`~quends.base.trim.MeanVariationTrimStrategy` also uses.
 
         Parameters
         ----------

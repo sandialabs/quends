@@ -8,6 +8,7 @@ from .base.ensemble import Ensemble
 from .base.operations import DataStreamOperation
 from .base.stationary import MakeDataStreamStationaryOperation
 from .base.trim import (
+    MEAN_VARIATION_DEFAULTS,
     IQRTrimStrategy,
     MeanVariationTrimStrategy,
     NoiseThresholdTrimStrategy,
@@ -64,6 +65,7 @@ __all__ = [
     "BatchEnsembleWorkflow",
     # Trim — canonical entry point
     "build_trim_strategy",
+    "MEAN_VARIATION_DEFAULTS",
     # Trim — strategy classes (concrete)
     "IQRTrimStrategy",
     "MeanVariationTrimStrategy",

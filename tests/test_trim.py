@@ -773,3 +773,42 @@ def test_mean_variation_plots_shown_on_interactive_backend():
 def test_trim_operation_strategy_property():
     strategy = QuantileTrimStrategy(window_size=3)
     assert TrimDataStreamOperation(strategy=strategy).strategy is strategy
+
+
+def test_mean_variation_defaults_match_robust_workflow():
+    """MeanVariationTrimStrategy and RobustWorkflow share one set of defaults."""
+    import inspect
+
+    from quends import MEAN_VARIATION_DEFAULTS, RobustWorkflow
+
+    strategy = MeanVariationTrimStrategy()
+    workflow_params = inspect.signature(RobustWorkflow.__init__).parameters
+    for name, default in MEAN_VARIATION_DEFAULTS.items():
+        assert getattr(strategy, name) == default
+        assert workflow_params[name].default == default
+    # The strategy accepts exactly the shared parameters.
+    strategy_params = set(inspect.signature(MeanVariationTrimStrategy).parameters)
+    assert strategy_params == set(MEAN_VARIATION_DEFAULTS)
+
+
+def test_mean_variation_defaults_are_read_only():
+    from quends import MEAN_VARIATION_DEFAULTS
+
+    with pytest.raises(TypeError):
+        MEAN_VARIATION_DEFAULTS["std_dev_frac"] = 0.5
+
+
+def test_robust_workflow_passes_settings_to_strategy():
+    """RobustWorkflow hands its SSS settings to MeanVariationTrimStrategy."""
+    from quends import MEAN_VARIATION_DEFAULTS, RobustWorkflow
+
+    captured = {}
+    original_init = MeanVariationTrimStrategy.__init__
+
+    def spy(self, **kwargs):
+        captured.update(kwargs)
+        original_init(self, **kwargs)
+
+    with patch.object(MeanVariationTrimStrategy, "__init__", spy):
+        RobustWorkflow().process_data_stream(_sss_signal(n=300), "A")
+    assert captured == dict(MEAN_VARIATION_DEFAULTS)
