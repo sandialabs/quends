@@ -1,0 +1,257 @@
+quends.base.ensemble_statistics
+===============================
+
+.. py:module:: quends.base.ensemble_statistics
+
+.. autoapi-nested-parse::
+
+   ensemble_statistics.py
+   ----------------------
+   Module-level statistical functions for ensemble analysis.
+
+   These functions implement the three ensemble-statistics techniques and operate
+   on plain lists of :class:`~quends.base.data_stream.DataStream` objects so that
+   workflow classes and the :class:`~quends.base.ensemble.Ensemble` class share
+   the same computation path without code duplication.
+
+   Technique names
+   ---------------
+   The three techniques are addressed by descriptive canonical names; legacy
+   ``technique=0|1|2`` and ``"technique0"|"technique1"|"technique2"`` strings
+   are accepted for backward compatibility but normalised internally.
+
+   * ``"ensemble_average"`` — average traces element-wise into a single trace and
+     run DataStream statistics on it (technique 0).
+   * ``"pooled_block_means"`` — block each member with its own tau-window
+     (``w = round(tau_int)`` of that member), pool the block means across members,
+     and compute the mean and an ESS-corrected standard error on the pooled
+     series (technique 1; preferred for trimmed ensembles).
+   * ``"ivw_member_means"`` — call ``DataStream.compute_statistics()`` on each
+     member, combine the per-member ``(mean, SE)`` pairs using inverse-variance
+     weighting (technique 2; fallback to simple mean when SEs are unusable).
+
+   Public API
+   ----------
+   pool_block_means
+   ensemble_average_stats_for_col
+   pooled_block_means_stats_for_col
+   ivw_member_means_stats_for_col
+   compute_ensemble_statistics
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   quends.base.ensemble_statistics.ENSEMBLE_AVERAGE
+   quends.base.ensemble_statistics.POOLED_BLOCK_MEANS
+   quends.base.ensemble_statistics.IVW_MEMBER_MEANS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   quends.base.ensemble_statistics.pool_block_means
+   quends.base.ensemble_statistics.ensemble_average_stats_for_col
+   quends.base.ensemble_statistics.pooled_block_means_stats_for_col
+   quends.base.ensemble_statistics.ivw_member_means_stats_for_col
+   quends.base.ensemble_statistics.compute_ensemble_statistics
+
+
+Module Contents
+---------------
+
+.. py:data:: ENSEMBLE_AVERAGE
+   :value: 'ensemble_average'
+
+
+.. py:data:: POOLED_BLOCK_MEANS
+   :value: 'pooled_block_means'
+
+
+.. py:data:: IVW_MEMBER_MEANS
+   :value: 'ivw_member_means'
+
+
+.. py:function:: pool_block_means(data_streams, col, window_size = None, method = 'non-overlapping', lb_alpha = 0.05, lb_lags = None, max_tries = 25, min_blocks = 8)
+
+   For all members: choose a per-member block window, then pool block means.
+
+   Calls ``DataStream._process_column`` directly for each member, with its
+   default tau-window rule: each member is blocked with ``w = round(tau_int)``
+   estimated from that member's own series.  No Ljung-Box search is run; the
+   per-member Ljung-Box p-values are still recorded as diagnostics, along with
+   each member's window, block count, block ESS and ``independence_status``
+   (``"tau_window"`` under the default rule).
+
+   :Parameters: * **data_streams** (*list of DataStream*)
+                * **col** (*str*)
+                * **window_size** (*int or None*) -- Explicit block window used for every member.  When ``None``, each member
+                  gets its own tau-window.
+                * **method** (*str*)
+                * **lb_alpha** (*float*) -- Ljung-Box significance level for the recorded diagnostic.
+                * **lb_lags** (*int or None*) -- Single-lag override for the Ljung-Box diagnostic (backward compat).
+                  When ``None``, the canonical ``lag_set=(5, 10)`` is used.
+                * **max_tries** (*int*) -- Iteration cap of the legacy Ljung-Box search.  Retained for backward
+                  compatibility; neither the default tau-window rule nor an explicit
+                  *window_size* iterates, so it currently has no effect.
+                * **min_blocks** (*int*) -- With an explicit *window_size*, the minimum block count needed to run
+                  the Ljung-Box diagnostic.  The tau-window rule keeps at least 4 blocks
+                  regardless.
+
+   :returns: *(pooled_blocks, meta)*
+
+
+.. py:function:: ensemble_average_stats_for_col(data_streams, col, ddof = 1, method = 'non-overlapping', window_size = None, avg_ds = None, confidence_level = 0.95, ci_method = 'normal', tau_mode = 'pooled')
+
+   Compute *ensemble_average* (T0) statistics for one column.
+
+   ``tau_mode`` (default ``"pooled"``) sets the block window for the averaged
+   trace:
+
+   * ``"pooled"``     - ``w = round(tau*)`` with ``tau*`` pooled across the member
+     traces.  Averaging N independent members scales the autocovariance by 1/N
+     but leaves the *normalised* ACF unchanged (``rho_ea = rho``), so the member
+     correlation time IS the correct time-scale for the EA trace — and pooling M
+     member ACFs resolves it far better than the single averaged trace can.
+   * ``"per_member"`` - use the EA trace's own tau (the plain tau-window rule).
+
+   An explicit *window_size* overrides both.
+
+   Uses a pre-computed average-ensemble DataStream (or builds it from
+   *data_streams* if *avg_ds* is ``None``). Runs
+   :meth:`DataStream.compute_statistics` on the single averaged trace.
+
+   :Parameters: * **data_streams** (*list of DataStream*) -- Used to build the average when *avg_ds* is ``None``.
+                * **col** (*str*)
+                * **ddof** (*int*)
+                * **method** (*str*)
+                * **window_size** (*int or None*)
+                * **avg_ds** (*DataStream or None*) -- Pre-computed ensemble average.
+
+   :returns: *(stat_dict, meta_dict)*
+
+
+.. py:function:: pooled_block_means_stats_for_col(data_streams, col, ddof = 1, window_size = None, method = 'non-overlapping', lb_lags = None, lb_alpha = 0.05, pooled_lb_alpha_bad = 0.01, confidence_level = 0.95, ci_method = 'normal', pooled_ess_method = 'concat')
+
+   Compute *pooled_block_means* (T1) statistics for one column.
+
+   Pipeline:
+
+   1. :func:`pool_block_means` blocks each member with its own tau-window
+      (``w = round(tau_int)`` of that member, unless *window_size* is given)
+      and pools the block means of all members into one series.  Per-member
+      windows, block ESS, Ljung-Box p-values and ``independence_status`` are
+      recorded as diagnostics.
+   2. The pooled effective block count ``ess_blocks`` is set by
+      *pooled_ess_method*: by default (``"concat"``) the Geyer ESS of the
+      concatenated pooled block means; with ``"sum"``, the sum of the
+      per-member block ESS.
+   3. The standard error is always ``sem_ess = sd(pooled_blocks) /
+      sqrt(ess_blocks)``.  The block-count SEM ``sem_n = sd / sqrt(n_blocks)``
+      is still returned as ``mean_uncertainty_sem_n`` for comparison but is
+      never reported as ``mean_uncertainty``.  The ensemble
+      ``independence_status`` (all/some/none-independent) summarises the
+      per-member verdicts; it does not change the standard error.  No
+      Ljung-Box test is run on the cross-member concatenation, which would
+      inject spurious boundary autocorrelation (AUDIT_REPORT H3).  ``lb_lags``
+      and ``pooled_lb_alpha_bad`` are retained for backward compatibility but
+      no longer drive a pooled test.
+
+   :Parameters: * **data_streams** (*list of DataStream*)
+                * **col** (*str*)
+                * **ddof** (*int*)
+                * **window_size** (*int or None*) -- Explicit block window for every member.  ``None`` gives each member its
+                  own tau-window.
+                * **method** (*str*)
+                * **lb_lags** (*int or None*) -- Single-lag override for the per-member Ljung-Box diagnostic (backward
+                  compat).  When ``None``, the canonical ``lag_set=(5, 10)`` is used.
+                * **lb_alpha** (*float*) -- Ljung-Box significance level for the per-member diagnostic.
+                * **pooled_lb_alpha_bad** (*float*) -- Retained for backward compatibility; unused.
+                * **confidence_level** (*float*) -- Two-sided confidence level for the CI.  Default ``0.95``.
+                * **ci_method** (*{'normal', 't'}*) -- CI quantile family.  With ``'t'``, ``dof = max(1, ess_blocks - 1)``.
+                * **pooled_ess_method** (*{'concat', 'sum'}*) -- How the pooled effective block count is formed (step 2).  On an AR(1)
+                  benchmark (16 members, ``w = tau``) ``"concat"`` ran about 2%
+                  conservative on the standard error and ``"sum"`` was unbiased.
+
+   :returns: *(stat_dict, meta_dict)* -- ``stat_dict`` canonical keys:
+
+             ``mean``, ``variance``, ``ess_blocks``, ``n_short_averages``,
+             ``mean_uncertainty``, ``mean_uncertainty_sem_n``, ``mean_uncertainty_sem_ess``,
+             ``se_method``, ``warning``, ``confidence_interval``, ``pm_std``,
+             ``window_size`` (median member window, or ``None`` if no members),
+             ``independent``, ``independence_status``,
+             ``ljungbox_pvalue`` (scalar min, backward-compat),
+             ``ljungbox_pvalues`` (list, normalised schema),
+             ``ljungbox_lags`` (list, normalised schema),
+             ``member_all_independent``, ``member_some_best_p``.
+
+
+.. py:function:: ivw_member_means_stats_for_col(data_streams, col, ddof = 1, method = 'non-overlapping', window_size = None, diagnostics = 'compact', confidence_level = 0.95, ci_method = 'normal', tau_mode = 'pooled')
+
+   Compute *ivw_member_means* (T2) statistics for one column.
+
+   Calls :meth:`DataStream.compute_statistics` on each member and aggregates
+   the per-member ``(mean, SE)`` pairs via inverse-variance weighting
+   (fallback: simple mean when no variances are available).  Each member's SE
+   is ``sd(block_means) / sqrt(ess_blocks)``.
+
+   ``tau_mode`` (default ``"pooled"``) sets the members' block window:
+   ``"pooled"`` gives every member ``w = round(tau*)`` with ``tau*`` pooled
+   across the member traces (homogeneous ensembles only); ``"per_member"``
+   gives each member its own tau-window.  An explicit *window_size* overrides
+   both.
+
+   :Parameters: * **data_streams** (*list of DataStream*)
+                * **col** (*str*)
+                * **ddof** (*int*)
+                * **method** (*str*)
+                * **window_size** (*int or None*)
+                * **diagnostics** (*{"compact", "full"}*) -- ``"full"`` includes per-member statistics (including per-member window
+                  and independence diagnostics) in ``stat_dict["individual"]``.
+
+   :returns: *(stat_dict, meta_dict)* -- ``stat_dict`` canonical keys:
+
+             ``mean``, ``mean_uncertainty``, ``confidence_interval``, ``pm_std``,
+             ``variance``, ``ess_blocks``, ``n_short_averages``, ``se_method``,
+             ``warning``,
+             ``window_size`` (mean of per-member windows, or ``None``),
+             ``independence_status`` (``"all_independent"``, ``"some_independent"``,
+             ``"none_independent"``, or ``"unknown"``),
+             ``independent`` (``True`` iff all members are independent),
+             ``ljungbox_pvalue`` (mean of per-member min p-values),
+             ``ljungbox_pvalues`` (list of per-member min p-values),
+             ``individual`` (per-member dicts when *diagnostics* == ``"full"``).
+
+
+.. py:function:: compute_ensemble_statistics(data_streams, column_name = None, ddof = 1, method = 'non-overlapping', window_size = None, technique = POOLED_BLOCK_MEANS, diagnostics = 'compact', confidence_level = 0.95, ci_method = 'normal')
+
+   Aggregate mean, SEM, CI, ±SEM, variance, and ESS across an ensemble.
+
+   Dispatches to the appropriate technique helper.
+
+   :Parameters: * **data_streams** (*list of DataStream*)
+                * **column_name** (*str, list of str, or None*) -- ``None`` → all common variables.
+                * **ddof** (*int*)
+                * **method** (*{"non-overlapping", "sliding"}*)
+                * **window_size** (*int or None*)
+                * **technique** (*{"ensemble_average", "pooled_block_means", "ivw_member_means"}*) -- Canonical technique name.  Legacy values ``0``/``1``/``2`` and
+                  ``"technique0"``/``"technique1"``/``"technique2"`` are accepted as
+                  backward-compatible aliases.  Default ``"pooled_block_means"``.
+                * **diagnostics** (*{"compact", "full"}*)
+
+   :returns: *dict* -- ``{"results": {col: {stats}}, "metadata": {...}}``
+
+             Metadata key for each technique:
+
+             * ``"technique_0_ensemble_average"``
+             * ``"technique_1_pooled_block_means"``
+             * ``"technique_2_ivw_member_means"``
+
+   :raises ValueError: If *technique* is not a recognised alias.
+
+
